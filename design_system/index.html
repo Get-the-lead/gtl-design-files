@@ -8,9 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,700;9..40,800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../gtl-app/styles.css">
+    <link rel="stylesheet" href="../gtl-app/componentes.css">
   </head>
-  <body>
+  <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
       <a class="brand" href="#overview" aria-label="GTL Design System home">
         <span class="brand-mark">G</span>
@@ -25,6 +26,7 @@
         <a href="#tokens">Tokens</a>
         <a href="#typography">Typography</a>
         <a href="#buttons">Buttons</a>
+        <a href="#pills">Pills</a>
         <a href="#forms">Forms</a>
         <a href="#navigation">Navigation</a>
         <a href="#cards">Cards</a>
@@ -225,29 +227,125 @@
           <p>Use primary buttons once per surface for the most important action.</p>
         </div>
 
-        <div class="panel component-stack">
-          <div class="button-row">
+        <div class="panel component-stack button-showcase">
+          <div class="button-state-table">
+            <span class="type-label">State</span>
+            <span class="type-label">Primary</span>
+            <span class="type-label">Secondary</span>
+            <span class="type-label">Ghost</span>
+            <span class="type-label">Tertiary</span>
+            <span class="type-label">Icon</span>
+
+            <span class="type-label">Default</span>
             <button class="button button-primary" type="button">Primary</button>
             <button class="button button-secondary" type="button">Secondary</button>
             <button class="button button-ghost" type="button">Ghost</button>
-            <button class="button button-danger" type="button">No / Sell</button>
-            <button class="button button-primary" type="button" disabled>Disabled</button>
-          </div>
-          <div class="button-row">
+            <button class="button button-tertiary" type="button">Tertiary</button>
             <button class="icon-button" type="button" aria-label="Search"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
-            <button class="icon-button" type="button" aria-label="Settings"><span class="material-symbols-outlined" aria-hidden="true">settings</span></button>
+
+            <span class="type-label">Hover</span>
+            <button class="button button-primary is-hovered" type="button">Primary</button>
+            <button class="button button-secondary is-hovered" type="button">Secondary</button>
+            <button class="button button-ghost is-hovered" type="button">Ghost</button>
+            <button class="button button-tertiary is-hovered" type="button">Tertiary</button>
+            <button class="icon-button is-hovered" type="button" aria-label="Search hover"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+
+            <span class="type-label">Pressed</span>
+            <button class="button button-primary is-pressed" type="button" aria-pressed="true">Primary</button>
+            <button class="button button-secondary is-pressed" type="button" aria-pressed="true">Secondary</button>
+            <button class="button button-ghost is-pressed" type="button" aria-pressed="true">Ghost</button>
+            <button class="button button-tertiary is-pressed" type="button" aria-pressed="true">Tertiary</button>
+            <button class="icon-button is-pressed" type="button" aria-label="Search pressed" aria-pressed="true"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+
+            <span class="type-label">Loading</span>
+            <button class="button button-primary is-loading" type="button">Primary</button>
+            <button class="button button-secondary is-loading" type="button">Secondary</button>
+            <button class="button button-ghost is-loading" type="button">Ghost</button>
+            <button class="button button-tertiary is-loading" type="button">Tertiary</button>
+            <button class="icon-button is-loading" type="button" aria-label="Search loading"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+
+            <span class="type-label">Disabled</span>
+            <button class="button button-primary" type="button" disabled>Primary</button>
+            <button class="button button-secondary" type="button" disabled>Secondary</button>
+            <button class="button button-ghost" type="button" disabled>Ghost</button>
+            <button class="button button-tertiary" type="button" disabled>Tertiary</button>
+            <button class="icon-button" type="button" aria-label="Search disabled" disabled><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+          </div>
+
+          <div class="button-size-table">
+            <span class="type-label">Size</span>
+            <span class="type-label">Primary</span>
+            <span class="type-label">Secondary</span>
+            <span class="type-label">Tertiary</span>
+
+            <span class="type-label">Small</span>
+            <button class="button button-small button-primary" type="button">Small</button>
             <button class="button button-small button-secondary" type="button">Small</button>
+            <button class="button button-small button-tertiary" type="button">Small</button>
+
+            <span class="type-label">Medium</span>
+            <button class="button button-primary" type="button">Medium</button>
+            <button class="button button-secondary" type="button">Medium</button>
+            <button class="button button-tertiary" type="button">Medium</button>
+
+            <span class="type-label">Large</span>
+            <button class="button button-large button-primary" type="button">Large</button>
+            <button class="button button-large button-secondary" type="button">Large</button>
+            <button class="button button-large button-tertiary" type="button">Large</button>
           </div>
-          <div class="button-row">
-            <button class="button button-primary is-pressed" type="button" aria-pressed="true">Pressed</button>
-            <button class="button button-secondary is-loading" type="button">Loading</button>
-            <button class="button button-ghost is-disabled" type="button" aria-disabled="true">Disabled</button>
-          </div>
-          <div class="button-row">
-            <span class="pill pill-success">Live</span>
-            <span class="pill pill-interrupted">Interrupted</span>
-            <span class="pill pill-suspended">Suspended</span>
-          </div>
+        </div>
+      </section>
+
+      <section id="pills" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Game status</p>
+          <h2>Status Pills</h2>
+          <p>Use pills to communicate the market or game state before users read the full card.</p>
+        </div>
+
+        <div class="panel pill-guide">
+          <article>
+            <div class="live-game-card live-status-sample">
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="live-dot"></span>
+                  <span>08:42</span>
+                  <span>·</span>
+                  <strong>Q2</strong>
+                </div>
+              </div>
+            </div>
+            <div>
+              <strong>Game is live</strong>
+              <p>Show the live dot, game clock, and quarter when the game is currently in progress and markets are open for trading.</p>
+            </div>
+          </article>
+          <article>
+            <div class="live-game-card live-status-sample">
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="pill pill-interrupted">Interrupted</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <strong>Game is interrupted</strong>
+              <p>Show for temporary delays, reviews, weather pauses, injury stoppages, or broadcast interruptions.</p>
+            </div>
+          </article>
+          <article>
+            <div class="live-game-card live-status-sample">
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="pill pill-suspended">Suspended</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <strong>Markets are suspended</strong>
+              <p>Show when trading is paused and users cannot place orders until the market reopens.</p>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -343,36 +441,229 @@
         <div class="section-header">
           <p class="eyebrow">Surfaces</p>
           <h2>Cards</h2>
-          <p>Cards group repeated objects. Page sections remain unframed.</p>
+          <p>Live game cards are the primary repeated surface in the app. Use the exact component markup below for production pages.</p>
         </div>
 
-        <div class="card-grid">
-          <article class="card">
-            <div class="card-top">
-              <span class="avatar">AM</span>
-              <span class="pill pill-success">YES</span>
+        <div class="card-grid live-card-grid">
+          <article class="live-game-card model-1 league-nfl">
+            <div class="game-header">
+              <div class="sport-info">
+                <div class="sport-icon"></div>
+                <span>NFL</span>
+              </div>
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="live-dot"></span>
+                  <span>08:42</span>
+                  <span>·</span>
+                  <strong>Q2</strong>
+                </div>
+                <button class="save-game-button" type="button" aria-label="Save game" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+                </button>
+              </div>
             </div>
-            <h3>Customer Portal</h3>
-            <p>Reusable layout for authenticated account and settings pages.</p>
-            <div class="card-meta"><span>Updated today</span><strong>92%</strong></div>
+            <div class="teams">
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Kansas City Chiefs</span>
+                </div>
+                <strong class="score">17</strong>
+              </div>
+              <div class="team-row">
+                <div class="team-name">
+                  <span>San Francisco 49ers</span>
+                </div>
+                <strong class="score">14</strong>
+              </div>
+            </div>
+            <div class="market-carousel" data-market-carousel>
+              <div class="market-track">
+                <div class="market-slide">
+                  <p class="market-label">GTL - Get the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>58¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>42¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">Tie</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>19¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>83¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">KTL - Keep the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>66¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>36¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="market-dots" aria-label="Markets: GTL, Tie and KTL">
+                <button class="dot active" type="button" aria-label="GTL market"></button>
+                <button class="dot" type="button" aria-label="Tie market"></button>
+                <button class="dot" type="button" aria-label="KTL market"></button>
+              </div>
+            </div>
           </article>
-          <article class="card">
-            <div class="card-top">
-              <span class="avatar avatar-accent">DS</span>
-              <span class="pill">PRE GAME</span>
+
+          <article class="live-game-card model-1 league-nba">
+            <div class="game-header">
+              <div class="sport-info">
+                <div class="sport-icon"></div>
+                <span>NBA</span>
+              </div>
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="live-dot"></span>
+                  <span>05:18</span>
+                  <span>·</span>
+                  <strong>Q4</strong>
+                </div>
+                <button class="save-game-button" type="button" aria-label="Save game" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+                </button>
+              </div>
             </div>
-            <h3>Component Library</h3>
-            <p>Documented styles, examples, and states for UI production.</p>
-            <div class="card-meta"><span>14 items</span><strong>Ready</strong></div>
+            <div class="teams">
+              <div class="team-row">
+                <div class="team-name">
+                  <span>New York Knicks</span>
+                </div>
+                <strong class="score">84</strong>
+              </div>
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Boston Celtics</span>
+                </div>
+                <strong class="score">89</strong>
+              </div>
+            </div>
+            <div class="market-carousel" data-market-carousel>
+              <div class="market-track">
+                <div class="market-slide">
+                  <p class="market-label">GTL - Get the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>43¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>59¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">Tie</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>13¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>89¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">KTL - Keep the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>62¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>41¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="market-dots" aria-label="Markets: GTL, Tie and KTL">
+                <button class="dot active" type="button" aria-label="GTL market"></button>
+                <button class="dot" type="button" aria-label="Tie market"></button>
+                <button class="dot" type="button" aria-label="KTL market"></button>
+              </div>
+            </div>
           </article>
-          <article class="card">
-            <div class="card-top">
-              <span class="avatar avatar-warm">UX</span>
-              <span class="pill pill-warning">SPREAD</span>
+
+          <article class="live-game-card model-2 league-nfl">
+            <div class="game-header">
+              <div class="sport-info">
+                <div class="sport-icon"></div>
+                <span>NFL</span>
+              </div>
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="live-dot"></span>
+                  <span>11:03</span>
+                  <span>·</span>
+                  <strong>Q3</strong>
+                </div>
+                <button class="save-game-button" type="button" aria-label="Save game" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+                </button>
+              </div>
             </div>
-            <h3>Experience Audit</h3>
-            <p>Checklist for accessibility, responsiveness, and content quality.</p>
-            <div class="card-meta"><span>3 blockers</span><strong>Open</strong></div>
+            <div class="teams">
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Buffalo Bills</span>
+                </div>
+                <strong class="score">24</strong>
+              </div>
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Miami Dolphins</span>
+                </div>
+                <strong class="score">20</strong>
+              </div>
+            </div>
+            <div class="market-stack" aria-label="Markets">
+              <article class="stacked-market" style="--yes-share: 70%; --no-share: 30%;">
+                <div class="stacked-market-header">
+                  <strong>GTL - Get the Lead</strong>
+                </div>
+                <div class="market-depth-group">
+                  <div class="market-depth">
+                    <div><span>Bid</span><span>·</span><strong>70</strong></div>
+                    <div><span>Ask</span><span>·</span><strong>30</strong></div>
+                  </div>
+                  <div class="market-progress" aria-label="Bid 70, ask 30">
+                    <span class="progress-yes"></span>
+                    <span class="progress-no"></span>
+                  </div>
+                </div>
+                <div class="market-actions">
+                  <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>70¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>30¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                </div>
+              </article>
+              <article class="stacked-market" style="--yes-share: 22%; --no-share: 78%;">
+                <div class="stacked-market-header">
+                  <strong>Tie</strong>
+                </div>
+                <div class="market-depth-group">
+                  <div class="market-depth">
+                    <div><span>Bid</span><span>·</span><strong>22</strong></div>
+                    <div><span>Ask</span><span>·</span><strong>78</strong></div>
+                  </div>
+                  <div class="market-progress" aria-label="Bid 22, ask 78">
+                    <span class="progress-yes"></span>
+                    <span class="progress-no"></span>
+                  </div>
+                </div>
+                <div class="market-actions">
+                  <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>22¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>78¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                </div>
+              </article>
+              <article class="stacked-market" style="--yes-share: 64%; --no-share: 36%;">
+                <div class="stacked-market-header">
+                  <strong>KTL - Keep the Lead</strong>
+                </div>
+                <div class="market-depth-group">
+                  <div class="market-depth">
+                    <div><span>Bid</span><span>·</span><strong>64</strong></div>
+                    <div><span>Ask</span><span>·</span><strong>36</strong></div>
+                  </div>
+                  <div class="market-progress" aria-label="Bid 64, ask 36">
+                    <span class="progress-yes"></span>
+                    <span class="progress-no"></span>
+                  </div>
+                </div>
+                <div class="market-actions">
+                  <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>64¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>36¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                </div>
+              </article>
+            </div>
           </article>
         </div>
       </section>
@@ -409,7 +700,7 @@
               </tr>
               <tr>
                 <td>Dialogs</td>
-                <td><span class="pill">PRE GAME</span></td>
+                <td><span class="pill pill-suspended">SUSPENDED</span></td>
                 <td>Engineering</td>
                 <td>Jun 26, 2026</td>
               </tr>
@@ -499,6 +790,7 @@
       </div>
     </dialog>
 
+    <script src="../gtl-app/script.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

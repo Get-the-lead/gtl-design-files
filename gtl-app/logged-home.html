@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GTL App Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,700;9..40,800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="componentes.css">
+  </head>
+  <body class="marketing-page logged-page">
+    <header class="marketing-nav">
+      <a class="brand" href="#" aria-label="GTL home">
+        <span class="brand-mark">G</span>
+        <span>
+          <strong>GTL</strong>
+          <small>Markets</small>
+        </span>
+      </a>
+      <nav class="nav-links" aria-label="Logged navigation">
+        <a href="#portfolio">Portfolio</a>
+        <a href="#markets">Markets</a>
+        <a href="#account">Account</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-button" type="button" aria-label="Search">
+          <span class="material-symbols-outlined" aria-hidden="true">search</span>
+        </button>
+        <button class="icon-button" type="button" aria-label="Notifications">
+          <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section id="account" class="landing-section logged-dashboard">
+        <div class="welcome-strip">
+          <p class="eyebrow">Home</p>
+          <h1>Good afternoon, Alex.</h1>
+        </div>
+
+        <section class="balance-card">
+          <div class="panel-top">
+            <span class="tag">Account equity</span>
+            <span class="pill pill-success">+5.08%</span>
+          </div>
+          <strong class="balance">$24,892.40</strong>
+          <div class="balance-meta">
+            <div>
+              <span>Available</span>
+              <strong>$8,410</strong>
+            </div>
+            <div>
+              <span>Open P&L</span>
+              <strong class="positive">+$642</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="portfolio" class="landing-section">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Portfolio</p>
+            <h2>Open positions</h2>
+          </div>
+          <span class="tag">4 active</span>
+        </div>
+        <div class="position-list">
+          <article class="position-card">
+            <div class="position-top">
+              <span class="pill pill-success">YES</span>
+              <strong class="positive">+$148.00</strong>
+            </div>
+            <div class="position-main">
+              <h3>Celtics Q4</h3>
+              <p>18 contracts at 62¢ average</p>
+            </div>
+            <div class="position-actions">
+              <button class="button button-small button-secondary" type="button">Buy</button>
+              <button class="button button-small button-tertiary" type="button">Sell</button>
+            </div>
+          </article>
+          <article class="position-card">
+            <div class="position-top">
+              <span class="pill pill-suspended">NO</span>
+              <strong class="negative">-$32.00</strong>
+            </div>
+            <div class="position-main">
+              <h3>Under 218.5</h3>
+              <p>10 contracts at 44¢ average</p>
+            </div>
+            <div class="position-actions">
+              <button class="button button-small button-secondary" type="button">Buy</button>
+              <button class="button button-small button-tertiary" type="button">Sell</button>
+            </div>
+          </article>
+          <article class="position-card">
+            <div class="position-top">
+              <span class="pill pill-success">YES</span>
+              <strong class="positive">+$74.00</strong>
+            </div>
+            <div class="position-main">
+              <h3>Dallas -3.5</h3>
+              <p>12 contracts at 57¢ average</p>
+            </div>
+            <div class="position-actions">
+              <button class="button button-small button-secondary" type="button">Buy</button>
+              <button class="button button-small button-tertiary" type="button">Sell</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="markets" class="landing-section">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Discover</p>
+            <h2>Live games <span class="section-count">(3)</span></h2>
+          </div>
+        </div>
+
+        <div class="landing-market-grid">
+          <article class="live-game-card model-1 league-nfl">
+            <div class="game-header">
+              <div class="sport-info">
+                <div class="sport-icon"></div>
+                <span>NFL</span>
+              </div>
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="live-dot"></span>
+                  <span>08:42</span>
+                  <span>·</span>
+                  <strong>Q2</strong>
+                </div>
+                <button class="save-game-button" type="button" aria-label="Save game" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+                </button>
+              </div>
+            </div>
+            <div class="teams">
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Kansas City Chiefs</span>
+                </div>
+                <strong class="score">17</strong>
+              </div>
+              <div class="team-row">
+                <div class="team-name">
+                  <span>San Francisco 49ers</span>
+                </div>
+                <strong class="score">14</strong>
+              </div>
+            </div>
+            <div class="market-carousel" data-market-carousel>
+              <div class="market-track">
+                <div class="market-slide">
+                  <p class="market-label">GTL - Get the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>58¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>42¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">Tie</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-loading" type="button"><span class="choice">Yes</span><span class="prices"><strong>19¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>83¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">KTL - Keep the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes" type="button"><span class="choice">Yes</span><span class="prices"><strong>66¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no" type="button"><span class="choice">No</span><span class="prices"><strong>36¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="market-dots" aria-label="Markets: GTL, Tie and KTL">
+                <button class="dot active" type="button" aria-label="GTL market"></button>
+                <button class="dot" type="button" aria-label="Tie market"></button>
+                <button class="dot" type="button" aria-label="KTL market"></button>
+              </div>
+            </div>
+          </article>
+
+          <article class="live-game-card model-1 league-nba">
+            <div class="game-header">
+              <div class="sport-info">
+                <div class="sport-icon"></div>
+                <span>NBA</span>
+              </div>
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="pill pill-interrupted">Interrupted</span>
+                </div>
+                <button class="save-game-button" type="button" aria-label="Save game" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+                </button>
+              </div>
+            </div>
+            <div class="teams">
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Denver Nuggets</span>
+                </div>
+                <strong class="score">92</strong>
+              </div>
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Dallas Mavericks</span>
+                </div>
+                <strong class="score">88</strong>
+              </div>
+            </div>
+            <div class="market-carousel" data-market-carousel>
+              <div class="market-track">
+                <div class="market-slide">
+                  <p class="market-label">GTL - Get the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-disabled" type="button" disabled><span class="choice">Yes</span><span class="prices"><strong>58¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no is-disabled" type="button" disabled><span class="choice">No</span><span class="prices"><strong>45¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">Tie</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-disabled" type="button" disabled><span class="choice">Yes</span><span class="prices"><strong>21¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no is-disabled" type="button" disabled><span class="choice">No</span><span class="prices"><strong>81¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">KTL - Keep the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-disabled" type="button" disabled><span class="choice">Yes</span><span class="prices"><strong>64¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no is-disabled" type="button" disabled><span class="choice">No</span><span class="prices"><strong>39¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="market-dots" aria-label="Markets: GTL, Tie and KTL">
+                <button class="dot active" type="button" aria-label="GTL market"></button>
+                <button class="dot" type="button" aria-label="Tie market"></button>
+                <button class="dot" type="button" aria-label="KTL market"></button>
+              </div>
+            </div>
+          </article>
+
+          <article class="live-game-card model-1 league-nfl">
+            <div class="game-header">
+              <div class="sport-info">
+                <div class="sport-icon"></div>
+                <span>NFL</span>
+              </div>
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="pill pill-suspended">Suspended</span>
+                </div>
+                <button class="save-game-button" type="button" aria-label="Save game" aria-pressed="false">
+                  <span class="material-symbols-outlined" aria-hidden="true">bookmark</span>
+                </button>
+              </div>
+            </div>
+            <div class="teams">
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Dallas Cowboys</span>
+                </div>
+                <strong class="score">21</strong>
+              </div>
+              <div class="team-row">
+                <div class="team-name">
+                  <span>Philadelphia Eagles</span>
+                </div>
+                <strong class="score">21</strong>
+              </div>
+            </div>
+            <div class="market-carousel" data-market-carousel>
+              <div class="market-track">
+                <div class="market-slide">
+                  <p class="market-label">GTL - Get the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-disabled" type="button" disabled><span class="choice">Yes</span><span class="prices"><strong>51¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no is-disabled" type="button" disabled><span class="choice">No</span><span class="prices"><strong>51¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">Tie</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-disabled" type="button" disabled><span class="choice">Yes</span><span class="prices"><strong>31¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                    <button class="bet-button no is-disabled" type="button" disabled><span class="choice">No</span><span class="prices"><strong>71¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                  </div>
+                </div>
+                <div class="market-slide">
+                  <p class="market-label">KTL - Keep the Lead</p>
+                  <div class="market-actions">
+                    <button class="bet-button yes is-disabled" type="button" disabled><span class="choice">Yes</span><span class="prices"><strong>50¢ <span class="material-symbols-outlined trend-icon down" aria-hidden="true">arrow_downward</span></strong></span></button>
+                    <button class="bet-button no is-disabled" type="button" disabled><span class="choice">No</span><span class="prices"><strong>52¢ <span class="material-symbols-outlined trend-icon up" aria-hidden="true">arrow_upward</span></strong></span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="market-dots" aria-label="Markets: GTL, Tie and KTL">
+                <button class="dot active" type="button" aria-label="GTL market"></button>
+                <button class="dot" type="button" aria-label="Tie market"></button>
+                <button class="dot" type="button" aria-label="KTL market"></button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
