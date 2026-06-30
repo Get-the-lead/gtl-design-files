@@ -4,6 +4,7 @@
   --font-marketing: "Syne", sans-serif;
   --font-b: "DM Sans", sans-serif;
   --font-label: "DM Sans", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --text-12: 12px;
   --text-14: 14px;
   --text-16: 16px;
@@ -24,10 +25,12 @@
   --border: rgba(var(--accent-rgb), 0.08);
   --border2: rgba(var(--accent-rgb), 0.16);
   --border3: rgba(var(--accent-rgb), 0.28);
+  --white-border: rgba(255, 255, 255, 0.3);
   --text: #e8f5e8;
   --muted: #7f8b84;
   --muted2: #aab4ad;
   --muted3: #d5ddd7;
+  --clock-text: #7a8a72;
   --accent: #4ade80;
   --accent2: #22c55e;
   --accent-ink: #050a05;
@@ -39,6 +42,7 @@
   --gold: #fbbf24;
   --gold-text: #fbbf24;
   --gold-dim: rgba(var(--gold-rgb), 0.1);
+  --score-text: #ff9425;
   --blue: #60a5fa;
   --blue-dim: rgba(var(--blue-rgb), 0.1);
   --sage: #86efac;
@@ -240,7 +244,7 @@ p {
   gap: var(--space-2);
   justify-content: space-between;
   min-height: 72px;
-  padding: var(--space-3);
+  padding: var(--space-4);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -283,12 +287,16 @@ p {
   text-transform: uppercase;
 }
 
+.nav-links a[aria-current="page"] {
+  color: var(--text);
+}
+
 .marketing-hero {
   display: grid;
   gap: var(--space-6);
   margin: 0 auto;
   max-width: 1180px;
-  padding: var(--space-6) var(--space-3) var(--space-8);
+  padding: var(--space-6) var(--space-4) var(--space-8);
 }
 
 .hero-content {
@@ -298,6 +306,12 @@ p {
 .hero-content h1 {
   font-size: 24px;
   max-width: 680px;
+}
+
+.hero-content .eyebrow {
+  color: var(--muted);
+  font-size: var(--text-12);
+  margin: 0 0 var(--space-3);
 }
 
 .hero-content p {
@@ -310,7 +324,7 @@ p {
 .landing-section {
   margin: 0 auto;
   max-width: 1180px;
-  padding: var(--space-6) var(--space-3);
+  padding: var(--space-6) var(--space-4);
 }
 
 .landing-market-grid,
@@ -321,24 +335,23 @@ p {
   gap: var(--space-4);
 }
 
+.marketing-page:not(.logged-page) #markets .section-title,
+.marketing-page:not(.logged-page) .landing-market-grid {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 820px;
+}
+
 .logged-dashboard {
   display: grid;
-  gap: var(--space-4);
-}
-
-.logged-dashboard .welcome-strip {
-  align-self: center;
-}
-
-.logged-dashboard .balance-card {
-  width: 100%;
+  gap: var(--space-3);
 }
 
 .site-footer {
   border-top: 1px solid var(--border2);
   margin: var(--space-8) auto 0;
   max-width: 1180px;
-  padding: var(--space-8) var(--space-3);
+  padding: var(--space-8) var(--space-4);
 }
 
 .footer-grid {
@@ -366,8 +379,6 @@ p {
     padding: var(--space-8) var(--space-6) 112px;
   }
 
-  .welcome-strip,
-  .balance-card,
   .live-card,
   .app-shell > .live-game-card,
   .section-block {
@@ -379,8 +390,6 @@ p {
     grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
   }
 
-  .welcome-strip,
-  .balance-card,
   .quick-actions,
   .live-card,
   .app-shell > .live-game-card {
@@ -417,7 +426,7 @@ p {
 
   .marketing-hero {
     min-height: calc(100vh - 72px);
-    padding: var(--space-8) var(--space-3);
+    padding: var(--space-8) var(--space-4);
   }
 
   .hero-content {
@@ -434,15 +443,19 @@ p {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .marketing-page:not(.logged-page) .landing-market-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .logged-dashboard {
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 380px) {
   .app-shell {
-    padding-left: var(--space-3);
-    padding-right: var(--space-3);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
   }
 
   h1 {

@@ -1,7 +1,19 @@
 /* Component Tokens */
 :root {
+  --edge-light: rgba(255, 255, 255, 0.08);
+  --edge-dark: #000000;
+  --hairline: #262b26;
+  --surface-base: #0b0d0b;
+  --surface-1: #101310;
+  --surface-2: #1a1e1a;
+  --accent-border: rgba(74, 222, 128, 0.3);
+  --on-accent: #06210f;
+  --ink: #f4f4f0;
+  --ink-dim: #8a948a;
+  --label: #6f7d68;
+  --value: #c8d4c0;
   --live-game-card-bg: #0f2115;
-  --live-game-card-border: rgba(255, 255, 255, 0.1);
+  --live-game-card-border: var(--hairline);
 }
 
 /* Shared Components */
@@ -39,18 +51,35 @@
   gap: var(--space-3);
 }
 
+.brand-compact {
+  gap: var(--space-2);
+}
+
 .brand-mark {
   align-items: center;
   background: var(--accent);
   border-radius: var(--r);
   color: var(--accent-ink);
   display: inline-flex;
-  font-family: var(--font-marketing);
-  font-size: 18px;
-  font-weight: 800;
   height: 40px;
   justify-content: center;
+  overflow: hidden;
+  position: relative;
+  text-indent: -999px;
   width: 40px;
+}
+
+.brand-mark::before {
+  border-left: 7px solid var(--transparent);
+  border-right: 7px solid var(--transparent);
+  border-bottom: 11px solid currentColor;
+  content: "";
+  height: 0;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -55%);
+  width: 0;
 }
 
 .brand strong {
@@ -68,6 +97,30 @@
   letter-spacing: 0.14em;
   margin-top: var(--space-1);
   text-transform: uppercase;
+}
+
+.wallet-balance {
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--white-border);
+  border-radius: var(--r);
+  color: var(--text);
+  display: inline-flex;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+}
+
+.wallet-balance .material-symbols-outlined {
+  color: var(--muted3);
+  font-size: 18px;
+}
+
+.wallet-balance strong {
+  font-family: var(--font-label);
+  font-size: var(--text-14);
+  font-weight: 800;
+  line-height: 1;
 }
 
 .header-actions {
@@ -103,7 +156,7 @@
 
 .button-ghost {
   background: var(--transparent);
-  border-color: var(--border2);
+  border-color: var(--white-border);
   color: var(--muted3);
 }
 
@@ -347,6 +400,40 @@ textarea::placeholder {
 }
 
 /* Account Summary */
+.account-summary {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.account-summary h1 {
+  color: var(--muted3);
+  font-size: var(--text-16);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.account-metrics {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.account-metrics span {
+  color: var(--muted2);
+  font-family: var(--font-label);
+  font-size: var(--text-14);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.account-metrics strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
 .balance {
   display: block;
   font-size: 24px;
@@ -501,6 +588,10 @@ textarea::placeholder {
   margin-bottom: var(--space-4);
 }
 
+.section-title .eyebrow {
+  display: none;
+}
+
 .section-title a {
   color: var(--accent);
   font-weight: 800;
@@ -543,6 +634,28 @@ textarea::placeholder {
   background: var(--accent-dim);
   border-color: var(--green-border);
   color: var(--accent);
+}
+
+.sport-filter {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-start;
+  margin-top: var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+  width: 100%;
+}
+
+.sport-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.sport-filter .chip {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  margin: 0;
+  text-decoration: none;
 }
 
 /* Market Cards */
@@ -643,6 +756,286 @@ textarea::placeholder {
   flex: 1;
 }
 
+/* Open Positions */
+.open-positions {
+  --position-surface-base: #0b0d0b;
+  --position-surface-1: #151915;
+  --position-hairline: #262b26;
+  --position-edge-light: rgba(255, 255, 255, 0.07);
+  --position-accent: #4ade80;
+  --position-on-accent: #06210f;
+  --position-accent-dim: #5b8f3a;
+  --position-ink: #e8e8e8;
+  --position-ink-dim: #cfd6cb;
+  --position-label: #6f7d68;
+  --position-value: #9aa896;
+  --position-gain: #4ade80;
+  --position-loss: #f06a5e;
+}
+
+.open-positions > .position-list {
+  display: none;
+}
+
+.open-positions-header {
+  align-items: end;
+}
+
+.active-pill {
+  align-items: center;
+  border: 1px solid var(--position-hairline);
+  border-radius: var(--radius-pill);
+  color: var(--position-value);
+  display: inline-flex;
+  font-family: var(--font-label);
+  font-size: var(--text-12);
+  font-weight: 800;
+  gap: var(--space-2);
+  letter-spacing: 0.08em;
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  text-transform: uppercase;
+}
+
+.live-status-dot {
+  background: var(--position-accent);
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+}
+
+.position-conflict-hint {
+  border: 1px solid var(--position-hairline);
+  border-radius: var(--r);
+  color: var(--position-label);
+  font-size: var(--text-12);
+  line-height: 1.45;
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+}
+
+.open-position-carousel {
+  display: grid;
+  gap: var(--space-3);
+  overflow: hidden;
+}
+
+.open-position-list {
+  display: grid;
+  gap: 9px;
+  grid-auto-columns: minmax(260px, 88%);
+  grid-auto-flow: column;
+  overflow-x: auto;
+  padding: 0 var(--space-4) var(--space-1) 0;
+  scroll-padding-left: 0;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.open-position-list::-webkit-scrollbar {
+  display: none;
+}
+
+.open-position-card {
+  background: var(--position-surface-1);
+  border-radius: var(--r);
+  box-shadow:
+    inset 0 1px 0 var(--position-edge-light),
+    inset -1px -1px 0 #000000,
+    0 8px 18px rgba(var(--black-rgb), 0.22);
+  color: var(--position-ink);
+  cursor: pointer;
+  display: grid;
+  gap: var(--space-2);
+  min-height: 112px;
+  padding: var(--space-3);
+  scroll-snap-align: start;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.open-position-card:is(:hover, .is-selected) {
+  background: color-mix(in srgb, var(--position-surface-1) 86%, var(--surface-2));
+}
+
+.position-line {
+  align-items: baseline;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.position-identity {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.team-split {
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  flex: 0 0 12px;
+  height: 16px;
+  overflow: hidden;
+  width: 12px;
+}
+
+.team-split span {
+  background: var(--team-color);
+  flex: 1;
+}
+
+.position-logos {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.position-logos img {
+  height: 20px;
+  object-fit: contain;
+  width: 20px;
+}
+
+.position-logos img + img {
+  margin-left: -6px;
+}
+
+.position-matchup {
+  align-items: center;
+  color: var(--position-ink-dim);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  font-weight: 800;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.position-matchup img {
+  height: 18px;
+  object-fit: contain;
+  width: 18px;
+}
+
+.matchup,
+.market-tag,
+.position-footer p,
+.position-pnl {
+  font-family: var(--font-mono);
+}
+
+.matchup {
+  color: var(--position-ink-dim);
+  font-size: var(--text-12);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.market-tag {
+  border: 1px solid var(--position-accent-dim);
+  border-radius: var(--radius-pill);
+  color: var(--position-accent-dim);
+  font-size: var(--text-12);
+  font-weight: 800;
+  line-height: 1;
+  padding: 3px var(--space-2);
+}
+
+.market-tag-tie {
+  border-color: var(--position-label);
+  color: var(--position-label);
+}
+
+.position-pnl {
+  font-size: var(--text-14);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.position-pnl.is-gain {
+  color: var(--position-gain);
+}
+
+.position-pnl.is-loss {
+  color: var(--position-loss);
+}
+
+.open-position-card h3 {
+  color: var(--position-ink);
+  font-size: var(--text-16);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.position-footer {
+  align-items: center;
+}
+
+.position-footer p {
+  color: var(--position-label);
+  font-size: var(--text-12);
+  line-height: 1.4;
+  margin: 0;
+  min-width: 0;
+}
+
+.sell-position-button {
+  border-radius: var(--r);
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.sell-position-button.is-pressed {
+  transform: translateY(-1px);
+}
+
+.open-position-card:focus-visible,
+.sell-position-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.open-position-empty {
+  color: var(--position-label);
+  display: grid;
+  min-height: 120px;
+  place-items: center;
+  text-align: center;
+}
+
+.position-dots {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.position-dots .dot {
+  background: var(--position-label);
+  border-radius: var(--radius-pill);
+  height: 6px;
+  opacity: 0.5;
+  width: 6px;
+}
+
+.position-dots .dot.active {
+  background: var(--position-value);
+  opacity: 1;
+  width: 18px;
+}
+
+@media (min-width: 760px) {
+  .open-position-list {
+    grid-auto-columns: minmax(280px, 34%);
+  }
+}
+
 /* Navigation */
 .bottom-nav {
   background: color-mix(in srgb, var(--surface) 94%, var(--bg));
@@ -703,7 +1096,7 @@ textarea::placeholder {
   background: var(--live-game-card-bg);
   border: 1px solid var(--live-game-card-border);
   border-radius: var(--rxl);
-  box-shadow: var(--shadow-md), 0 0 0 1px var(--border);
+  box-shadow: inset 0 1px 0 var(--edge-light), inset 0 -1px 0 var(--edge-dark);
   color: var(--text);
   display: grid;
   gap: var(--space-4);
@@ -785,6 +1178,10 @@ textarea::placeholder {
   color: var(--blue);
 }
 
+.live-game-card.league-nfl .sport-info {
+  color: var(--blue);
+}
+
 .live-game-card.league-nba .sport-icon {
   background: var(--red-dim);
   border-color: var(--red-border);
@@ -800,17 +1197,14 @@ textarea::placeholder {
 }
 
 .live-game-card .live-info {
-  background: var(--green-dim);
-  border: 1px solid var(--green-border);
-  border-radius: var(--radius-pill);
-  color: var(--green);
+  color: var(--clock-text);
   flex: 0 0 auto;
-  font-family: var(--font-label);
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
   font-weight: 800;
-  gap: 7px;
+  gap: var(--space-2);
   letter-spacing: 0.08em;
-  padding: 7px 10px;
+  padding: 0;
   text-transform: uppercase;
 }
 
@@ -818,6 +1212,35 @@ textarea::placeholder {
   background: var(--transparent);
   border: 0;
   padding: 0;
+}
+
+.live-game-card .game-status {
+  align-items: center;
+  border-radius: var(--r);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-family: var(--font-label);
+  font-size: var(--text-12);
+  font-weight: 800;
+  gap: var(--space-2);
+  letter-spacing: 0.08em;
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  text-transform: uppercase;
+}
+
+.live-game-card .game-status .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.live-game-card .status-interrupted {
+  background: var(--gold-dim);
+  color: var(--gold-text);
+}
+
+.live-game-card .status-suspended {
+  background: var(--red-dim);
+  color: var(--red);
 }
 
 .live-game-card .save-game-button {
@@ -832,8 +1255,15 @@ textarea::placeholder {
   height: 26px;
   justify-content: center;
   padding: 0;
+  position: relative;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
   width: 26px;
+}
+
+.live-game-card .save-game-button::before {
+  content: "";
+  inset: -9px;
+  position: absolute;
 }
 
 .live-game-card .save-game-button:hover {
@@ -882,7 +1312,7 @@ textarea::placeholder {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :is(.button, .icon-button, .price-button, .live-game-card .bet-button, .live-game-card .save-game-button) {
+  :is(.button, .icon-button, .price-button, .live-game-card .bet-button, .live-game-card .save-game-button, .live-game-card .outcome-button) {
     transition: none;
   }
 
@@ -903,14 +1333,28 @@ textarea::placeholder {
 .live-game-card .team-row {
   gap: var(--space-3);
   justify-content: space-between;
+  transition: background-color 180ms ease, opacity 180ms ease;
 }
 
 .live-game-card .team-name {
   color: var(--text);
   font-size: 14px;
-  font-weight: 300;
-  gap: 10px;
+  font-weight: 600;
+  gap: var(--space-2);
   min-width: 0;
+  transition: font-size 180ms ease, font-weight 180ms ease, opacity 180ms ease;
+}
+
+.live-game-card .team-row.is-leading .team-name {
+  font-size: var(--text-14);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.live-game-card .team-row.is-trailing .team-name {
+  font-size: var(--text-12);
+  font-weight: 600;
+  opacity: 0.7;
 }
 
 .live-game-card .team-name span:last-child {
@@ -919,11 +1363,39 @@ textarea::placeholder {
   white-space: nowrap;
 }
 
+.live-game-card .team-logo {
+  flex: 0 0 32px;
+  height: 32px;
+  object-fit: contain;
+  width: 32px;
+}
+
 .live-game-card .score {
-  color: var(--gold-text);
+  color: var(--score-text);
   font-size: 18px;
   font-weight: 800;
   line-height: 1;
+  transition: color 180ms ease, font-size 180ms ease, font-weight 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.live-game-card .team-row.is-leading .score {
+  font-size: var(--text-18);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.live-game-card .team-row.is-trailing .score {
+  font-size: var(--text-16);
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+.live-game-card .team-row.is-scoring {
+  background: color-mix(in srgb, var(--score-text) 12%, var(--transparent));
+}
+
+.live-game-card .team-row.is-scoring .score {
+  transform: scale(1.14);
 }
 
 .live-game-card .market,
@@ -966,6 +1438,28 @@ textarea::placeholder {
   font-size: 16px;
   font-weight: 800;
   margin: 0 0 var(--space-3);
+}
+
+.live-game-card .market-state-note {
+  color: var(--muted2);
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: var(--space-2);
+  font-size: var(--text-12);
+  line-height: 1.5;
+  margin: 0;
+  padding: var(--space-3) 0;
+}
+
+.live-game-card .market-state-note .material-symbols-outlined {
+  flex: 0 0 auto;
+  font-size: 16px;
+}
+
+.live-game-card .market-state-note strong {
+  font-weight: 800;
 }
 
 .live-game-card .market-actions {
@@ -1023,15 +1517,23 @@ textarea::placeholder {
 }
 
 .live-game-card .trend-icon {
-  font-size: 14px;
+  border-left: 4px solid var(--transparent);
+  border-right: 4px solid var(--transparent);
+  display: inline-block;
+  font-size: 0;
+  height: 0;
   letter-spacing: 0;
+  line-height: 0;
+  width: 0;
 }
 
 .live-game-card .trend-icon.up {
+  border-bottom: 6px solid var(--green);
   color: var(--green);
 }
 
 .live-game-card .trend-icon.down {
+  border-top: 6px solid var(--red);
   color: var(--red);
 }
 
@@ -1052,7 +1554,7 @@ textarea::placeholder {
 }
 
 .live-game-card .market-dots {
-  gap: 6px;
+  gap: var(--space-2);
   justify-content: center;
   margin-top: var(--space-3);
 }
@@ -1070,6 +1572,40 @@ textarea::placeholder {
 .live-game-card .dot.active {
   background: var(--accent);
   width: 18px;
+}
+
+.live-game-card.model-1 .market-carousel {
+  display: block;
+}
+
+.live-game-card.is-filtered-out {
+  display: none;
+}
+
+.marketing-page:not(.logged-page) .live-game-card .market-track {
+  cursor: default;
+  gap: var(--space-3);
+  grid-auto-columns: auto;
+  grid-auto-flow: row;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.marketing-page:not(.logged-page) .live-game-card .market-track.is-dragging {
+  cursor: default;
+}
+
+.marketing-page:not(.logged-page) .live-game-card .market-slide {
+  scroll-snap-align: none;
+}
+
+.marketing-page:not(.logged-page) .live-game-card .market-slide + .market-slide {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+
+.marketing-page:not(.logged-page) .live-game-card .market-dots {
+  display: none;
 }
 
 .live-game-card.model-2 .market-stack {
@@ -1162,13 +1698,249 @@ textarea::placeholder {
   margin-top: 0;
 }
 
+.live-game-card.model-2 .outcome-market {
+  display: none;
+}
+
+.live-game-card.model-2 .market-carousel {
+  display: block;
+}
+
+.live-game-card.model-2 .market-track {
+  cursor: default;
+  display: grid;
+  gap: var(--space-3);
+  grid-auto-flow: row;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.live-game-card.model-2 .market-slide {
+  scroll-snap-align: none;
+}
+
+.live-game-card.model-2 .market-slide + .market-slide {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+
+.live-game-card.model-2 .market-dots {
+  display: none;
+}
+
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button,
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button:is(:disabled, .is-disabled) {
+  align-items: center;
+  background: color-mix(in srgb, var(--bg) 42%, var(--surface));
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(var(--black-rgb), 0.5);
+  color: var(--muted2);
+  cursor: default;
+  gap: var(--space-2);
+  justify-content: flex-start;
+  opacity: 1;
+  pointer-events: none;
+  text-align: left;
+  transform: none;
+}
+
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button::before {
+  color: var(--muted);
+  content: "lock";
+  font-family: "Material Symbols Outlined";
+  font-size: 14px;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 20;
+  line-height: 1;
+}
+
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button .choice,
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button .prices strong {
+  color: var(--muted2);
+}
+
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button .choice {
+  margin-right: 0;
+}
+
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button .prices {
+  margin-left: auto;
+  text-align: right;
+}
+
+.live-game-card.model-2:is(.is-interrupted, .is-suspended) .bet-button .trend-icon {
+  display: none;
+}
+
+.live-game-card.model-3 .outcome-market {
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding-top: var(--space-3);
+}
+
+.live-game-card.model-3 .market-carousel {
+  display: none;
+}
+
+.live-game-card.model-3 .outcome-button {
+  align-items: center;
+  background: var(--transparent);
+  border: 1px solid var(--transparent);
+  border-radius: var(--r);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  gap: var(--space-1);
+  height: 54px;
+  justify-items: center;
+  min-width: 0;
+  padding: var(--space-2);
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.live-game-card.model-3 .outcome-button:is(:disabled, .is-disabled) {
+  cursor: not-allowed;
+  opacity: 0.48;
+  pointer-events: none;
+  transform: none;
+}
+
+.live-game-card.model-3 .outcome-button:hover {
+  transform: translateY(-2px);
+}
+
+.live-game-card.model-3 .outcome-gtl {
+  background: var(--accent-dim);
+  border-color: var(--border2);
+  color: var(--accent);
+}
+
+.live-game-card.model-3 .outcome-gtl:hover {
+  border-color: var(--border3);
+}
+
+.live-game-card.model-3 .outcome-tie {
+  background: var(--transparent);
+  border-color: var(--white-border);
+  color: var(--muted3);
+}
+
+.live-game-card.model-3 .outcome-tie:hover {
+  background: var(--surface3);
+  border-color: var(--border3);
+  color: var(--text);
+}
+
+.live-game-card.model-3 .outcome-ktl {
+  background: var(--gold-dim);
+  border-color: var(--gold-border);
+  color: var(--gold-text);
+}
+
+.live-game-card.model-3 .outcome-ktl:hover {
+  border-color: var(--gold-border);
+}
+
+.live-game-card.model-3 .outcome-button span,
+.live-game-card.model-3 .outcome-button strong {
+  font-family: var(--font-label);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.live-game-card.model-3 .outcome-button span {
+  color: currentColor;
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  opacity: 0.74;
+}
+
+.live-game-card.model-3 .outcome-button strong {
+  align-items: center;
+  color: currentColor;
+  display: inline-flex;
+  font-size: var(--text-16);
+  gap: var(--space-1);
+  justify-content: center;
+}
+
+.live-game-card:is(.is-interrupted, .is-suspended) {
+  background: color-mix(in srgb, var(--live-game-card-bg) 74%, var(--surface));
+}
+
+.live-game-card:is(.is-interrupted, .is-suspended) .save-game-button {
+  display: none;
+}
+
+.live-game-card:is(.is-interrupted, .is-suspended) .sport-info,
+.live-game-card:is(.is-interrupted, .is-suspended) .team-name,
+.live-game-card:is(.is-interrupted, .is-suspended) .team-logo {
+  filter: saturate(0.15);
+}
+
+.live-game-card:is(.is-interrupted, .is-suspended) .team-logo {
+  opacity: 0.58;
+}
+
+.live-game-card:is(.is-interrupted, .is-suspended) .score,
+.live-game-card:is(.is-interrupted, .is-suspended) .team-row.is-leading .score,
+.live-game-card:is(.is-interrupted, .is-suspended) .team-row.is-trailing .score {
+  color: var(--muted);
+}
+
+.live-game-card.is-interrupted .market-state-note .material-symbols-outlined,
+.live-game-card.is-interrupted .market-state-note strong {
+  color: var(--gold-text);
+}
+
+.live-game-card.is-suspended .market-state-note .material-symbols-outlined,
+.live-game-card.is-suspended .market-state-note strong {
+  color: var(--red);
+}
+
+.live-game-card.model-3:is(.is-interrupted, .is-suspended) .outcome-market {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.live-game-card.model-3:is(.is-interrupted, .is-suspended) .outcome-button,
+.live-game-card.model-3:is(.is-interrupted, .is-suspended) .outcome-button:is(:disabled, .is-disabled) {
+  background: color-mix(in srgb, var(--bg) 42%, var(--surface));
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(var(--black-rgb), 0.5);
+  color: var(--muted2);
+  cursor: default;
+  opacity: 1;
+  pointer-events: none;
+  transform: none;
+}
+
+.live-game-card.model-3:is(.is-interrupted, .is-suspended) .outcome-button span {
+  opacity: 1;
+}
+
+.live-game-card.model-3:is(.is-interrupted, .is-suspended) .outcome-button strong {
+  color: var(--muted3);
+}
+
+.live-game-card.model-3 .outcome-button .lock-icon {
+  color: var(--muted);
+  font-family: "Material Symbols Outlined";
+  font-size: 14px;
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1;
+  opacity: 1;
+}
+
 /* Trade Bottom Sheet */
 body.sheet-open {
   overflow: hidden;
 }
 
 .trade-sheet-backdrop {
-  background: var(--overlay);
+  background: color-mix(in srgb, var(--surface-base) 78%, var(--transparent));
   inset: 0;
   opacity: 0;
   pointer-events: none;
@@ -1221,6 +1993,22 @@ body.sheet-open {
   justify-content: space-between;
 }
 
+.trade-sheet-header-actions {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: var(--space-2);
+}
+
+.trade-step-count {
+  color: var(--muted2);
+  font-family: var(--font-label);
+  font-size: var(--text-12);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
 .trade-sheet-title {
   display: grid;
   gap: var(--space-1);
@@ -1247,9 +2035,22 @@ body.sheet-open {
   padding: var(--space-4);
 }
 
+.trade-step {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.trade-step[hidden] {
+  display: none;
+}
+
 .trade-sheet-section {
   display: grid;
   gap: var(--space-3);
+}
+
+.trade-sheet-section .tabs {
+  justify-content: center;
 }
 
 .trade-sheet-label {
@@ -1268,7 +2069,36 @@ body.sheet-open {
 }
 
 .contract-toggle {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-pill);
+  gap: 0;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  height: 36px;
+  justify-self: center;
+  overflow: hidden;
+  padding: 3px;
+  position: relative;
+  width: 132px;
+}
+
+.contract-toggle::before {
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  bottom: 3px;
+  box-shadow: var(--shadow-sm);
+  content: "";
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  transform: translateX(0);
+  transition: transform 160ms ease, background-color 160ms ease;
+  width: calc((100% - 6px) / 2);
+}
+
+.contract-toggle[data-selected-contract="no"]::before {
+  background: var(--red);
+  transform: translateX(100%);
 }
 
 .contract-option,
@@ -1284,16 +2114,24 @@ body.sheet-open {
   padding: 0 var(--space-3);
 }
 
+.contract-option {
+  background: var(--transparent);
+  border: 0;
+  color: var(--muted2);
+  display: grid;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  place-items: center;
+  position: relative;
+  z-index: 1;
+}
+
 .contract-option.is-active {
-  background: var(--accent-dim);
-  border-color: var(--green-border);
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .contract-option[data-contract="no"].is-active {
-  background: var(--red-dim);
-  border-color: var(--red-border);
-  color: var(--red);
+  color: var(--accent-ink);
 }
 
 .quantity-control {
@@ -1305,6 +2143,40 @@ body.sheet-open {
   font-size: var(--text-18);
   font-weight: 800;
   text-align: center;
+}
+
+.limit-price-control {
+  justify-items: stretch;
+}
+
+.limit-price-field {
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  display: flex;
+  min-height: 44px;
+  overflow: hidden;
+}
+
+.limit-price-field input {
+  background: var(--transparent);
+  border: 0;
+  color: var(--text);
+  flex: 1;
+  font-size: var(--text-18);
+  font-weight: 800;
+  min-height: 42px;
+  padding-right: var(--space-2);
+  text-align: center;
+}
+
+.limit-price-field span {
+  color: var(--muted2);
+  font-family: var(--font-label);
+  font-size: var(--text-16);
+  font-weight: 800;
+  padding-right: var(--space-4);
 }
 
 .quick-amounts {
@@ -1372,10 +2244,329 @@ body.sheet-open {
 
 .trade-sheet-footer {
   border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.trade-sheet-actions {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+}
+
+.trade-sheet-actions .button[hidden] {
+  display: none;
+}
+
+.trade-sheet-actions .trade-submit {
+  grid-column: 1 / -1;
+}
+
+.trade-sheet-actions .button-ghost:not([hidden]) + .trade-submit {
+  grid-column: auto;
+}
+
+.trade-sheet-note {
+  color: var(--muted2);
+  font-size: var(--text-12);
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
 }
 
 .trade-submit {
   width: 100%;
+}
+
+.trade-sheet {
+  background: var(--surface-1);
+  border: 0;
+  border-radius: var(--rxl) var(--rxl) 0 0;
+  box-shadow: inset 0 1px 0 var(--edge-light), 0 -18px 42px rgba(var(--black-rgb), 0.32);
+  color: var(--ink);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  max-height: calc(100dvh - 16px);
+  min-height: min(740px, calc(100dvh - 16px));
+}
+
+.trade-sheet-handle {
+  background: var(--hairline);
+  border-radius: var(--radius-pill);
+  height: 4px;
+  justify-self: center;
+  margin-top: var(--space-3);
+  width: 44px;
+}
+
+.trade-sheet-header,
+.trade-sheet-footer {
+  background: var(--surface-1);
+}
+
+.trade-sheet-header {
+  border-bottom: 0;
+  padding-top: var(--space-3);
+}
+
+.trade-step-count {
+  color: var(--label);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.trade-step-count strong {
+  color: var(--value);
+  font-weight: 800;
+}
+
+.trade-sheet-title p,
+.trade-sheet-label {
+  color: var(--label);
+  font-size: var(--text-12);
+  letter-spacing: 0.14em;
+}
+
+.trade-sheet-title h2 {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  font-size: var(--text-18);
+  gap: var(--space-2);
+  letter-spacing: 0;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.outcome-swatch {
+  background: var(--outcome-color, var(--value));
+  border-radius: 50%;
+  flex: 0 0 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.outcome-swatch.has-logo {
+  background-color: var(--transparent);
+  background-image: var(--outcome-logo);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-radius: 0;
+}
+
+.trade-sheet-header .icon-button {
+  background: var(--transparent);
+  border-color: var(--transparent);
+  color: var(--value);
+  height: 32px;
+  min-height: 32px;
+  width: 32px;
+}
+
+.trade-sheet-header .icon-button:is(:hover, .is-hovered) {
+  background: var(--transparent);
+  border-color: var(--transparent);
+  color: var(--ink);
+}
+
+.trade-sheet-body {
+  gap: var(--space-5);
+  padding-top: var(--space-3);
+}
+
+.trade-step {
+  gap: var(--space-5);
+}
+
+.trade-hero {
+  align-items: center;
+  display: grid;
+  gap: var(--space-1);
+  justify-items: center;
+  padding: var(--space-3) 0 var(--space-5);
+  text-align: center;
+}
+
+.hero-price-field {
+  align-items: baseline;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.hero-price-field input {
+  appearance: textfield;
+  background: var(--transparent);
+  border: 0;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 0.95;
+  min-height: auto;
+  padding: 0;
+  text-align: center;
+  width: 132px;
+}
+
+.hero-price-field input::-webkit-outer-spin-button,
+.hero-price-field input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.hero-price-field input:not([readonly]) {
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.hero-price-field small {
+  color: var(--value);
+  font-size: 22px;
+  margin-left: 2px;
+}
+
+.trade-hero p {
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  margin: var(--space-1) 0 0;
+  text-align: center;
+}
+
+.quantity-control input,
+.limit-price-field,
+.quick-amount,
+.execution-toggle,
+.order-summary,
+.potential-box {
+  background: var(--surface-2);
+  border-color: var(--hairline);
+}
+
+.quantity-control input {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-18);
+  font-weight: 800;
+  min-height: 44px;
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
+  width: 100%;
+}
+
+.quick-amount {
+  align-items: center;
+  color: var(--value);
+  display: inline-flex;
+  font-family: var(--font-mono);
+  justify-content: center;
+  min-height: 44px;
+  text-align: center;
+}
+
+.execution-toggle {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-pill);
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 34px;
+  padding: 2px;
+  position: relative;
+}
+
+.execution-toggle::before {
+  background: var(--surface-1);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-pill);
+  bottom: 2px;
+  content: "";
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  transform: translateX(var(--execution-offset, 0));
+  transition: transform 160ms ease;
+  width: calc((100% - 4px) / 2);
+}
+
+.execution-toggle:has([data-execution-mode="limit"].is-active) {
+  --execution-offset: 100%;
+}
+
+.execution-option {
+  align-items: center;
+  background: var(--transparent);
+  border: 1px solid var(--transparent);
+  border-radius: calc(var(--r) - 2px);
+  color: var(--value);
+  display: inline-flex;
+  font-family: var(--font-b);
+  font-size: var(--text-14);
+  font-weight: 800;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  text-align: center;
+  z-index: 1;
+}
+
+.execution-option span {
+  color: var(--label);
+  font-size: var(--text-12);
+  margin-left: var(--space-1);
+}
+
+.execution-option.is-active {
+  border-color: var(--transparent);
+  color: var(--ink);
+}
+
+.limit-price-field {
+  margin-top: var(--space-2);
+}
+
+.limit-price-field[hidden] {
+  display: none;
+}
+
+.limit-price-field input {
+  color: var(--ink);
+  font-family: var(--font-mono);
+}
+
+.limit-price-field span,
+.contract-price-note,
+.trade-sheet-note,
+.summary-row span {
+  color: var(--label);
+}
+
+.summary-row strong,
+.summary-row.total strong,
+.potential-box .summary-row span,
+.potential-box .summary-row strong {
+  color: var(--value);
+}
+
+.summary-row strong {
+  font-family: var(--font-mono);
+}
+
+.summary-row.total {
+  border-top-color: var(--hairline);
+}
+
+.potential-box {
+  border-color: var(--hairline);
+}
+
+.trade-sheet-footer {
+  border-top-color: var(--hairline);
+}
+
+.trade-sheet-actions .button-primary {
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 @media (min-width: 760px) {
@@ -1395,7 +2586,7 @@ body.sheet-open {
   display: grid;
 }
 
-.design-system-page :is(.mobile-topbar, .window-controls, .panel-header, .token-list div, .check-row, .toggle-row, .breadcrumbs, .tabs, .command-bar, .card-top, .card-meta, .modal-header, .modal-actions) {
+.design-system-page :is(.window-controls, .panel-header, .token-list div, .check-row, .toggle-row, .breadcrumbs, .tabs, .command-bar, .card-top, .card-meta, .modal-header, .modal-actions) {
   align-items: center;
   display: flex;
 }
@@ -1437,6 +2628,7 @@ body.sheet-open {
 }
 
 .design-system-page .mobile-topbar {
+  align-items: center;
   background: var(--surface);
   border-bottom: 1px solid var(--border2);
   display: none;
@@ -1450,13 +2642,24 @@ body.sheet-open {
 
 .design-system-page .page-shell {
   margin-left: var(--sidebar-width);
+  min-width: 0;
   padding: 0 var(--space-8) var(--space-12);
 }
 
 .design-system-page .section {
   margin: 0 auto;
   max-width: 1216px;
+  min-width: 0;
   padding-top: var(--space-12);
+}
+
+.design-system-page :is(.panel, .hero-copy, .hero-panel, .button-showcase, .button-state-table, .button-size-table) {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.design-system-page :is(.button-state-table, .button-size-table) {
+  width: 100%;
 }
 
 .design-system-page .hero {
@@ -2141,6 +3344,145 @@ body.sheet-open {
 
 .design-system-page .live-status-sample .game-actions {
   padding: 0;
+}
+
+.design-system-page .token-reference-grid,
+.design-system-page .colorway-preview,
+.design-system-page .token-channel-panel,
+.design-system-page .component-app-shell,
+.design-system-page .component-inventory-grid,
+.design-system-page #product-components > .section-block,
+.design-system-page .navigation-preview,
+.design-system-page .utility-button-row {
+  margin-top: var(--space-5);
+}
+
+.design-system-page .colorway-preview {
+  color: var(--text);
+}
+
+.design-system-page .colorway-channel {
+  margin-top: var(--space-4);
+}
+
+.design-system-page .focus-ring-sample {
+  box-shadow: var(--focus-ring);
+}
+
+.design-system-page .component-app-shell {
+  overflow: hidden;
+}
+
+.design-system-page .component-app-shell .app-shell {
+  background: var(--surface-base);
+  gap: 0;
+  grid-template-columns: 1fr;
+  margin: 0;
+  max-width: none;
+  padding: 0;
+}
+
+.design-system-page .component-app-shell .app-header {
+  position: static;
+}
+
+.design-system-page .component-app-shell .welcome-strip {
+  padding: var(--space-5);
+}
+
+.design-system-page .component-inventory-grid {
+  align-items: stretch;
+}
+
+.design-system-page .component-inventory-grid > * {
+  min-width: 0;
+}
+
+.design-system-page .trade-control-demo {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.design-system-page .trade-control-demo .contract-toggle {
+  justify-self: start;
+}
+
+.design-system-page .trade-control-demo .limit-price-control {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.design-system-page .trade-lock-demo .live-game-card {
+  min-height: auto;
+  padding: 0;
+}
+
+.design-system-page .trade-lock-demo .outcome-market {
+  padding-top: 0;
+}
+
+.design-system-page .navigation-preview {
+  overflow: hidden;
+}
+
+.design-system-page .navigation-preview .bottom-nav {
+  border-left: 1px solid var(--border2);
+  border-right: 1px solid var(--border2);
+  border-radius: var(--r);
+  position: static;
+}
+
+.design-system-page .position-library-demo .open-position-list {
+  grid-auto-columns: minmax(280px, 48%);
+}
+
+.design-system-page .legacy-position-list {
+  margin-top: var(--space-5);
+}
+
+.design-system-page .page-pattern-panel {
+  overflow: hidden;
+}
+
+.design-system-page .page-pattern-preview {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.design-system-page .page-pattern-preview .marketing-nav {
+  position: static;
+}
+
+.design-system-page .page-pattern-preview .marketing-hero {
+  min-height: 320px;
+}
+
+.design-system-page .page-pattern-preview > .section-title,
+.design-system-page .page-pattern-preview > .landing-market-grid,
+.design-system-page .page-pattern-preview > .how-grid {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1180px;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.design-system-page .page-pattern-preview > .section-title {
+  margin-top: var(--space-6);
+}
+
+.design-system-page .page-pattern-preview > .how-grid {
+  margin-top: var(--space-4);
+}
+
+.design-system-page .page-pattern-preview .site-footer {
+  margin-top: var(--space-6);
+}
+
+.design-system-page .utility-button-row {
+  align-items: center;
 }
 
 @media (max-width: 980px) {

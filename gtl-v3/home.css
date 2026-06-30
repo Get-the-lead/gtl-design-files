@@ -1,0 +1,277 @@
+/* GTL v2 — home page: hero, league strip, live game variants, how it works */
+
+/* Hero --------------------------------------------------------------- */
+.hero {
+  position: relative;
+  padding-block: clamp(100px, 8vh, 200px) var(--s8);
+  overflow: hidden;
+  isolation: isolate;
+}
+.hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.hero-glow {
+  position: absolute;
+  inset: -25% -10% auto -10%;
+  height: 130%;
+  background:
+    radial-gradient(50% 55% at 28% 12%, rgba(74, 222, 128, 0.22), transparent 60%),
+    radial-gradient(48% 50% at 82% 4%, rgba(96, 140, 250, 0.18), transparent 60%),
+    radial-gradient(45% 45% at 60% 60%, rgba(168, 85, 247, 0.12), transparent 60%);
+  filter: blur(8px);
+  animation: hero-drift 16s var(--ease) infinite alternate;
+}
+@keyframes hero-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-3%, 2%, 0) scale(1.08); }
+}
+.float-logo {
+  position: absolute;
+  width: 96px; height: 96px;
+  object-fit: contain;
+  opacity: 0.13;
+  filter: blur(0.4px);
+  animation: float-y 9s var(--ease) infinite alternate;
+}
+.fl-1 { top: 9%;  left: 4%;   width: 132px; animation-duration: 11s; }
+.fl-2 { top: 20%; right: 6%;  width: 104px; animation-duration: 9s;  animation-delay: -2s; }
+.fl-3 { top: 58%; left: 8%;   width: 86px;  animation-duration: 12s; animation-delay: -4s; }
+.fl-4 { bottom: 8%; right: 12%; width: 116px; animation-duration: 10s; animation-delay: -1s; }
+.fl-5 { top: 7%;  right: 32%; width: 60px;  animation-duration: 13s; animation-delay: -5s; }
+.fl-6 { bottom: 14%; left: 30%; width: 64px; animation-duration: 8s;  animation-delay: -3s; }
+@keyframes float-y { from { transform: translateY(-10px); } to { transform: translateY(12px); } }
+
+.hero-inner { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.hero-trading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line-2);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--s6);
+}
+.hero-trading .tnum { color: var(--green); }
+.hero-title { font-size: var(--fs-hero); line-height: 1.0; max-width: 16ch; }
+.hero-sub { margin: var(--s5) auto 0; max-width: 44ch; color: var(--ink-2); font-size: var(--fs-lead); }
+.hero-cta { margin-top: var(--s8); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s3); }
+
+/* League filter strip (centered, league logos) ----------------------- */
+.league-strip {
+  display: flex;
+  justify-content: center;
+  gap: var(--s8);
+  margin-bottom: var(--s8);
+  margin-top: -4px;
+  padding-top: 4px;
+  padding-bottom: var(--s2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.league-strip::-webkit-scrollbar { display: none; }
+.league-pill {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s3);
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink-3);
+  transition: color 0.2s var(--ease);
+}
+.league-icon {
+  width: 72px; height: 72px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 2px solid var(--line);
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.league-icon img { width: 44px; height: 44px; object-fit: contain; transition: filter 0.2s var(--ease); filter: grayscale(0.4) opacity(0.7); }
+.league-label { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.04em; }
+.league-pill:hover .league-icon { transform: translateY(-2px); }
+.league-pill.is-active { color: var(--ink); }
+.league-pill.is-active .league-icon { border-color: var(--green); background: var(--green-soft); }
+.league-pill.is-active .league-icon img { filter: none; }
+
+/* Game grid ---------------------------------------------------------- */
+.game-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
+@media (min-width: 720px) { .game-grid { grid-template-columns: 1fr 1fr; gap: var(--s5); } }
+@media (min-width: 1024px) { .game-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+.game-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.game-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.84));
+}
+.game-tile:hover { transform: translateY(-3px); border-color: var(--line-2); }
+
+.tile-main { display: block; width: 100%; padding: 32px var(--s5) 28px; color: inherit; background: none; border: none; text-align: left; font: inherit; cursor: pointer; }
+.game-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s2); }
+.team { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
+.team-away { flex-direction: row-reverse; }
+.team-logo { width: 48px; height: 48px; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); }
+.team-meta { display: flex; flex-direction: column; min-width: 0; }
+.team-away .team-meta { align-items: flex-end; }
+.team-abbr { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.82); }
+.team-score { font-family: var(--font-display); font-size: min(var(--fs-score), 2rem); font-weight: 700; line-height: 0.95; font-variant-numeric: tabular-nums; }
+.team.is-leading .team-score { color: #fff; }
+.team:not(.is-leading) .team-score { color: rgba(255, 255, 255, 0.66); }
+
+.game-center { display: flex; flex-direction: column; align-items: center; gap: 1px; padding-inline: var(--s2); }
+.game-center .period { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.6); }
+.game-center .clock { font-family: var(--font-display); font-weight: 400; font-size: 0.8rem; color: #fff; font-variant-numeric: tabular-nums; }
+
+.tile-foot { padding: 0 var(--s5) var(--s5); }
+.game-tile { cursor: pointer; }
+.game-tile .market-option { cursor: pointer; }
+
+.tile-quick-markets { margin-bottom: var(--s4); }
+.tile-quick-markets .market-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s2);
+}
+.tile-quick-markets .market-option {
+  display: grid;
+  align-content: center;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  justify-items: center;
+  column-gap: var(--s2);
+  min-height: 46px;
+  padding: 0 var(--s2);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  text-align: left;
+  white-space: nowrap;
+  transition: transform 0.16s var(--ease), border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.tile-quick-markets .market-option:hover {
+  transform: translateY(-2px);
+}
+.tile-quick-markets .market-option[data-market="gtl"] {
+  border-color: var(--green-line);
+  background: var(--green-soft);
+  color: var(--green);
+}
+.tile-quick-markets .market-option[data-market="tie"] {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.tile-quick-markets .market-option[data-market="ktl"] {
+  border-color: rgba(255, 206, 77, 0.34);
+  background: rgba(255, 206, 77, 0.14);
+  color: var(--gold);
+}
+.tile-quick-markets .market-option[data-market="gtl"]:hover {
+  background: rgba(74, 222, 128, 0.22);
+}
+.tile-quick-markets .market-option[data-market="tie"]:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.tile-quick-markets .market-option[data-market="ktl"]:hover {
+  background: rgba(255, 206, 77, 0.2);
+}
+.tile-quick-markets .market-option-label,
+.tile-quick-markets .market-option-price {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+.tile-quick-markets .market-option-price {
+  color: currentColor;
+}
+
+/* Expandable toggle — centred white label with a chevron on each side */
+/* Bets grid — Yes (left) · title (centre) · No (right), with column headers */
+.mkt-head, .mkt-row { display: grid; grid-template-columns: 0.82fr 1.36fr 0.82fr; align-items: center; gap: var(--s3); }
+.mkt-head { padding-bottom: var(--s2); }
+.mkt-head span { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.92); }
+.mkt-head .col-yes, .mkt-head .col-no { justify-self: center; }
+
+.mkt-row { padding: var(--s3) 0; }
+.mkt-row + .mkt-row { border-top: 1px solid rgba(255, 255, 255, 0.07); }
+.mkt-name { display: flex; flex-direction: column; align-items: center; gap: 1px; text-align: center; font-size: var(--fs-body); font-weight: 600; line-height: 1.15; color: rgba(255, 255, 255, 0.95); }
+.mkt-sub { font-size: var(--fs-eyebrow); font-weight: 500; color: rgba(255, 255, 255, 0.5); }
+
+.price {
+  justify-self: stretch;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 10px 14px; border-radius: var(--r-pill);
+  font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;
+  border: 1px solid; font-variant-numeric: tabular-nums;
+  transition: transform 0.14s var(--ease), background 0.18s var(--ease);
+}
+.price:active { transform: scale(0.97); }
+.price.yes { color: var(--yes); border-color: var(--green-line); background: var(--yes-soft); }
+.price.no { color: var(--no); border-color: var(--no-line); background: var(--no-soft); }
+.price.yes:hover { background: rgba(74, 222, 128, 0.2); }
+.price.no:hover { background: rgba(255, 93, 114, 0.2); }
+
+.view-game {
+  display: flex; width: 100%; align-items: center; justify-content: center;
+  height: 48px; margin-top: var(--s5);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff; font-weight: 600; font-size: var(--fs-label);
+  transition: background 0.18s var(--ease);
+}
+.view-game:hover { background: rgba(255, 255, 255, 0.16); }
+/* price glow keyframes are shared — see styles.css */
+
+/* How it works — connected flow, no boxes ---------------------------- */
+.flow { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: 1fr; gap: var(--s8); }
+.flow::before {
+  content: ""; position: absolute; left: 23px; top: 24px; bottom: 24px; width: 2px;
+  background: linear-gradient(180deg, var(--green-line), rgba(74, 222, 128, 0.05));
+}
+.flow-step { position: relative; padding-left: 68px; }
+.flow-marker {
+  position: absolute; left: 0; top: 0;
+  width: 48px; height: 48px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--bg); border: 1.5px solid var(--green-line); color: var(--green);
+  z-index: 1;
+}
+.flow-marker svg { width: 24px; height: 24px; }
+.flow-num { font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.14em; color: var(--ink-3); }
+.flow-title { font-size: var(--fs-h3); margin: 4px 0 6px; }
+.flow-text { margin: 0; color: var(--ink-2); font-size: var(--fs-label); line-height: 1.6; }
+
+@media (min-width: 768px) {
+  .flow { grid-template-columns: repeat(4, 1fr); gap: var(--s6); text-align: center; }
+  .flow::before { left: 12.5%; right: 12.5%; top: 24px; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent); }
+  .flow-step { padding-left: 0; padding-top: 68px; }
+  .flow-marker { left: 50%; transform: translateX(-50%); }
+}
+
+/* Light-theme tweaks */
+:root[data-theme="light"] .hero-trading { background: rgba(10, 20, 25, 0.05); }
+:root[data-theme="light"] .hero-trading .tnum { color: #15803d; }
+:root[data-theme="light"] .flow-marker { background: var(--surface); border-color: rgba(22, 163, 74, 0.4); color: #16a34a; }

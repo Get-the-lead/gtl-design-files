@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL v2 Design System</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="game.css" />
+  <link rel="stylesheet" href="design-system.css" />
+</head>
+<body class="ds-page">
+  <header class="ds-header">
+    <a class="brand" href="design-system.html" aria-label="GTL v2 design system home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 16.5 10 10l3.5 3.5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="brand-word">GTL v2</span>
+    </a>
+    <nav class="ds-nav" aria-label="Catalog navigation">
+      <a href="#tokens">Tokens</a><a href="#type">Type</a><a href="#components">Components</a><a href="#contracts">Contracts</a>
+    </nav>
+    <button class="btn btn-secondary btn-sm ds-theme" type="button" data-theme-toggle>Change theme</button>
+  </header>
+
+  <main class="ds-shell">
+    <section class="ds-intro">
+      <p class="eyebrow">Versioned reference</p>
+      <h1>GTL v2 Design System</h1>
+      <p>Every reusable token and primitive has a visible owner. Full compositions remain available in the production pages.</p>
+      <div class="ds-actions"><a class="btn btn-primary" href="home.html">Open Home</a><a class="btn btn-ghost" href="game.html">Open Game</a></div>
+    </section>
+
+    <section class="ds-section" id="tokens">
+      <div class="ds-section-head"><div><p class="eyebrow">Foundation</p><h2>Color Tokens</h2></div><code>tokens.css</code></div>
+      <div class="ds-token-grid">
+        <article class="ds-token" style="--sample:var(--green)"><span></span><strong>Green</strong><code>--green</code></article>
+        <article class="ds-token" style="--sample:var(--green-strong)"><span></span><strong>Green strong</strong><code>--green-strong</code></article>
+        <article class="ds-token" style="--sample:var(--green-soft)"><span></span><strong>Green soft</strong><code>--green-soft</code></article>
+        <article class="ds-token" style="--sample:var(--green-line)"><span></span><strong>Green line</strong><code>--green-line</code></article>
+        <article class="ds-token" style="--sample:var(--green-glow)"><span></span><strong>Green glow</strong><code>--green-glow</code></article>
+        <article class="ds-token" style="--sample:var(--bg)"><span></span><strong>Background</strong><code>--bg</code></article>
+        <article class="ds-token" style="--sample:var(--bg-2)"><span></span><strong>Background 2</strong><code>--bg-2</code></article>
+        <article class="ds-token" style="--sample:var(--surface)"><span></span><strong>Surface</strong><code>--surface</code></article>
+        <article class="ds-token" style="--sample:var(--surface-2)"><span></span><strong>Surface 2</strong><code>--surface-2</code></article>
+        <article class="ds-token" style="--sample:var(--surface-3)"><span></span><strong>Surface 3</strong><code>--surface-3</code></article>
+        <article class="ds-token" style="--sample:var(--line)"><span></span><strong>Line</strong><code>--line</code></article>
+        <article class="ds-token" style="--sample:var(--line-2)"><span></span><strong>Line 2</strong><code>--line-2</code></article>
+        <article class="ds-token" style="--sample:var(--ink)"><span></span><strong>Ink</strong><code>--ink</code></article>
+        <article class="ds-token" style="--sample:var(--ink-2)"><span></span><strong>Ink 2</strong><code>--ink-2</code></article>
+        <article class="ds-token" style="--sample:var(--ink-3)"><span></span><strong>Ink 3</strong><code>--ink-3</code></article>
+        <article class="ds-token" style="--sample:var(--yes)"><span></span><strong>Yes</strong><code>--yes</code></article>
+        <article class="ds-token" style="--sample:var(--yes-soft)"><span></span><strong>Yes soft</strong><code>--yes-soft</code></article>
+        <article class="ds-token" style="--sample:var(--no)"><span></span><strong>No</strong><code>--no</code></article>
+        <article class="ds-token" style="--sample:var(--no-soft)"><span></span><strong>No soft</strong><code>--no-soft</code></article>
+        <article class="ds-token" style="--sample:var(--no-line)"><span></span><strong>No line</strong><code>--no-line</code></article>
+        <article class="ds-token" style="--sample:var(--gold)"><span></span><strong>Gold</strong><code>--gold</code></article>
+      </div>
+      <div class="ds-theme-note"><strong>Light theme</strong><span>The same semantic names switch values through <code>:root[data-theme="light"]</code>. Use the theme control to inspect every sample.</span></div>
+    </section>
+
+    <section class="ds-section" id="type">
+      <div class="ds-section-head"><div><p class="eyebrow">Scales</p><h2>Typography, Shape & Spacing</h2></div></div>
+      <div class="ds-two-col">
+        <article class="ds-panel ds-type-list">
+          <div style="font-family:var(--font-display)"><code>--font-display</code><strong>Space Grotesk</strong></div>
+          <div style="font-family:var(--font-ui)"><code>--font-ui</code><strong>Inter</strong></div>
+          <p style="font-size:var(--fs-eyebrow)"><code>--fs-eyebrow</code> Eyebrow</p>
+          <p style="font-size:var(--fs-label)"><code>--fs-label</code> Label</p>
+          <p style="font-size:var(--fs-body)"><code>--fs-body</code> Body</p>
+          <p style="font-size:var(--fs-lead)"><code>--fs-lead</code> Lead</p>
+          <p style="font-size:var(--fs-h3)"><code>--fs-h3</code> Heading 3</p>
+          <p style="font-size:var(--fs-h2)"><code>--fs-h2</code> Heading 2</p>
+          <p style="font-size:var(--fs-hero)"><code>--fs-hero</code> Hero</p>
+          <p style="font-size:var(--fs-score)"><code>--fs-score</code> Score</p>
+          <p style="font-size:var(--fs-score-lg)"><code>--fs-score-lg</code> Large score</p>
+        </article>
+        <article class="ds-panel">
+          <h3>Radius</h3>
+          <div class="ds-radius-row"><span style="border-radius:var(--r-sm)">--r-sm</span><span style="border-radius:var(--r-md)">--r-md</span><span style="border-radius:var(--r-lg)">--r-lg</span><span style="border-radius:var(--r-xl)">--r-xl</span><span style="border-radius:var(--r-pill)">--r-pill</span></div>
+          <h3>Spacing</h3>
+          <div class="ds-space-list">
+            <span style="--space:var(--s1)"><i></i><code>--s1</code></span><span style="--space:var(--s2)"><i></i><code>--s2</code></span><span style="--space:var(--s3)"><i></i><code>--s3</code></span><span style="--space:var(--s4)"><i></i><code>--s4</code></span><span style="--space:var(--s5)"><i></i><code>--s5</code></span><span style="--space:var(--s6)"><i></i><code>--s6</code></span><span style="--space:var(--s8)"><i></i><code>--s8</code></span><span style="--space:var(--s10)"><i></i><code>--s10</code></span><span style="--space:var(--s12)"><i></i><code>--s12</code></span><span style="--space:var(--s16)"><i></i><code>--s16</code></span><span style="--space:var(--s20)"><i></i><code>--s20</code></span><span style="--space:var(--s24)"><i></i><code>--s24</code></span>
+          </div>
+        </article>
+      </div>
+      <div class="ds-meta-grid">
+        <div style="box-shadow:var(--shadow-sm)"><code>--shadow-sm</code><span>Compact elevation</span></div>
+        <div style="box-shadow:var(--shadow)"><code>--shadow</code><span>Overlay elevation</span></div>
+        <div><code>--maxw</code><span>1180px content width</span></div><div><code>--header-h</code><span>72px navigation header</span></div>
+        <div><code>--ease</code><span>Standard state motion</span></div><div><code>--ease-out</code><span>Entrances and exits</span></div>
+      </div>
+    </section>
+
+    <section class="ds-section" id="components">
+      <div class="ds-section-head"><div><p class="eyebrow">Reusable UI</p><h2>Component Variants</h2></div></div>
+      <article class="ds-panel">
+        <h3>Buttons</h3>
+        <div class="ds-button-row"><button class="btn btn-primary" type="button">Primary</button><button class="btn btn-secondary" type="button">Secondary</button><button class="btn btn-ghost" type="button">Ghost</button><button class="btn btn-glass" type="button">Glass</button></div>
+        <div class="ds-button-row"><button class="btn btn-primary btn-sm" type="button">Small</button><button class="btn btn-primary" type="button">Default</button><button class="btn btn-primary btn-lg" type="button">Large</button><button class="btn btn-secondary btn-block" type="button">Block</button></div>
+      </article>
+      <article class="ds-live-preview">
+        <div class="ds-preview-head"><div><span class="eyebrow">Rendered by app.js</span><h3>Home Game Tiles</h3></div><a class="btn btn-secondary btn-sm" href="home.html#live">Open source page</a></div>
+        <div class="game-grid" id="gameGrid"></div>
+      </article>
+      <article class="ds-live-preview ds-game-preview">
+        <div class="ds-preview-head"><div><span class="eyebrow">Rendered by app.js</span><h3>Game Detail</h3></div><a class="btn btn-secondary btn-sm" href="game.html">Open source page</a></div>
+        <div id="gameMain"></div>
+      </article>
+    </section>
+
+    <section class="ds-section" id="contracts">
+      <div class="ds-section-head"><div><p class="eyebrow">Runtime API</p><h2>Custom Property Contracts</h2></div></div>
+      <div class="ds-contracts">
+        <div><code>--btn-h</code><span>Provided by button size variants.</span></div>
+        <div><code>--home-color</code><span>Provided by game data for team tinting.</span></div>
+        <div><code>--away-color</code><span>Provided by game data for team tinting.</span></div>
+        <div><code>--d</code><span>Provided by the number picker for distance scaling.</span></div>
+        <div><code>--toast-deg</code><span>Registered with <code>@property</code> for countdown animation.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    document.querySelector('[data-theme-toggle]')?.addEventListener('click', function () {
+      var root = document.documentElement;
+      var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('gtl-theme', next); } catch (e) {}
+    });
+  </script>
+</body>
+</html>
