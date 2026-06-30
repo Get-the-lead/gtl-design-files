@@ -1,0 +1,51 @@
+/* GTL v2 — Pricing & fees page */
+
+.fees-body { padding-top: 96px; padding-bottom: 120px; }
+.fees-head { text-align: center; max-width: 44ch; margin: 0 auto var(--s10); }
+.fees-head h1 { font-size: var(--fs-h2); margin: var(--s3) 0 var(--s4); }
+.fees-head p { color: var(--ink-2); font-size: var(--fs-lead); margin: 0; }
+
+.fee-highlight {
+  display: flex; align-items: center; gap: var(--s5);
+  padding: var(--s6);
+  border-radius: var(--r-lg);
+  background: var(--green-soft);
+  border: 1px solid var(--green-line);
+  margin-bottom: var(--s10);
+}
+.fee-big { font-family: var(--font-display); font-weight: 700; font-size: 3rem; line-height: 1; color: var(--green); }
+.fee-big-meta { display: flex; flex-direction: column; gap: 2px; }
+.fee-big-meta strong { font-size: var(--fs-lead); }
+.fee-big-meta span { color: var(--ink-2); font-size: var(--fs-label); }
+:root[data-theme="light"] .fee-big { color: #15803d; }
+
+.fee-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s8); }
+.fee-item { display: grid; grid-template-columns: auto 1fr; gap: var(--s5); align-items: start; }
+.fee-num { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--ink-3); padding-top: 2px; }
+.fee-item h3 { font-size: var(--fs-h3); margin: 0 0 var(--s2); }
+.fee-item p { color: var(--ink-2); font-size: var(--fs-body); line-height: 1.6; margin: 0; }
+.fee-item p strong { color: var(--ink); font-weight: 700; }
+
+/* Collapsed bet bar — the drawer minimised into one green tap-target */
+.bet-mini {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: center; gap: var(--s4);
+  max-width: 520px; margin-inline: auto;
+  padding: var(--s5);
+  padding-bottom: calc(var(--s5) + env(safe-area-inset-bottom, 0));
+  color: #fff;
+  border-top: 2px solid var(--green);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  background-color: #070809; /* solid base — page must not show through */
+  background-image:
+    radial-gradient(120% 130% at 0% 20%, color-mix(in srgb, var(--home-color, var(--green)) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 20%, color-mix(in srgb, var(--away-color, var(--blue)) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.05), #070809 94%);
+}
+.bet-mini[hidden] { display: none; }
+.bet-mini-teams { display: inline-flex; align-items: center; gap: var(--s1); }
+.bet-mini-logo { width: 36px; height: 36px; object-fit: contain; flex: 0 0 auto; }
+.bet-mini-v { color: rgba(255, 255, 255, 0.5); font-weight: 600; font-size: var(--fs-label); }
+.bet-mini-label { font-weight: 700; font-size: var(--fs-body); }

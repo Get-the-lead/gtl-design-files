@@ -63,8 +63,8 @@
   display: flex;
   justify-content: center;
   gap: var(--s8);
-  margin-bottom: var(--s8);
-  padding-bottom: var(--s2);
+  margin-bottom: var(--s6);
+  padding-block: var(--s2); /* room so the active ring + hover lift aren't clipped by overflow-x */
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -146,7 +146,7 @@
 /* Expandable toggle — centred white label with a chevron on each side */
 .foot-toggle {
   width: 100%;
-  display: flex; align-items: center; justify-content: center; gap: var(--s2);
+  display: flex; align-items: center; justify-content: center; gap: var(--s3);
   padding: 10px 0;
   border: none;
   background: none;
@@ -154,6 +154,7 @@
   font-weight: 600; font-size: var(--fs-label);
   letter-spacing: 0.02em;
 }
+.foot-toggle::before, .foot-toggle::after { content: ""; flex: 1; height: 1px; background: rgba(255, 255, 255, 0.16); }
 .foot-toggle .chev { width: 15px; height: 15px; display: inline-flex; color: rgba(255, 255, 255, 0.92); transition: transform 0.25s var(--ease); }
 .game-tile.is-open .foot-toggle .chev { transform: rotate(180deg); }
 .foot-toggle:hover, .foot-toggle:hover .chev { color: #fff; }

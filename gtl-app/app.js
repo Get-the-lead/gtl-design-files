@@ -110,7 +110,7 @@ function betPanel(g) {
       ${row("TIE", "", "Tie", "tie")}
       ${row("KTL", "Keep the Lead", "Keep the Lead", "ktl")}
     </div>
-    <p class="bet-help">Tap a price to start your bet · Prices updated every 2 seconds</p>
+    <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>
     <a class="view-game" href="${href}">View Game</a>`;
 }
 
@@ -140,13 +140,13 @@ function renderTiles() {
         </div>`;
     };
     return `<article class="game-tile" data-league="${g.league}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-        <button class="tile-main" data-expand aria-expanded="false" aria-label="Show bets for ${g.away.abbr} at ${g.home.abbr}">
+        <a class="tile-main" href="game.html?id=${g.id}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">
           <div class="game-row">
             ${teamBlock("home")}
             <div class="game-center"><span class="period">${g.period}</span><span class="clock tnum">${g.clock}</span></div>
             ${teamBlock("away")}
           </div>
-        </button>
+        </a>
         ${footHTML(g)}
       </article>`;
   }).join("");
@@ -237,6 +237,9 @@ function initScrollTop() {
 }
 
 /* --------------------------------------------------- LIVE PRICE TICKER */
+// A price move of at least 5¢, in either direction
+const priceDelta = () => (5 + Math.floor(Math.random() * 5)) * (Math.random() < 0.5 ? -1 : 1);
+
 function startPriceTicker() {
   const rows = $$(".mkt-row");
   if (!rows.length) return;
@@ -244,8 +247,7 @@ function startPriceTicker() {
     const yesEl = row.querySelector(".price.yes");
     const noEl = row.querySelector(".price.no");
     if (!yesEl || !noEl) return;
-    let yes = parseInt(yesEl.textContent, 10);
-    yes += Math.floor(Math.random() * 7) - 3; // drift -3..+3
+    let yes = parseInt(yesEl.textContent, 10) + priceDelta();
     yes = Math.max(5, Math.min(95, yes));
     yesEl.textContent = `${yes}¢`;
     noEl.textContent = `${100 - yes}¢`;
@@ -255,7 +257,7 @@ function startPriceTicker() {
     // sporadic: nudge just one or two markets each tick
     const count = 1 + Math.floor(Math.random() * 2);
     for (let i = 0; i < count; i++) bump(rows[Math.floor(Math.random() * rows.length)]);
-  }, 2000);
+  }, 10000);
 }
 
 /* --------------------------------------------------- HERO: LIVE COUNTER */
@@ -301,7 +303,7 @@ function renderGamePage() {
       ${marketRow(g, "TIE", "", "tie")}
       ${marketRow(g, "KTL", "Keep the Lead", "ktl")}
     </div>
-    <p class="bet-help">Tap a price to start your bet · Prices updated every 2 seconds</p>`;
+    <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>`;
 
   const statsHTML = g.stats.map((s) => {
     const total = s.home + s.away || 1;
@@ -319,9 +321,6 @@ function renderGamePage() {
         <div class="gb-topbar">
           <a class="gb-back" href="home.html" aria-label="Back to games">${CHEVRON}<span>Games</span></a>
           <span class="live-badge"><span class="live-dot"></span> ${g.period} · ${g.clock}</span>
-          <button class="gb-share" aria-label="Share">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V4m0 0L8 8m4-4l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13v5a2 2 0 002 2h10a2 2 0 002-2v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
         </div>
         <div class="gb-score">
           ${teamCol("home")}
@@ -350,8 +349,22 @@ function renderGamePage() {
 }
 
 /* ----------------------------------------------- BET DRAWER (two-step) */
-const betState = { game: null, market: "gtl", contract: "yes", quantity: 10, step: 1, markets: {}, limit: null, limitOpen: false };
+const betState = { game: null, market: "gtl", contract: "yes", quantity: 100, step: 1, markets: {}, limit: null, limitOpen: false, typeOpen: false };
 const money = (v) => `$${v.toFixed(2)}`;
+
+function computeBet() {
+  const mk = betState.markets[betState.market] || { yes: 50, no: 50 };
+  const marketPrice = betState.contract === "yes" ? mk.yes : mk.no;
+  const priceCents = betState.limit != null ? betState.limit : marketPrice;
+  const qty = betState.quantity;
+  const subtotal = (priceCents / 100) * qty;
+  const fee = Math.max(0.01, subtotal * 0.02);
+  const total = subtotal + fee;
+  const payout = qty;
+  const profit = Math.max(0, payout - subtotal);
+  const net = Math.max(0, profit - fee);
+  return { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net };
+}
 
 function renderScoreboard(g) {
   const sb = $("#betSheet")?.querySelector("[data-bet-grab]");
@@ -374,15 +387,14 @@ function renderScoreboard(g) {
     </div>`;
 }
 
-function renderPicker() {
-  const picker = $("#betSheet")?.querySelector("[data-picker]");
-  if (!picker) return;
-  const q = betState.quantity;
-  picker.innerHTML = [-2, -1, 0, 1, 2].map((o) => {
-    const n = q + o, d = Math.abs(o);
-    if (n < 1) return `<span class="np-num np-empty" style="--d:${d}"></span>`;
-    return `<button class="np-num${o === 0 ? " is-active" : ""}" data-np="${n}" style="--d:${d}" tabindex="-1">${n}</button>`;
-  }).join("");
+// Two quick limit options — nearest round-10 values straddling the current price
+function limitOptions(p) {
+  let low = Math.floor(p / 10) * 10;
+  let high = low + 10;
+  low = Math.max(5, low);
+  high = Math.min(99, high);
+  if (low >= high) low = high - 10;
+  return [low, high];
 }
 
 function ensureBetSheet() {
@@ -396,6 +408,17 @@ function ensureBetSheet() {
 
       <div class="bet-sheet-body">
         <div class="bet-step bet-step-1">
+          <div class="bet-field contracts-field">
+            <span class="bet-label">Select number of contracts</span>
+            <input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts" />
+            <div class="qty-quick">
+              <button data-qty-set="50">50</button>
+              <button data-qty-set="100">100</button>
+              <button data-qty-set="500">500</button>
+              <button data-qty-set="1000">1000</button>
+            </div>
+          </div>
+
           <div class="bet-field">
             <span class="bet-label">Bet type</span>
             <div class="seg seg-3" role="group" aria-label="Bet type">
@@ -404,16 +427,7 @@ function ensureBetSheet() {
               <button data-market="ktl">KTL</button>
             </div>
           </div>
-          <div class="bet-field">
-            <span class="bet-label">Contracts</span>
-            <div class="num-picker" data-picker role="slider" aria-label="Number of contracts"></div>
-            <div class="qty-quick">
-              <button data-qty-set="10">10</button>
-              <button data-qty-set="25">25</button>
-              <button data-qty-set="50">50</button>
-              <button data-qty-set="100">100</button>
-            </div>
-          </div>
+
           <div class="bet-field">
             <span class="bet-label">Pick a side</span>
             <div class="bet-toggle" data-active="yes" role="group" aria-label="Side">
@@ -422,18 +436,16 @@ function ensureBetSheet() {
             </div>
             <button class="limit-toggle" data-limit-toggle aria-expanded="false">Set a limit</button>
             <div class="limit-section" data-limit-section hidden>
-              <input class="limit-input" data-limit-input type="number" inputmode="numeric" min="1" max="100" placeholder="Limit price (¢)" />
-              <div class="qty-quick">
-                <button data-limit-set="10">10</button>
-                <button data-limit-set="25">25</button>
-                <button data-limit-set="50">50</button>
-                <button data-limit-set="100">100</button>
-              </div>
+              <span class="limit-caption">Max limit price</span>
+              <div class="num-input-wrap"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents" /><span class="num-suffix">¢</span></div>
+              <div class="qty-quick limit-quick" data-limit-quick></div>
             </div>
           </div>
+
           <div class="bet-highlight">
+            <span class="bet-label">Purchase price</span>
             <span class="bet-total-big tnum" data-total-big>$0.00</span>
-            <span class="bet-payout-line">Potential payout of <strong data-payout-big>$0.00</strong></span>
+            <span class="bet-profit-line">Potential profit of <strong data-profit-big>$0.00</strong> after <a href="#" class="fees-link" data-fees-link>fees</a></span>
           </div>
         </div>
 
@@ -445,64 +457,83 @@ function ensureBetSheet() {
               <div class="summary-row"><span>Contracts</span><strong data-s-qty>—</strong></div>
               <div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>—</strong></div>
               <div class="summary-row"><span>Trading fee</span><strong data-s-fee>—</strong></div>
-              <div class="summary-row total"><span data-s-total-label>Total to pay</span><strong data-s-total>—</strong></div>
+              <div class="summary-row total"><span>Total to pay</span><strong data-s-total>—</strong></div>
             </div>
           </div>
           <div class="bet-field">
             <span class="bet-label">Potential gain</span>
-            <div class="gain">
+            <div class="summary">
               <div class="summary-row"><span>Potential payout</span><strong data-g-payout>—</strong></div>
               <div class="summary-row"><span>Potential profit</span><strong data-g-profit>—</strong></div>
               <div class="summary-row"><span>Fees</span><strong data-g-fees>—</strong></div>
-              <div class="gain-net"><span>Net potential gain</span><strong data-g-net>—</strong></div>
+              <div class="summary-row total"><span>Net potential gain</span><strong data-g-net>—</strong></div>
             </div>
           </div>
         </div>
       </div>
 
       <footer class="bet-sheet-footer">
-        <button class="bet-secondary" data-breakdown>Breakdown</button>
+        <button class="bet-secondary" data-breakdown>See Details</button>
         <button class="bet-secondary" data-bet-back>Back</button>
-        <button class="btn btn-primary bet-primary" data-bet-primary>Place Bet</button>
+        <button class="btn btn-primary bet-primary" data-bet-primary>Quick Bet</button>
       </footer>
 
       <div class="bet-success">
-        <span class="bet-success-check">${CHECK_ICON}</span>
-        <h3 class="bet-success-title">Bet placed!</h3>
-        <p class="bet-success-sub" data-success-line>You're in the game.</p>
+        <div class="success-content">
+          <div class="bet-success-head">
+            <span class="bet-success-check">${CHECK_ICON}</span>
+            <h3 class="bet-success-title">Bet placed!</h3>
+            <p class="bet-success-sub" data-success-line>You're in the game.</p>
+          </div>
+          <div class="bet-field">
+            <span class="bet-label">Order summary</span>
+            <div class="summary">
+              <div class="summary-row"><span>Contract price</span><strong data-sx-price>—</strong></div>
+              <div class="summary-row"><span>Contracts</span><strong data-sx-qty>—</strong></div>
+              <div class="summary-row"><span>Subtotal</span><strong data-sx-subtotal>—</strong></div>
+              <div class="summary-row"><span>Trading fee</span><strong data-sx-fee>—</strong></div>
+              <div class="summary-row total"><span>Total paid</span><strong data-sx-total>—</strong></div>
+            </div>
+          </div>
+          <button class="bet-secondary cancel-bet" data-cancel-bet>Cancel Bet</button>
+        </div>
+        <button class="btn btn-primary success-close" data-success-close>Close</button>
       </div>
     </aside>
   `);
   sheet = $("#betSheet");
 
+  const qtyInput = sheet.querySelector("[data-qty-input]");
+  const limitInput = sheet.querySelector("[data-limit-input]");
+
   $$("[data-bet-close]").forEach((el) => el.addEventListener("click", closeBetSheet));
   $$("[data-market]", sheet).forEach((b) => b.addEventListener("click", () => { betState.market = b.dataset.market; updateBetSheet(); }));
   $$("[data-contract]", sheet).forEach((b) => b.addEventListener("click", () => { betState.contract = b.dataset.contract; updateBetSheet(); }));
-  $$("[data-qty-set]", sheet).forEach((b) => b.addEventListener("click", () => { betState.quantity = Number(b.dataset.qtySet); updateBetSheet(); }));
+  $$("[data-qty-set]", sheet).forEach((b) => b.addEventListener("click", () => { betState.quantity = Number(b.dataset.qtySet); qtyInput.value = betState.quantity; updateBetSheet(); }));
   sheet.querySelector("[data-breakdown]").addEventListener("click", () => { betState.step = 2; updateBetSheet(); });
   sheet.querySelector("[data-bet-back]").addEventListener("click", () => { betState.step = 1; updateBetSheet(); });
   sheet.querySelector("[data-bet-primary]").addEventListener("click", placeBet);
-  sheet.querySelector("[data-limit-toggle]").addEventListener("click", () => { betState.limitOpen = !betState.limitOpen; updateBetSheet(); });
-  sheet.querySelector("[data-limit-input]").addEventListener("input", (e) => { const v = parseInt(e.target.value, 10); betState.limit = v >= 1 && v <= 100 ? v : null; updateBetSheet(); });
-  $$("[data-limit-set]", sheet).forEach((b) => b.addEventListener("click", () => { betState.limit = Number(b.dataset.limitSet); sheet.querySelector("[data-limit-input]").value = betState.limit; updateBetSheet(); }));
+  sheet.querySelector("[data-cancel-bet]").addEventListener("click", closeBetSheet);
+  sheet.querySelector("[data-success-close]").addEventListener("click", closeBetSheet);
+  sheet.querySelector("[data-fees-link]").addEventListener("click", (e) => { e.preventDefault(); goToFees(); });
 
-  // Number picker — swipe (pointer drag) or click a neighbour
-  const picker = sheet.querySelector("[data-picker]");
-  let pStartX = 0, pStartQ = 10, pDrag = false, pMoved = false;
-  picker.addEventListener("pointerdown", (e) => { pDrag = true; pMoved = false; pStartX = e.clientX; pStartQ = betState.quantity; picker.setPointerCapture(e.pointerId); });
-  picker.addEventListener("pointermove", (e) => {
-    if (!pDrag) return;
-    if (Math.abs(e.clientX - pStartX) > 4) pMoved = true;
-    const nq = Math.max(1, pStartQ + Math.round((pStartX - e.clientX) / 40));
-    if (nq !== betState.quantity) { betState.quantity = nq; updateBetSheet(); }
+  qtyInput.addEventListener("input", () => { const v = parseInt(qtyInput.value.replace(/[^0-9]/g, ""), 10); betState.quantity = v >= 1 ? v : 1; updateBetSheet(); });
+  limitInput.addEventListener("input", () => { let v = parseInt(limitInput.value.replace(/[^0-9]/g, ""), 10); if (v > 99) { v = 99; limitInput.value = "99"; } betState.limit = v >= 1 ? v : 1; updateBetSheet(); });
+
+  sheet.querySelector("[data-limit-toggle]").addEventListener("click", () => {
+    betState.limitOpen = !betState.limitOpen;
+    if (betState.limitOpen) {
+      const mk = betState.markets[betState.market] || { yes: 50, no: 50 };
+      betState.limit = betState.contract === "yes" ? mk.yes : mk.no; // start at the live price
+      limitInput.value = betState.limit;
+    } else {
+      betState.limit = null;
+    }
+    updateBetSheet();
   });
-  const pEnd = () => { pDrag = false; };
-  picker.addEventListener("pointerup", pEnd);
-  picker.addEventListener("pointercancel", pEnd);
-  picker.addEventListener("click", (e) => {
-    if (pMoved) { pMoved = false; return; }
-    const b = e.target.closest("[data-np]");
-    if (b) { betState.quantity = Number(b.dataset.np); updateBetSheet(); }
+  sheet.querySelector("[data-limit-quick]").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-limit-set]");
+    if (b) { betState.limit = Number(b.dataset.limitSet); limitInput.value = betState.limit; updateBetSheet(); }
   });
 
   // Swipe the scoreboard down to close
@@ -519,38 +550,34 @@ function ensureBetSheet() {
 
 function updateBetSheet() {
   const sheet = ensureBetSheet();
-  const mk = betState.markets[betState.market] || { yes: 50, no: 50 };
-  const marketPrice = betState.contract === "yes" ? mk.yes : mk.no;
-  const priceCents = betState.limit != null ? betState.limit : marketPrice;
-  const price = priceCents / 100;
-  const qty = betState.quantity;
-  const subtotal = price * qty;
-  const fee = Math.max(0.01, subtotal * 0.02);
-  const total = subtotal + fee;
-  const payout = qty;
-  const profit = Math.max(0, payout - subtotal);
-  const net = Math.max(0, profit - fee);
+  const { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net } = computeBet();
 
   sheet.setAttribute("data-step", betState.step);
   sheet.querySelector("[data-yes-price]").textContent = `${mk.yes}¢`;
   sheet.querySelector("[data-no-price]").textContent = `${mk.no}¢`;
-  renderPicker();
 
   $$("[data-market]", sheet).forEach((b) => b.classList.toggle("is-active", b.dataset.market === betState.market));
   $$("[data-contract]", sheet).forEach((b) => b.classList.toggle("is-active", b.dataset.contract === betState.contract));
   sheet.querySelector(".bet-toggle").dataset.active = betState.contract;
   $$("[data-qty-set]", sheet).forEach((b) => b.classList.toggle("is-active", Number(b.dataset.qtySet) === qty));
 
+  // limit section
   const limitSection = sheet.querySelector("[data-limit-section]");
   const limitToggle = sheet.querySelector("[data-limit-toggle]");
   limitSection.hidden = !betState.limitOpen;
   limitToggle.textContent = betState.limitOpen ? "Hide limit" : "Set a limit";
   limitToggle.setAttribute("aria-expanded", betState.limitOpen ? "true" : "false");
-  $$("[data-limit-set]", sheet).forEach((b) => b.classList.toggle("is-active", Number(b.dataset.limitSet) === betState.limit));
+  if (betState.limitOpen) {
+    const [low, high] = limitOptions(marketPrice);
+    sheet.querySelector("[data-limit-quick]").innerHTML = [low, high]
+      .map((v) => `<button data-limit-set="${v}"${v === betState.limit ? ' class="is-active"' : ""}>${v}¢</button>`).join("");
+  }
 
+  // highlight — total bet + green profit-after-fees
   sheet.querySelector("[data-total-big]").textContent = money(total);
-  sheet.querySelector("[data-payout-big]").textContent = money(payout);
+  sheet.querySelector("[data-profit-big]").textContent = money(net);
 
+  // see-details breakdown
   sheet.querySelector("[data-s-price]").textContent = `${priceCents}¢`;
   sheet.querySelector("[data-s-qty]").textContent = qty;
   sheet.querySelector("[data-s-subtotal]").textContent = money(subtotal);
@@ -569,26 +596,38 @@ function startBetTicker() {
     const sheet = $("#betSheet");
     const mk = betState.markets[betState.market];
     if (!sheet || !mk) return;
-    let yes = Math.max(5, Math.min(95, mk.yes + Math.floor(Math.random() * 7) - 3));
+    let yes = Math.max(5, Math.min(95, mk.yes + priceDelta()));
     mk.yes = yes; mk.no = 100 - yes;
     updateBetSheet();
     ["[data-yes-price]", "[data-no-price]"].forEach((sel) => {
       const el = sheet.querySelector(sel);
       if (el) { el.classList.remove("blip"); void el.offsetWidth; el.classList.add("blip"); }
     });
-  }, 2000);
+  }, 10000);
 }
 function stopBetTicker() { if (betTicker) { clearInterval(betTicker); betTicker = null; } }
 
-function openBetSheet(gameId, market, side, markets) {
+function syncInputs() {
+  const sheet = $("#betSheet");
+  if (!sheet) return;
+  sheet.querySelector("[data-qty-input]").value = betState.quantity;
+  sheet.querySelector("[data-limit-input]").value = betState.limit != null ? betState.limit : "";
+}
+
+function openBetSheet(gameId, market, side, markets, opts = {}) {
   const g = GAMES.find((x) => x.id === gameId);
   if (!g) return;
-  Object.assign(betState, { game: g, market, contract: side, quantity: 10, step: 1, markets, limit: null, limitOpen: false });
+  Object.assign(betState, {
+    game: g, market, contract: side, markets,
+    quantity: opts.quantity || 100, step: 1, typeOpen: false,
+    limit: opts.limit != null ? opts.limit : null,
+    limitOpen: opts.limit != null,
+  });
   const sheet = ensureBetSheet();
   sheet.classList.remove("is-success");
   renderScoreboard(g);
   updateBetSheet();
-  sheet.querySelector("[data-limit-input]").value = "";
+  syncInputs();
   $("#betBackdrop").classList.add("is-open");
   sheet.classList.add("is-open");
   sheet.setAttribute("aria-hidden", "false");
@@ -600,6 +639,7 @@ function closeBetSheet() {
   const sheet = $("#betSheet");
   if (!sheet) return;
   stopBetTicker();
+  stopCancelTimer();
   $("#betBackdrop").classList.remove("is-open");
   sheet.classList.remove("is-open");
   sheet.setAttribute("aria-hidden", "true");
@@ -608,45 +648,34 @@ function closeBetSheet() {
 
 function placeBet() {
   const sheet = ensureBetSheet();
-  const g = betState.game;
-  const title = `${betState.quantity} × ${MARKET_LABELS[betState.market]} ${betState.contract.toUpperCase()}`;
-  const sub = `${g.home.abbr} vs ${g.away.abbr}`;
-  sheet.querySelector("[data-success-line]").textContent = title;
+  const { priceCents, qty, subtotal, fee, total } = computeBet();
+  sheet.querySelector("[data-success-line]").textContent = `${qty} × ${MARKET_LABELS[betState.market]} ${betState.contract.toUpperCase()}`;
+  sheet.querySelector("[data-sx-price]").textContent = `${priceCents}¢`;
+  sheet.querySelector("[data-sx-qty]").textContent = qty;
+  sheet.querySelector("[data-sx-subtotal]").textContent = money(subtotal);
+  sheet.querySelector("[data-sx-fee]").textContent = money(fee);
+  sheet.querySelector("[data-sx-total]").textContent = money(total);
   sheet.classList.add("is-success");
   stopBetTicker();
-  setTimeout(() => { closeBetSheet(); showToast(title, sub); }, 1600);
+  startCancelTimer();
 }
 
-/* Revoke toast — slides in over the header, 10s countdown border, swipe up to dismiss */
-function showToast(title, sub) {
-  dismissToast(true);
-  const el = document.createElement("div");
-  el.className = "bet-toast";
-  el.innerHTML = `<div class="toast-inner">
-      <div class="toast-info"><strong>${title}</strong><span>${sub}</span></div>
-      <button class="toast-revoke" type="button">Revoke</button>
-    </div>`;
-  document.body.appendChild(el);
-  el._timer = setTimeout(() => dismissToast(), 10000);
-  el.querySelector(".toast-revoke").addEventListener("click", () => dismissToast());
-
-  let ty = 0, tdrag = false;
-  el.addEventListener("pointerdown", (e) => { if (e.target.closest(".toast-revoke")) return; tdrag = true; ty = e.clientY; el.style.transition = "none"; el.setPointerCapture(e.pointerId); });
-  el.addEventListener("pointermove", (e) => { if (!tdrag) return; const dy = Math.min(0, e.clientY - ty); el.style.transform = `translateY(${dy}px)`; });
-  const tend = (e) => { if (!tdrag) return; tdrag = false; el.style.transition = ""; const dy = Math.min(0, (e.clientY || ty) - ty); el.style.transform = ""; if (dy < -50) dismissToast(); };
-  el.addEventListener("pointerup", tend);
-  el.addEventListener("pointercancel", tend);
-
-  requestAnimationFrame(() => el.classList.add("is-in"));
+let cancelTimer = null;
+function startCancelTimer() {
+  stopCancelTimer();
+  const btn = $("#betSheet")?.querySelector("[data-cancel-bet]");
+  if (!btn) return;
+  btn.classList.remove("draining");
+  void btn.offsetWidth;
+  btn.classList.add("draining"); // 10s left-to-right fill
+  cancelTimer = setTimeout(closeBetSheet, 10000); // window over → close the drawer
 }
-function dismissToast(immediate) {
-  const el = document.querySelector(".bet-toast");
-  if (!el) return;
-  clearTimeout(el._timer);
-  if (immediate) { el.remove(); return; }
-  el.classList.remove("is-in");
-  el.classList.add("is-out");
-  setTimeout(() => el.remove(), 320);
+function stopCancelTimer() { if (cancelTimer) { clearTimeout(cancelTimer); cancelTimer = null; } }
+
+function goToFees() {
+  const p = new URLSearchParams({ game: betState.game.id, market: betState.market, side: betState.contract, qty: betState.quantity });
+  if (betState.limit != null) p.set("limit", betState.limit);
+  location.href = "fees.html?" + p.toString();
 }
 
 function initBetSheet() {
@@ -663,6 +692,41 @@ function initBetSheet() {
     openBetSheet(price.dataset.game, price.dataset.market, price.dataset.side, markets);
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeBetSheet(); });
+}
+
+// Returning from the Fees page — reopen the drawer with the carried bet state
+function maybeReopenBet() {
+  if (!$("#gameMain")) return;
+  const p = new URL(location.href).searchParams;
+  if (p.get("bet") !== "1") return;
+  const g = GAMES.find((x) => x.id === p.get("id"));
+  if (!g) return;
+  const markets = { gtl: { ...g.markets.gtl }, tie: { ...g.markets.tie }, ktl: { ...g.markets.ktl } };
+  openBetSheet(g.id, p.get("market") || "gtl", p.get("side") || "yes", markets, {
+    quantity: parseInt(p.get("qty"), 10) || 100,
+    limit: p.get("limit") ? parseInt(p.get("limit"), 10) : null,
+  });
+}
+
+// Fees page — populate the collapsed "continue bet" bar from the carried state
+function initFeesPage() {
+  const mini = $("#betMini");
+  if (!mini) return;
+  const p = new URL(location.href).searchParams;
+  const g = GAMES.find((x) => x.id === p.get("game"));
+  if (!g) return;
+  const market = p.get("market") || "gtl";
+  mini.style.setProperty("--home-color", g.home.color);
+  mini.style.setProperty("--away-color", g.away.color);
+  mini.querySelector("[data-mini-home]").src = g.home.logo;
+  mini.querySelector("[data-mini-home]").alt = g.home.name;
+  mini.querySelector("[data-mini-away]").src = g.away.logo;
+  mini.querySelector("[data-mini-away]").alt = g.away.name;
+  const back = new URLSearchParams({ id: g.id, bet: "1", market, side: p.get("side") || "yes", qty: p.get("qty") || "100" });
+  if (p.get("limit")) back.set("limit", p.get("limit"));
+  mini.href = "game.html?" + back.toString();
+  mini.querySelector("[data-mini-label]").textContent = "Continue Bet";
+  mini.hidden = false;
 }
 
 function initStickyBet() {
@@ -693,5 +757,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTradingCounter();
   renderGamePage();
   initBetSheet();
+  initFeesPage();
+  maybeReopenBet();
   startPriceTicker(); // after both home tiles and the game page have rendered their rows
 });

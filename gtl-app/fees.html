@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Pricing &amp; fees</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="fees.css" />
+</head>
+<body class="fees-body">
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-row">
+      <div class="header-left">
+        <button class="header-menu floating-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel">
+          <span>Menu</span>
+        </button>
+      </div>
+      <a class="brand floating-logo" href="home.html" aria-label="GTL home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>
+        </span>
+      </a>
+      <div class="header-right">
+        <a class="btn header-login floating-btn" href="#">Login</a>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="menuPanel" hidden>
+      <a href="home.html#live">Live games</a>
+      <a href="home.html#how">How it works</a>
+      <a href="#">Tutorial</a>
+      <button class="theme-toggle menu-theme" id="themeBtn" aria-label="Switch colour theme">
+        <span>Appearance</span>
+        <span class="menu-theme-value">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="label-dark">Dark</span>
+          <span class="label-light">Light</span>
+        </span>
+      </button>
+      <div class="menu-actions">
+        <a class="btn btn-secondary btn-block" href="#">Log in</a>
+        <a class="btn btn-primary btn-block" href="#">Create account</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="fees container">
+    <div class="fees-head">
+      <span class="eyebrow">Pricing &amp; fees</span>
+      <h1>What you pay, what you win.</h1>
+      <p>Simple, transparent pricing — no hidden charges. Here's exactly how it works.</p>
+    </div>
+
+    <section class="fee-highlight">
+      <span class="fee-big tnum">2%</span>
+      <div class="fee-big-meta">
+        <strong>Trading fee per order</strong>
+        <span>Charged on the order value · $0.01 minimum</span>
+      </div>
+    </section>
+
+    <ol class="fee-list">
+      <li class="fee-item">
+        <span class="fee-num">01</span>
+        <div>
+          <h3>Contracts are priced 1¢ – 99¢</h3>
+          <p>Every market is priced in cents. The price reflects the live likelihood of the outcome. Each contract settles at <strong>$1.00</strong> if your side wins, or <strong>$0.00</strong> if it doesn't.</p>
+        </div>
+      </li>
+      <li class="fee-item">
+        <span class="fee-num">02</span>
+        <div>
+          <h3>What you pay</h3>
+          <p>Your cost is the contract price × the number of contracts, plus the 2% trading fee. The full breakdown is shown in your order summary before you confirm.</p>
+        </div>
+      </li>
+      <li class="fee-item">
+        <span class="fee-num">03</span>
+        <div>
+          <h3>What you can win</h3>
+          <p>If your side settles in your favour, each contract pays out <strong>$1.00</strong>. Your potential profit is the payout less your cost and fees.</p>
+        </div>
+      </li>
+      <li class="fee-item">
+        <span class="fee-num">04</span>
+        <div>
+          <h3>No other fees</h3>
+          <p>No account, deposit, withdrawal, or inactivity fees during the pilot. The 2% trading fee is the only charge.</p>
+        </div>
+      </li>
+      <li class="fee-item">
+        <span class="fee-num">05</span>
+        <div>
+          <h3>Settlement</h3>
+          <p>Markets settle automatically the moment the live result is final, and winnings are credited to your balance right away.</p>
+        </div>
+      </li>
+    </ol>
+  </main>
+
+  <!-- Collapsed bet — visible only when arriving from a bet -->
+  <a class="bet-mini" id="betMini" data-mini-continue href="#" hidden>
+    <span class="bet-mini-teams">
+      <img class="bet-mini-logo" data-mini-home src="" alt="" />
+      <span class="bet-mini-v">v</span>
+      <img class="bet-mini-logo" data-mini-away src="" alt="" />
+    </span>
+    <span class="bet-mini-label" data-mini-label>Continue Bet</span>
+  </a>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
