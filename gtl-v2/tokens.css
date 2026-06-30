@@ -1,0 +1,92 @@
+/* GTL v2 — design tokens
+   Only the brand green is carried over from v1 (#4ade80 / #22c55e).
+   Everything else is a clean-sheet, dark-first system. */
+
+:root {
+  /* Brand green — the one carry-over, used sparingly */
+  --green: #4ade80;
+  --green-strong: #22c55e;
+  --green-soft: rgba(74, 222, 128, 0.14);
+  --green-line: rgba(74, 222, 128, 0.30);
+  --green-glow: rgba(74, 222, 128, 0.35);
+
+  /* Neutrals — dark first */
+  --bg: #070809;
+  --bg-2: #0b0d0f;
+  --surface: #121417;
+  --surface-2: #181b20;
+  --surface-3: #20242a;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.14);
+
+  /* Text */
+  --ink: #f5f7f8;
+  --ink-2: #a7afb6;
+  --ink-3: #6c747b;
+
+  /* Semantic */
+  --yes: var(--green);
+  --yes-soft: var(--green-soft);
+  --no: #ff5d72;
+  --no-soft: rgba(255, 93, 114, 0.14);
+  --no-line: rgba(255, 93, 114, 0.32);
+  --gold: #ffce4d;
+
+  /* Type */
+  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-ui: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Fluid type scale */
+  --fs-eyebrow: 0.72rem;
+  --fs-label: 0.8rem;
+  --fs-body: 0.95rem;
+  --fs-lead: 1.05rem;
+  --fs-h3: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+  --fs-h2: clamp(1.5rem, 1.2rem + 1.6vw, 2.2rem);
+  --fs-hero: clamp(2.4rem, 1.6rem + 4.6vw, 4.6rem);
+  --fs-score: clamp(2.2rem, 1.6rem + 3vw, 3.4rem);
+  --fs-score-lg: clamp(3.4rem, 2.4rem + 5vw, 5.6rem);
+
+  /* Radii */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* Spacing */
+  --s1: 4px;  --s2: 8px;   --s3: 12px;  --s4: 16px;
+  --s5: 20px; --s6: 24px;  --s8: 32px;  --s10: 40px;
+  --s12: 48px; --s16: 64px; --s20: 80px; --s24: 96px;
+
+  /* Layout */
+  --maxw: 1180px;
+  --header-h: 64px;
+
+  /* Elevation */
+  --shadow-sm: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light theme — only neutrals flip; brand green is unchanged.
+   The game tiles and game-page scoreboard stay dark in both themes (media cards). */
+:root[data-theme="light"] {
+  --bg: #f4f6f8;
+  --bg-2: #eceff3;
+  --surface: #ffffff;
+  --surface-2: #f1f4f7;
+  --surface-3: #e6eaef;
+  --line: rgba(10, 20, 25, 0.08);
+  --line-2: rgba(10, 20, 25, 0.14);
+
+  --ink: #0d1411;
+  --ink-2: #4b565c;
+  --ink-3: #7c868d;
+
+  --shadow-sm: 0 6px 20px rgba(20, 30, 40, 0.10);
+  --shadow: 0 24px 70px rgba(20, 30, 40, 0.16);
+}

@@ -1,0 +1,168 @@
+/* GTL v2 — game detail page: scoreboard, markets, stats, sticky bet bar */
+
+.game-body { padding-bottom: 96px; } /* header floats over the scoreboard; room for the sticky bet bar */
+
+/* Scoreboard --------------------------------------------------------- */
+.gb {
+  position: relative;
+  padding: 100px 0 var(--s10); /* top clears the floating header so the tint sits behind it */
+  overflow: hidden;
+  isolation: isolate;
+  background: #070809; /* scoreboard stays dark in both themes */
+}
+.gb-glow {
+  position: absolute;
+  inset: -40% -15% 0;
+  z-index: -1;
+  background:
+    radial-gradient(72% 95% at 0% 0%, color-mix(in srgb, var(--home-color) 78%, transparent), transparent 60%),
+    radial-gradient(72% 95% at 100% 0%, color-mix(in srgb, var(--away-color) 78%, transparent), transparent 60%),
+    linear-gradient(180deg, rgba(7, 8, 9, 0.2), #070809 94%);
+}
+.gb-inner { display: flex; flex-direction: column; align-items: center; }
+
+.gb-topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s8);
+}
+.gb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.86);
+}
+.gb-back svg { width: 18px; height: 18px; transform: rotate(180deg); }
+.gb-share {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--line);
+  color: rgba(255, 255, 255, 0.86);
+}
+.gb-share svg { width: 19px; height: 19px; }
+
+.gb-score {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  gap: var(--s4);
+}
+.gb-team { display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
+.gb-logo { width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px); object-fit: contain; filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)); }
+.gb-abbr { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lead); letter-spacing: 0.04em; color: #fff; }
+
+.gb-numbers { display: inline-flex; align-items: center; gap: var(--s3); }
+.gb-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-score-lg);
+  line-height: 0.9;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+.gb-num.is-leading { color: #fff; }
+.gb-dash { color: rgba(255, 255, 255, 0.35); font-size: var(--fs-score); font-family: var(--font-display); }
+
+.gb-league {
+  margin: var(--s6) 0 0;
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Markets — same betting language as the home cards (YES/NO columns,
+   pill prices, GTL/TIE/KTL + subtitles), scaled up for the detail page */
+.markets { padding-top: var(--s10); }
+.markets .section-head { margin-bottom: var(--s6); }
+
+.mkt-head, .mkt-row { display: grid; grid-template-columns: 0.9fr 1.2fr 0.9fr; align-items: center; gap: var(--s4); }
+.mkt-head { padding-bottom: var(--s3); }
+.mkt-head span { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+.mkt-head .col-yes, .mkt-head .col-no { justify-self: center; }
+
+.mkt-row { padding: var(--s4) 0; }
+.mkt-row + .mkt-row { border-top: 1px solid var(--line); }
+.mkt-name { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; font-size: var(--fs-h3); font-weight: 700; line-height: 1.1; color: var(--ink); }
+.mkt-sub { font-size: var(--fs-label); font-weight: 500; color: var(--ink-2); }
+
+.price {
+  justify-self: stretch;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 62px; padding: 0 var(--s4);
+  border-radius: var(--r-pill);
+  border: 1px solid; background: var(--surface-2);
+  font-family: var(--font-display); font-weight: 700; font-size: 1.4rem;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.14s var(--ease), background 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+.price:active { transform: scale(0.97); }
+.price.yes { color: var(--green); border-color: var(--green-line); background: var(--green-soft); }
+.price.no { color: var(--no); border-color: var(--no-line); background: var(--no-soft); }
+.price.yes:hover { background: rgba(74, 222, 128, 0.2); }
+.price.no:hover { background: rgba(255, 93, 114, 0.2); }
+.price { cursor: pointer; }
+
+.bet-help { text-align: center; margin: var(--s6) 0 0; color: var(--ink-2); font-size: var(--fs-label); }
+
+/* Stats -------------------------------------------------------------- */
+.stats-section { padding-top: var(--s12); padding-bottom: var(--s16); }
+.stats { display: flex; flex-direction: column; gap: var(--s6); }
+.stat-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: var(--s4);
+  margin-bottom: var(--s2);
+}
+.stat-val { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lead); }
+.stat-label { text-align: center; color: var(--ink-2); font-size: var(--fs-label); }
+.stat-bar { display: flex; height: 6px; border-radius: var(--r-pill); overflow: hidden; background: var(--surface-2); }
+.stat-fill-h { background: var(--home-color, var(--green)); }
+.stat-fill-a { background: var(--away-color, var(--ink-3)); }
+
+/* the stats section sits outside .gb, so expose team colours via JS-set vars on it */
+.stats-section { --home-color: var(--green); --away-color: var(--ink-3); }
+
+/* Sticky Bet Now ----------------------------------------------------- */
+.betbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  background: rgba(7, 8, 9, 0.82);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-top: 1px solid var(--line);
+  transform: translateY(120%);
+  transition: transform 0.32s var(--ease-out);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.betbar.is-visible { transform: none; }
+.betbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding-block: var(--s3);
+}
+.betbar-meta { display: flex; flex-direction: column; line-height: 1.2; }
+.betbar-label { font-weight: 600; font-size: var(--fs-body); }
+.betbar-hint { color: var(--ink-3); font-size: var(--fs-eyebrow); }
+.betbar-cta { --btn-h: 48px; padding-inline: var(--s8); box-shadow: 0 0 0 4px var(--green-soft); }
+
+@media (min-width: 768px) {
+  .markets, .stats-section { max-width: 760px; }
+  .betbar-inner { max-width: 760px; }
+}
+
+/* Light-theme tweaks (markets/stats flip to light; green text needs deepening) */
+:root[data-theme="light"] .price.yes { color: #15803d; }
+:root[data-theme="light"] .betbar { background: rgba(255, 255, 255, 0.85); }
