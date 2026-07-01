@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Reset password</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body class="auth-body">
+
+  <header class="site-header" id="siteHeader"></header>
+
+  <main class="auth-main">
+    <div class="auth-card" id="forgotCard">
+      <a class="step-back" href="login.html">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back
+      </a>
+      <div class="auth-head">
+        <span class="eyebrow">Reset password</span>
+        <h1>Forgot your password?</h1>
+        <p>Enter your email and we'll send you a link to reset it.</p>
+      </div>
+
+      <form class="auth-form" data-forgot-form novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="field-input" id="email" type="email" autocomplete="email" placeholder="you@email.com" required />
+        </div>
+        <button class="btn btn-primary auth-submit" type="submit">Send Reset Link</button>
+      </form>
+
+      <div class="auth-sent">
+        <div class="sent-check">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h1>Check your email</h1>
+        <p>We've sent a reset link to <span class="code-sent-to" data-sent-email>your email</span>. It expires in 30 minutes.</p>
+        <a class="btn btn-secondary auth-submit" href="login.html">Back to Login</a>
+        <p class="code-resend">Didn't get it? <button type="button" data-forgot-resend>Resend Link</button></p>
+      </div>
+
+      <p class="auth-foot">Remembered it? <a href="login.html">Login</a></p>
+    </div>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

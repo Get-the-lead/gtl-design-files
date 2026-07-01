@@ -82,6 +82,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 }
 .btn:active { transform: scale(0.97); }
 
+/* Semantic action buttons carry the bolder text size (matches the auth screens) */
+.btn-primary, .btn-secondary, .btn-ghost { font-size: var(--fs-body); }
+
 .btn-primary { background: var(--green); color: #06210f; }
 .btn-primary:hover { background: var(--green-strong); }
 
@@ -114,15 +117,26 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   pointer-events: none; /* only the buttons + panel are interactive */
 }
 .header-row {
-  max-width: var(--maxw);
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  position: relative; z-index: 3; /* stays above the full-screen menu takeover */
+  /* full-width — the header row spans the viewport (edge spacing comes from .site-header padding) */
+  /* Mobile: logo + menu icon on the left, auth on the right (no Menu text button) */
+  display: flex;
   align-items: center;
+  justify-content: space-between;
 }
-.header-left { justify-self: start; display: inline-flex; align-items: center; gap: var(--s2); }
-.header-right { justify-self: end; }
-.brand { grid-column: 2; justify-self: center; display: inline-flex; align-items: center; gap: var(--s3); }
+.header-left { display: none; justify-self: start; align-items: center; }
+.header-center { display: inline-flex; align-items: center; gap: var(--s2); }
+.header-right { justify-self: end; display: inline-flex; align-items: center; gap: var(--s2); }
+.brand { display: inline-flex; align-items: center; gap: var(--s3); }
+/* Mobile: the logo chip itself opens the menu (brand-menu); desktop uses the home link (brand-link) */
+.brand-link { display: none; }
+.brand-menu { padding-right: var(--s3); }
+.brand-burger { display: inline-flex; align-items: center; justify-content: center; margin-left: var(--s2); color: var(--ink-2); }
+.brand-burger span { display: inline-flex; }
+.brand-burger svg { width: 18px; height: 18px; }
+.brand-burger .icon-close { display: none; }
+body.menu-open .brand-burger .icon-menu { display: none; }
+body.menu-open .brand-burger .icon-close { display: inline-flex; }
 
 /* shared glass treatment for each floating button */
 .floating-btn {
@@ -165,42 +179,73 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   color: #06210f;
 }
 .brand-mark svg { width: 20px; height: 20px; }
-.site-header .brand-mark { width: 48px; height: 48px; box-shadow: var(--shadow-sm); }
-.site-header .brand-mark svg { width: 22px; height: 22px; }
+/* Header logo — glass pill with icon + "GTL Markets" wordmark */
+.site-header .floating-logo { height: 48px; padding: 0 var(--s5) 0 7px; border-radius: var(--r-pill); gap: var(--s2); }
+.site-header .brand-mark { width: 34px; height: 34px; }
+.site-header .brand-mark svg { width: 20px; height: 20px; }
+.site-header .brand-word { font-size: 1.02rem; white-space: nowrap; }
 .brand-word { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; letter-spacing: 0.02em; }
 
 .header-login { height: 48px; --btn-h: 48px; padding-inline: var(--s5); border-radius: var(--r-pill); }
 
-/* Menu dropdown */
+/* Appearance as a header icon button (desktop only) */
+.theme-icon { display: none; width: 48px; height: 48px; align-items: center; justify-content: center; padding: 0; border-radius: var(--r-pill); }
+.theme-icon svg { width: 20px; height: 20px; }
+
+/* Menu — full-screen takeover on mobile (auth top · nav · appearance bottom) */
 .menu-panel {
   pointer-events: auto;
-  width: min(320px, calc(100% - var(--s8)));
-  margin: var(--s2) 0 0;
-  padding: var(--s3);
-  border-radius: var(--r-lg);
-  background: rgba(13, 15, 17, 0.92);
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-  border: 1px solid var(--line-2);
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  transform-origin: top center;
-  animation: menu-in 0.22s var(--ease-out);
+  position: fixed; inset: 0; z-index: 1; /* under the header-row so Close + logo stay visible */
+  display: flex; flex-direction: column; gap: var(--s3);
+  padding: calc(88px + env(safe-area-inset-top, 0)) var(--s5) calc(var(--s8) + env(safe-area-inset-bottom, 0));
+  background: rgba(9, 11, 13, 0.98);
+  -webkit-backdrop-filter: blur(24px) saturate(140%); backdrop-filter: blur(24px) saturate(140%);
+  overflow-y: auto;
+  animation: menu-in 0.26s var(--ease-out);
 }
 .menu-panel[hidden] { display: none; }
-.menu-panel > a {
-  padding: var(--s3) var(--s4);
-  border-radius: var(--r-sm);
-  font-weight: 600;
-  font-size: var(--fs-body);
+.menu-nav { display: flex; flex-direction: column; gap: var(--s1); }
+.menu-nav a {
+  display: flex; align-items: center;
+  padding: var(--s4);
+  border-radius: var(--r-md);
+  font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; letter-spacing: -0.01em;
   color: var(--ink);
   transition: background 0.18s var(--ease);
 }
-.menu-panel > a:hover { background: rgba(255, 255, 255, 0.06); }
-.menu-actions { display: flex; flex-direction: column; gap: var(--s2); margin-top: var(--s2); padding-top: var(--s3); border-top: 1px solid var(--line); }
-@keyframes menu-in { from { opacity: 0; transform: translateY(-6px) scale(0.98); } to { opacity: 1; transform: none; } }
+.menu-nav a:hover { background: rgba(255, 255, 255, 0.06); }
+.menu-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+.menu-appearance { margin-top: auto; padding-top: var(--s5); border-top: 1px solid var(--line); }
+body.menu-open { overflow: hidden; }
+/* while the takeover is open, hide the right-hand auth chip (it's inside the menu) */
+body.menu-open #headerAuth { display: none; }
+@keyframes menu-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menu-in-drop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* Desktop — compact dropdown; Appearance moves to the header icon button */
+@media (min-width: 768px) {
+  .theme-icon { display: inline-flex; }
+  .header-row { display: grid; grid-template-columns: 1fr auto 1fr; }
+  .header-left { display: inline-flex; }
+  .header-center { grid-column: 2; justify-self: center; }
+  .brand-link { display: inline-flex; }
+  .brand-menu { display: none; }
+  body.menu-open { overflow: auto; }
+  body.menu-open #headerAuth { display: inline-flex; } /* keep the chip on desktop (dropdown doesn't cover it) */
+  .menu-panel {
+    position: absolute; inset: auto; top: calc(100% - var(--s2)); left: var(--s4); z-index: 2;
+    width: min(300px, calc(100vw - var(--s8)));
+    gap: 2px; overflow: visible;
+    padding: var(--s3); border-radius: var(--r-lg);
+    background: rgba(13, 15, 17, 0.92);
+    -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid var(--line-2); box-shadow: var(--shadow);
+    transform-origin: top left; animation: menu-in-drop 0.2s var(--ease-out);
+  }
+  .menu-nav a { font-family: var(--font-ui); font-size: var(--fs-body); padding: var(--s3) var(--s4); border-radius: var(--r-sm); }
+  .menu-actions { margin-top: var(--s2); padding-top: var(--s3); border-top: 1px solid var(--line); gap: var(--s2); }
+  .menu-appearance { display: none; }
+}
 
 /* Footer ------------------------------------------------------------- */
 .site-footer {
@@ -334,25 +379,25 @@ body.sheet-open { overflow: hidden; }
 .limit-toggle:hover { text-decoration: underline; }
 .limit-section[hidden] { display: none; }
 .limit-section { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s2); }
-.limit-caption { text-align: center; color: var(--ink-3); font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
-.limit-section .limit-quick { display: flex; justify-content: center; gap: var(--s3); }
-.limit-section .limit-quick button { flex: 0 0 auto; min-width: 112px; padding-inline: var(--s6); }
+.limit-minmax { text-align: center; margin: 0; color: var(--ink-3); font-size: var(--fs-label); font-weight: 600; }
 
 .bet-field.contracts-field { gap: var(--s6); } /* extra breathing room around the number */
 
 /* Big number input — replaces the swipe picker (no bg/border) */
 .num-input {
   width: 100%; text-align: center; border: none; background: none;
-  font-family: var(--font-display); font-weight: 700; font-size: 3.9rem; line-height: 1.1;
+  font-family: var(--font-display); font-weight: 700; font-size: 3.9rem; line-height: normal;
   color: var(--ink); font-variant-numeric: tabular-nums;
+  overflow: hidden; /* never let the big number scroll within the field */
 }
 .num-input:focus { outline: none; }
 .num-input::-webkit-outer-spin-button, .num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 /* Contracts input — bordered field look, no background; radius = half the 40px chip height */
-.contracts-field .num-input { border: 1px solid var(--line-2); border-radius: 20px; padding: var(--s4) var(--s5); }
+.contracts-field .num-input { border: 1px solid var(--line-2); border-radius: 20px; padding: var(--s2) var(--s5); }
 .contracts-field .num-input:focus { border-color: var(--green); }
-.num-input-wrap { display: flex; align-items: baseline; justify-content: center; gap: var(--s1); }
-.num-input-wrap .num-input { width: auto; min-width: 0; }
+.num-input-box { display: flex; align-items: baseline; justify-content: center; gap: var(--s1); border: 1px solid var(--line-2); border-radius: 20px; padding: var(--s2) var(--s5); }
+.num-input-box:focus-within { border-color: var(--green); }
+.num-input-box .num-input { width: auto; min-width: 0; text-align: left; }
 .num-suffix { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: var(--ink-3); }
 
 /* Total bet + green profit-after-fees */
@@ -422,6 +467,206 @@ body.sheet-open { overflow: hidden; }
 :root[data-theme="light"] .menu-theme:hover { background: rgba(10, 20, 25, 0.05); }
 :root[data-theme="light"] .btn-glass { background: rgba(255, 255, 255, 0.6); color: var(--ink); }
 :root[data-theme="light"] .btn-glass:hover { background: rgba(255, 255, 255, 0.82); }
+
+/* Authenticated chrome — wallet chip in the header ------------------- */
+.wallet-chip {
+  height: 48px;
+  display: inline-flex; align-items: center; gap: var(--s2);
+  padding: 0 var(--s5) 0 var(--s4);
+  border-radius: var(--r-pill);
+  font-weight: 700; font-size: var(--fs-label);
+  font-variant-numeric: tabular-nums;
+}
+.wallet-chip .wallet-ico { width: 18px; height: 18px; color: var(--green); }
+.wallet-chip .wallet-amount { color: var(--ink); }
+:root[data-theme="light"] .wallet-chip .wallet-ico { color: #16a34a; }
+.menu-logout { color: var(--no) !important; }
+.menu-logout:hover { background: var(--no-soft) !important; }
+
+/* P&L colour helper -------------------------------------------------- */
+.pnl.up, .oc-pnl.up { color: var(--green); }
+.pnl.down, .oc-pnl.down { color: var(--no); }
+:root[data-theme="light"] .pnl.up, :root[data-theme="light"] .oc-pnl.up { color: #16a34a; }
+
+/* Position / order card (authed home + wallet) ----------------------- */
+.order-card {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; gap: var(--s4);
+  padding: var(--s5);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  text-align: left;
+}
+.order-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.55;
+  background:
+    radial-gradient(90% 130% at 0% 0%, color-mix(in srgb, var(--home-color) 18%, transparent), transparent 62%),
+    radial-gradient(90% 130% at 100% 0%, color-mix(in srgb, var(--away-color) 18%, transparent), transparent 62%);
+}
+.oc-top { display: flex; align-items: center; gap: var(--s3); }
+.oc-logos { display: inline-flex; align-items: center; flex: 0 0 auto; }
+.oc-logos img { width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35)); }
+.oc-logos img + img { margin-left: -6px; }
+.oc-match { display: flex; flex-direction: column; min-width: 0; }
+.oc-teams { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-body); font-variant-numeric: tabular-nums; }
+.oc-meta { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.oc-meta .live-dot { display: inline-block; vertical-align: middle; margin-right: 5px; }
+
+.oc-mid { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); }
+.oc-pos { display: flex; flex-direction: column; gap: 3px; }
+.oc-tag { font-weight: 700; font-size: var(--fs-label); }
+.oc-tag .side-yes { color: var(--green); }
+.oc-tag .side-no { color: var(--no); }
+:root[data-theme="light"] .oc-tag .side-yes { color: #16a34a; }
+.oc-sub { font-size: var(--fs-eyebrow); color: var(--ink-2); font-weight: 600; letter-spacing: 0.04em; }
+.oc-val { text-align: right; display: flex; flex-direction: column; gap: 2px; }
+.oc-amount { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.oc-pnl { font-size: var(--fs-label); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.oc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); }
+.oc-actions button { height: 46px; border-radius: var(--r-pill); border: 1px solid; font-weight: 600; font-size: var(--fs-label); transition: background 0.18s var(--ease); }
+.oc-buy { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
+.oc-buy:hover { background: rgba(74, 222, 128, 0.22); }
+:root[data-theme="light"] .oc-buy { color: #16a34a; }
+.oc-sell { background: var(--no-soft); border-color: var(--no-line); color: var(--no); }
+.oc-sell:hover { background: rgba(255, 93, 114, 0.22); }
+
+/* Settled variant — result pill instead of actions */
+.order-card.settled::before { opacity: 0.3; }
+.oc-result { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.result-pill { display: inline-flex; align-items: center; gap: var(--s1); padding: 5px var(--s3); border-radius: var(--r-pill); font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.result-pill.win { background: var(--green-soft); color: var(--green); }
+.result-pill.loss { background: var(--no-soft); color: var(--no); }
+:root[data-theme="light"] .result-pill.win { color: #16a34a; }
+.oc-settled-pnl { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+
+/* Live-game media header (tiles, position cards, settled banner) ----- */
+.game-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s2); }
+.team { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
+.team-away { flex-direction: row-reverse; }
+.team-logo { width: 48px; height: 48px; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); }
+.team-meta { display: flex; flex-direction: column; min-width: 0; }
+.team-away .team-meta { align-items: flex-end; }
+.team-abbr { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.82); }
+.team-score { font-family: var(--font-display); font-size: var(--fs-score); font-weight: 700; line-height: 0.95; font-variant-numeric: tabular-nums; }
+.team.is-leading .team-score { color: #fff; }
+.team:not(.is-leading) .team-score { color: rgba(255, 255, 255, 0.66); }
+.game-center { display: flex; flex-direction: column; align-items: center; gap: 1px; padding-inline: var(--s2); }
+.game-center .period { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.6); }
+.game-center .clock { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: #fff; font-variant-numeric: tabular-nums; }
+
+.pos-media { position: relative; overflow: hidden; isolation: isolate; padding: var(--s5) var(--s5) var(--s4); background: var(--bg-2); }
+.pos-media .team-score { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
+.pos-media .sc-won { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; color: var(--green); }
+.pos-media::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.84));
+}
+
+/* Settled — dark media card, shown as a slide-down banner on any page */
+.settled-card { position: relative; background: #08090c; border: 1px solid var(--green-line); border-radius: var(--r-lg); overflow: hidden; }
+.settled-progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--green); transform-origin: left; transform: scaleX(0); }
+.settled-toast.is-open .settled-progress { animation: cancel-fill 10s linear forwards; }
+.settled-card .pos-media { background: transparent; }
+.settled-body { padding: var(--s1) var(--s5) var(--s5); background: transparent; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--s3); }
+.settled-profit { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3rem); line-height: 1; color: var(--green); }
+:root[data-theme="light"] .settled-profit { color: #15803d; }
+.settled-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); width: 100%; margin-top: var(--s2); }
+.settled-actions .btn { --btn-h: 44px; width: 100%; }
+
+.settled-toast {
+  position: fixed; inset: 0 0 auto 0; z-index: 80;
+  display: flex; justify-content: center;
+  padding: calc(var(--s4) + env(safe-area-inset-top, 0)) var(--s5) 0;
+  pointer-events: none;
+  transform: translateY(-140%);
+  transition: transform 0.5s var(--ease-out);
+}
+.settled-toast.is-open { transform: translateY(0); }
+.settled-toast .settled-card { pointer-events: auto; width: 100%; max-width: 440px; box-shadow: var(--shadow); }
+
+/* Sell mode in the bet drawer ---------------------------------------- */
+.bet-sheet[data-mode="sell"] .buy-only { display: none !important; }
+.bet-sheet[data-mode="buy"] .sell-only { display: none !important; }
+.sell-readout { display: flex; flex-direction: column; align-items: center; gap: var(--s1); text-align: center; }
+.sell-readout .sell-tag { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h3); }
+.sell-readout .sell-tag .side-yes { color: var(--green); }
+.sell-readout .sell-tag .side-no { color: var(--no); }
+:root[data-theme="light"] .sell-readout .sell-tag .side-yes { color: #16a34a; }
+.sell-readout .sell-sub { color: var(--ink-2); font-size: var(--fs-label); }
+.qty-quick.q3 { grid-template-columns: repeat(3, 1fr); }
+.bet-profit-line.is-loss { color: var(--no); }
+:root[data-theme="light"] .bet-profit-line.is-loss { color: var(--no); }
+/* Sell footer — single full-width action */
+.bet-sheet[data-mode="sell"] [data-breakdown],
+.bet-sheet[data-mode="sell"] [data-bet-back] { display: none; }
+.bet-sheet[data-mode="sell"] .bet-primary { flex: 1; }
+
+/* Toast notifications (success / error) ------------------------------ */
+.toast-stack {
+  position: fixed; top: calc(84px + env(safe-area-inset-top, 0)); left: 50%; transform: translateX(-50%);
+  z-index: 300; display: flex; flex-direction: column; align-items: center; gap: var(--s2);
+  width: min(440px, calc(100% - var(--s8))); pointer-events: none;
+}
+.toast {
+  pointer-events: auto; display: flex; align-items: center; gap: var(--s3);
+  max-width: 100%; padding: var(--s3) var(--s5) var(--s3) var(--s3);
+  border-radius: var(--r-pill);
+  background: var(--surface-2); border: 1px solid var(--line-2);
+  box-shadow: var(--shadow); color: var(--ink);
+  font-size: var(--fs-label); font-weight: 600;
+  animation: toast-in 0.32s var(--ease-out);
+}
+.toast.leaving { animation: toast-out 0.26s var(--ease) forwards; }
+.toast-ico { flex: 0 0 auto; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; }
+.toast-ico svg { width: 16px; height: 16px; }
+.toast-msg { min-width: 0; }
+.toast-success { border-color: var(--green-line); }
+.toast-success .toast-ico { background: var(--green-soft); color: var(--green); }
+.toast-error { border-color: var(--no-line); }
+.toast-error .toast-ico { background: var(--no-soft); color: var(--no); }
+:root[data-theme="light"] .toast-success .toast-ico { color: #16a34a; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-12px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(-8px); } }
+
+/* Auth gate — centred modal shown when a guest tries to bet --------- */
+.gate-backdrop {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+}
+.gate-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.auth-gate {
+  position: fixed; z-index: 201; left: 50%; top: 50%;
+  width: min(420px, calc(100% - var(--s6)));
+  transform: translate(-50%, -46%) scale(0.96); opacity: 0; pointer-events: none;
+  background: var(--bg); border: 1px solid var(--line-2); border-radius: var(--r-xl);
+  box-shadow: var(--shadow); overflow: hidden;
+  transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+}
+.auth-gate.is-open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+.auth-gate .bet-scoreboard { cursor: default; }
+.gate-body { padding: var(--s10) var(--s5) var(--s6); text-align: center; display: flex; flex-direction: column; gap: var(--s3); }
+.gate-title { font-size: clamp(2.1rem, 1.4rem + 3.4vw, 3rem); line-height: 1.05; }
+.gate-desc { margin: 0; color: var(--ink-2); font-size: var(--fs-body); }
+.gate-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s4); }
+.gate-actions .btn { --btn-h: 52px; width: 100%; }
+/* Close — a secondary button below the modal, over the backdrop */
+.gate-close {
+  position: fixed; z-index: 201; left: 50%; bottom: calc(var(--s6) + env(safe-area-inset-bottom, 0));
+  --btn-h: 50px; min-width: 180px;
+  box-shadow: var(--shadow);
+  opacity: 0; pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+  transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+}
+.gate-close.is-open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto; transition-duration: 0.001ms !important; }

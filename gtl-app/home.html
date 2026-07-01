@@ -18,42 +18,7 @@
 <body>
 
   <!-- Floating header (shared) -->
-  <header class="site-header" id="siteHeader">
-    <div class="header-row">
-      <div class="header-left">
-        <button class="header-menu floating-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel">
-          <span>Menu</span>
-        </button>
-      </div>
-      <a class="brand floating-logo" href="home.html" data-scroll-top aria-label="GTL home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>
-        </span>
-      </a>
-      <div class="header-right">
-        <a class="btn header-login floating-btn" href="#">Login</a>
-      </div>
-    </div>
-
-    <div class="menu-panel" id="menuPanel" hidden>
-      <a href="#live">Live games</a>
-      <a href="#how">How it works</a>
-      <a href="#">Tutorial</a>
-      <button class="theme-toggle menu-theme" id="themeBtn" aria-label="Switch colour theme">
-        <span>Appearance</span>
-        <span class="menu-theme-value">
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span class="label-dark">Dark</span>
-          <span class="label-light">Light</span>
-        </span>
-      </button>
-      <div class="menu-actions">
-        <a class="btn btn-secondary btn-block" href="#">Log in</a>
-        <a class="btn btn-primary btn-block" href="#">Create account</a>
-      </div>
-    </div>
-  </header>
+  <header class="site-header" id="siteHeader"></header>
 
   <main>
     <!-- Hero -->
@@ -75,8 +40,8 @@
         <h1 class="hero-title">Trade the moments that move the game.</h1>
         <p class="hero-sub">Back the lead on live NFL &amp; NBA. Buy and sell in seconds, as the game turns.</p>
         <div class="hero-cta">
-          <a class="btn btn-primary btn-lg" href="#live">Live games</a>
-          <a class="btn btn-glass btn-lg" href="#">Create account</a>
+          <a class="btn btn-primary btn-lg" href="#live">Live Games</a>
+          <a class="btn btn-glass btn-lg" href="signup.html">Create Account</a>
         </div>
       </div>
     </section>
@@ -103,6 +68,17 @@
 
         <!-- Game tiles (rendered by app.js) -->
         <div class="game-grid" id="gameGrid"></div>
+
+        <!-- NBA coming-soon state (shown when NBA is selected) -->
+        <div class="coming-soon" id="nbaSoon" hidden>
+          <img class="cs-logo" src="assets/logos/league-nba.png" alt="" />
+          <h3 class="cs-title">NBA Betting Coming Soon</h3>
+          <p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p>
+          <div class="cs-actions">
+            <button class="btn btn-secondary" data-nba-vote="yes">I'd bet on NBA</button>
+            <button class="btn btn-secondary" data-nba-vote="no">Not for me</button>
+          </div>
+        </div>
       </div>
     </section>
 

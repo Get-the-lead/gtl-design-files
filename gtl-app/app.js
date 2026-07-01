@@ -170,7 +170,11 @@ function initLeagueFilter() {
   const strip = $("#leagueStrip");
   const grid = $("#gameGrid");
   if (!strip || !grid) return;
+  const soon = $("#nbaSoon");
   const apply = (league) => {
+    const isNba = league === "nba";
+    if (soon) soon.hidden = !isNba; // NBA → coming-soon panel instead of cards
+    grid.style.display = isNba ? "none" : "";
     $$(".game-tile", grid).forEach((tile) => {
       tile.style.display = tile.dataset.league === league ? "" : "none";
     });
@@ -187,9 +191,66 @@ function initLeagueFilter() {
   });
   const active = $(".league-pill.is-active", strip) || $(".league-pill", strip);
   apply(active.dataset.league);
+
+  // NBA interest signal → feedback toast
+  const soonEl = $("#nbaSoon");
+  if (soonEl) soonEl.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-nba-vote]");
+    if (!b) return;
+    $$("[data-nba-vote]", soonEl).forEach((x) => x.classList.toggle("is-chosen", x === b));
+    showToast("Your feedback has been submitted", "success");
+  });
 }
 
-/* ----------------------------------------------- HEADER: MENU + SCROLL */
+/* ----------------------------------------------- HEADER (shared, rendered) */
+const ICON_MOON = '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const LOGO_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>';
+const ICON_HAMBURGER = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const ICON_X = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+// Single source of truth for the header on every page (auth slots filled by applyAuthChrome)
+function renderHeader() {
+  const header = $("#siteHeader");
+  if (!header) return;
+  header.innerHTML = `
+    <div class="header-row">
+      <div class="header-left">
+        <button class="header-menu floating-btn" id="menuBtn" data-menu-toggle aria-expanded="false" aria-controls="menuPanel"><span>Menu</span></button>
+      </div>
+      <div class="header-center">
+        <a class="brand floating-logo floating-btn brand-link" href="home.html" data-scroll-top aria-label="GTL Markets home">
+          <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
+          <span class="brand-word">GTL Markets</span>
+        </a>
+        <button class="brand floating-logo floating-btn brand-menu" data-menu-toggle aria-controls="menuPanel" aria-expanded="false" aria-label="Open menu">
+          <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
+          <span class="brand-word">GTL Markets</span>
+          <span class="brand-burger"><span class="icon-menu">${ICON_HAMBURGER}</span><span class="icon-close">${ICON_X}</span></span>
+        </button>
+      </div>
+      <div class="header-right">
+        <button class="theme-icon floating-btn theme-toggle" id="themeBtnHeader" data-theme-toggle aria-label="Switch colour theme">${ICON_MOON}${ICON_SUN}</button>
+        <span class="header-auth" id="headerAuth"></span>
+      </div>
+    </div>
+    <div class="menu-panel" id="menuPanel" hidden>
+      <nav class="menu-nav">
+        <a href="home.html" data-scroll-top>Home</a>
+        <a href="home.html#live">Live Games</a>
+        <a href="home.html#how">How It Works</a>
+        <a href="#">Tutorial</a>
+      </nav>
+      <div class="menu-actions" id="menuActions"></div>
+      <div class="menu-appearance">
+        <button class="theme-toggle menu-theme" id="themeBtn" data-theme-toggle aria-label="Switch colour theme">
+          <span>Appearance</span>
+          <span class="menu-theme-value">${ICON_MOON}${ICON_SUN}<span class="label-dark">Dark</span><span class="label-light">Light</span></span>
+        </button>
+      </div>
+    </div>`;
+}
+
 function initHeader() {
   const header = $("#siteHeader");
   if (!header) return;
@@ -197,16 +258,14 @@ function initHeader() {
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  const btn = $("#menuBtn");
+  const triggers = $$("[data-menu-toggle]");
   const panel = $("#menuPanel");
-  if (btn && panel) {
-    const close = () => { panel.setAttribute("hidden", ""); btn.setAttribute("aria-expanded", "false"); };
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const willOpen = panel.hasAttribute("hidden");
-      if (willOpen) { panel.removeAttribute("hidden"); btn.setAttribute("aria-expanded", "true"); }
-      else close();
-    });
+  if (triggers.length && panel) {
+    const label = $("#menuBtn")?.querySelector("span");
+    const setExpanded = (v) => triggers.forEach((t) => t.setAttribute("aria-expanded", v));
+    const close = () => { panel.setAttribute("hidden", ""); setExpanded("false"); document.body.classList.remove("menu-open"); if (label) label.textContent = "Menu"; };
+    const open = () => { panel.removeAttribute("hidden"); setExpanded("true"); document.body.classList.add("menu-open"); if (label) label.textContent = "Close"; };
+    triggers.forEach((t) => t.addEventListener("click", (e) => { e.stopPropagation(); panel.hasAttribute("hidden") ? open() : close(); }));
     panel.addEventListener("click", (e) => { if (e.target.closest("a")) close(); });
     document.addEventListener("click", (e) => { if (!header.contains(e.target)) close(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
@@ -215,13 +274,13 @@ function initHeader() {
 
 /* ------------------------------------------------------- THEME TOGGLE */
 function initTheme() {
-  const btn = $("#themeBtn");
-  if (!btn) return;
-  btn.addEventListener("click", () => {
+  const toggles = $$("[data-theme-toggle]");
+  if (!toggles.length) return;
+  toggles.forEach((btn) => btn.addEventListener("click", () => {
     const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", next);
     try { localStorage.setItem("gtl-theme", next); } catch (e) { /* ignore */ }
-  });
+  }));
 }
 
 /* --------------------------------------------------- SCROLL-TO-TOP LOGO */
@@ -366,8 +425,7 @@ function computeBet() {
   return { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net };
 }
 
-function renderScoreboard(g) {
-  const sb = $("#betSheet")?.querySelector("[data-bet-grab]");
+function fillScoreboard(sb, g) {
   if (!sb) return;
   const lead = leaderOf(g);
   sb.style.setProperty("--home-color", g.home.color);
@@ -386,29 +444,27 @@ function renderScoreboard(g) {
       ${team("away")}
     </div>`;
 }
-
-// Two quick limit options — nearest round-10 values straddling the current price
-function limitOptions(p) {
-  let low = Math.floor(p / 10) * 10;
-  let high = low + 10;
-  low = Math.max(5, low);
-  high = Math.min(99, high);
-  if (low >= high) low = high - 10;
-  return [low, high];
-}
+function renderScoreboard(g) { fillScoreboard($("#betSheet")?.querySelector("[data-bet-grab]"), g); }
 
 function ensureBetSheet() {
   let sheet = $("#betSheet");
   if (sheet) return sheet;
   document.body.insertAdjacentHTML("beforeend", `
     <div class="bet-sheet-backdrop" id="betBackdrop" data-bet-close></div>
-    <aside class="bet-sheet" id="betSheet" data-step="1" aria-hidden="true" aria-label="Place a bet">
+    <aside class="bet-sheet" id="betSheet" data-step="1" data-mode="buy" aria-hidden="true" aria-label="Place a bet">
       <div class="bet-scoreboard" data-bet-grab></div>
       <div class="bet-sheet-handle" aria-hidden="true"></div>
 
       <div class="bet-sheet-body">
         <div class="bet-step bet-step-1">
-          <div class="bet-field contracts-field">
+          <!-- SELL: position you hold -->
+          <div class="sell-only sell-readout">
+            <span class="sell-tag" data-sell-tag>—</span>
+            <span class="sell-sub" data-sell-sub>—</span>
+          </div>
+
+          <!-- BUY: how many to buy -->
+          <div class="bet-field contracts-field buy-only">
             <span class="bet-label">Select number of contracts</span>
             <input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts" />
             <div class="qty-quick">
@@ -419,7 +475,18 @@ function ensureBetSheet() {
             </div>
           </div>
 
-          <div class="bet-field">
+          <!-- SELL: how many to sell -->
+          <div class="bet-field contracts-field sell-only">
+            <span class="bet-label">Contracts to sell</span>
+            <input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="0" aria-label="Contracts to sell" />
+            <div class="qty-quick q3" data-sell-quick>
+              <button data-sell-pct="25">25%</button>
+              <button data-sell-pct="50">50%</button>
+              <button data-sell-pct="100">Max</button>
+            </div>
+          </div>
+
+          <div class="bet-field buy-only">
             <span class="bet-label">Bet type</span>
             <div class="seg seg-3" role="group" aria-label="Bet type">
               <button data-market="gtl">GTL</button>
@@ -428,24 +495,34 @@ function ensureBetSheet() {
             </div>
           </div>
 
-          <div class="bet-field">
+          <div class="bet-field buy-only">
             <span class="bet-label">Pick a side</span>
             <div class="bet-toggle" data-active="yes" role="group" aria-label="Side">
               <button class="bt-opt yes" data-contract="yes"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>—</span></button>
               <button class="bt-opt no" data-contract="no"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>—</span></button>
             </div>
-            <button class="limit-toggle" data-limit-toggle aria-expanded="false">Set a limit</button>
+            <button class="limit-toggle" data-limit-toggle aria-expanded="false">Set a Limit</button>
             <div class="limit-section" data-limit-section hidden>
-              <span class="limit-caption">Max limit price</span>
-              <div class="num-input-wrap"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents" /><span class="num-suffix">¢</span></div>
-              <div class="qty-quick limit-quick" data-limit-quick></div>
+              <span class="bet-label">Max limit price</span>
+              <div class="num-input-box">
+                <input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents" />
+                <span class="num-suffix">¢</span>
+              </div>
+              <p class="limit-minmax" data-limit-minmax></p>
             </div>
           </div>
 
-          <div class="bet-highlight">
+          <div class="bet-highlight buy-only">
             <span class="bet-label">Purchase price</span>
             <span class="bet-total-big tnum" data-total-big>$0.00</span>
             <span class="bet-profit-line">Potential profit of <strong data-profit-big>$0.00</strong> after <a href="#" class="fees-link" data-fees-link>fees</a></span>
+          </div>
+
+          <!-- SELL: proceeds + realised P&L -->
+          <div class="bet-highlight sell-only">
+            <span class="bet-label">You receive</span>
+            <span class="bet-total-big tnum" data-receive-big>$0.00</span>
+            <span class="bet-profit-line" data-realized-line>Realised profit of <strong data-realized-big>$0.00</strong> after fees</span>
           </div>
         </div>
 
@@ -482,7 +559,7 @@ function ensureBetSheet() {
         <div class="success-content">
           <div class="bet-success-head">
             <span class="bet-success-check">${CHECK_ICON}</span>
-            <h3 class="bet-success-title">Bet placed!</h3>
+            <h3 class="bet-success-title" data-success-title>Bet placed!</h3>
             <p class="bet-success-sub" data-success-line>You're in the game.</p>
           </div>
           <div class="bet-field">
@@ -492,7 +569,7 @@ function ensureBetSheet() {
               <div class="summary-row"><span>Contracts</span><strong data-sx-qty>—</strong></div>
               <div class="summary-row"><span>Subtotal</span><strong data-sx-subtotal>—</strong></div>
               <div class="summary-row"><span>Trading fee</span><strong data-sx-fee>—</strong></div>
-              <div class="summary-row total"><span>Total paid</span><strong data-sx-total>—</strong></div>
+              <div class="summary-row total"><span data-sx-total-label>Total paid</span><strong data-sx-total>—</strong></div>
             </div>
           </div>
           <button class="bet-secondary cancel-bet" data-cancel-bet>Cancel Bet</button>
@@ -518,7 +595,30 @@ function ensureBetSheet() {
   sheet.querySelector("[data-fees-link]").addEventListener("click", (e) => { e.preventDefault(); goToFees(); });
 
   qtyInput.addEventListener("input", () => { const v = parseInt(qtyInput.value.replace(/[^0-9]/g, ""), 10); betState.quantity = v >= 1 ? v : 1; updateBetSheet(); });
-  limitInput.addEventListener("input", () => { let v = parseInt(limitInput.value.replace(/[^0-9]/g, ""), 10); if (v > 99) { v = 99; limitInput.value = "99"; } betState.limit = v >= 1 ? v : 1; updateBetSheet(); });
+  limitInput.addEventListener("input", () => {
+    const mk = betState.markets[betState.market] || { yes: 50, no: 50 };
+    const max = betState.contract === "yes" ? mk.yes : mk.no; // can't bid above the listed price
+    let v = parseInt(limitInput.value.replace(/[^0-9]/g, ""), 10);
+    if (isNaN(v)) v = 0;
+    if (v > max) { v = max; limitInput.value = max; }
+    betState.limit = v >= 1 ? v : 1;
+    updateBetSheet();
+  });
+
+  // Sell mode — contracts-to-sell input + quick percentages (capped at holding)
+  const sellQtyInput = sheet.querySelector("[data-sell-qty-input]");
+  sellQtyInput.addEventListener("input", () => {
+    let v = parseInt(sellQtyInput.value.replace(/[^0-9]/g, ""), 10);
+    if (isNaN(v)) v = 0;
+    v = Math.max(0, Math.min(betState.holding || 0, v));
+    betState.sellQty = v; sellQtyInput.value = v; updateBetSheet();
+  });
+  sheet.querySelector("[data-sell-quick]").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-sell-pct]");
+    if (!b) return;
+    betState.sellQty = Math.max(1, Math.round((betState.holding || 0) * Number(b.dataset.sellPct) / 100));
+    sellQtyInput.value = betState.sellQty; updateBetSheet();
+  });
 
   sheet.querySelector("[data-limit-toggle]").addEventListener("click", () => {
     betState.limitOpen = !betState.limitOpen;
@@ -531,11 +631,6 @@ function ensureBetSheet() {
     }
     updateBetSheet();
   });
-  sheet.querySelector("[data-limit-quick]").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-limit-set]");
-    if (b) { betState.limit = Number(b.dataset.limitSet); limitInput.value = betState.limit; updateBetSheet(); }
-  });
-
   // Swipe the scoreboard down to close
   const grab = sheet.querySelector("[data-bet-grab]");
   let sStartY = 0, sDrag = false;
@@ -550,9 +645,15 @@ function ensureBetSheet() {
 
 function updateBetSheet() {
   const sheet = ensureBetSheet();
+  if (betState.limitOpen && betState.limit != null) {
+    const mkNow = betState.markets[betState.market] || { yes: 50, no: 50 };
+    const maxNow = betState.contract === "yes" ? mkNow.yes : mkNow.no;
+    if (betState.limit > maxNow) { betState.limit = maxNow; const li = sheet.querySelector("[data-limit-input]"); if (li) li.value = maxNow; }
+  }
   const { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net } = computeBet();
 
   sheet.setAttribute("data-step", betState.step);
+  sheet.setAttribute("data-mode", betState.mode || "buy");
   sheet.querySelector("[data-yes-price]").textContent = `${mk.yes}¢`;
   sheet.querySelector("[data-no-price]").textContent = `${mk.no}¢`;
 
@@ -565,12 +666,10 @@ function updateBetSheet() {
   const limitSection = sheet.querySelector("[data-limit-section]");
   const limitToggle = sheet.querySelector("[data-limit-toggle]");
   limitSection.hidden = !betState.limitOpen;
-  limitToggle.textContent = betState.limitOpen ? "Hide limit" : "Set a limit";
+  limitToggle.textContent = betState.limitOpen ? "Hide Limit" : "Set a Limit";
   limitToggle.setAttribute("aria-expanded", betState.limitOpen ? "true" : "false");
   if (betState.limitOpen) {
-    const [low, high] = limitOptions(marketPrice);
-    sheet.querySelector("[data-limit-quick]").innerHTML = [low, high]
-      .map((v) => `<button data-limit-set="${v}"${v === betState.limit ? ' class="is-active"' : ""}>${v}¢</button>`).join("");
+    sheet.querySelector("[data-limit-minmax]").textContent = `Min 1¢ · Max ${marketPrice}¢`;
   }
 
   // highlight — total bet + green profit-after-fees
@@ -587,6 +686,34 @@ function updateBetSheet() {
   sheet.querySelector("[data-g-profit]").textContent = money(profit);
   sheet.querySelector("[data-g-fees]").textContent = money(fee);
   sheet.querySelector("[data-g-net]").textContent = money(net);
+
+  // Sell mode — position readout, quick-% active state, proceeds + realised P&L
+  if (betState.mode === "sell") {
+    const s = computeSell();
+    sheet.querySelector("[data-sell-tag]").innerHTML = `${MARKET_LABELS[betState.market]} · <span class="side-${betState.contract}">${betState.contract.toUpperCase()}</span>`;
+    sheet.querySelector("[data-sell-sub]").textContent = `${betState.holding} held · avg ${betState.avg}¢ · now ${s.priceCents}¢`;
+    $$("[data-sell-pct]", sheet).forEach((b) => {
+      const target = Math.max(1, Math.round(betState.holding * Number(b.dataset.sellPct) / 100));
+      b.classList.toggle("is-active", target === s.qty);
+    });
+    sheet.querySelector("[data-receive-big]").textContent = money(s.proceeds);
+    const rline = sheet.querySelector("[data-realized-line]");
+    const win = s.realized >= 0;
+    rline.classList.toggle("is-loss", !win);
+    rline.innerHTML = `Realised ${win ? "profit" : "loss"} of <strong>${money(Math.abs(s.realized))}</strong> after fees`;
+  }
+
+  // Primary button label
+  const primary = sheet.querySelector("[data-bet-primary]");
+  if (primary) primary.textContent = betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Quick Bet");
+
+  syncLimitSize();
+}
+
+// Size the limit input to its content so the ¢ suffix sits next to the number (centred)
+function syncLimitSize() {
+  const li = $("#betSheet")?.querySelector("[data-limit-input]");
+  if (li) li.size = Math.max(1, String(li.value || "").length);
 }
 
 let betTicker = null;
@@ -612,14 +739,16 @@ function syncInputs() {
   if (!sheet) return;
   sheet.querySelector("[data-qty-input]").value = betState.quantity;
   sheet.querySelector("[data-limit-input]").value = betState.limit != null ? betState.limit : "";
+  syncLimitSize();
 }
 
 function openBetSheet(gameId, market, side, markets, opts = {}) {
   const g = GAMES.find((x) => x.id === gameId);
   if (!g) return;
   Object.assign(betState, {
-    game: g, market, contract: side, markets,
+    game: g, mode: opts.mode || "buy", market, contract: side, markets,
     quantity: opts.quantity || 100, step: 1, typeOpen: false,
+    holding: 0, avg: 0, sellQty: 0,
     limit: opts.limit != null ? opts.limit : null,
     limitOpen: opts.limit != null,
   });
@@ -635,6 +764,50 @@ function openBetSheet(gameId, market, side, markets, opts = {}) {
   startBetTicker();
 }
 
+const marketsFromGame = (g) => ({ gtl: { ...g.markets.gtl }, tie: { ...g.markets.tie }, ktl: { ...g.markets.ktl } });
+
+// Buy more of an existing position — the standard buy drawer, prefilled
+function openBuy(pos) {
+  const g = GAMES.find((x) => x.id === pos.gameId);
+  if (!g) return;
+  openBetSheet(pos.gameId, pos.market, pos.side, marketsFromGame(g), { quantity: 100, mode: "buy" });
+}
+
+// Sell all or part of a holding at the live price
+function openSell(pos) {
+  const g = GAMES.find((x) => x.id === pos.gameId);
+  if (!g) return;
+  Object.assign(betState, {
+    game: g, mode: "sell", market: pos.market, contract: pos.side, markets: marketsFromGame(g),
+    holding: pos.qty, avg: pos.avg, sellQty: pos.qty,
+    quantity: 100, step: 1, typeOpen: false, limit: null, limitOpen: false,
+  });
+  const sheet = ensureBetSheet();
+  sheet.classList.remove("is-success");
+  renderScoreboard(g);
+  updateBetSheet();
+  const sq = sheet.querySelector("[data-sell-qty-input]");
+  if (sq) sq.value = betState.sellQty;
+  syncInputs();
+  $("#betBackdrop").classList.add("is-open");
+  sheet.classList.add("is-open");
+  sheet.setAttribute("aria-hidden", "false");
+  document.body.classList.add("sheet-open");
+  startBetTicker();
+}
+
+function computeSell() {
+  const mk = betState.markets[betState.market] || { yes: 50, no: 50 };
+  const priceCents = betState.contract === "yes" ? mk.yes : mk.no;
+  const qty = betState.sellQty || 0;
+  const gross = (priceCents / 100) * qty;
+  const fee = qty > 0 ? Math.max(0.01, gross * 0.02) : 0;
+  const proceeds = Math.max(0, gross - fee);
+  const cost = (betState.avg / 100) * qty;
+  const realized = proceeds - cost;
+  return { priceCents, qty, gross, fee, proceeds, cost, realized };
+}
+
 function closeBetSheet() {
   const sheet = $("#betSheet");
   if (!sheet) return;
@@ -647,14 +820,36 @@ function closeBetSheet() {
 }
 
 function placeBet() {
+  if (betState.mode === "sell") return sellNow();
   const sheet = ensureBetSheet();
   const { priceCents, qty, subtotal, fee, total } = computeBet();
+  sheet.querySelector("[data-success-title]").textContent = "Bet placed!";
   sheet.querySelector("[data-success-line]").textContent = `${qty} × ${MARKET_LABELS[betState.market]} ${betState.contract.toUpperCase()}`;
   sheet.querySelector("[data-sx-price]").textContent = `${priceCents}¢`;
   sheet.querySelector("[data-sx-qty]").textContent = qty;
   sheet.querySelector("[data-sx-subtotal]").textContent = money(subtotal);
   sheet.querySelector("[data-sx-fee]").textContent = money(fee);
+  sheet.querySelector("[data-sx-total-label]").textContent = "Total paid";
   sheet.querySelector("[data-sx-total]").textContent = money(total);
+  sheet.querySelector("[data-cancel-bet]").textContent = "Cancel Bet";
+  sheet.classList.add("is-success");
+  stopBetTicker();
+  startCancelTimer();
+}
+
+function sellNow() {
+  const sheet = ensureBetSheet();
+  const s = computeSell();
+  if (s.qty < 1) return;
+  sheet.querySelector("[data-success-title]").textContent = "Sold!";
+  sheet.querySelector("[data-success-line]").textContent = `${s.qty} × ${MARKET_LABELS[betState.market]} ${betState.contract.toUpperCase()} sold`;
+  sheet.querySelector("[data-sx-price]").textContent = `${s.priceCents}¢`;
+  sheet.querySelector("[data-sx-qty]").textContent = s.qty;
+  sheet.querySelector("[data-sx-subtotal]").textContent = money(s.gross);
+  sheet.querySelector("[data-sx-fee]").textContent = money(s.fee);
+  sheet.querySelector("[data-sx-total-label]").textContent = "You received";
+  sheet.querySelector("[data-sx-total]").textContent = money(s.proceeds);
+  sheet.querySelector("[data-cancel-bet]").textContent = "Undo Sale";
   sheet.classList.add("is-success");
   stopBetTicker();
   startCancelTimer();
@@ -678,10 +873,71 @@ function goToFees() {
   location.href = "fees.html?" + p.toString();
 }
 
+/* ---------------------------------------------- AUTH GATE (guests betting) */
+// Remember the bet a guest tried to place, so login/sign-up can resume it
+const INTENT_KEY = "gtl-bet-intent";
+function setBetIntent(o) { try { localStorage.setItem(INTENT_KEY, JSON.stringify(o)); } catch (e) { /* ignore */ } }
+function clearBetIntent() { try { localStorage.removeItem(INTENT_KEY); } catch (e) { /* ignore */ } }
+function postAuthDest() {
+  let intent = null;
+  try { intent = JSON.parse(localStorage.getItem(INTENT_KEY) || "null"); } catch (e) { /* ignore */ }
+  clearBetIntent();
+  if (intent && intent.id) {
+    const p = new URLSearchParams({ id: intent.id, bet: "1", market: intent.market || "gtl", side: intent.side || "yes", qty: "100" });
+    return "game.html?" + p.toString();
+  }
+  return "home.html";
+}
+
+function ensureAuthGate() {
+  let gate = $("#authGate");
+  if (gate) return gate;
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="gate-backdrop" id="gateBackdrop"></div>
+    <div class="auth-gate" id="authGate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="gateTitle">
+      <div class="gate-body">
+        <h3 class="gate-title" id="gateTitle">You need an account to bet on the lead.</h3>
+        <p class="gate-desc">Login below or create an account in less than a minute.</p>
+        <div class="gate-actions">
+          <a class="btn btn-secondary" href="login.html">Login</a>
+          <a class="btn btn-primary" href="signup.html">Create Account</a>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-secondary gate-close" id="gateClose">Close</button>`);
+  gate = $("#authGate");
+  $("#gateBackdrop").addEventListener("click", closeAuthGate);
+  $("#gateClose").addEventListener("click", closeAuthGate);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAuthGate(); });
+  return gate;
+}
+function openAuthGate(gameId, market, side) {
+  const g = GAMES.find((x) => x.id === gameId);
+  if (!g) return;
+  setBetIntent({ id: gameId, market: market || "gtl", side: side || "yes" });
+  const gate = ensureAuthGate();
+  $("#gateBackdrop").classList.add("is-open");
+  gate.classList.add("is-open");
+  $("#gateClose").classList.add("is-open");
+  gate.setAttribute("aria-hidden", "false");
+  document.body.classList.add("sheet-open");
+}
+function closeAuthGate() {
+  const gate = $("#authGate");
+  if (!gate) return;
+  clearBetIntent(); // explicit dismiss = abandon the bet
+  $("#gateBackdrop").classList.remove("is-open");
+  gate.classList.remove("is-open");
+  $("#gateClose").classList.remove("is-open");
+  gate.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("sheet-open");
+}
+
 function initBetSheet() {
   document.addEventListener("click", (e) => {
     const price = e.target.closest(".price");
     if (!price || !price.dataset.game) return;
+    if (!isAuthed()) { openAuthGate(price.dataset.game, price.dataset.market, price.dataset.side); return; } // guests: contextual account prompt
     const grid = price.closest(".mkt-grid");
     const markets = {};
     grid.querySelectorAll(".price[data-market]").forEach((b) => {
@@ -746,9 +1002,534 @@ function initStickyBet() {
   });
 }
 
+/* ---------------------------------------------------- USER (mock) + AUTH
+   Prototype auth: a flag in localStorage marks the signed-in state; the
+   positions/settled data below is the signed-in user's mock portfolio. */
+const USER = {
+  name: "Sam",
+  balance: 248.5,
+  positions: [
+    { gameId: "kc-sf", market: "gtl", side: "yes", qty: 150, avg: 31 },
+    { gameId: "den-dal", market: "gtl", side: "no", qty: 90, avg: 60 },
+    { gameId: "ny-bos", market: "ktl", side: "yes", qty: 100, avg: 70 },
+  ],
+  settled: [
+    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 100, avg: 45, result: "win", net: 54.1, reopened: true },
+    { gameId: "lal-gs", market: "ktl", side: "yes", qty: 60, avg: 55, result: "loss", net: -33 },
+  ],
+};
+
+const AUTH_KEY = "gtl-auth";
+function getAuth() { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (e) { return null; } }
+function isAuthed() { return !!getAuth(); }
+function setAuth(user) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(user)); } catch (e) { /* ignore */ } }
+function clearAuth() { try { localStorage.removeItem(AUTH_KEY); } catch (e) { /* ignore */ } }
+function currentName() { const a = getAuth(); return (a && a.name) || USER.name; }
+function nameFromEmail(email) {
+  if (!email) return USER.name;
+  const local = String(email).split("@")[0].replace(/[._+-]+/g, " ").trim();
+  if (!local) return USER.name;
+  return local.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+const signed = (v) => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toFixed(2);
+function posFigures(p) {
+  const g = GAMES.find((x) => x.id === p.gameId);
+  const cur = g.markets[p.market][p.side];
+  const value = (cur / 100) * p.qty;
+  const cost = (p.avg / 100) * p.qty;
+  return { g, cur, value, cost, pnl: value - cost };
+}
+
+/* --------------------------------------------------- POSITION / ORDER CARDS */
+// Live-game media header (team-tinted, logos + scores; centre cell is caller-supplied)
+function gameMedia(g, centerInner) {
+  const lead = leaderOf(g);
+  const team = (side) => {
+    const t = g[side];
+    return `<div class="team team-${side}${lead === side ? " is-leading" : ""}">
+        <img class="team-logo" src="${t.logo}" alt="${t.name}" />
+        <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
+      </div>`;
+  };
+  return `<div class="game-row">${team("home")}<div class="game-center">${centerInner || ""}</div>${team("away")}</div>`;
+}
+const clockCenter = (g) => `<span class="period">${g.period}</span><span class="clock tnum">${g.clock}</span>`;
+
+// Open-position card for the authed-home carousel (live media header + position + Buy More/Sell)
+function positionCarouselCard(p, i) {
+  const { g, value, pnl } = posFigures(p);
+  const up = pnl >= 0;
+  return `<article class="pos-card" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="pos-media">${gameMedia(g, clockCenter(g))}</div>
+    <div class="pos-info">
+      <div class="oc-mid">
+        <span class="oc-pos">
+          <span class="oc-tag">${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span></span>
+          <span class="oc-sub">${p.qty} contracts · avg ${p.avg}¢</span>
+        </span>
+        <span class="oc-val">
+          <span class="oc-amount tnum">${money(value)}</span>
+          <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span>
+        </span>
+      </div>
+      <div class="oc-actions">
+        <button class="oc-buy" data-buy="${i}">Buy More</button>
+        <button class="oc-sell" data-sell="${i}">Sell</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function positionCardHTML(p, i) {
+  const { g, value, pnl } = posFigures(p);
+  const up = pnl >= 0;
+  return `<article class="order-card" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="oc-top">
+      <span class="oc-logos"><img src="${g.home.logo}" alt="" /><img src="${g.away.logo}" alt="" /></span>
+      <span class="oc-match">
+        <span class="oc-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span>
+        <span class="oc-meta"><span class="live-dot"></span>${g.league.toUpperCase()} · ${g.period} ${g.clock}</span>
+      </span>
+    </div>
+    <div class="oc-mid">
+      <span class="oc-pos">
+        <span class="oc-tag">${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span></span>
+        <span class="oc-sub">${p.qty} contracts · avg ${p.avg}¢</span>
+      </span>
+      <span class="oc-val">
+        <span class="oc-amount tnum">${money(value)}</span>
+        <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span>
+      </span>
+    </div>
+    <div class="oc-actions">
+      <button class="oc-buy" data-buy="${i}">Buy</button>
+      <button class="oc-sell" data-sell="${i}">Sell</button>
+    </div>
+  </article>`;
+}
+
+function settledCardHTML(s) {
+  const g = GAMES.find((x) => x.id === s.gameId);
+  const win = s.result === "win";
+  return `<article class="order-card settled" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="oc-top">
+      <span class="oc-logos"><img src="${g.home.logo}" alt="" /><img src="${g.away.logo}" alt="" /></span>
+      <span class="oc-match">
+        <span class="oc-teams">${g.home.abbr} · ${g.away.abbr}</span>
+        <span class="oc-meta">${g.league.toUpperCase()} · Final</span>
+      </span>
+    </div>
+    <div class="oc-mid">
+      <span class="oc-pos">
+        <span class="oc-tag">${MARKET_LABELS[s.market]} · <span class="side-${s.side}">${s.side.toUpperCase()}</span></span>
+        <span class="oc-sub">${s.qty} contracts · avg ${s.avg}¢</span>
+      </span>
+    </div>
+    <div class="oc-result">
+      <span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>
+      <span class="oc-settled-pnl ${win ? "up" : "down"} tnum">${signed(s.net)}</span>
+    </div>
+  </article>`;
+}
+
+function bindPositionActions(root) {
+  if (!root) return;
+  root.addEventListener("click", (e) => {
+    const buy = e.target.closest("[data-buy]");
+    const sell = e.target.closest("[data-sell]");
+    if (buy) openBuy(USER.positions[Number(buy.dataset.buy)]);
+    else if (sell) openSell(USER.positions[Number(sell.dataset.sell)]);
+  });
+}
+
+/* ------------------------------------------------- AUTH-AWARE HEADER CHROME */
+const WALLET_ICO = '<svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function applyAuthChrome() {
+  const right = $("#headerAuth");
+  const actions = $("#menuActions");
+  if (right) {
+    right.innerHTML = isAuthed()
+      ? `<a class="wallet-chip floating-btn" href="wallet.html" aria-label="Wallet balance">${WALLET_ICO}<span class="wallet-amount tnum">${money(USER.balance)}</span></a>`
+      : `<a class="btn header-login floating-btn" href="login.html">Login</a>`;
+  }
+  if (actions) {
+    if (isAuthed()) {
+      actions.innerHTML = `<a class="btn btn-secondary btn-block" href="wallet.html">Wallet</a><button class="btn btn-ghost btn-block menu-logout" data-logout>Logout</button>`;
+      const lo = actions.querySelector("[data-logout]");
+      if (lo) lo.addEventListener("click", () => { clearAuth(); location.href = "home.html"; });
+    } else {
+      actions.innerHTML = `<a class="btn btn-secondary btn-block" href="login.html">Login</a><a class="btn btn-primary btn-block" href="signup.html">Create Account</a>`;
+    }
+  }
+}
+
+/* -------------------------------------------------- AUTHENTICATED HOME HERO */
+function renderAuthedHome() {
+  const heroInner = $(".hero .hero-inner");
+  if (!heroInner || !$("#gameGrid") || !isAuthed()) return;
+
+  heroInner.classList.add("authed");
+  heroInner.innerHTML = `
+    <div class="hero-greeting">
+      <span class="eyebrow">Welcome back</span>
+      <h1>Hey ${currentName()}.</h1>
+    </div>
+    <div class="authed-stack">
+      <div class="positions-block">
+        <div class="positions-head"><span class="eyebrow">Open Positions</span></div>
+        <div class="pos-carousel" id="positionList">${USER.positions.map((p, i) => positionCarouselCard(p, i)).join("")}</div>
+        <div class="pos-footer">
+          <a href="wallet.html">View All</a>
+          <div class="pos-dots" id="posDots"></div>
+          <a href="wallet.html#settled">View Settled</a>
+        </div>
+      </div>
+      <a class="btn btn-primary authed-cta" href="#live">Live Games</a>
+    </div>`;
+  bindPositionActions($("#positionList"));
+  initPositionsCarousel();
+}
+
+// Settled win — a banner that slides down over the header on any page (until dismissed)
+function renderSettledToast() {
+  if (!isAuthed()) return;
+  const reopen = USER.settled.find((s) => s.reopened);
+  if (!reopen) return;
+  let dismissed = null;
+  try { dismissed = sessionStorage.getItem("gtl-settled-dismissed"); } catch (e) { /* ignore */ }
+  if (dismissed === reopen.gameId) return; // hidden only after the user taps Dismiss, and only for this session
+  const g = GAMES.find((x) => x.id === reopen.gameId);
+  if (!g) return;
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="settled-toast" id="settledToast" role="status" aria-label="Settled bet — you won">
+      <div class="settled-card" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+        <div class="pos-media">${gameMedia(g, `<span class="period">Settled</span><span class="sc-won">You Won</span>`)}</div>
+        <div class="settled-body">
+          <span class="settled-profit tnum">${signed(reopen.net)}</span>
+          <div class="settled-actions">
+            <button class="btn btn-secondary" data-settled-dismiss>Dismiss</button>
+            <a class="btn btn-primary" href="game.html?id=${g.id}">Bet Again</a>
+          </div>
+        </div>
+        <span class="settled-progress" aria-hidden="true"></span>
+      </div>
+    </div>`);
+  const toast = $("#settledToast");
+  let autoTimer = null;
+  const hide = (persist) => {
+    if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+    if (persist) { try { sessionStorage.setItem("gtl-settled-dismissed", reopen.gameId); } catch (e) { /* ignore */ } }
+    toast.classList.remove("is-open");
+    setTimeout(() => toast.remove(), 500);
+  };
+  toast.querySelector("[data-settled-dismiss]").addEventListener("click", () => hide(true)); // explicit dismiss = gone for the session
+  setTimeout(() => {                          // let the page settle first, then slide in after 5s
+    if (!document.body.contains(toast)) return;
+    toast.classList.add("is-open");          // slide down + start the 10s progress fill
+    autoTimer = setTimeout(() => hide(false), 10000); // auto-dismiss is transient — it returns on the next authed screen
+  }, 5000);
+}
+
+function initPositionsCarousel() {
+  const car = $("#positionList");
+  const dots = $("#posDots");
+  if (!car || !dots) return;
+  const cards = $$(".pos-card", car);
+  if (cards.length <= 1) { dots.hidden = true; return; }
+  dots.hidden = false;
+  dots.innerHTML = cards.map((_, i) => `<button class="pos-dot${i === 0 ? " is-active" : ""}" data-dot="${i}" aria-label="Go to position ${i + 1}"></button>`).join("");
+  const dotEls = $$(".pos-dot", dots);
+  const setActive = (i) => dotEls.forEach((d, k) => d.classList.toggle("is-active", k === i));
+  let raf = null;
+  car.addEventListener("scroll", () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = null;
+      const cRect = car.getBoundingClientRect();
+      const center = cRect.left + cRect.width / 2;
+      let best = 0, bd = Infinity;
+      cards.forEach((c, i) => { const r = c.getBoundingClientRect(); const d = Math.abs((r.left + r.width / 2) - center); if (d < bd) { bd = d; best = i; } });
+      setActive(best);
+    });
+  }, { passive: true });
+  dots.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-dot]");
+    if (b) cards[Number(b.dataset.dot)].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  });
+}
+
+/* ------------------------------------------------------------ WALLET PAGE */
+function initWallet() {
+  const main = $("#walletMain");
+  if (!main) return;
+  if (!isAuthed()) {
+    main.innerHTML = `<div class="wallet-guard">
+      <h1>Your wallet</h1>
+      <p>Login to see your balance, add funds and manage your orders.</p>
+      <a class="btn btn-primary" href="login.html">Login</a>
+      <a class="link-green" href="signup.html">Create an Account</a>
+    </div>`;
+    return;
+  }
+  const openHTML = USER.positions.length
+    ? USER.positions.map((p, i) => positionCardHTML(p, i)).join("")
+    : `<div class="wallet-empty">No open positions yet.</div>`;
+  const settledHTML = USER.settled.length
+    ? USER.settled.map((s) => settledCardHTML(s)).join("")
+    : `<div class="wallet-empty">No settled orders yet.</div>`;
+  main.innerHTML = `
+    <div class="wallet-title"><span class="eyebrow">Wallet</span><h1>Hey ${currentName()}</h1></div>
+    <section class="balance-card">
+      <div><span class="balance-label">Available balance</span><div class="balance-amount tnum" data-balance>${money(USER.balance)}</div></div>
+      <div class="balance-actions">
+        <button class="btn btn-primary" data-add-toggle>Add Funds</button>
+        <a class="btn btn-secondary" href="home.html#live">Trade Now</a>
+      </div>
+    </section>
+    <section class="addfunds" hidden id="addFunds">
+      <div class="addfunds-inner">
+        <h3>Add Funds</h3>
+        <div class="addfunds-quick" data-add-quick>
+          <button data-add-amt="20">$20</button>
+          <button data-add-amt="50">$50</button>
+          <button data-add-amt="100">$100</button>
+          <button data-add-amt="200">$200</button>
+        </div>
+        <div class="addfunds-amount"><span class="af-sign">$</span><input data-add-input type="text" inputmode="numeric" value="50" aria-label="Amount to add" /></div>
+        <div class="addfunds-actions">
+          <button class="btn btn-secondary" data-add-cancel>Cancel</button>
+          <button class="btn btn-primary" data-add-confirm>Add Funds</button>
+        </div>
+        <p class="addfunds-note">Prototype — no real payment is taken.</p>
+      </div>
+    </section>
+    <section class="wallet-section">
+      <div class="wallet-section-head"><h2>Pending &amp; current orders</h2><span class="count">${USER.positions.length}</span></div>
+      <div class="order-list" id="walletOpen">${openHTML}</div>
+    </section>
+    <section class="wallet-section" id="settled">
+      <div class="wallet-section-head"><h2>Settled orders</h2><span class="count">${USER.settled.length}</span></div>
+      <div class="order-list">${settledHTML}</div>
+    </section>`;
+  bindPositionActions($("#walletOpen"));
+  initAddFunds();
+}
+
+function initAddFunds() {
+  const panel = $("#addFunds");
+  if (!panel) return;
+  const input = panel.querySelector("[data-add-input]");
+  const markActive = (v) => $$("[data-add-amt]", panel).forEach((b) => b.classList.toggle("is-active", Number(b.dataset.addAmt) === v));
+  const setAmt = (v) => { input.value = v; markActive(v); };
+  $("[data-add-toggle]").addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) { setAmt(50); panel.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  });
+  panel.querySelector("[data-add-quick]").addEventListener("click", (e) => { const b = e.target.closest("[data-add-amt]"); if (b) setAmt(Number(b.dataset.addAmt)); });
+  input.addEventListener("input", () => markActive(parseInt(input.value.replace(/[^0-9]/g, ""), 10)));
+  panel.querySelector("[data-add-cancel]").addEventListener("click", () => { panel.hidden = true; });
+  panel.querySelector("[data-add-confirm]").addEventListener("click", () => {
+    const v = parseInt(input.value.replace(/[^0-9]/g, ""), 10) || 0;
+    if (v > 0) { USER.balance += v; $("[data-balance]").textContent = money(USER.balance); applyAuthChrome(); }
+    panel.hidden = true;
+  });
+  setAmt(50);
+}
+
+/* ---------------------------------------------------------- AUTH SCREENS */
+// Inline validation errors (shown in-app, not via native browser bubbles)
+const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+function showErr(input, msg) {
+  input.classList.add("is-error");
+  const field = input.closest(".field");
+  if (!field) return;
+  let el = field.querySelector(":scope > .field-error");
+  if (!el) { el = document.createElement("p"); el.className = "field-error"; el.setAttribute("role", "alert"); field.appendChild(el); }
+  el.textContent = msg;
+}
+function clearErr(input) {
+  input.classList.remove("is-error");
+  const field = input.closest(".field");
+  const el = field && field.querySelector(":scope > .field-error");
+  if (el) el.remove();
+}
+function clearErrsOnInput(form) { $$(".field-input", form).forEach((i) => i.addEventListener("input", () => clearErr(i))); }
+function showCodeErr(wrap, msg) {
+  wrap.classList.add("is-error");
+  let el = wrap.nextElementSibling;
+  if (!el || !el.classList.contains("field-error")) { el = document.createElement("p"); el.className = "field-error"; el.setAttribute("role", "alert"); wrap.insertAdjacentElement("afterend", el); }
+  el.textContent = msg;
+}
+function clearCodeErr(wrap) {
+  wrap.classList.remove("is-error");
+  const el = wrap.nextElementSibling;
+  if (el && el.classList.contains("field-error")) el.remove();
+}
+
+// Toast notifications — success / error
+const TOAST_ICONS = {
+  success: '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  error: '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5.5M12 16.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+};
+function showToast(msg, type = "success") {
+  let stack = $(".toast-stack");
+  if (!stack) { stack = document.createElement("div"); stack.className = "toast-stack"; document.body.appendChild(stack); }
+  const t = document.createElement("div");
+  t.className = `toast toast-${type}`;
+  t.setAttribute("role", type === "error" ? "alert" : "status");
+  t.innerHTML = `<span class="toast-ico">${TOAST_ICONS[type] || TOAST_ICONS.success}</span><span class="toast-msg">${msg}</span>`;
+  stack.appendChild(t);
+  const remove = () => {
+    t.classList.add("leaving");
+    t.addEventListener("animationend", () => t.remove(), { once: true });
+    setTimeout(() => t.remove(), 400);
+  };
+  setTimeout(remove, 3200);
+}
+
+function initPassToggles() {
+  $$("[data-pass-toggle]").forEach((btn) => btn.addEventListener("click", () => {
+    const input = btn.parentElement.querySelector("input");
+    const show = input.type === "password";
+    input.type = show ? "text" : "password";
+    btn.classList.toggle("is-shown", show);
+    btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  }));
+}
+
+// Social buttons on the login page sign straight in; sign-up handles its own
+function initSocialButtons() {
+  $$("[data-social]").forEach((b) => {
+    if (b.closest("#signupSteps")) return;
+    b.addEventListener("click", () => { setAuth({ name: USER.name }); location.href = postAuthDest(); });
+  });
+}
+
+function initLogin() {
+  const form = $("[data-login-form]");
+  if (!form) return;
+  const emailEl = form.querySelector("#email");
+  const passEl = form.querySelector("#password");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(emailEl); clearErr(passEl);
+    const email = emailEl.value.trim();
+    let ok = true;
+    if (!email) { showErr(emailEl, "Enter your email"); ok = false; }
+    else if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); ok = false; }
+    if (!passEl.value) { showErr(passEl, "Enter your password"); ok = false; }
+    if (!ok) return;
+    setAuth({ name: nameFromEmail(email), email });
+    location.href = postAuthDest();
+  });
+  clearErrsOnInput(form);
+}
+
+function initCodeInput(wrap) {
+  wrap = wrap || $("[data-code-input]");
+  if (!wrap) return;
+  const boxes = $$(".code-box", wrap);
+  boxes.forEach((box, i) => {
+    box.addEventListener("input", () => {
+      box.value = box.value.replace(/[^0-9]/g, "").slice(0, 1);
+      box.classList.toggle("is-filled", !!box.value);
+      clearCodeErr(wrap);
+      if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
+    });
+    box.addEventListener("keydown", (e) => { if (e.key === "Backspace" && !box.value && i > 0) boxes[i - 1].focus(); });
+    box.addEventListener("paste", (e) => {
+      e.preventDefault();
+      const digits = (e.clipboardData.getData("text") || "").replace(/[^0-9]/g, "").slice(0, boxes.length);
+      digits.split("").forEach((d, k) => { boxes[k].value = d; boxes[k].classList.add("is-filled"); });
+      if (digits.length) boxes[Math.min(digits.length, boxes.length) - 1].focus();
+    });
+  });
+}
+
+function initSignup() {
+  const steps = $("#signupSteps");
+  if (!steps) return;
+  let email = "";
+  const go = (n) => {
+    steps.dataset.step = n;
+    $$(".auth-progress span").forEach((d) => d.classList.toggle("is-done", Number(d.dataset.dot) <= n));
+    const focusEl = steps.querySelector(`.auth-step[data-step="${n}"] input`);
+    if (focusEl) setTimeout(() => focusEl.focus(), 80);
+  };
+  const f1 = steps.querySelector("[data-step1-form]");
+  const emailEl = f1.querySelector("#email");
+  f1.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(emailEl);
+    email = emailEl.value.trim();
+    if (!email) { showErr(emailEl, "Enter your email"); return; }
+    if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); return; }
+    const tgt = steps.querySelector("[data-code-email]");
+    if (tgt) tgt.textContent = email;
+    go(2);
+  });
+
+  const f2 = steps.querySelector("[data-step2-form]");
+  const p1 = f2.querySelector("#newpass");
+  const p2 = f2.querySelector("#confirmpass");
+  f2.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(p1); clearErr(p2);
+    if (!p1.value) { showErr(p1, "Create a password"); return; }
+    if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
+    if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
+    if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
+    go(3);
+  });
+
+  const f3 = steps.querySelector("[data-step3-form]");
+  const codeWrap = f3.querySelector("[data-code-input]");
+  f3.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearCodeErr(codeWrap);
+    const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
+    if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
+    setAuth({ name: nameFromEmail(email), email });
+    location.href = postAuthDest();
+  });
+
+  $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
+  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => { setAuth({ name: USER.name }); location.href = postAuthDest(); }));
+  const resend = steps.querySelector("[data-resend]");
+  if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
+  clearErrsOnInput(f1); clearErrsOnInput(f2);
+  initCodeInput(codeWrap);
+}
+
+function initForgot() {
+  const form = $("[data-forgot-form]");
+  if (!form) return;
+  const card = $("#forgotCard");
+  const emailEl = form.querySelector("#email");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(emailEl);
+    const email = emailEl.value.trim();
+    if (!email) { showErr(emailEl, "Enter your email"); return; }
+    if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); return; }
+    const tgt = card.querySelector("[data-sent-email]");
+    if (tgt) tgt.textContent = email;
+    card.classList.add("is-sent");
+  });
+  const resend = card.querySelector("[data-forgot-resend]");
+  if (resend) resend.addEventListener("click", () => showToast("Reset link resent — check your email", "success"));
+  clearErrsOnInput(form);
+}
+
 /* ------------------------------------------------------------- INIT */
 document.addEventListener("DOMContentLoaded", () => {
+  renderHeader();
+  applyAuthChrome();
+  renderSettledToast();
   renderTiles();
+  renderAuthedHome();
   initExpanders();
   initLeagueFilter();
   initHeader();
@@ -758,6 +1539,13 @@ document.addEventListener("DOMContentLoaded", () => {
   renderGamePage();
   initBetSheet();
   initFeesPage();
+  initWallet();
   maybeReopenBet();
-  startPriceTicker(); // after both home tiles and the game page have rendered their rows
+  // auth screens
+  initPassToggles();
+  initSocialButtons();
+  initLogin();
+  initSignup();
+  initForgot();
+  startPriceTicker(); // after home tiles and the game page have rendered their rows
 });

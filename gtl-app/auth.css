@@ -1,0 +1,138 @@
+/* GTL v2 — authentication screens (login, sign-up, forgot password) */
+
+.auth-body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Centred card — the shared floating site-header (styles.css) sits above */
+.auth-main { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 96px var(--s5) var(--s16); }
+.auth-card {
+  width: 100%; max-width: 420px;
+  margin-top: clamp(var(--s2), 4vh, var(--s10));
+  display: flex; flex-direction: column;
+}
+.auth-head { text-align: center; margin-bottom: var(--s8); }
+.auth-head .eyebrow { display: block; margin-bottom: var(--s3); }
+.auth-head h1 { font-size: var(--fs-h2); }
+.auth-head p { margin: var(--s3) 0 0; color: var(--ink-2); font-size: var(--fs-body); }
+
+/* Social sign-in */
+.social-row { display: flex; flex-direction: column; gap: var(--s3); }
+.social-btn {
+  display: flex; align-items: center; justify-content: center; gap: var(--s3);
+  height: 50px; width: 100%;
+  border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--line-2);
+  color: var(--ink); font-weight: 600; font-size: var(--fs-body);
+  transition: background 0.18s var(--ease), border-color 0.18s var(--ease), transform 0.15s var(--ease);
+}
+.social-btn:hover { background: var(--surface-2); border-color: var(--line-2); }
+.social-btn:active { transform: scale(0.98); }
+.social-btn svg, .social-btn img { width: 20px; height: 20px; }
+.social-btn .apple-mark { fill: var(--ink); }
+
+/* "or" divider */
+.auth-divider { display: flex; align-items: center; gap: var(--s4); margin: var(--s6) 0; color: var(--ink-3); font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+/* Form fields */
+.field { display: flex; flex-direction: column; gap: var(--s2); }
+.field + .field { margin-top: var(--s4); }
+.field label { font-size: var(--fs-label); font-weight: 600; color: var(--ink-2); padding-left: var(--s1); }
+.field-input {
+  height: 52px; width: 100%;
+  padding: 0 var(--s5);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  color: var(--ink); font-family: var(--font-ui); font-size: var(--fs-body);
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.field-input::placeholder { color: var(--ink-3); }
+.field-input:focus { outline: none; border-color: var(--green); background: var(--bg-2); }
+.field-hint { font-size: var(--fs-eyebrow); color: var(--ink-3); padding-left: var(--s1); }
+
+/* Inline validation errors */
+.field-input.is-error, .field-input.is-error:focus { border-color: var(--no); background: var(--no-soft); }
+.field-error { margin: var(--s2) 0 0; padding-left: var(--s4); display: flex; align-items: center; gap: var(--s2); color: var(--no); font-size: var(--fs-label); font-weight: 600; animation: err-in 0.18s var(--ease-out); }
+.field-error::before { content: "!"; flex: 0 0 auto; width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; background: var(--no); color: #2a0a0f; font-size: 11px; font-weight: 800; line-height: 1; }
+@keyframes err-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.code-input.is-error .code-box { border-color: var(--no); }
+
+/* Password field with show/hide */
+.field-pass { position: relative; }
+.field-pass .field-input { padding-right: 52px; }
+.pass-toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border: none; background: none; color: var(--ink-3); border-radius: var(--r-sm);
+}
+.pass-toggle:hover { color: var(--ink); background: var(--surface-2); }
+.pass-toggle svg { width: 20px; height: 20px; }
+.pass-toggle .icon-hide { display: none; }
+.pass-toggle.is-shown .icon-show { display: none; }
+.pass-toggle.is-shown .icon-hide { display: block; }
+
+.field-row { display: flex; align-items: center; justify-content: flex-start; margin-top: var(--s4); }
+.link-green { color: var(--green); font-weight: 600; font-size: var(--fs-label); }
+.link-green:hover { text-decoration: underline; }
+:root[data-theme="light"] .link-green { color: #16a34a; }
+
+.auth-submit { margin-top: var(--s6); --btn-h: 54px; width: 100%; font-size: var(--fs-body); font-weight: 600; }
+.auth-foot { margin-top: var(--s6); text-align: center; color: var(--ink-2); font-size: var(--fs-body); }
+.auth-foot a { color: var(--green); font-weight: 600; }
+.auth-foot a:hover { text-decoration: underline; }
+:root[data-theme="light"] .auth-foot a { color: #16a34a; }
+
+.auth-fineprint { margin-top: var(--s6); text-align: center; color: var(--ink-3); font-size: var(--fs-eyebrow); line-height: 1.7; }
+.auth-fineprint a { color: var(--ink-2); text-decoration: underline; }
+
+/* Multi-step sign-up ------------------------------------------------- */
+.auth-progress { display: flex; align-items: center; justify-content: center; gap: var(--s2); margin-bottom: var(--s6); }
+.auth-progress span { width: 28px; height: 4px; border-radius: 999px; background: var(--line-2); transition: background 0.25s var(--ease); }
+.auth-progress span.is-done { background: var(--green); }
+
+.auth-step { display: none; flex-direction: column; animation: step-in 0.3s var(--ease-out); }
+.auth-steps[data-step="1"] .auth-step[data-step="1"],
+.auth-steps[data-step="2"] .auth-step[data-step="2"],
+.auth-steps[data-step="3"] .auth-step[data-step="3"] { display: flex; }
+@keyframes step-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+
+.step-back {
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: var(--s1);
+  margin-bottom: var(--s5); padding: 6px var(--s3) 6px var(--s2);
+  border: none; background: none; color: var(--ink-2); font-weight: 600; font-size: var(--fs-label);
+  border-radius: var(--r-pill);
+}
+.step-back:hover { background: var(--surface-2); color: var(--ink); }
+.step-back svg { width: 18px; height: 18px; transform: rotate(180deg); }
+
+/* Verification code boxes */
+.code-input { display: flex; align-items: center; justify-content: center; gap: var(--s2); margin: var(--s2) 0; }
+.code-dash { flex: 0 0 auto; width: 12px; height: 2px; border-radius: 2px; background: var(--ink-3); margin-inline: var(--s1); }
+.code-box {
+  flex: 1 1 0; min-width: 0; padding: 0;
+  height: 60px; text-align: center;
+  border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--line-2);
+  color: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.code-box:focus { outline: none; border-color: var(--green); background: var(--bg-2); }
+.code-box.is-filled { border-color: var(--green-line); }
+.code-resend { margin-top: var(--s5); text-align: center; color: var(--ink-2); font-size: var(--fs-label); }
+.code-resend button { border: none; background: none; color: var(--green); font-weight: 600; font-size: var(--fs-label); }
+.code-resend button:hover { text-decoration: underline; }
+.code-sent-to { font-weight: 600; color: var(--ink); }
+
+/* Forgot-password sent confirmation */
+.auth-sent { display: none; flex-direction: column; align-items: center; text-align: center; gap: var(--s4); }
+.auth-card.is-sent .auth-form { display: none; }
+.auth-card.is-sent .auth-sent { display: flex; }
+.sent-check { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green); margin-bottom: var(--s2); }
+.sent-check svg { width: 36px; height: 36px; }

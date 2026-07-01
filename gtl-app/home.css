@@ -58,6 +58,42 @@
 .hero-sub { margin: var(--s5) auto 0; max-width: 44ch; color: var(--ink-2); font-size: var(--fs-lead); }
 .hero-cta { margin-top: var(--s8); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s3); }
 
+/* Authenticated hero — greeting + positions + reopened callout ------- */
+.hero-inner.authed { align-items: stretch; text-align: left; }
+.hero-greeting { text-align: center; margin-bottom: var(--s2); }
+.hero-greeting .eyebrow { display: block; margin-bottom: var(--s2); }
+.hero-greeting h1 { font-size: var(--fs-hero); line-height: 1.0; }
+
+.authed-stack { display: flex; flex-direction: column; gap: var(--s6); margin-top: var(--s8); }
+
+.positions-head { display: flex; justify-content: center; }
+/* row under the carousel: View All (left) · dots (centre) · View Settled (right) */
+.pos-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: var(--s4); }
+.pos-footer a { color: var(--ink-2); font-weight: 600; font-size: var(--fs-label); }
+.pos-footer a:hover { color: var(--ink); text-decoration: underline; }
+.pos-footer a:first-child { justify-self: start; }
+.pos-footer a:last-child { justify-self: end; }
+.pos-footer .pos-dots { margin-top: 0; }
+
+/* Open Positions — full-bleed horizontal carousel (media + settled styles are shared, in styles.css) */
+.pos-carousel {
+  display: flex; gap: var(--s4); margin-top: var(--s4);
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--s1);
+  margin-inline: calc(-1 * var(--s5)); padding-inline: var(--s5); scroll-padding-inline: var(--s5);
+}
+.pos-carousel::-webkit-scrollbar { display: none; }
+.pos-card { flex: 0 0 clamp(316px, 94%, 376px); scroll-snap-align: start; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: #08090c; }
+.pos-card .pos-media { background: transparent; }
+.pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+
+.pos-dots { display: flex; justify-content: center; gap: var(--s2); margin-top: var(--s4); }
+.pos-dots[hidden] { display: none; }
+.pos-dot { width: 8px; height: 8px; padding: 0; border: none; border-radius: 50%; background: var(--line-2); transition: background 0.2s var(--ease), transform 0.2s var(--ease); }
+.pos-dot.is-active { background: var(--green); transform: scale(1.25); }
+
+.authed-cta { align-self: center; width: auto; padding-inline: var(--s10); --btn-h: 54px; margin-top: var(--s2); }
+
 /* League filter strip (centered, league logos) ----------------------- */
 .league-strip {
   display: flex;
@@ -96,6 +132,24 @@
 .league-pill.is-active .league-icon { border-color: var(--green); background: var(--green-soft); }
 .league-pill.is-active .league-icon img { filter: none; }
 
+/* NBA coming-soon state ---------------------------------------------- */
+.coming-soon {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: var(--s3);
+  padding: var(--s16) var(--s5);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+}
+.coming-soon[hidden] { display: none; }
+.cs-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: var(--s2); }
+.cs-title { font-size: var(--fs-h2); }
+.cs-desc { margin: 0; max-width: 44ch; color: var(--ink-2); font-size: var(--fs-lead); }
+.cs-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); margin-top: var(--s5); width: 100%; max-width: 440px; }
+.cs-actions .btn { --btn-h: 52px; width: 100%; }
+.cs-actions .btn.is-chosen { border-color: var(--green-line); background: var(--green-soft); color: var(--green); }
+:root[data-theme="light"] .cs-actions .btn.is-chosen { color: #15803d; }
+
 /* Game grid ---------------------------------------------------------- */
 .game-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
 @media (min-width: 720px) { .game-grid { grid-template-columns: 1fr 1fr; gap: var(--s5); } }
@@ -125,20 +179,7 @@
 .game-tile:hover { transform: translateY(-3px); border-color: var(--line-2); }
 
 .tile-main { display: block; width: 100%; padding: 32px var(--s5) 28px; color: inherit; background: none; border: none; text-align: left; font: inherit; cursor: pointer; } /* click to expand; +12px top, +12px before the See Bets row */
-.game-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s2); }
-.team { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
-.team-away { flex-direction: row-reverse; }
-.team-logo { width: 48px; height: 48px; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); }
-.team-meta { display: flex; flex-direction: column; min-width: 0; }
-.team-away .team-meta { align-items: flex-end; }
-.team-abbr { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.82); }
-.team-score { font-family: var(--font-display); font-size: var(--fs-score); font-weight: 700; line-height: 0.95; font-variant-numeric: tabular-nums; }
-.team.is-leading .team-score { color: #fff; }
-.team:not(.is-leading) .team-score { color: rgba(255, 255, 255, 0.66); }
-
-.game-center { display: flex; flex-direction: column; align-items: center; gap: 1px; padding-inline: var(--s2); }
-.game-center .period { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.6); }
-.game-center .clock { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: #fff; font-variant-numeric: tabular-nums; }
+/* .game-row / .team* / .game-center are shared (styles.css) — used by tiles, position cards, and the settled banner */
 
 .tile-foot { padding: 0 var(--s5) var(--s5); }
 .tile-divider { border-top: 1px solid rgba(255, 255, 255, 0.12); padding-top: var(--s4); }
