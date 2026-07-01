@@ -2,9 +2,9 @@
 
 .wallet { padding-top: 96px; padding-bottom: var(--s20); max-width: 720px; }
 
-.wallet-title { margin-bottom: var(--s6); }
+.wallet-title { margin-bottom: var(--s6); text-align: left; }
 .wallet-title .eyebrow { display: block; margin-bottom: var(--s2); }
-.wallet-title h1 { font-size: var(--fs-h2); }
+.wallet-title h1 { font-size: var(--fs-h2); line-height: 1.05; }
 
 /* Balance card — green-tinted hero */
 .balance-card {

@@ -7,6 +7,7 @@
   overflow: hidden;
   isolation: isolate;
 }
+.hero:has(.hero-inner.authed) { padding-block-start: 96px; }
 .hero-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 .hero-glow {
   position: absolute;
@@ -60,9 +61,9 @@
 
 /* Authenticated hero — greeting + positions + reopened callout ------- */
 .hero-inner.authed { align-items: stretch; text-align: left; }
-.hero-greeting { text-align: center; margin-bottom: var(--s2); }
+.hero-greeting { text-align: left; margin-bottom: var(--s2); }
 .hero-greeting .eyebrow { display: block; margin-bottom: var(--s2); }
-.hero-greeting h1 { font-size: var(--fs-hero); line-height: 1.0; }
+.hero-greeting h1 { font-size: var(--fs-h2); line-height: 1.05; }
 
 .authed-stack { display: flex; flex-direction: column; gap: var(--s6); margin-top: var(--s8); }
 
@@ -205,20 +206,26 @@
 .foot-panel-inner { overflow: hidden; }
 .foot-panel-pad { padding-top: var(--s3); }
 
-/* Bets grid — Yes (left) · title (centre) · No (right), with column headers */
-.mkt-head, .mkt-row { display: grid; grid-template-columns: 0.82fr 1.36fr 0.82fr; align-items: center; gap: var(--s3); }
+/* Bets grid — market names on the left, Yes/No price columns grouped on the right */
+.mkt-head, .mkt-row { display: grid; grid-template-columns: minmax(96px, 1fr) minmax(72px, 0.58fr) minmax(72px, 0.58fr); align-items: center; gap: var(--s3); }
 .mkt-head { padding-bottom: var(--s2); }
 .mkt-head span { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.92); }
-.mkt-head .col-yes, .mkt-head .col-no { justify-self: center; }
+.mkt-head .col-market { justify-self: start; }
+.mkt-head .col-yes, .mkt-head .col-no {
+  width: 72px;
+  justify-self: end;
+  text-align: center;
+}
 
 .mkt-row { padding: var(--s3) 0; }
 .mkt-row + .mkt-row { border-top: 1px solid rgba(255, 255, 255, 0.07); }
-.mkt-name { display: flex; flex-direction: column; align-items: center; gap: 1px; text-align: center; font-size: var(--fs-body); font-weight: 600; line-height: 1.15; color: rgba(255, 255, 255, 0.95); }
+.mkt-name { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: left; font-size: var(--fs-body); font-weight: 600; line-height: 1.15; color: rgba(255, 255, 255, 0.95); }
 .mkt-sub { font-size: var(--fs-eyebrow); font-weight: 500; color: rgba(255, 255, 255, 0.5); }
 
 .price {
-  justify-self: stretch;
+  justify-self: end;
   display: inline-flex; align-items: center; justify-content: center;
+  min-width: 72px;
   padding: 10px 14px; border-radius: var(--r-pill);
   font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;
   border: 1px solid; font-variant-numeric: tabular-nums;
@@ -229,6 +236,55 @@
 .price.no { color: var(--no); border-color: var(--no-line); background: var(--no-soft); }
 .price.yes:hover { background: rgba(74, 222, 128, 0.2); }
 .price.no:hover { background: rgba(255, 93, 114, 0.2); }
+.price:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
+}
+.price:disabled:hover { background: var(--surface-2); }
+.price-loader {
+  width: 13px;
+  height: 13px;
+  margin-right: var(--s2);
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: price-spin 0.8s linear infinite;
+}
+.trade-pause {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px var(--s2);
+  align-items: center;
+  margin-bottom: var(--s4);
+  padding: var(--s3);
+  border: 1px solid rgba(255, 206, 77, 0.28);
+  border-radius: var(--r-md);
+  background: rgba(255, 206, 77, 0.1);
+  color: rgba(255, 255, 255, 0.94);
+  font-size: var(--fs-label);
+  font-weight: 700;
+}
+.trade-pause small {
+  grid-column: 2;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+}
+.pause-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36);
+  animation: pause-pulse 1.2s var(--ease) infinite;
+}
+.game-tile.is-paused { border-color: rgba(255, 206, 77, 0.32); }
+@keyframes price-spin { to { transform: rotate(360deg); } }
+@keyframes pause-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); }
+  100% { box-shadow: 0 0 0 10px rgba(255, 206, 77, 0); }
+}
 
 .bet-help {
   text-align: center; margin: var(--s5) 0 0;

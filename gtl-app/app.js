@@ -95,33 +95,34 @@ const CHEVRON = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" str
 const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const MARKET_LABELS = { gtl: "Get the Lead", tie: "Tie", ktl: "Keep the Lead" };
 const CHEVRON_DOWN = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const PAUSED_DEMO_GAME_ID = "kc-sf";
 
 /* ----------------------------------------------- HOME: EXPANDABLE BETS */
-function betPanel(g) {
+function betPanel(g, paused = false) {
   const href = `game.html?id=${g.id}`;
   const row = (label, sub, full, key) => `<div class="mkt-row">
-      <button class="price yes" data-game="${g.id}" data-market="${key}" data-side="yes" aria-label="${full} Yes ${g.markets[key].yes} cents">${g.markets[key].yes}¢</button>
       <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
+      <button class="price yes" data-game="${g.id}" data-market="${key}" data-side="yes" aria-label="${full} Yes ${g.markets[key].yes} cents">${g.markets[key].yes}¢</button>
       <button class="price no" data-game="${g.id}" data-market="${key}" data-side="no" aria-label="${full} No ${g.markets[key].no} cents">${g.markets[key].no}¢</button>
     </div>`;
-  return `<div class="mkt-grid">
-      <div class="mkt-head"><span class="col-yes">Yes</span><span></span><span class="col-no">No</span></div>
+  return `${paused ? `<div class="trade-pause" role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
+    <div class="mkt-grid">
+      <div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>
       ${row("GTL", "Get the Lead", "Get the Lead", "gtl")}
       ${row("TIE", "", "Tie", "tie")}
       ${row("KTL", "Keep the Lead", "Keep the Lead", "ktl")}
     </div>
-    <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>
     <a class="view-game" href="${href}">View Game</a>`;
 }
 
-function footHTML(g) {
+function footHTML(g, paused = false) {
   return `<div class="tile-foot">
-      <button class="foot-toggle" data-expand aria-expanded="false">
+      <button class="foot-toggle" data-expand aria-expanded="${paused ? "true" : "false"}">
         <span class="chev">${CHEVRON_DOWN}</span>
-        <span class="toggle-label">See Bets</span>
+        <span class="toggle-label">${paused ? "Hide Bets" : "See Bets"}</span>
         <span class="chev">${CHEVRON_DOWN}</span>
       </button>
-      <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${betPanel(g)}</div></div></div>
+      <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${betPanel(g, paused)}</div></div></div>
     </div>`;
 }
 
@@ -131,6 +132,7 @@ function renderTiles() {
   if (!grid) return;
   grid.innerHTML = GAMES.map((g) => {
     const lead = leaderOf(g);
+    const paused = g.id === PAUSED_DEMO_GAME_ID;
     const teamBlock = (side) => {
       const t = g[side];
       const leading = lead === side ? " is-leading" : "";
@@ -139,7 +141,7 @@ function renderTiles() {
           <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
         </div>`;
     };
-    return `<article class="game-tile" data-league="${g.league}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    return `<article class="game-tile${paused ? " is-open is-paused" : ""}" data-league="${g.league}"${paused ? " data-paused-demo" : ""} style="--home-color:${g.home.color};--away-color:${g.away.color}">
         <a class="tile-main" href="game.html?id=${g.id}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">
           <div class="game-row">
             ${teamBlock("home")}
@@ -147,9 +149,30 @@ function renderTiles() {
             ${teamBlock("away")}
           </div>
         </a>
-        ${footHTML(g)}
+        ${footHTML(g, paused)}
       </article>`;
   }).join("");
+  initPausedTradingDemo(grid);
+}
+
+function initPausedTradingDemo(grid) {
+  const tile = grid.querySelector("[data-paused-demo]");
+  if (!tile) return;
+  $$(".price", tile).forEach((btn) => {
+    btn.disabled = true;
+    btn.setAttribute("aria-disabled", "true");
+    btn.insertAdjacentHTML("afterbegin", `<span class="price-loader" aria-hidden="true"></span>`);
+  });
+  setTimeout(() => {
+    tile.classList.remove("is-paused");
+    tile.removeAttribute("data-paused-demo");
+    tile.querySelector(".trade-pause")?.remove();
+    $$(".price", tile).forEach((btn) => {
+      btn.disabled = false;
+      btn.removeAttribute("aria-disabled");
+      btn.querySelector(".price-loader")?.remove();
+    });
+  }, 8000);
 }
 
 /* --------------------------------------------------------- HOME: EXPAND */
@@ -208,6 +231,14 @@ const ICON_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hid
 const LOGO_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>';
 const ICON_HAMBURGER = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 const ICON_X = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+const THEME_SWITCH = `<span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">${ICON_SUN}</span><span class="theme-option theme-moon">${ICON_MOON}</span></span>`;
+const AUTH_NAV = `<nav class="header-nav" aria-label="Account navigation">
+  <a href="home.html" data-scroll-top>Home</a>
+  <a href="wallet.html">Portfolio</a>
+  <a href="home.html#live">Live Games</a>
+  <a href="home.html#how">How it works</a>
+</nav>`;
+const WALLET_ICO = '<svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 // Single source of truth for the header on every page (auth slots filled by applyAuthChrome)
 function renderHeader() {
@@ -230,24 +261,25 @@ function renderHeader() {
         </button>
       </div>
       <div class="header-right">
-        <button class="theme-icon floating-btn theme-toggle" id="themeBtnHeader" data-theme-toggle aria-label="Switch colour theme">${ICON_MOON}${ICON_SUN}</button>
         <span class="header-auth" id="headerAuth"></span>
+        <button class="theme-switch floating-btn" id="themeBtnHeader" data-theme-toggle aria-label="Switch colour theme">${THEME_SWITCH}</button>
       </div>
     </div>
     <div class="menu-panel" id="menuPanel" hidden>
       <nav class="menu-nav">
         <a href="home.html" data-scroll-top>Home</a>
+        <a href="wallet.html">Portfolio</a>
         <a href="home.html#live">Live Games</a>
         <a href="home.html#how">How It Works</a>
         <a href="#">Tutorial</a>
       </nav>
-      <div class="menu-actions" id="menuActions"></div>
       <div class="menu-appearance">
-        <button class="theme-toggle menu-theme" id="themeBtn" data-theme-toggle aria-label="Switch colour theme">
+        <button class="menu-theme" id="themeBtn" data-theme-toggle aria-label="Switch colour theme">
           <span>Appearance</span>
-          <span class="menu-theme-value">${ICON_MOON}${ICON_SUN}<span class="label-dark">Dark</span><span class="label-light">Light</span></span>
+          ${THEME_SWITCH}
         </button>
       </div>
+      <div class="menu-actions" id="menuActions"></div>
     </div>`;
 }
 
@@ -306,6 +338,7 @@ function startPriceTicker() {
     const yesEl = row.querySelector(".price.yes");
     const noEl = row.querySelector(".price.no");
     if (!yesEl || !noEl) return;
+    if (yesEl.disabled || noEl.disabled) return;
     let yes = parseInt(yesEl.textContent, 10) + priceDelta();
     yes = Math.max(5, Math.min(95, yes));
     yesEl.textContent = `${yes}¢`;
@@ -341,6 +374,145 @@ function marketRow(g, label, sub, key) {
     </div>`;
 }
 
+function statCards(items) {
+  return items.map((item) => `<div class="stat-card">
+      <span class="stat-card-label">${item.label}</span>
+      <span class="stat-card-value tnum">${item.value}</span>
+    </div>`).join("");
+}
+
+function chartPath(points, width = 260, height = 86, min = 0, max = 100) {
+  const span = Math.max(1, max - min);
+  return points.map((value, i) => {
+    const x = (i / Math.max(1, points.length - 1)) * width;
+    const y = height - ((value - min) / span) * height;
+    return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ");
+}
+
+function seriesAround(value, variant, spread) {
+  return Array.from({ length: 7 }, (_, i) => {
+    const wave = ((i * 3 + variant * 2) % 7) - 3;
+    return Math.max(1, Math.min(99, value + wave * spread));
+  });
+}
+
+function bettingCharts(g) {
+  const mk = g.markets.gtl;
+  const bid = Math.max(1, mk.yes - 1);
+  const ask = Math.min(99, mk.yes + 1);
+  const bidSeries = seriesAround(bid, g.variant, 1.2);
+  const askSeries = bidSeries.map((v, i) => Math.min(99, v + 2 + (i % 2)));
+  const volumeNow = (g.home.score + g.away.score) * 1250 + g.variant * 1800;
+  const volumeSeries = Array.from({ length: 7 }, (_, i) => Math.round(volumeNow * (0.44 + i * 0.09 + ((g.variant + i) % 3) * 0.012)));
+  const volumeMax = Math.max(...volumeSeries);
+  const probRaw = [
+    { key: "GTL", value: g.markets.gtl.yes },
+    { key: "TIE", value: g.markets.tie.yes },
+    { key: "KTL", value: g.markets.ktl.yes },
+  ];
+  const total = probRaw.reduce((sum, item) => sum + item.value, 0) || 1;
+  const probs = probRaw.map((item) => ({ ...item, pct: Math.round((item.value / total) * 100) }));
+  probs[2].pct += 100 - probs.reduce((sum, item) => sum + item.pct, 0);
+
+  return `
+    <div class="chart-card">
+      <div class="chart-head">
+        <span>Bid / Ask</span>
+        <strong class="tnum">${bid}¢ / ${ask}¢</strong>
+      </div>
+      <svg class="line-chart" viewBox="0 0 260 86" role="img" aria-label="Bid and ask price movement">
+        <path class="chart-grid" d="M0 18H260M0 43H260M0 68H260"></path>
+        <path class="chart-line bid" d="${chartPath(bidSeries)}"></path>
+        <path class="chart-line ask" d="${chartPath(askSeries)}"></path>
+      </svg>
+      <div class="chart-legend"><span class="bid">Bid</span><span class="ask">Ask</span></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <span>Implied probability</span>
+        <strong class="tnum">100%</strong>
+      </div>
+      <div class="prob-line" aria-label="Implied probability split">
+        ${probs.map((item) => `<span class="prob-seg ${item.key.toLowerCase()}" style="width:${item.pct}%"></span>`).join("")}
+      </div>
+      <div class="prob-legend">
+        ${probs.map((item) => `<span><b class="${item.key.toLowerCase()}"></b>${item.key} <strong class="tnum">${item.pct}%</strong></span>`).join("")}
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <span>Volume</span>
+        <strong class="tnum">$${volumeNow.toLocaleString("en-US")}</strong>
+      </div>
+      <svg class="line-chart" viewBox="0 0 260 86" role="img" aria-label="Trading volume growing over time">
+        <path class="chart-grid" d="M0 18H260M0 43H260M0 68H260"></path>
+        <path class="chart-area" d="${chartPath(volumeSeries, 260, 86, 0, volumeMax)} L260 86 L0 86 Z"></path>
+        <path class="chart-line volume" d="${chartPath(volumeSeries, 260, 86, 0, volumeMax)}"></path>
+      </svg>
+    </div>`;
+}
+
+function gameMomentumStats(g) {
+  const ties = 2 + (g.variant % 4);
+  const changes = 4 + (g.variant % 5);
+  const tiesUp = g.variant % 2 === 0;
+  const changesUp = g.home.score <= g.away.score;
+  return [
+    {
+      label: "Current ties",
+      value: ties,
+      trend: tiesUp ? "up" : "down",
+      delta: tiesUp ? "+1 last quarter" : "-1 last quarter",
+      series: seriesAround(ties * 12 + 32, g.variant, 2.4),
+    },
+    {
+      label: "Lead changes",
+      value: changes,
+      trend: changesUp ? "up" : "down",
+      delta: changesUp ? "+2 since halftime" : "-1 since halftime",
+      series: seriesAround(changes * 9 + 28, g.variant + 2, 2.8),
+    },
+  ];
+}
+
+function gameMomentumCards(g) {
+  return gameMomentumStats(g).map((item) => `<div class="momentum-card ${item.trend}">
+      <div class="momentum-head">
+        <span>${item.label}</span>
+        <strong class="tnum">${item.value}</strong>
+      </div>
+      <svg class="spark-chart" viewBox="0 0 160 52" role="img" aria-label="${item.label} trend">
+        <path class="chart-grid" d="M0 14H160M0 38H160"></path>
+        <path class="chart-line ${item.trend}" d="${chartPath(item.series, 160, 52, 0, 100)}"></path>
+      </svg>
+      <span class="trend-pill ${item.trend}">
+        <span class="trend-arrow" aria-hidden="true">${item.trend === "up" ? "↑" : "↓"}</span>
+        ${item.delta}
+      </span>
+    </div>`).join("");
+}
+
+function initStatsTabs() {
+  const tabs = $("#statsTabs");
+  if (!tabs) return;
+  tabs.addEventListener("click", (e) => {
+    const tab = e.target.closest("[data-stats-tab]");
+    if (!tab) return;
+    const target = tab.dataset.statsTab;
+    $$("[data-stats-tab]", tabs).forEach((btn) => {
+      const active = btn === tab;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    $$("[data-stats-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.statsPanel !== target;
+    });
+  });
+}
+
 function renderGamePage() {
   const main = $("#gameMain");
   if (!main) return;
@@ -364,14 +536,8 @@ function renderGamePage() {
     </div>
     <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>`;
 
-  const statsHTML = g.stats.map((s) => {
-    const total = s.home + s.away || 1;
-    const hp = Math.round((s.home / total) * 100);
-    return `<div class="stat">
-        <div class="stat-row"><span class="stat-val tnum">${s.home}</span><span class="stat-label">${s.label}</span><span class="stat-val tnum">${s.away}</span></div>
-        <div class="stat-bar"><span class="stat-fill-h" style="width:${hp}%"></span><span class="stat-fill-a" style="width:${100 - hp}%"></span></div>
-      </div>`;
-  }).join("");
+  const bettingStatsHTML = bettingCharts(g);
+  const gameSummaryHTML = gameMomentumCards(g);
 
   main.innerHTML = `
     <section class="gb" style="--home-color:${g.home.color};--away-color:${g.away.color}">
@@ -379,16 +545,22 @@ function renderGamePage() {
       <div class="container gb-inner">
         <div class="gb-topbar">
           <a class="gb-back" href="home.html" aria-label="Back to games">${CHEVRON}<span>Games</span></a>
-          <span class="live-badge"><span class="live-dot"></span> ${g.period} · ${g.clock}</span>
         </div>
-        <div class="gb-score">
-          ${teamCol("home")}
-          <div class="gb-numbers">
-            <span class="gb-num tnum${lead === "home" ? " is-leading" : ""}">${g.home.score}</span>
-            <span class="gb-dash">–</span>
-            <span class="gb-num tnum${lead === "away" ? " is-leading" : ""}">${g.away.score}</span>
+        <div class="gb-score-stack">
+          <span class="live-badge game-clock-badge">
+            <span class="live-dot"></span>
+            <span class="game-period">${g.period}</span>
+            <span class="game-clock tnum">${g.clock}</span>
+          </span>
+          <div class="gb-score">
+            ${teamCol("home")}
+            <div class="gb-numbers">
+              <span class="gb-num tnum${lead === "home" ? " is-leading" : ""}">${g.home.score}</span>
+              <span class="gb-dash">–</span>
+              <span class="gb-num tnum${lead === "away" ? " is-leading" : ""}">${g.away.score}</span>
+            </div>
+            ${teamCol("away")}
           </div>
-          ${teamCol("away")}
         </div>
         <p class="gb-league">${g.league.toUpperCase()} · Regular season</p>
       </div>
@@ -400,11 +572,21 @@ function renderGamePage() {
     </section>
 
     <section class="container stats-section" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-      <div class="section-head center"><span class="eyebrow">Team stats</span><h2>Inside the game</h2></div>
-      <div class="stats">${statsHTML}</div>
+      <div class="section-head center"><span class="eyebrow">Stats</span><h2>Inside the game</h2></div>
+      <div class="stats-tabs" id="statsTabs" role="tablist" aria-label="Game statistics views">
+        <button class="stats-tab is-active" type="button" role="tab" aria-selected="true" data-stats-tab="betting">Betting Stats</button>
+        <button class="stats-tab" type="button" role="tab" aria-selected="false" data-stats-tab="game">Game Stats</button>
+      </div>
+      <div class="stats-panel" data-stats-panel="betting">
+        <div class="chart-grid-wrap">${bettingStatsHTML}</div>
+      </div>
+      <div class="stats-panel" data-stats-panel="game" hidden>
+        <div class="momentum-grid">${gameSummaryHTML}</div>
+      </div>
     </section>`;
 
   initStickyBet();
+  initStatsTabs();
 }
 
 /* ----------------------------------------------- BET DRAWER (two-step) */
@@ -630,6 +812,11 @@ function ensureBetSheet() {
       betState.limit = null;
     }
     updateBetSheet();
+    const body = sheet.querySelector(".bet-sheet-body");
+    requestAnimationFrame(() => {
+      if (!body) return;
+      body.scrollTo({ top: betState.limitOpen ? body.scrollHeight : 0, behavior: "smooth" });
+    });
   });
   // Swipe the scoreboard down to close
   const grab = sheet.querySelector("[data-bet-grab]");
@@ -654,6 +841,7 @@ function updateBetSheet() {
 
   sheet.setAttribute("data-step", betState.step);
   sheet.setAttribute("data-mode", betState.mode || "buy");
+  sheet.classList.toggle("is-updating-price", !!betState.priceUpdating);
   sheet.querySelector("[data-yes-price]").textContent = `${mk.yes}¢`;
   sheet.querySelector("[data-no-price]").textContent = `${mk.no}¢`;
 
@@ -705,8 +893,11 @@ function updateBetSheet() {
 
   // Primary button label
   const primary = sheet.querySelector("[data-bet-primary]");
-  if (primary) primary.textContent = betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Quick Bet");
-
+  if (primary) {
+    primary.disabled = !!betState.priceUpdating;
+    primary.textContent = betState.priceUpdating ? "Updating..." : (betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Quick Bet"));
+  }
+  $$("[data-contract]", sheet).forEach((b) => { b.disabled = !!betState.priceUpdating; });
   syncLimitSize();
 }
 
@@ -717,22 +908,42 @@ function syncLimitSize() {
 }
 
 let betTicker = null;
+let betPriceUpdateTimer = null;
 function startBetTicker() {
   stopBetTicker();
   betTicker = setInterval(() => {
     const sheet = $("#betSheet");
     const mk = betState.markets[betState.market];
-    if (!sheet || !mk) return;
+    if (!sheet || !mk || betState.priceUpdating) return;
     let yes = Math.max(5, Math.min(95, mk.yes + priceDelta()));
-    mk.yes = yes; mk.no = 100 - yes;
+    beginBetPriceUpdate(yes);
+  }, 10000);
+}
+function beginBetPriceUpdate(nextYes) {
+  const sheet = $("#betSheet");
+  const mk = betState.markets[betState.market];
+  if (!sheet || !mk) return;
+  betState.priceUpdating = true;
+  betState.pendingYes = nextYes;
+  updateBetSheet();
+  betPriceUpdateTimer = setTimeout(() => {
+    mk.yes = betState.pendingYes;
+    mk.no = 100 - mk.yes;
+    betState.priceUpdating = false;
+    betState.pendingYes = null;
     updateBetSheet();
     ["[data-yes-price]", "[data-no-price]"].forEach((sel) => {
       const el = sheet.querySelector(sel);
       if (el) { el.classList.remove("blip"); void el.offsetWidth; el.classList.add("blip"); }
     });
-  }, 10000);
+  }, 1200);
 }
-function stopBetTicker() { if (betTicker) { clearInterval(betTicker); betTicker = null; } }
+function stopBetTicker() {
+  if (betTicker) { clearInterval(betTicker); betTicker = null; }
+  if (betPriceUpdateTimer) { clearTimeout(betPriceUpdateTimer); betPriceUpdateTimer = null; }
+  betState.priceUpdating = false;
+  betState.pendingYes = null;
+}
 
 function syncInputs() {
   const sheet = $("#betSheet");
@@ -751,6 +962,7 @@ function openBetSheet(gameId, market, side, markets, opts = {}) {
     holding: 0, avg: 0, sellQty: 0,
     limit: opts.limit != null ? opts.limit : null,
     limitOpen: opts.limit != null,
+    priceUpdating: false, pendingYes: null,
   });
   const sheet = ensureBetSheet();
   sheet.classList.remove("is-success");
@@ -781,6 +993,7 @@ function openSell(pos) {
     game: g, mode: "sell", market: pos.market, contract: pos.side, markets: marketsFromGame(g),
     holding: pos.qty, avg: pos.avg, sellQty: pos.qty,
     quantity: 100, step: 1, typeOpen: false, limit: null, limitOpen: false,
+    priceUpdating: false, pendingYes: null,
   });
   const sheet = ensureBetSheet();
   sheet.classList.remove("is-success");
@@ -820,6 +1033,7 @@ function closeBetSheet() {
 }
 
 function placeBet() {
+  if (betState.priceUpdating) return;
   if (betState.mode === "sell") return sellNow();
   const sheet = ensureBetSheet();
   const { priceCents, qty, subtotal, fee, total } = computeBet();
@@ -838,6 +1052,7 @@ function placeBet() {
 }
 
 function sellNow() {
+  if (betState.priceUpdating) return;
   const sheet = ensureBetSheet();
   const s = computeSell();
   if (s.qty < 1) return;
@@ -1119,16 +1334,16 @@ function settledCardHTML(s) {
         <span class="oc-teams">${g.home.abbr} · ${g.away.abbr}</span>
         <span class="oc-meta">${g.league.toUpperCase()} · Final</span>
       </span>
+      <span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>
     </div>
     <div class="oc-mid">
       <span class="oc-pos">
         <span class="oc-tag">${MARKET_LABELS[s.market]} · <span class="side-${s.side}">${s.side.toUpperCase()}</span></span>
         <span class="oc-sub">${s.qty} contracts · avg ${s.avg}¢</span>
       </span>
-    </div>
-    <div class="oc-result">
-      <span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>
-      <span class="oc-settled-pnl ${win ? "up" : "down"} tnum">${signed(s.net)}</span>
+      <span class="oc-val">
+        <span class="oc-settled-pnl ${win ? "up" : "down"} tnum">${signed(s.net)}</span>
+      </span>
     </div>
   </article>`;
 }
@@ -1144,19 +1359,17 @@ function bindPositionActions(root) {
 }
 
 /* ------------------------------------------------- AUTH-AWARE HEADER CHROME */
-const WALLET_ICO = '<svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
 function applyAuthChrome() {
   const right = $("#headerAuth");
   const actions = $("#menuActions");
   if (right) {
     right.innerHTML = isAuthed()
-      ? `<a class="wallet-chip floating-btn" href="wallet.html" aria-label="Wallet balance">${WALLET_ICO}<span class="wallet-amount tnum">${money(USER.balance)}</span></a>`
+      ? `${AUTH_NAV}<a class="wallet-chip floating-btn" href="wallet.html" aria-label="Wallet balance">${WALLET_ICO}<span class="wallet-amount tnum">${money(USER.balance)}</span></a>`
       : `<a class="btn header-login floating-btn" href="login.html">Login</a>`;
   }
   if (actions) {
     if (isAuthed()) {
-      actions.innerHTML = `<a class="btn btn-secondary btn-block" href="wallet.html">Wallet</a><button class="btn btn-ghost btn-block menu-logout" data-logout>Logout</button>`;
+      actions.innerHTML = `<button class="btn btn-ghost btn-block menu-logout" data-logout>Logout</button>`;
       const lo = actions.querySelector("[data-logout]");
       if (lo) lo.addEventListener("click", () => { clearAuth(); location.href = "home.html"; });
     } else {
@@ -1174,7 +1387,7 @@ function renderAuthedHome() {
   heroInner.innerHTML = `
     <div class="hero-greeting">
       <span class="eyebrow">Welcome back</span>
-      <h1>Hey ${currentName()}.</h1>
+      <h1>Hey ${currentName()}</h1>
     </div>
     <div class="authed-stack">
       <div class="positions-block">
@@ -1280,13 +1493,9 @@ function initWallet() {
     ? USER.settled.map((s) => settledCardHTML(s)).join("")
     : `<div class="wallet-empty">No settled orders yet.</div>`;
   main.innerHTML = `
-    <div class="wallet-title"><span class="eyebrow">Wallet</span><h1>Hey ${currentName()}</h1></div>
+    <div class="wallet-title"><span class="eyebrow">Portfolio</span><h1>Hey ${currentName()}</h1></div>
     <section class="balance-card">
       <div><span class="balance-label">Available balance</span><div class="balance-amount tnum" data-balance>${money(USER.balance)}</div></div>
-      <div class="balance-actions">
-        <button class="btn btn-primary" data-add-toggle>Add Funds</button>
-        <a class="btn btn-secondary" href="home.html#live">Trade Now</a>
-      </div>
     </section>
     <section class="addfunds" hidden id="addFunds">
       <div class="addfunds-inner">
@@ -1323,7 +1532,8 @@ function initAddFunds() {
   const input = panel.querySelector("[data-add-input]");
   const markActive = (v) => $$("[data-add-amt]", panel).forEach((b) => b.classList.toggle("is-active", Number(b.dataset.addAmt) === v));
   const setAmt = (v) => { input.value = v; markActive(v); };
-  $("[data-add-toggle]").addEventListener("click", () => {
+  const addToggle = $("[data-add-toggle]");
+  if (addToggle) addToggle.addEventListener("click", () => {
     panel.hidden = !panel.hidden;
     if (!panel.hidden) { setAmt(50); panel.scrollIntoView({ behavior: "smooth", block: "center" }); }
   });
