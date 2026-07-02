@@ -24,21 +24,27 @@
   0% { transform: translate3d(0, 0, 0) scale(1); }
   100% { transform: translate3d(-3%, 2%, 0) scale(1.08); }
 }
-.float-logo {
-  position: absolute;
-  width: 96px; height: 96px;
-  object-fit: contain;
-  opacity: 0.13;
-  filter: blur(0.4px);
-  animation: float-y 9s var(--ease) infinite alternate;
+/* Trading-floor grid — perspective gridlines receding to a horizon behind the headline, slowly scrolling toward you */
+.hero-grid {
+  position: absolute; inset: 0; overflow: hidden;
+  perspective: 340px; perspective-origin: 50% 42%;
+  opacity: 0.05;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 34%, #000 60%);
+  mask-image: linear-gradient(to bottom, transparent 34%, #000 60%);
 }
-.fl-1 { top: 9%;  left: 4%;   width: 132px; animation-duration: 11s; }
-.fl-2 { top: 20%; right: 6%;  width: 104px; animation-duration: 9s;  animation-delay: -2s; }
-.fl-3 { top: 58%; left: 8%;   width: 86px;  animation-duration: 12s; animation-delay: -4s; }
-.fl-4 { bottom: 8%; right: 12%; width: 116px; animation-duration: 10s; animation-delay: -1s; }
-.fl-5 { top: 7%;  right: 32%; width: 60px;  animation-duration: 13s; animation-delay: -5s; }
-.fl-6 { bottom: 14%; left: 30%; width: 64px; animation-duration: 8s;  animation-delay: -3s; }
-@keyframes float-y { from { transform: translateY(-10px); } to { transform: translateY(12px); } }
+.hero-grid-plane {
+  position: absolute; left: -60%; right: -60%; top: 42%; height: 260%;
+  background-image:
+    linear-gradient(to right, rgba(150, 195, 235, 0.95) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(150, 195, 235, 0.95) 1px, transparent 1px);
+  background-size: 46px 46px;
+  transform: rotateX(76deg); transform-origin: 50% 0%;
+  animation: grid-toward 6s linear infinite;
+}
+@keyframes grid-toward {
+  from { background-position: 0 0; }
+  to { background-position: 0 46px; }
+}
 
 .hero-inner { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .hero-trading {
@@ -61,9 +67,10 @@
 
 /* Authenticated hero — greeting + positions + reopened callout ------- */
 .hero-inner.authed { align-items: stretch; text-align: left; }
-.hero-greeting { text-align: left; margin-bottom: var(--s2); }
+.hero-wallet { align-self: center; margin-top: 40px; margin-bottom: calc(var(--s4) + 16px); }
+.hero-greeting { text-align: center; margin-bottom: var(--s2); }
 .hero-greeting .eyebrow { display: block; margin-bottom: var(--s2); }
-.hero-greeting h1 { font-size: var(--fs-h2); line-height: 1.05; }
+.hero-greeting h1 { font-size: var(--fs-hero); line-height: 1.0; }
 
 .authed-stack { display: flex; flex-direction: column; gap: var(--s6); margin-top: var(--s8); }
 
@@ -75,25 +82,77 @@
 .pos-footer a:first-child { justify-self: start; }
 .pos-footer a:last-child { justify-self: end; }
 .pos-footer .pos-dots { margin-top: 0; }
+/* No scroll needed (all cards fit): drop the dots column and centre the two links together */
+.pos-footer.no-scroll { display: flex; justify-content: center; gap: var(--s8); }
 
 /* Open Positions — full-bleed horizontal carousel (media + settled styles are shared, in styles.css) */
 .pos-carousel {
-  display: flex; gap: var(--s4); margin-top: var(--s4);
+  display: flex; align-items: flex-start; gap: var(--s4); margin-top: var(--s4);
   overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
   padding-bottom: var(--s1);
   margin-inline: calc(-1 * var(--s5)); padding-inline: var(--s5); scroll-padding-inline: var(--s5);
 }
 .pos-carousel::-webkit-scrollbar { display: none; }
-.pos-card { flex: 0 0 clamp(316px, 94%, 376px); scroll-snap-align: start; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: #08090c; }
+.pos-card { position: relative; isolation: isolate; flex: 0 0 clamp(316px, 94%, 376px); scroll-snap-align: start; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: #08090c; }
+/* team-colour tint spans the whole card (like the live-game tiles), not just the media header */
+.pos-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.84));
+}
 .pos-card .pos-media { background: transparent; }
+.pos-card .pos-media::before { content: none; } /* card gradient handles the tint now */
+/* Desktop: size the cards so exactly three fit the row (no overflow → no dots) */
+@media (min-width: 1024px) {
+  .pos-card { flex-basis: calc((100% - 2 * var(--s4)) / 3); }
+}
 .pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+
+/* Position card variant B — bet-type headline + Contracts / Value / Return row, all centred */
+.ocb-type { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.01em; text-align: center; }
+.ocb-type .side-yes { color: var(--green); }
+.ocb-type .side-no { color: var(--no); }
+.ocb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }
+.ocb-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.ocb-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.ocb-v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+
+/* Position card variant C — bet type + profit above a centre-anchored gain/loss bar, value under it */
+.game-center .period.qtime { white-space: normal; max-width: 92px; text-align: center; line-height: 1.15; text-transform: uppercase; }
+.pos-info.occ { gap: var(--s3); }
+.occ-total { text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 2rem; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.occ-bar { position: relative; height: 8px; border-radius: 999px; background: rgba(0, 0, 0, 0.4); overflow: hidden; }
+.occ-bar-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; transform: translateX(-50%); background: var(--ink-3); z-index: 1; }
+.occ-bar.up .occ-bar-center { background: var(--green); }
+.occ-bar.down .occ-bar-center { background: var(--no); }
+.occ-bar-fill { position: absolute; top: 0; bottom: 0; transition: width 0.4s var(--ease-out); }
+/* inner edge (at the centre) stays square; only the outer end is rounded */
+.occ-bar-fill.up { background: var(--green); border-radius: 0 999px 999px 0; }
+.occ-bar-fill.down { background: var(--no); border-radius: 999px 0 0 999px; }
+/* Cards 2 & 3 — tighten the media→content gap by 8px, add that 8px above the buttons */
+.pos-card--b .pos-info, .pos-card--c .pos-info { padding-top: calc(var(--s4) - 12px); }
+.pos-card--b .oc-actions, .pos-card--c .oc-actions { margin-top: 8px; }
+
+.occ-bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.occ-type { font-size: var(--fs-label); font-weight: 600; }
+.occ-change { font-weight: 700; font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+.occ-change.up { color: var(--green); }
+.occ-change.down { color: var(--no); }
 
 .pos-dots { display: flex; justify-content: center; gap: var(--s2); margin-top: var(--s4); }
 .pos-dots[hidden] { display: none; }
 .pos-dot { width: 8px; height: 8px; padding: 0; border: none; border-radius: 50%; background: var(--line-2); transition: background 0.2s var(--ease), transform 0.2s var(--ease); }
 .pos-dot.is-active { background: var(--green); transform: scale(1.25); }
 
-.authed-cta { align-self: center; width: auto; padding-inline: var(--s10); --btn-h: 54px; margin-top: var(--s2); }
+.authed-cta { align-self: center; width: auto; padding-inline: var(--s10); --btn-h: 54px; margin-top: calc(var(--s2) + 24px); }
+
+/* Desktop authenticated hero — greeting sits lower under the header */
+@media (min-width: 768px) {
+  .hero:has(.hero-inner.authed) { padding-block-start: 144px; }
+  .hero-wallet { margin-top: 0; margin-bottom: var(--s4); } /* extra spacing is mobile-only */
+}
 
 /* League filter strip (centered, league logos) ----------------------- */
 .league-strip {
@@ -152,7 +211,7 @@
 :root[data-theme="light"] .cs-actions .btn.is-chosen { color: #15803d; }
 
 /* Game grid ---------------------------------------------------------- */
-.game-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
+.game-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); align-items: start; }
 @media (min-width: 720px) { .game-grid { grid-template-columns: 1fr 1fr; gap: var(--s5); } }
 @media (min-width: 1024px) { .game-grid { grid-template-columns: 1fr 1fr 1fr; } }
 
