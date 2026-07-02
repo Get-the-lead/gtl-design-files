@@ -135,13 +135,6 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .brand { display: inline-flex; align-items: center; gap: var(--s3); }
 /* Mobile: the logo chip itself opens the menu (brand-menu); desktop uses the home link (brand-link) */
 .brand-link { display: none; }
-.brand-menu { padding-right: var(--s3); }
-.brand-burger { display: inline-flex; align-items: center; justify-content: center; margin-left: var(--s2); color: var(--ink-2); }
-.brand-burger span { display: inline-flex; }
-.brand-burger svg { width: 18px; height: 18px; }
-.brand-burger .icon-close { display: none; }
-body.menu-open .brand-burger .icon-menu { display: none; }
-body.menu-open .brand-burger .icon-close { display: inline-flex; }
 
 /* shared glass treatment for each floating button */
 .floating-btn {
@@ -162,7 +155,7 @@ body.menu-open .brand-burger .icon-close { display: inline-flex; }
 .menu-theme:hover { background: rgba(255, 255, 255, 0.06); }
 .header-left > .theme-switch { display: none; }
 .theme-switch {
-  width: 78px;
+  width: 86px;
   height: 48px;
   align-items: center;
   justify-content: center;
@@ -171,8 +164,8 @@ body.menu-open .brand-burger .icon-close { display: inline-flex; }
 }
 .theme-switch-track {
   position: relative;
-  width: 64px;
-  height: 34px;
+  width: 72px;
+  height: 40px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
@@ -184,14 +177,14 @@ body.menu-open .brand-burger .icon-close { display: inline-flex; }
 .theme-switch-thumb {
   position: absolute;
   top: 3px;
-  left: 33px;
-  width: 28px;
-  height: 28px;
+  left: 37px;
+  width: 34px; /* matches the GTL Markets logo circle */
+  height: 34px;
   border-radius: 50%;
   background: var(--green);
   transition: transform 0.22s var(--ease-out);
 }
-:root[data-theme="light"] .theme-switch-thumb { transform: translateX(-30px); }
+:root[data-theme="light"] .theme-switch-thumb { transform: translateX(-36px); }
 .theme-option {
   position: relative;
   z-index: 1;
@@ -339,33 +332,33 @@ body.menu-open #headerAuth { display: none; }
 
 /* Open Positions — header dropdown. Mobile: icon + count; desktop: primary "N Open Positions" beside the wallet */
 .header-auth:empty { display: none; }
+.header-wallet { display: inline-flex; }
+.header-wallet:empty { display: none; }
 .header-positions { position: relative; display: inline-flex; }
 .header-positions:empty { display: none; }
+/* Open Positions — primary (solid green) chip on every breakpoint */
 .hpos-trigger {
   pointer-events: auto;
-  display: inline-flex; align-items: center; gap: var(--s2);
-  height: 48px; padding: 0 var(--s4);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  height: 48px; width: 48px; padding: 0; /* compact: a circle the same size as its height */
   border-radius: var(--r-pill);
-  border: 1px solid var(--line-2);
-  background: rgba(13, 15, 17, 0.66);
-  -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
-  color: var(--ink); font-weight: 700; font-size: var(--fs-label);
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: #06210f; font-weight: 700; font-size: var(--fs-label);
   box-shadow: var(--shadow-sm); cursor: pointer;
   transition: filter 0.2s var(--ease), transform 0.15s var(--ease);
 }
 .hpos-trigger:hover { filter: brightness(1.08); }
 .hpos-trigger:active { transform: scale(0.96); }
-.hpos-ico { display: inline-flex; width: 20px; height: 20px; color: var(--green); }
-.hpos-ico svg { width: 20px; height: 20px; }
 .hpos-num { font-variant-numeric: tabular-nums; }
 .hpos-word { display: none; }
 .hpos-close { display: none; }
-/* Open → the trigger becomes a neutral secondary "Close" button */
-.hpos-trigger[aria-expanded="true"] { background: var(--surface-2); border-color: var(--line-2); color: var(--ink); padding-inline: var(--s5); }
-.hpos-trigger[aria-expanded="true"] .hpos-ico,
+.hpos-close svg { width: 20px; height: 20px; }
+/* Open → the trigger becomes a neutral square X (close) button on every breakpoint */
+.hpos-trigger[aria-expanded="true"] { width: 48px; padding: 0; background: var(--surface-2); border-color: var(--line-2); color: var(--ink); }
 .hpos-trigger[aria-expanded="true"] .hpos-num,
 .hpos-trigger[aria-expanded="true"] .hpos-word { display: none; }
-.hpos-trigger[aria-expanded="true"] .hpos-close { display: inline; }
+.hpos-trigger[aria-expanded="true"] .hpos-close { display: inline-flex; }
 
 /* Panel is chrome-free — just the floating position cards stacked down the side, full height (no scrollbar) */
 .hpos-panel {
@@ -379,16 +372,70 @@ body.menu-open #headerAuth { display: none; }
 .hpos-panel[hidden] { display: none; }
 .hpos-list { display: flex; flex-direction: column; gap: var(--s3); }
 
+/* The Open Positions dropdown renders each position as the home page's 3rd carousel
+   card (variant C). These mirror that card's styles from home.css, scoped here so the
+   dropdown is styled on EVERY page (home.css isn't loaded outside home.html). flex is
+   reset so the card fills the vertical menu instead of taking the carousel's fixed width. */
+.hpos-list .pos-card {
+  position: relative; isolation: isolate; flex: 0 0 auto;
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  overflow: hidden; background: #08090c;
+}
+.hpos-list .pos-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.84));
+}
+.hpos-list .pos-card .pos-media { background: transparent; }
+.hpos-list .pos-card .pos-media::before { content: none; }
+.hpos-list .pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+.hpos-list .pos-info.occ { gap: var(--s3); }
+.hpos-list .pos-card--c .pos-info { padding-top: calc(var(--s4) - 12px); }
+.hpos-list .pos-card--c .oc-actions { margin-top: 8px; }
+.hpos-list .game-center .period.qtime { white-space: normal; max-width: 92px; text-align: center; line-height: 1.15; text-transform: uppercase; }
+.hpos-list .occ-total { text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 2rem; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.hpos-list .occ-bar { position: relative; height: 8px; border-radius: 999px; background: rgba(0, 0, 0, 0.4); overflow: hidden; }
+.hpos-list .occ-bar-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; transform: translateX(-50%); background: var(--ink-3); z-index: 1; }
+.hpos-list .occ-bar.up .occ-bar-center { background: var(--green); }
+.hpos-list .occ-bar.down .occ-bar-center { background: var(--no); }
+.hpos-list .occ-bar-fill { position: absolute; top: 0; bottom: 0; transition: width 0.4s var(--ease-out); }
+.hpos-list .occ-bar-fill.up { background: var(--green); border-radius: 0 999px 999px 0; }
+.hpos-list .occ-bar-fill.down { background: var(--no); border-radius: 999px 0 0 999px; }
+.hpos-list .occ-bottom { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.hpos-list .occ-type { font-size: var(--fs-label); font-weight: 600; }
+.hpos-list .occ-change { font-weight: 700; font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+.hpos-list .occ-change.up { color: var(--green); }
+.hpos-list .occ-change.down { color: var(--no); }
+
+/* Dropdown mirrors the carousel's variant A (all but the last card) + variant B (last card) */
+.hpos-list .pos-card--a .pos-info { padding-top: calc(var(--s4) - 12px); }
+.hpos-list .oc-summary { display: flex; flex-direction: column; gap: 4px; }
+.hpos-list .oc-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
+.hpos-list .oc-row > span { white-space: nowrap; }
+.hpos-list .oc-vr-head { font-size: var(--fs-eyebrow); color: var(--ink); font-weight: 600; letter-spacing: 0.04em; }
+.hpos-list .oc-figures { font-size: var(--fs-label); font-weight: 700; color: var(--ink); }
+.hpos-list .oc-figures .oc-pnl { font-weight: 600; }
+.hpos-list .oc-sub .side-yes { color: var(--green); }
+.hpos-list .oc-sub .side-no { color: var(--no); }
+.hpos-list .pos-card--b .pos-info { padding-top: calc(var(--s4) - 12px); }
+.hpos-list .pos-card--b .oc-actions { margin-top: 8px; }
+.hpos-list .ocb-type { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.01em; text-align: center; }
+.hpos-list .ocb-type .side-yes { color: var(--green); }
+.hpos-list .ocb-type .side-no { color: var(--no); }
+.hpos-list .ocb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }
+.hpos-list .ocb-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.hpos-list .ocb-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); font-weight: 600; }
+.hpos-list .ocb-v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+
 @media (min-width: 768px) {
-  .hpos-trigger { padding: 0 var(--s4) 0 var(--s2); border-color: var(--green); background: var(--green); color: #06210f; -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .hpos-ico { display: none; }
+  /* Desktop: widen back out to show the wordmark and set the count in a prominent dark circle */
+  .hpos-trigger { width: auto; padding: 0 var(--s4) 0 var(--s2); }
   .hpos-word { display: inline; }
-  /* number in a prominent dark circle */
   .hpos-num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #06210f; color: var(--green); font-size: var(--fs-body); font-weight: 700; }
 }
-:root[data-theme="light"] .hpos-trigger { background: rgba(255, 255, 255, 0.72); color: var(--ink); }
 :root[data-theme="light"] .hpos-panel { background: rgba(255, 255, 255, 0.97); }
-@media (min-width: 768px) { :root[data-theme="light"] .hpos-trigger { background: var(--green); color: #06210f; } }
 
 /* Footer ------------------------------------------------------------- */
 .site-footer {

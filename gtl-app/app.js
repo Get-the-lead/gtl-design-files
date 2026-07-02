@@ -47,6 +47,7 @@ const GAMES = [
   },
   {
     id: "buf-mia", league: "nfl", clock: "11:05", period: "Q3", variant: 3,
+    paused: { message: "Trading paused. Recalculating markets.", clears: true },
     home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", logo: L + "nfl-buf.png" },
     away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: L + "nfl-mia.png" },
     markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
@@ -73,8 +74,9 @@ const GAMES = [
   },
   {
     id: "dal-phi", league: "nfl", clock: "02:14", period: "Q4", variant: 5,
-    home: { abbr: "DAL", name: "Cowboys", score: 21, color: "#003594", logo: L + "nfl-dal.png" },
-    away: { abbr: "PHI", name: "Eagles", score: 21, color: "#004C54", logo: L + "nfl-phi.png" },
+    paused: { message: "Markets open when a team takes the lead.", clears: false },
+    home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: L + "nfl-dal.png" },
+    away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: L + "nfl-phi.png" },
     markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 64, no: 36 }, ktl: { yes: 50, no: 50 } },
     stats: [
       { label: "Total yards", home: 341, away: 352 },
@@ -95,22 +97,23 @@ const CHEVRON = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" str
 const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const MARKET_LABELS = { gtl: "Get the Lead", tie: "Tie", ktl: "Keep the Lead" };
 const CHEVRON_DOWN = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-// The 2nd live game (NFL default view) demos the "trading paused → recalculating" state on every expand.
-const PAUSED_DEMO_GAME_ID = "buf-mia";
 // The 3rd card (den-dal) opens an alternate design page (game-b.html) for experimentation.
 const ALT_DESIGN_GAME_ID = "den-dal";
 const gamePageHref = (g) => `${g.id === ALT_DESIGN_GAME_ID ? "game-b" : "game"}.html?id=${g.id}`;
 
 /* ----------------------------------------------- HOME: EXPANDABLE BETS */
-function betPanel(g, paused = false) {
+// Paused status — sits in the See Bets toggle's slot when a game's markets aren't tradable.
+// Games carry a `paused: { message, clears }` object; `clears` auto-reveals See Bets after ~8s.
+const tradePauseHTML = (message) => `<div class="trade-pause" role="status"><span class="pause-dot"></span><span>${message}</span></div>`;
+
+function betPanel(g) {
   const href = gamePageHref(g);
   const row = (label, sub, full, key) => `<div class="mkt-row">
       <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
       <button class="price yes" data-game="${g.id}" data-market="${key}" data-side="yes" aria-label="${full} Yes ${g.markets[key].yes} cents">${g.markets[key].yes}¢</button>
       <button class="price no" data-game="${g.id}" data-market="${key}" data-side="no" aria-label="${full} No ${g.markets[key].no} cents">${g.markets[key].no}¢</button>
     </div>`;
-  return `${paused ? `<div class="trade-pause" role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
-    <div class="mkt-grid">
+  return `<div class="mkt-grid">
       <div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>
       ${row("GTL", "Get the Lead", "Get the Lead", "gtl")}
       ${row("TIE", "", "Tie", "tie")}
@@ -119,14 +122,16 @@ function betPanel(g, paused = false) {
     <a class="view-game" href="${href}">View Game</a>`;
 }
 
-function footHTML(g, paused = false) {
+function footHTML(g) {
+  // When paused, the status replaces the See Bets toggle; the tile stays collapsed.
   return `<div class="tile-foot">
-      <button class="foot-toggle" data-expand aria-expanded="${paused ? "true" : "false"}">
+      ${g.paused ? tradePauseHTML(g.paused.message) : ""}
+      <button class="foot-toggle" data-expand aria-expanded="false">
         <span class="chev">${CHEVRON_DOWN}</span>
-        <span class="toggle-label">${paused ? "Hide Bets" : "See Bets"}</span>
+        <span class="toggle-label">See Bets</span>
         <span class="chev">${CHEVRON_DOWN}</span>
       </button>
-      <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${betPanel(g, paused)}</div></div></div>
+      <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${betPanel(g)}</div></div></div>
     </div>`;
 }
 
@@ -144,8 +149,9 @@ function renderTiles() {
           <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
         </div>`;
     };
-    const demo = g.id === PAUSED_DEMO_GAME_ID ? " data-paused-demo" : "";
-    return `<article class="game-tile" data-league="${g.league}"${demo} style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    const pausedCls = g.paused ? " is-paused" : "";
+    const pauseClears = g.paused?.clears ? " data-pause-clears" : "";
+    return `<article class="game-tile${pausedCls}" data-league="${g.league}"${pauseClears} style="--home-color:${g.home.color};--away-color:${g.away.color}">
         <a class="tile-main" href="${gamePageHref(g)}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">
           <div class="game-row">
             ${teamBlock("home")}
@@ -167,43 +173,30 @@ function initExpanders() {
       $$("[data-expand]", tile).forEach((b) => b.setAttribute("aria-expanded", open ? "true" : "false"));
       const label = tile.querySelector(".toggle-label");
       if (label) label.textContent = open ? "Hide Bets" : "See Bets";
-      if (open && tile.hasAttribute("data-paused-demo")) runPausedDemo(tile);
     })
   );
 }
 
-// Demo the "trading paused → recalculating markets" state each time the tile is opened.
-// Prices lock with loaders, then ~8s later (while still open) the pause clears and prices update.
-function runPausedDemo(tile) {
-  const pad = tile.querySelector(".foot-panel-pad");
-  if (!pad) return;
-  clearTimeout(tile._pauseTimer);
-  tile.classList.add("is-paused");
-  if (!pad.querySelector(".trade-pause")) {
-    pad.insertAdjacentHTML("afterbegin", `<div class="trade-pause" role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>`);
-  }
-  $$(".price", tile).forEach((btn) => {
-    btn.disabled = true; btn.setAttribute("aria-disabled", "true");
-    if (!btn.querySelector(".price-loader")) btn.insertAdjacentHTML("afterbegin", `<span class="price-loader" aria-hidden="true"></span>`);
+// Auto-clearing paused tiles (e.g. "recalculating markets") show the status immediately, then
+// ~8s later reveal See Bets with freshly recalculated prices. Persistent pauses (e.g. "markets
+// open when a team takes the lead") have no data-pause-clears and stay until the game changes.
+function initPausedDemo() {
+  $$(".game-tile.is-paused[data-pause-clears]").forEach((tile) => {
+    clearTimeout(tile._pauseTimer);
+    tile._pauseTimer = setTimeout(() => {
+      tile.classList.remove("is-paused");
+      tile.querySelector(".trade-pause")?.remove();
+      // markets recalculated — nudge the prices so they're fresh when the tile is opened
+      $$(".mkt-row", tile).forEach((row) => {
+        const yesEl = row.querySelector(".price.yes");
+        const noEl = row.querySelector(".price.no");
+        if (!yesEl || !noEl) return;
+        const yes = Math.max(5, Math.min(95, parseInt(yesEl.textContent, 10) + priceDelta()));
+        yesEl.textContent = `${yes}¢`;
+        noEl.textContent = `${100 - yes}¢`;
+      });
+    }, 8000);
   });
-  tile._pauseTimer = setTimeout(() => {
-    tile.classList.remove("is-paused");
-    tile.querySelector(".trade-pause")?.remove();
-    $$(".price", tile).forEach((btn) => {
-      btn.disabled = false; btn.removeAttribute("aria-disabled");
-      btn.querySelector(".price-loader")?.remove();
-    });
-    // markets recalculated — nudge the prices so they visibly update
-    $$(".mkt-row", tile).forEach((row) => {
-      const yesEl = row.querySelector(".price.yes");
-      const noEl = row.querySelector(".price.no");
-      if (!yesEl || !noEl) return;
-      const yes = Math.max(5, Math.min(95, parseInt(yesEl.textContent, 10) + priceDelta()));
-      yesEl.textContent = `${yes}¢`;
-      noEl.textContent = `${100 - yes}¢`;
-      [yesEl, noEl].forEach((el) => { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); });
-    });
-  }, 8000);
 }
 
 /* --------------------------------------------------- HOME: LEAGUE FILTER */
@@ -247,8 +240,6 @@ function initLeagueFilter() {
 const ICON_MOON = '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 const LOGO_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>';
-const ICON_HAMBURGER = '<svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-const ICON_X = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 const THEME_SWITCH = `<span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">${ICON_SUN}</span><span class="theme-option theme-moon">${ICON_MOON}</span></span>`;
 // Header nav shown inside the GTL pill on desktop. Home / Live Games / How it works always; Portfolio + Logout only when signed in.
 function navHTML(authed) {
@@ -261,7 +252,7 @@ function navHTML(authed) {
   </nav>`;
 }
 const WALLET_ICO = '<svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const POS_ICO = '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="5" rx="1.6" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="12.5" width="18" height="5" rx="1.6" stroke="currentColor" stroke-width="1.8"/></svg>';
+const ICON_CLOSE = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
 // Single source of truth for the header on every page (auth slots filled by applyAuthChrome)
 function renderHeader() {
@@ -278,7 +269,6 @@ function renderHeader() {
           <button class="brand floating-logo floating-btn brand-menu" data-menu-toggle aria-controls="menuPanel" aria-expanded="false" aria-label="Open menu">
             <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
             <span class="brand-word">GTL Markets</span>
-            <span class="brand-burger"><span class="icon-menu">${ICON_HAMBURGER}</span><span class="icon-close">${ICON_X}</span></span>
           </button>
           <span class="header-nav-slot" id="headerNav"></span>
         </span>
@@ -286,6 +276,7 @@ function renderHeader() {
       </div>
       <div class="header-right">
         <span class="header-auth" id="headerAuth"></span>
+        <span class="header-wallet" id="headerWallet"></span>
         <span class="header-positions" id="headerPositions"></span>
       </div>
     </div>
@@ -550,6 +541,105 @@ function gameMomentumCards(g) {
     </div>`).join("");
 }
 
+/* --- Polished chart renderer (used by both game.html and game-b.html) --- */
+function seriesSmooth(value, variant, spread, n = 18) {
+  return Array.from({ length: n }, (_, i) => {
+    const wave = Math.sin((i + variant) * 0.55) * spread * 1.8 + Math.sin((i * 1.9 + variant) * 0.9) * spread * 0.7;
+    return Math.max(3, Math.min(97, value + wave));
+  });
+}
+function smoothLine(points, w, h, min = 0, max = 100) {
+  const span = Math.max(1, max - min);
+  const p = points.map((v, i) => [(i / Math.max(1, points.length - 1)) * w, h - ((v - min) / span) * h]);
+  if (p.length < 2) return `M0 ${h}H${w}`;
+  const t = 0.18;
+  let d = `M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+    const c1x = b[0] + (c[0] - a[0]) * t, c1y = b[1] + (c[1] - a[1]) * t;
+    const c2x = c[0] - (e[0] - b[0]) * t, c2y = c[1] - (e[1] - b[1]) * t;
+    d += ` C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${c[0].toFixed(1)} ${c[1].toFixed(1)}`;
+  }
+  return d;
+}
+function chartGridPath(w, h) {
+  const parts = [];
+  [0.25, 0.5, 0.75].forEach((f) => parts.push(`M0 ${(h * f).toFixed(1)}H${w}`));
+  [0.2, 0.4, 0.6, 0.8].forEach((f) => parts.push(`M${(w * f).toFixed(1)} 0V${h}`));
+  return parts.join(" ");
+}
+function proLineChart(id, w, h, series, color, opts = {}) {
+  const { min = 0, max = 100, fill = 0.3, second = null, secondColor = "var(--ink-3)" } = opts;
+  const line = smoothLine(series, w, h, min, max);
+  const area = `${line} L${w} ${h} L0 ${h} Z`;
+  return `
+    <svg class="line-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-hidden="true">
+      <defs>
+        <linearGradient id="cf-${id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" style="stop-color:${color};stop-opacity:${fill}"></stop>
+          <stop offset="0.92" style="stop-color:${color};stop-opacity:0"></stop>
+        </linearGradient>
+      </defs>
+      <path class="chart-grid" d="${chartGridPath(w, h)}"></path>
+      <path class="chart-fill" d="${area}" fill="url(#cf-${id})"></path>
+      ${second ? `<path class="chart-line chart-line--ghost" d="${smoothLine(second, w, h, min, max)}" style="color:${secondColor}"></path>` : ""}
+      <path class="chart-line" d="${line}" style="color:${color}"></path>
+    </svg>`;
+}
+function bettingChartsPro(g) {
+  const mk = g.markets.gtl;
+  const bid = Math.max(1, mk.yes - 1);
+  const ask = Math.min(99, mk.yes + 1);
+  const bidSeries = seriesSmooth(bid, g.variant, 1.5);
+  const askSeries = bidSeries.map((v) => Math.min(99, v + 2.4));
+  const lo = Math.min(...bidSeries) - 8;
+  const hi = Math.max(...askSeries) + 8;
+  const volumeNow = (g.home.score + g.away.score) * 1250 + g.variant * 1800;
+  const volumeSeries = Array.from({ length: 18 }, (_, i) => {
+    const tt = i / 17;
+    return volumeNow * (0.1 + tt * 0.9) * (0.97 + ((g.variant + i) % 3) * 0.015);
+  });
+  const volMax = Math.max(...volumeSeries) * 1.1;
+  const probRaw = [
+    { key: "GTL", value: g.markets.gtl.yes },
+    { key: "TIE", value: g.markets.tie.yes },
+    { key: "KTL", value: g.markets.ktl.yes },
+  ];
+  const total = probRaw.reduce((s, x) => s + x.value, 0) || 1;
+  const probs = probRaw.map((x) => ({ ...x, pct: Math.round((x.value / total) * 100) }));
+  probs[2].pct += 100 - probs.reduce((s, x) => s + x.pct, 0);
+  return `
+    <div class="chart-card">
+      <div class="chart-head"><span>Bid / Ask</span><strong class="tnum">${bid}¢ / ${ask}¢</strong></div>
+      ${proLineChart(`${g.id}-ba`, 320, 150, bidSeries, "var(--green)", { min: lo, max: hi, fill: 0.26, second: askSeries, secondColor: "var(--no)" })}
+      <div class="chart-legend"><span class="bid">Bid</span><span class="ask">Ask</span></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head"><span>Implied probability</span><strong class="tnum">100%</strong></div>
+      <div class="prob-chart" role="img" aria-label="Implied probability: ${probs.map((x) => `${x.key} ${x.pct}%`).join(", ")}">
+        ${probs.map((x) => `<div class="prob-col ${x.key.toLowerCase()}">
+          <div class="prob-bar"><span class="prob-fill" style="height:${x.pct}%"></span><span class="prob-val tnum" style="bottom:${x.pct}%">${x.pct}%</span></div>
+          <span class="prob-key">${x.key}</span>
+        </div>`).join("")}
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head"><span>Volume</span><strong class="tnum">$${volumeNow.toLocaleString("en-US")}</strong></div>
+      ${proLineChart(`${g.id}-vol`, 320, 150, volumeSeries, "#8fb7ff", { min: 0, max: volMax, fill: 0.34 })}
+    </div>`;
+}
+function gameMomentumCardsPro(g) {
+  return gameMomentumStats(g).map((item) => {
+    const color = item.trend === "up" ? "var(--green)" : "var(--no)";
+    const key = item.label.replace(/[^a-z]/gi, "");
+    return `<div class="momentum-card ${item.trend}">
+      <div class="momentum-head"><span>${item.label}</span><strong class="tnum">${item.value}</strong></div>
+      ${proLineChart(`${g.id}-${key}`, 260, 96, item.series, color, { fill: 0.24 })}
+      <span class="trend-pill ${item.trend}"><span class="trend-arrow" aria-hidden="true">${item.trend === "up" ? "↑" : "↓"}</span>${item.delta}</span>
+    </div>`;
+  }).join("");
+}
+
 function initStatsTabs() {
   const tabs = $("#statsTabs");
   if (!tabs) return;
@@ -568,6 +658,19 @@ function initStatsTabs() {
   });
 }
 
+// The game-page back link mirrors where the user arrived from (Home / Portfolio); falls back to Home.
+function gameBackTarget() {
+  try {
+    const ref = document.referrer ? new URL(document.referrer) : null;
+    if (ref && ref.origin === location.origin) {
+      const labels = { "home.html": "Home", "wallet.html": "Portfolio" };
+      const label = labels[ref.pathname.split("/").pop()];
+      if (label) return { label, href: ref.href };
+    }
+  } catch (e) { /* ignore */ }
+  return { label: "Home", href: "home.html" };
+}
+
 function renderGamePage() {
   const main = $("#gameMain");
   if (!main) return;
@@ -575,6 +678,7 @@ function renderGamePage() {
   const g = GAMES.find((x) => x.id === id) || GAMES[0];
   document.title = `${g.away.abbr} @ ${g.home.abbr} — GTL`;
   const lead = leaderOf(g);
+  const back = gameBackTarget();
 
   const teamCol = (side) => {
     const t = g[side];
@@ -591,17 +695,35 @@ function renderGamePage() {
     </div>
     <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>`;
 
-  const bettingStatsHTML = bettingCharts(g);
-  const gameSummaryHTML = gameMomentumCards(g);
+  const bettingStatsHTML = bettingChartsPro(g);
+  const gameSummaryHTML = gameMomentumCardsPro(g);
+
+  // Stats (right column on desktop): a tabbed toggle between Betting Stats and Game Stats.
+  const statsHTML = `<section class="container stats-section" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+      <div class="section-head center stats-overall-head"><span class="eyebrow">Stats</span><h2>Inside the game</h2></div>
+      <div class="stats-tabs" id="statsTabs" role="tablist" aria-label="Game statistics views">
+        <button class="stats-tab is-active" type="button" role="tab" aria-selected="true" data-stats-tab="betting">Betting Stats</button>
+        <button class="stats-tab" type="button" role="tab" aria-selected="false" data-stats-tab="game">Game Stats</button>
+      </div>
+      <div class="stats-panel" data-stats-panel="betting">
+        <h3 class="stats-section-label">Betting Stats</h3>
+        <div class="chart-grid-wrap">${bettingStatsHTML}</div>
+      </div>
+      <div class="stats-panel" data-stats-panel="game" hidden>
+        <h3 class="stats-section-label">Game Stats</h3>
+        <div class="momentum-grid">${gameSummaryHTML}</div>
+      </div>
+    </section>`;
 
   main.innerHTML = `
     <div class="game-layout" style="--home-color:${g.home.color};--away-color:${g.away.color}">
     <div class="game-col-left" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <a class="gb-back gb-back-right" href="${back.href}" aria-label="Back to ${back.label}">${CHEVRON}<span>${back.label}</span></a>
     <section class="gb" style="--home-color:${g.home.color};--away-color:${g.away.color}">
       <div class="gb-glow" aria-hidden="true"></div>
       <div class="container gb-inner">
         <div class="gb-topbar">
-          <a class="gb-back" href="home.html" aria-label="Back to games">${CHEVRON}<span>Games</span></a>
+          <a class="gb-back" href="${back.href}" aria-label="Back to ${back.label}">${CHEVRON}<span>${back.label}</span></a>
         </div>
         <div class="gb-score-stack">
           <span class="live-badge game-clock-badge">
@@ -628,21 +750,7 @@ function renderGamePage() {
     </section>
     </div>
     <div class="game-col-right">
-    <a class="gb-back gb-back-right" href="home.html" aria-label="Back to games">${CHEVRON}<span>Games</span></a>
-
-    <section class="container stats-section" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-      <div class="section-head center"><span class="eyebrow">Stats</span><h2>Inside the game</h2></div>
-      <div class="stats-tabs" id="statsTabs" role="tablist" aria-label="Game statistics views">
-        <button class="stats-tab is-active" type="button" role="tab" aria-selected="true" data-stats-tab="betting">Betting Stats</button>
-        <button class="stats-tab" type="button" role="tab" aria-selected="false" data-stats-tab="game">Game Stats</button>
-      </div>
-      <div class="stats-panel" data-stats-panel="betting">
-        <div class="chart-grid-wrap">${bettingStatsHTML}</div>
-      </div>
-      <div class="stats-panel" data-stats-panel="game" hidden>
-        <div class="momentum-grid">${gameSummaryHTML}</div>
-      </div>
-    </section>
+    ${statsHTML}
     </div>
     </div>`;
 
@@ -1333,20 +1441,41 @@ function gameMedia(g, centerInner) {
 }
 const clockCenter = (g) => `<span class="period">${g.period}</span><span class="clock tnum" data-game-clock="${g.id}">${g.clock}</span>`;
 
-// Open-position card for the authed-home carousel. Three visual variants (i = 0/1/2) so the
-// client can compare layouts. Clock ticks live except the last card (game at a Q3 break).
-function positionCarouselCard(p, i) {
-  const { g, value, cost, pnl } = posFigures(p);
-  const up = pnl >= 0;
-  const betType = `${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
-  const actions = `<div class="oc-actions">
+const posActions = (i) => `<div class="oc-actions">
         <button class="oc-buy" data-buy="${i}">Buy More</button>
         <button class="oc-sell" data-sell="${i}">Sell</button>
       </div>`;
 
-  // Variant B (2nd card) — bet type styled like the game time, then a Contracts / Value / Return row
-  if (i === 1) {
-    return `<article class="pos-card pos-card--b" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+// Variant A — the shared position-card design: a [bet type] / "Value & Return" label row
+// above a [side · contracts] / [value · return] data row.
+function positionCardA(p, i) {
+  const { g, value, pnl } = posFigures(p);
+  const up = pnl >= 0;
+  const sideTag = `<span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
+  return `<article class="pos-card pos-card--a" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <a class="pos-media" href="${gamePageHref(g)}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">${gameMedia(g, clockCenter(g))}</a>
+    <div class="pos-info">
+      <div class="oc-summary">
+        <div class="oc-row">
+          <span class="oc-tag">${MARKET_LABELS[p.market]}</span>
+          <span class="oc-vr-head">Value &amp; Return</span>
+        </div>
+        <div class="oc-row">
+          <span class="oc-sub">${sideTag} · ${p.qty} contracts</span>
+          <span class="oc-figures"><span class="tnum">${money(value)}</span> · <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
+        </div>
+      </div>
+      ${posActions(i)}
+    </div>
+  </article>`;
+}
+
+// Variant B — bet type over a centred Contracts / Value / Return stat row.
+function positionCardB(p, i) {
+  const { g, value, pnl } = posFigures(p);
+  const up = pnl >= 0;
+  const betType = `${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
+  return `<article class="pos-card pos-card--b" style="--home-color:${g.home.color};--away-color:${g.away.color}">
       <a class="pos-media" href="${gamePageHref(g)}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">${gameMedia(g, clockCenter(g))}</a>
       <div class="pos-info">
         <div class="ocb-type">${betType}</div>
@@ -1355,17 +1484,21 @@ function positionCarouselCard(p, i) {
           <div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">${money(value)}</span></div>
           <div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl ${up ? "up" : "down"}">${signed(pnl)}</span></div>
         </div>
-        ${actions}
+        ${posActions(i)}
       </div>
     </article>`;
-  }
+}
 
-  // Variant C (3rd card) — creative: profit above a centre-anchored gain/loss bar; game at a quarter break (no clock)
-  if (i === 2) {
-    const mag = Math.min(1, cost ? Math.abs(pnl) / cost : 0); // magnitude vs cost basis
-    const half = (mag * 50).toFixed(1);                        // half the bar = full gain/loss
-    const fillStyle = up ? `left:50%;width:${half}%` : `right:50%;width:${half}%`;
-    return `<article class="pos-card pos-card--c" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+/* The home carousel's 3rd card (variant C) — also used for every card in the
+   header Open Positions dropdown. Self-contained so both callers stay identical. */
+function positionCardC(p, i) {
+  const { g, value, cost, pnl } = posFigures(p);
+  const up = pnl >= 0;
+  const betType = `${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
+  const mag = Math.min(1, cost ? Math.abs(pnl) / cost : 0); // magnitude vs cost basis
+  const half = (mag * 50).toFixed(1);                        // half the bar = full gain/loss
+  const fillStyle = up ? `left:50%;width:${half}%` : `right:50%;width:${half}%`;
+  return `<article class="pos-card pos-card--c" style="--home-color:${g.home.color};--away-color:${g.away.color}">
       <a class="pos-media" href="${gamePageHref(g)}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">${gameMedia(g, `<span class="period qtime">3 Quarter Time</span>`)}</a>
       <div class="pos-info occ">
         <div class="occ-total tnum">${money(value)}</div>
@@ -1377,28 +1510,12 @@ function positionCarouselCard(p, i) {
           <span class="oc-tag occ-type">${betType}</span>
           <span class="occ-change ${up ? "up" : "down"} tnum">${signed(pnl)}</span>
         </div>
-        ${actions}
+        <div class="oc-actions">
+          <button class="oc-buy" data-buy="${i}">Buy More</button>
+          <button class="oc-sell" data-sell="${i}">Sell</button>
+        </div>
       </div>
     </article>`;
-  }
-
-  // Variant A (default, 1st card) — position + value side by side
-  return `<article class="pos-card" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <div class="pos-media">${gameMedia(g, clockCenter(g))}</div>
-    <div class="pos-info">
-      <div class="oc-mid">
-        <span class="oc-pos">
-          <span class="oc-tag">${betType}</span>
-          <span class="oc-sub">${p.qty} contracts</span>
-        </span>
-        <span class="oc-val">
-          <span class="oc-amount tnum">${money(value)}</span>
-          <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span>
-        </span>
-      </div>
-      ${actions}
-    </div>
-  </article>`;
 }
 
 function positionCardHTML(p, i) {
@@ -1471,8 +1588,14 @@ function applyAuthChrome() {
   const authed = isAuthed();
   document.body.classList.toggle("is-authed", authed);
   if (right) {
-    // Wallet chip now lives above the home greeting; the header keeps the Open Positions chip (right) for cross-page access.
+    // Signed out shows Login; signed in the header carries the Wallet + Open Positions chips (right) for cross-page access.
     right.innerHTML = authed ? "" : `<a class="btn header-login floating-btn" href="login.html">Login</a>`;
+  }
+  const wallet = $("#headerWallet");
+  if (wallet) {
+    wallet.innerHTML = authed
+      ? `<a class="wallet-chip floating-btn" href="wallet.html" aria-label="Wallet balance">${WALLET_ICO}<span class="wallet-amount tnum">${money(USER.balance)}</span></a>`
+      : "";
   }
   if (nav) {
     nav.innerHTML = navHTML(authed);
@@ -1485,13 +1608,12 @@ function applyAuthChrome() {
     if (n) {
       positions.innerHTML = `
         <button class="hpos-trigger" data-hpos-toggle aria-expanded="false" aria-haspopup="true" aria-controls="hposPanel" aria-label="${n} open positions">
-          <span class="hpos-ico" aria-hidden="true">${POS_ICO}</span>
           <span class="hpos-num tnum">${n}</span>
           <span class="hpos-word">Open Positions</span>
-          <span class="hpos-close">Close</span>
+          <span class="hpos-close" aria-hidden="true">${ICON_CLOSE}</span>
         </button>
         <div class="hpos-panel" id="hposPanel" role="menu" hidden>
-          <div class="hpos-list">${USER.positions.map((p, i) => positionCardHTML(p, i)).join("")}</div>
+          <div class="hpos-list">${USER.positions.map((p, i) => (i === USER.positions.length - 1 ? positionCardB(p, i) : positionCardA(p, i))).join("")}</div>
         </div>`;
       bindPositionActions(positions.querySelector(".hpos-list"));
     } else {
@@ -1515,15 +1637,17 @@ function renderAuthedHome() {
   if (!heroInner || !$("#gameGrid") || !isAuthed()) return;
 
   heroInner.classList.add("authed");
+  // Render each position card, then swap the display order of the 2nd and 3rd cards.
+  const posCards = USER.positions.map((p, i) => positionCardA(p, i));
+  if (posCards.length >= 3) [posCards[1], posCards[2]] = [posCards[2], posCards[1]];
   heroInner.innerHTML = `
-    <a class="wallet-chip floating-btn hero-wallet" href="wallet.html" aria-label="Wallet balance">${WALLET_ICO}<span class="wallet-amount tnum">${money(USER.balance)}</span></a>
     <div class="hero-greeting">
       <h1>Hey ${currentName()}</h1>
     </div>
     <div class="authed-stack">
       <div class="positions-block">
         <div class="positions-head"><span class="eyebrow">Open Positions</span></div>
-        <div class="pos-carousel" id="positionList">${USER.positions.map((p, i) => positionCarouselCard(p, i)).join("")}</div>
+        <div class="pos-carousel" id="positionList">${posCards.join("")}</div>
         <div class="pos-footer">
           <a href="wallet.html">View All</a>
           <div class="pos-dots" id="posDots"></div>
@@ -1891,6 +2015,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTiles();
   renderAuthedHome();
   initExpanders();
+  initPausedDemo();
   initLeagueFilter();
   initHeader();
   initTheme();

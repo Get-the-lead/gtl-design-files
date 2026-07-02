@@ -67,8 +67,7 @@
 
 /* Authenticated hero — greeting + positions + reopened callout ------- */
 .hero-inner.authed { align-items: stretch; text-align: left; }
-.hero-wallet { align-self: center; margin-top: 40px; margin-bottom: calc(var(--s4) + 16px); }
-.hero-greeting { text-align: center; margin-bottom: var(--s2); }
+.hero-greeting { text-align: center; margin-top: 24px; margin-bottom: var(--s2); }
 .hero-greeting .eyebrow { display: block; margin-bottom: var(--s2); }
 .hero-greeting h1 { font-size: var(--fs-hero); line-height: 1.0; }
 
@@ -110,13 +109,25 @@
 }
 .pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
 
+/* Position card variant A — [bet type] / "Value & Return" labels above [side · contracts] / [value · return] */
+.pos-card--a .pos-info { padding-top: calc(var(--s4) - 12px); } /* tighten the media→text gap by 12px */
+.oc-summary { display: flex; flex-direction: column; gap: 4px; }
+.oc-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
+.oc-row > span { white-space: nowrap; }
+.oc-vr-head { font-size: var(--fs-eyebrow); color: var(--ink); font-weight: 600; letter-spacing: 0.04em; }
+.oc-figures { font-size: var(--fs-label); font-weight: 700; color: var(--ink); }
+.oc-figures .oc-pnl { font-weight: 600; }
+.oc-sub .side-yes { color: var(--green); }
+.oc-sub .side-no { color: var(--no); }
+:root[data-theme="light"] .oc-sub .side-yes { color: #16a34a; }
+
 /* Position card variant B — bet-type headline + Contracts / Value / Return row, all centred */
 .ocb-type { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.01em; text-align: center; }
 .ocb-type .side-yes { color: var(--green); }
 .ocb-type .side-no { color: var(--no); }
 .ocb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }
 .ocb-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
-.ocb-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.ocb-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); font-weight: 600; }
 .ocb-v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 
 /* Position card variant C — bet type + profit above a centre-anchored gain/loss bar, value under it */
@@ -151,7 +162,6 @@
 /* Desktop authenticated hero — greeting sits lower under the header */
 @media (min-width: 768px) {
   .hero:has(.hero-inner.authed) { padding-block-start: 144px; }
-  .hero-wallet { margin-top: 0; margin-bottom: var(--s4); } /* extra spacing is mobile-only */
 }
 
 /* League filter strip (centered, league logos) ----------------------- */
@@ -310,27 +320,19 @@
   border-top-color: transparent;
   animation: price-spin 0.8s linear infinite;
 }
+/* Trading-paused status — takes the See Bets toggle's slot while markets recalc, no chip, no rails */
+.game-tile.is-paused .foot-toggle { display: none; }
 .trade-pause {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2px var(--s2);
-  align-items: center;
-  margin-bottom: var(--s4);
-  padding: var(--s3);
-  border: 1px solid rgba(255, 206, 77, 0.28);
-  border-radius: var(--r-md);
-  background: rgba(255, 206, 77, 0.1);
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: var(--s2);
+  padding: 10px 0;
   color: rgba(255, 255, 255, 0.94);
   font-size: var(--fs-label);
   font-weight: 700;
-}
-.trade-pause small {
-  grid-column: 2;
-  color: rgba(255, 255, 255, 0.62);
-  font-size: var(--fs-eyebrow);
-  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 .pause-dot {
+  flex: none;
   width: 9px;
   height: 9px;
   border-radius: 50%;

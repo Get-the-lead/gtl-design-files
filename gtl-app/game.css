@@ -25,7 +25,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: var(--s6);
 }
 .gb-back {
@@ -172,6 +172,7 @@
   color: #06210f;
 }
 .stats-panel[hidden] { display: none; }
+.stats-section-label { display: none; } /* mobile: tabs are the section labels; shown on desktop */
 .stat-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -206,10 +207,14 @@
   gap: var(--s3);
 }
 .chart-card {
-  padding: var(--s4);
+  position: relative;
+  overflow: hidden;
+  padding: var(--s5);
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: var(--surface);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(130% 90% at 50% 0%, rgba(255, 255, 255, 0.045), transparent 55%),
+    var(--surface);
 }
 .chart-head {
   display: flex;
@@ -228,24 +233,32 @@
   font-family: var(--font-display);
   font-size: var(--fs-lead);
 }
+/* full-bleed to the card edges (left→right = game timeline), taller for a premium read */
 .line-chart {
-  width: 100%;
-  height: 96px;
   display: block;
-  overflow: visible;
+  width: calc(100% + 2 * var(--s5));
+  margin-inline: calc(-1 * var(--s5));
+  height: 150px;
 }
 .chart-grid {
   fill: none;
-  stroke: var(--line);
+  stroke: var(--line-2);
   stroke-width: 1;
+  stroke-dasharray: 2 7;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.5;
 }
 .chart-line {
   fill: none;
-  stroke-width: 3;
+  stroke: currentColor;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 3px currentColor);
 }
+.chart-line--ghost { stroke-width: 1.8; opacity: 0.5; filter: none; } /* the secondary (ask) line */
+.chart-fill { stroke: none; }
 .chart-line.bid { stroke: var(--green); }
 .chart-line.ask { stroke: var(--no); }
 .chart-line.volume { stroke: #8fb7ff; }
@@ -280,15 +293,56 @@
 .prob-legend .ktl { background: #8fb7ff; }
 .prob-line {
   display: flex;
-  height: 18px;
+  height: 30px;
   overflow: hidden;
   border-radius: var(--r-pill);
   background: var(--surface-2);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 .prob-seg { min-width: 8px; }
-.prob-seg.gtl { background: var(--green); }
-.prob-seg.tie { background: var(--gold); }
-.prob-seg.ktl { background: #8fb7ff; }
+.prob-seg.gtl { background: linear-gradient(180deg, #74f0a6, var(--green)); }
+.prob-seg.tie { background: linear-gradient(180deg, #ffe293, var(--gold)); }
+.prob-seg.ktl { background: linear-gradient(180deg, #b6cdff, #8fb7ff); }
+
+/* Implied probability as three vertical bars (height = probability) — clearer than a stacked bar */
+.prob-chart {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s6);
+  align-items: end;
+  justify-items: center;
+  padding-top: var(--s4);
+}
+.prob-col { display: flex; flex-direction: column; align-items: center; gap: var(--s3); width: 100%; }
+.prob-bar {
+  position: relative;
+  width: 100%;
+  max-width: 76px;
+  height: 156px;
+  border-bottom: 1px solid var(--line-2);
+}
+.prob-fill {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  min-height: 6px;
+  border-radius: 10px 10px 2px 2px;
+}
+.prob-val {
+  position: absolute; left: 0; right: 0; bottom: 0; /* bottom overridden inline to the bar's % */
+  padding-bottom: 8px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-lead);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.prob-key { font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.04em; }
+.prob-col.gtl .prob-fill { background: linear-gradient(180deg, #7bf1ab, var(--green)); box-shadow: 0 6px 20px -6px var(--green-glow); }
+.prob-col.tie .prob-fill { background: linear-gradient(180deg, #ffe293, var(--gold)); box-shadow: 0 6px 20px -6px rgba(255, 206, 77, 0.5); }
+.prob-col.ktl .prob-fill { background: linear-gradient(180deg, #b6cdff, #8fb7ff); box-shadow: 0 6px 20px -6px rgba(143, 183, 255, 0.5); }
+.prob-col.gtl .prob-key { color: var(--green); }
+.prob-col.tie .prob-key { color: var(--gold); }
+.prob-col.ktl .prob-key { color: #8fb7ff; }
 .momentum-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -297,11 +351,14 @@
 .momentum-card {
   position: relative;
   overflow: hidden;
-  padding: var(--s4);
+  padding: var(--s5);
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  background: var(--surface);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(130% 90% at 50% 0%, rgba(255, 255, 255, 0.045), transparent 55%),
+    var(--surface);
 }
+.momentum-card .line-chart { height: 84px; margin-block: var(--s3); }
 .momentum-card::before {
   content: "";
   position: absolute;
@@ -423,6 +480,21 @@
        container and lets it slide up. Bottom breathing room lives inside the right column. */
     padding: 0 calc(var(--s4) + 40px) 0 var(--s4);
     align-items: start; /* each column keeps its own height so the left can go sticky */
+    isolation: isolate; /* stacking context so the ::before fade sits behind the columns */
+  }
+  /* team-colour fade at the PAGE level (behind BOTH columns), like v2 — replaces the
+     per-panel fade. Fixed to the viewport so it stays put behind the sticky scoreboard.
+     Dark backing up top keeps the scoreboard readable; fades to the page colour below. */
+  .game-layout::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(88% 560px at 0% 0%, color-mix(in srgb, var(--home-color) 66%, transparent), transparent 72%),
+      radial-gradient(88% 560px at 100% 0%, color-mix(in srgb, var(--away-color) 66%, transparent), transparent 72%),
+      linear-gradient(180deg, #070809 0%, #070809 400px, transparent 660px);
   }
   /* the mobile Bet Now bar's 96px bottom padding is phantom scroll on desktop (bar hidden) */
   .game-body { padding-bottom: 0; }
@@ -441,15 +513,7 @@
     display: flex;
     flex-direction: column;
     justify-content: safe center;
-    border-radius: var(--r-xl);               /* rounds the fade's corners */
-    padding: var(--s5);
-    /* the team-colour fade is the PANEL background now (edge to edge), not a separate
-       card. Dark backing at the top keeps the scoreboard's white text readable in both
-       themes; it fades to transparent (→ page colour, black in dark mode) before the betting. */
-    background:
-      radial-gradient(95% 55% at 0% 0%, color-mix(in srgb, var(--home-color) 72%, transparent), transparent 78%),
-      radial-gradient(95% 55% at 100% 0%, color-mix(in srgb, var(--away-color) 72%, transparent), transparent 78%),
-      linear-gradient(180deg, #070809 0%, #070809 34%, transparent 60%);
+    padding: var(--s5); /* insets scoreboard/betting from the column edges; fade is page-level now */
   }
   .game-col-left > .gb, .game-col-left > .markets { flex-shrink: 0; } /* keep natural size; scroll rather than squish */
   /* scoreboard is now just content sitting on the panel fade — no card box of its own */
@@ -466,11 +530,36 @@
   /* RIGHT — normal page flow; header clearance comes from the layout's margin-top */
   .game-col-right { padding-top: 0; }
   .game-col-left .container, .game-col-right .container { max-width: none; padding-inline: 0; margin-inline: 0; }
+  .game-col-left .markets { padding-inline: var(--s4); } /* pull the bet rows in ~16px to line up with the centred scoreboard */
   .game-col-right .stats-section { max-width: none; padding-top: 0; padding-bottom: var(--s10); }
-  .game-col-right .section-head.center { text-align: left; align-items: flex-start; }
 
-  .gb-back-right { display: inline-flex; margin-bottom: var(--s5); color: var(--ink-2); }
-  .gb-back-right:hover { color: var(--ink); }
+  /* v1 desktop: two-section stats (no toggle) — matches v2. Hide the toggle + overall head,
+     reveal BOTH panels with centred per-section labels, charts laid out horizontally (wrap). */
+  .game-col-right .stats-overall-head,
+  .game-col-right .stats-tabs { display: none; }
+  .game-col-right .stats-panel[hidden] { display: block; }
+  .game-col-right .stats-panel + .stats-panel { margin-top: var(--s12); }
+  .game-col-right .stats-section-label {
+    display: block; text-align: left;
+    font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h3);
+    margin-bottom: var(--s5);
+  }
+  .game-col-right .chart-grid-wrap,
+  .game-col-right .momentum-grid { display: flex; flex-direction: column; gap: var(--s3); }
+
+  /* back link pinned to the top-left of the left panel (bigger + white) */
+  .gb-back-right {
+    position: absolute;
+    top: var(--s5);
+    left: var(--s6);
+    z-index: 2;
+    display: inline-flex;
+    color: #fff;
+    font-size: var(--fs-lead);
+    font-weight: 600;
+  }
+  .gb-back-right svg { width: 20px; height: 20px; }
+  .gb-back-right:hover { color: rgba(255, 255, 255, 0.78); }
 
   .betbar { display: none; } /* betting is always visible on the left — no floating Bet Now on desktop */
 }
