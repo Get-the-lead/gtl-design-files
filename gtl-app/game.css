@@ -15,9 +15,9 @@
   inset: -40% -15% 0;
   z-index: -1;
   background:
-    radial-gradient(72% 95% at 0% 0%, color-mix(in srgb, var(--home-color) 78%, transparent), transparent 60%),
-    radial-gradient(72% 95% at 100% 0%, color-mix(in srgb, var(--away-color) 78%, transparent), transparent 60%),
-    linear-gradient(180deg, rgba(7, 8, 9, 0.2), #070809 94%);
+    radial-gradient(90% 120% at 0% 0%, color-mix(in srgb, var(--home-color) 78%, transparent), transparent 74%),
+    radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--away-color) 78%, transparent), transparent 74%),
+    linear-gradient(180deg, rgba(7, 8, 9, 0.1), #070809 88%);
 }
 .gb-inner { display: flex; flex-direction: column; align-items: center; }
 
@@ -25,6 +25,7 @@
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-bottom: var(--s6);
 }
 .gb-back {
@@ -45,19 +46,19 @@
   gap: var(--s4);
 }
 .gb-score-stack .game-clock-badge {
-  gap: var(--s2);
-  padding: 7px var(--s3) 7px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: var(--r-pill);
-  background: rgba(7, 8, 9, 0.58);
+  flex-direction: column;
+  gap: 13px;
+  padding: 0;
+  border: none;
+  background: none;
   color: #fff;
   letter-spacing: 0;
   text-transform: none;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
 }
 .gb-score-stack .game-period {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   min-height: 24px;
   padding: 0 var(--s2);
   border-radius: var(--r-pill);
@@ -126,10 +127,10 @@
 .price {
   justify-self: stretch;
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 62px; padding: 0 var(--s4);
+  min-height: 52px; padding: 0 var(--s4);
   border-radius: var(--r-pill);
   border: 1px solid; background: var(--surface-2);
-  font-family: var(--font-display); font-weight: 700; font-size: 1.4rem;
+  font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
   font-variant-numeric: tabular-nums;
   transition: transform 0.14s var(--ease), background 0.18s var(--ease), border-color 0.18s var(--ease);
 }
@@ -386,10 +387,7 @@
   position: fixed;
   left: 0; right: 0; bottom: 0;
   z-index: 60;
-  background: rgba(7, 8, 9, 0.82);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border-top: 1px solid var(--line);
+  pointer-events: none; /* transparent — only the floating button is interactive */
   transform: translateY(120%);
   transition: transform 0.32s var(--ease-out);
   padding-bottom: env(safe-area-inset-bottom, 0);
@@ -398,20 +396,96 @@
 .betbar-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--s4);
-  padding-block: var(--s3);
+  justify-content: center;
+  padding-block: var(--s5);
 }
-.betbar-meta { display: flex; flex-direction: column; line-height: 1.2; }
-.betbar-label { font-weight: 600; font-size: var(--fs-body); }
-.betbar-hint { color: var(--ink-3); font-size: var(--fs-eyebrow); }
-.betbar-cta { --btn-h: 48px; padding-inline: var(--s8); box-shadow: 0 0 0 4px var(--green-soft); }
+.betbar-cta { pointer-events: auto; width: 100%; --btn-h: 52px; padding-inline: var(--s10); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
 
 @media (min-width: 768px) {
   .markets, .stats-section { max-width: 760px; }
   .betbar-inner { max-width: 760px; }
 }
 
+/* Back-to-games button in the right column — desktop only */
+.gb-back-right { display: none; }
+
+/* Desktop — the 2-column layout drops below the floating header. The left column
+   (scorecard + betting) is a full-height STICKY panel that scrolls internally only
+   when its content is taller than the viewport; the right column drives the page scroll. */
+@media (min-width: 1024px) {
+  /* the layout container sits under the floating header (64px tall + 16px gap = 80px) */
+  .game-layout {
+    display: grid;
+    grid-template-columns: minmax(360px, 40%) 1fr;
+    gap: 8%;
+    margin-top: 104px;
+    /* NO bottom padding here: any space below the grid rows scrolls PAST the sticky left's
+       container and lets it slide up. Bottom breathing room lives inside the right column. */
+    padding: 0 calc(var(--s4) + 40px) 0 var(--s4);
+    align-items: start; /* each column keeps its own height so the left can go sticky */
+  }
+  /* the mobile Bet Now bar's 96px bottom padding is phantom scroll on desktop (bar hidden) */
+  .game-body { padding-bottom: 0; }
+  .game-col-left, .game-col-right { min-width: 0; }
+
+  /* LEFT — sticky + fills the available height; scrollbar appears only when it overflows.
+     Flex column: children STRETCH to equal width (betting edges match the scorecard),
+     and the group is vertically centred (safe = falls back to top-align when it overflows). */
+  .game-col-left {
+    position: sticky;
+    top: 104px;                               /* pinned just under the floating header */
+    height: calc(100vh - 104px - var(--s6));  /* fills the height left below the header */
+    overflow-y: auto;                         /* internal scroll ONLY when content won't fit */
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+    border-radius: var(--r-xl);               /* rounds the fade's corners */
+    padding: var(--s5);
+    /* the team-colour fade is the PANEL background now (edge to edge), not a separate
+       card. Dark backing at the top keeps the scoreboard's white text readable in both
+       themes; it fades to transparent (→ page colour, black in dark mode) before the betting. */
+    background:
+      radial-gradient(95% 55% at 0% 0%, color-mix(in srgb, var(--home-color) 72%, transparent), transparent 78%),
+      radial-gradient(95% 55% at 100% 0%, color-mix(in srgb, var(--away-color) 72%, transparent), transparent 78%),
+      linear-gradient(180deg, #070809 0%, #070809 34%, transparent 60%);
+  }
+  .game-col-left > .gb, .game-col-left > .markets { flex-shrink: 0; } /* keep natural size; scroll rather than squish */
+  /* scoreboard is now just content sitting on the panel fade — no card box of its own */
+  .game-col-left .gb { background: transparent; border-radius: 0; overflow: visible; padding: var(--s6) 0 var(--s8); }
+  .game-col-left .gb-inner { width: 100%; }
+  .game-col-left .gb-glow { display: none; } /* the fade lives on .game-col-left now */
+  /* centre the scorecard elements as a group rather than spreading them to the card edges */
+  .game-col-left .gb-score { grid-template-columns: auto auto auto; justify-content: center; gap: var(--s6); }
+  .game-col-left .gb-topbar { display: none; } /* back button lives in the right column */
+  .game-col-left .markets { margin-top: var(--s6); padding-top: 0; } /* betting sits under the scoreboard */
+  .game-col-left .markets .section-head { display: none; } /* no Markets / Back the lead label on desktop */
+  .game-col-left .bet-help { text-align: center; } /* "tap a price to start" centred */
+
+  /* RIGHT — normal page flow; header clearance comes from the layout's margin-top */
+  .game-col-right { padding-top: 0; }
+  .game-col-left .container, .game-col-right .container { max-width: none; padding-inline: 0; margin-inline: 0; }
+  .game-col-right .stats-section { max-width: none; padding-top: 0; padding-bottom: var(--s10); }
+  .game-col-right .section-head.center { text-align: left; align-items: flex-start; }
+
+  .gb-back-right { display: inline-flex; margin-bottom: var(--s5); color: var(--ink-2); }
+  .gb-back-right:hover { color: var(--ink); }
+
+  .betbar { display: none; } /* betting is always visible on the left — no floating Bet Now on desktop */
+}
+
+/* Desktop — float the Bet Now button centred under the right (markets) column, matching the layout grid */
+@media (min-width: 1024px) {
+  .betbar-inner {
+    max-width: 1240px;
+    padding-inline: var(--s5);
+    display: grid;
+    grid-template-columns: minmax(360px, 40%) 1fr;
+    gap: var(--s8);
+  }
+  .betbar-cta { grid-column: 2; justify-self: center; width: auto; }
+}
+
 /* Light-theme tweaks (markets/stats flip to light; green text needs deepening) */
 :root[data-theme="light"] .price.yes { color: #15803d; }
-:root[data-theme="light"] .betbar { background: rgba(255, 255, 255, 0.85); }
