@@ -6,15 +6,16 @@
   display: flex;
   flex-direction: column;
 }
-.auth-login .site-header { display: none; }
+/* auth screens are dismissible modals — no site header, just the floating X close */
+.auth-body .site-header { display: none; }
 
 /* Centred card — the shared floating site-header (styles.css) sits above */
-.auth-main { flex: 1; min-height: 0; display: flex; align-items: flex-start; justify-content: center; padding: calc(clamp(var(--s5), 6vh, var(--s10)) + 40px) var(--s5) var(--s8); }
+.auth-main { flex: 1; min-height: 0; display: flex; align-items: safe center; justify-content: center; padding: calc(clamp(var(--s5), 6vh, var(--s10)) + 40px) var(--s5) var(--s8); }
 .auth-card {
   width: 100%; max-width: 420px;
   display: flex; flex-direction: column;
 }
-.auth-login .auth-main { padding-top: calc(var(--s5) + 40px + env(safe-area-inset-top, 0px)); }
+.auth-body .auth-main { padding-top: calc(var(--s5) + 40px + env(safe-area-inset-top, 0px)); }
 .auth-close {
   position: fixed;
   top: calc(var(--s4) + env(safe-area-inset-top, 0px));
