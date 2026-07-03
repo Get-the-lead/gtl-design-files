@@ -589,58 +589,153 @@ function proLineChart(id, w, h, series, color, opts = {}) {
       <path class="chart-line" d="${line}" style="color:${color}"></path>
     </svg>`;
 }
-function bettingChartsPro(g) {
-  const mk = g.markets.gtl;
-  const bid = Math.max(1, mk.yes - 1);
-  const ask = Math.min(99, mk.yes + 1);
-  const bidSeries = seriesSmooth(bid, g.variant, 1.5);
-  const askSeries = bidSeries.map((v) => Math.min(99, v + 2.4));
-  const lo = Math.min(...bidSeries) - 8;
-  const hi = Math.max(...askSeries) + 8;
-  const volumeNow = (g.home.score + g.away.score) * 1250 + g.variant * 1800;
-  const volumeSeries = Array.from({ length: 18 }, (_, i) => {
-    const tt = i / 17;
-    return volumeNow * (0.1 + tt * 0.9) * (0.97 + ((g.variant + i) % 3) * 0.015);
+/* --- Betting-stats data (synthetic prototype: order book, order flow, bets) --- */
+function orderBook(g) {
+  const mid = g.markets.gtl.yes;
+  const bid = Math.max(2, mid - 1), ask = Math.min(98, mid + 1);
+  const size = (dist, seed) => Math.round((1500 - dist * 300) * (0.85 + ((g.variant + seed) % 4) * 0.12));
+  const asks = [3, 2, 1, 0].map((d) => ({ price: Math.min(99, ask + d), size: size(d, d) }));      // highest ask at top → best ask by the spread
+  const bids = [0, 1, 2, 3].map((d) => ({ price: Math.max(1, bid - d), size: size(d, d + 2) }));    // best bid by the spread → down
+  const maxSize = Math.max(...asks.map((a) => a.size), ...bids.map((b) => b.size));
+  return { bid, ask, spread: ask - bid, asks, bids, maxSize };
+}
+function betFlow(g) {
+  const labels = ["Q1", "Q2", "Q3", "Q4"];
+  const vals = labels.map((_, i) => Math.round((34 + ((g.variant * 7 + i * 13) % 46)) * (1 + i * 0.16)));
+  const max = Math.max(...vals);
+  return { total: vals.reduce((s, v) => s + v, 0), buckets: labels.map((label, i) => ({ label, val: vals[i], pct: Math.round((vals[i] / max) * 100) })) };
+}
+function recentBets(g) {
+  const mkts = ["GTL", "TIE", "KTL"];
+  const times = ["11:58", "10:42", "09:15", "08:03", "06:37"];
+  return times.map((t, i) => ({
+    t, m: mkts[(g.variant + i) % 3],
+    side: (g.variant + i) % 2 ? "Yes" : "No",
+    price: Math.max(5, Math.min(95, g.markets.gtl.yes + (i % 2 ? -1 : 1) * (2 + i))),
+    size: 50 * (1 + ((g.variant + i) % 6)),
+  }));
+}
+// Score differential (home − away) over the game; crosses zero on each lead change/tie.
+// Score margin (home − away) over the game as discrete steps; returns the series
+// plus the x-fractions where the lead changed (sign flips / ties) to highlight.
+function scoreWorm(g) {
+  const finalDiff = g.home.score - g.away.score;
+  const n = 16, amp = Math.max(7, Math.abs(finalDiff) + 6);
+  const series = Array.from({ length: n }, (_, i) => {
+    const tt = i / (n - 1);
+    return Math.round(Math.sin(tt * Math.PI * (2 + (g.variant % 3))) * amp * (1 - tt * 0.3) + finalDiff * tt);
   });
-  const volMax = Math.max(...volumeSeries) * 1.1;
-  const probRaw = [
-    { key: "GTL", value: g.markets.gtl.yes },
-    { key: "TIE", value: g.markets.tie.yes },
-    { key: "KTL", value: g.markets.ktl.yes },
-  ];
-  const total = probRaw.reduce((s, x) => s + x.value, 0) || 1;
-  const probs = probRaw.map((x) => ({ ...x, pct: Math.round((x.value / total) * 100) }));
-  probs[2].pct += 100 - probs.reduce((s, x) => s + x.pct, 0);
+  series[0] = 0;                 // game opens 0–0
+  series[n - 1] = finalDiff;     // ends at the live margin
+  const crossings = [];
+  for (let i = 1; i < n; i++) {
+    const a = series[i - 1], b = series[i];
+    if ((a > 0 && b <= 0) || (a < 0 && b >= 0)) crossings.push(i / (n - 1)); // lead swapped / levelled
+  }
+  const maxAbs = Math.max(6, ...series.map((v) => Math.abs(v)));
+  return { series, crossings, changes: crossings.length, maxAbs, n };
+}
+// Stepped path: the value holds flat, then steps at the next point (score-worm look).
+function stepPath(points, w, h, min, max) {
+  const span = Math.max(1, max - min);
+  const xy = points.map((v, i) => [(i / Math.max(1, points.length - 1)) * w, h - ((v - min) / span) * h]);
+  let d = `M${xy[0][0].toFixed(1)} ${xy[0][1].toFixed(1)}`;
+  for (let i = 1; i < xy.length; i++) d += ` H${xy[i][0].toFixed(1)} V${xy[i][1].toFixed(1)}`;
+  return d;
+}
+function scoreWormChart(g, worm) {
+  const w = 280, h = 132;
+  const line = stepPath(worm.series, w, h, -worm.maxAbs, worm.maxAbs); // symmetric → zero is the centre
+  const scale = Math.ceil(worm.maxAbs / 5) * 5;
+  const marks = worm.crossings.map((f) => `<span class="worm-mark" style="left:${(f * 100).toFixed(1)}%"></span>`).join("");
+  return `
+    <div class="worm-wrap">
+      <div class="worm-quarters" aria-hidden="true"><span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span></div>
+      <div class="worm-axis" aria-hidden="true"><span>+${scale}</span><span>0</span><span>−${scale}</span></div>
+      ${marks}
+      <svg class="worm-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Score margin over the game, ${worm.changes} lead changes">
+        <defs>
+          <linearGradient id="wg-${g.id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${h}">
+            <stop offset="0" stop-color="${g.home.color}"></stop>
+            <stop offset="0.5" stop-color="${g.home.color}"></stop>
+            <stop offset="0.5" stop-color="${g.away.color}"></stop>
+            <stop offset="1" stop-color="${g.away.color}"></stop>
+          </linearGradient>
+        </defs>
+        <line class="worm-zero" x1="0" y1="${h / 2}" x2="${w}" y2="${h / 2}"></line>
+        <path class="worm-line" d="${line}" style="stroke:url(#wg-${g.id})"></path>
+      </svg>
+    </div>`;
+}
+// Betting Stats panel — market book (was bid/ask) + order flow with a bets table.
+function bettingChartsPro(g) {
+  const book = orderBook(g);
+  const flow = betFlow(g);
+  const bets = recentBets(g);
+  const bookRow = (l, side) => `<div class="book-row book-${side}">
+      <span class="book-depth"><span class="book-depth-fill" style="width:${Math.round((l.size / book.maxSize) * 100)}%"></span></span>
+      <span class="book-price tnum">${l.price}¢</span>
+      <span class="book-size tnum">${l.size.toLocaleString("en-US")}</span>
+    </div>`;
   return `
     <div class="chart-card">
-      <div class="chart-head"><span>Bid / Ask</span><strong class="tnum">${bid}¢ / ${ask}¢</strong></div>
-      ${proLineChart(`${g.id}-ba`, 320, 150, bidSeries, "var(--green)", { min: lo, max: hi, fill: 0.26, second: askSeries, secondColor: "var(--no)" })}
-      <div class="chart-legend"><span class="bid">Bid</span><span class="ask">Ask</span></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-head"><span>Implied probability</span><strong class="tnum">100%</strong></div>
-      <div class="prob-chart" role="img" aria-label="Implied probability: ${probs.map((x) => `${x.key} ${x.pct}%`).join(", ")}">
-        ${probs.map((x) => `<div class="prob-col ${x.key.toLowerCase()}">
-          <div class="prob-bar"><span class="prob-fill" style="height:${x.pct}%"></span><span class="prob-val tnum" style="bottom:${x.pct}%">${x.pct}%</span></div>
-          <span class="prob-key">${x.key}</span>
-        </div>`).join("")}
+      <div class="chart-head"><span>Market book</span><strong class="tnum">${book.bid}¢ / ${book.ask}¢</strong></div>
+      <div class="book">
+        <div class="book-side">${book.asks.map((l) => bookRow(l, "ask")).join("")}</div>
+        <div class="book-spread"><span>Spread</span><strong class="tnum">${book.spread}¢</strong></div>
+        <div class="book-side">${book.bids.map((l) => bookRow(l, "bid")).join("")}</div>
       </div>
     </div>
     <div class="chart-card">
-      <div class="chart-head"><span>Volume</span><strong class="tnum">$${volumeNow.toLocaleString("en-US")}</strong></div>
-      ${proLineChart(`${g.id}-vol`, 320, 150, volumeSeries, "#8fb7ff", { min: 0, max: volMax, fill: 0.34 })}
+      <div class="chart-head"><span>Order flow</span><strong class="tnum">${flow.total} bets</strong></div>
+      <div class="flow-bars">${flow.buckets.map((b) => `<span class="flow-bar" style="height:${Math.max(6, b.pct)}%"><em class="flow-cap tnum">${b.val}</em></span>`).join("")}</div>
+      <div class="flow-axis">${flow.buckets.map((b) => `<span>${b.label}</span>`).join("")}</div>
+      <table class="bets-table">
+        <thead><tr><th>Time</th><th>Market</th><th>Side</th><th class="num">Price</th><th class="num">Size</th></tr></thead>
+        <tbody>${bets.map((b) => `<tr>
+          <td class="tnum">${b.t}</td>
+          <td>${b.m}</td>
+          <td><span class="side-${b.side.toLowerCase()}">${b.side}</span></td>
+          <td class="num tnum">${b.price}¢</td>
+          <td class="num tnum">${b.size}</td>
+        </tr>`).join("")}</tbody>
+      </table>
     </div>`;
 }
+// Game Stats panel — combined score-worm card (lead changes + ties) then the
+// three NFL stats most tied to lead changes (turnovers, possession, yards).
 function gameMomentumCardsPro(g) {
-  return gameMomentumStats(g).map((item) => {
-    const color = item.trend === "up" ? "var(--green)" : "var(--no)";
-    const key = item.label.replace(/[^a-z]/gi, "");
-    return `<div class="momentum-card ${item.trend}">
-      <div class="momentum-head"><span>${item.label}</span><strong class="tnum">${item.value}</strong></div>
-      ${proLineChart(`${g.id}-${key}`, 260, 96, item.series, color, { fill: 0.24 })}
-      <span class="trend-pill ${item.trend}"><span class="trend-arrow" aria-hidden="true">${item.trend === "up" ? "↑" : "↓"}</span>${item.delta}</span>
+  const worm = scoreWorm(g);
+  const ties = gameMomentumStats(g)[0].value;
+  const order = ["Turnovers", "Possession %", "Total yards"];
+  let picks = order.map((lbl) => g.stats.find((s) => s.label === lbl)).filter(Boolean);
+  if (picks.length < 3) picks = g.stats.slice(0, 3);
+  // Centre-anchored bars: each team grows from the middle toward its own side (home
+  // left, away right), scaled so the leader of that stat reaches the edge.
+  const statRow = (s) => {
+    const maxB = Math.max(s.home, s.away) || 1;
+    return `<div class="stat-block">
+      <div class="stat-caption"><span class="stat-val tnum">${s.home}</span><span class="stat-label">${s.label}</span><span class="stat-val tnum">${s.away}</span></div>
+      <div class="stat-bar-c">
+        <span class="stat-fill-h" style="width:${((s.home / maxB) * 50).toFixed(1)}%"></span>
+        <span class="stat-fill-a" style="width:${((s.away / maxB) * 50).toFixed(1)}%"></span>
+      </div>
     </div>`;
-  }).join("");
+  };
+  return `
+    <div class="momentum-card worm-card">
+      <div class="momentum-head"><span>Score worm</span></div>
+      <div class="worm-legend"><span class="worm-key"><i style="background:${g.home.color}"></i>${g.home.abbr} ahead</span><span class="worm-key"><i style="background:${g.away.color}"></i>${g.away.abbr} ahead</span></div>
+      ${scoreWormChart(g, worm)}
+      <div class="worm-stats">
+        <div class="worm-stat"><strong class="tnum">${worm.changes}</strong><span>Lead changes</span></div>
+        <div class="worm-stat"><strong class="tnum">${ties}</strong><span>Ties</span></div>
+      </div>
+    </div>
+    <div class="momentum-card stats-card">
+      <div class="stats-teams"><img class="stats-logo" src="${g.home.logo}" alt="${g.home.name}"><span class="stats-title">Game stats</span><img class="stats-logo" src="${g.away.logo}" alt="${g.away.name}"></div>
+      <div class="stat-list">${picks.map(statRow).join("")}</div>
+    </div>`;
 }
 
 function initStatsTabs() {
