@@ -100,6 +100,8 @@ const CHEVRON_DOWN = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6
 // The 3rd card (den-dal) opens an alternate design page (game-b.html) for experimentation.
 const ALT_DESIGN_GAME_ID = "den-dal";
 const gamePageHref = (g) => `${g.id === ALT_DESIGN_GAME_ID ? "game-b" : "game"}.html?id=${g.id}`;
+// Game 1's detail page demos periodic market "recalculation" (paused banner → fresh prices).
+const RECALC_DEMO_GAME_ID = "kc-sf";
 
 /* ----------------------------------------------- HOME: EXPANDABLE BETS */
 // Paused status — sits in the See Bets toggle's slot when a game's markets aren't tradable.
@@ -381,6 +383,7 @@ function startPriceTicker() {
   const rows = $$(".mkt-row");
   if (!rows.length) return;
   const bump = (row) => {
+    if (row.closest("[data-recalc-managed]")) return; // the recalc cycle owns these rows (game 1)
     const yesEl = row.querySelector(".price.yes");
     const noEl = row.querySelector(".price.no");
     if (!yesEl || !noEl) return;
@@ -744,8 +747,9 @@ function renderGamePage() {
       </div>
     </section>
 
-    <section class="container markets" id="marketsSection">
+    <section class="container markets" id="marketsSection"${g.id === RECALC_DEMO_GAME_ID ? " data-recalc-managed" : ""}>
       <div class="section-head center"><span class="eyebrow">Markets</span><h2>Back the lead</h2></div>
+      ${g.id === RECALC_DEMO_GAME_ID ? `<div class="game-recalc" data-game-recalc hidden><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
       ${marketsHTML}
     </section>
     </div>
@@ -756,6 +760,42 @@ function renderGamePage() {
 
   initStickyBet();
   initStatsTabs();
+  initGameRecalc();
+}
+
+// Game 1's detail page: every ~9s the market "recalculates" — the recalculating
+// banner appears (between "Back the lead" and the Yes/No header) and the prices
+// lock, then ~1.6s later the freshly nudged prices are revealed. Only the
+// recalc-managed section (game 1) does this; startPriceTicker leaves it alone.
+function initGameRecalc() {
+  const section = $("#marketsSection[data-recalc-managed]");
+  const banner = section && $("[data-game-recalc]", section);
+  if (!section || !banner) return;
+  const rows = $$(".mkt-row", section);
+  const prices = $$(".price", section);
+  let busy = false;
+  setInterval(() => {
+    if (busy || document.hidden) return;
+    busy = true;
+    banner.hidden = false;                          // "Trading paused. Recalculating markets."
+    section.classList.add("is-recalc");
+    prices.forEach((p) => { p.disabled = true; });  // lock betting while recalculating
+    setTimeout(() => {
+      rows.forEach((row) => {                       // reveal the recalculated prices
+        const yesEl = row.querySelector(".price.yes");
+        const noEl = row.querySelector(".price.no");
+        if (!yesEl || !noEl) return;
+        const yes = Math.max(5, Math.min(95, parseInt(yesEl.textContent, 10) + priceDelta()));
+        yesEl.textContent = `${yes}¢`;
+        noEl.textContent = `${100 - yes}¢`;
+        [yesEl, noEl].forEach((el) => { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); });
+      });
+      banner.hidden = true;
+      section.classList.remove("is-recalc");
+      prices.forEach((p) => { p.disabled = false; });
+      busy = false;
+    }, 1600);
+  }, 9000);
 }
 
 /* ----------------------------------------------- BET DRAWER (two-step) */
@@ -833,7 +873,7 @@ function ensureBetSheet() {
             <div class="qty-quick q3" data-sell-quick>
               <button data-sell-pct="25">25%</button>
               <button data-sell-pct="50">50%</button>
-              <button data-sell-pct="100">Max</button>
+              <button data-sell-pct="100">All</button>
             </div>
           </div>
 
@@ -866,14 +906,14 @@ function ensureBetSheet() {
           <div class="bet-highlight buy-only">
             <span class="bet-label">Purchase price</span>
             <span class="bet-total-big tnum" data-total-big>$0.00</span>
-            <span class="bet-profit-line">Potential profit of <strong data-profit-big>$0.00</strong> after <a href="#" class="fees-link" data-fees-link>fees</a></span>
+            <p class="potential-win">Potential profit of <strong data-profit-big>$0.00</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p>
           </div>
 
           <!-- SELL: proceeds + realised P&L -->
           <div class="bet-highlight sell-only">
             <span class="bet-label">You receive</span>
             <span class="bet-total-big tnum" data-receive-big>$0.00</span>
-            <span class="bet-profit-line" data-realized-line>Realised profit of <strong data-realized-big>$0.00</strong> after fees</span>
+            <p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$0.00</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p>
           </div>
         </div>
 
@@ -944,7 +984,7 @@ function ensureBetSheet() {
   sheet.querySelector("[data-bet-primary]").addEventListener("click", placeBet);
   sheet.querySelector("[data-cancel-bet]").addEventListener("click", closeBetSheet);
   sheet.querySelector("[data-success-close]").addEventListener("click", closeBetSheet);
-  sheet.querySelector("[data-fees-link]").addEventListener("click", (e) => { e.preventDefault(); goToFees(); });
+  sheet.addEventListener("click", (e) => { if (e.target.closest("[data-fees-link]")) { e.preventDefault(); goToFees(); } }); // delegated: covers the buy line AND the (regenerated) sell line's fees link
 
   qtyInput.addEventListener("input", () => { const v = parseInt(qtyInput.value.replace(/[^0-9]/g, ""), 10); betState.quantity = v >= 1 ? v : 1; updateBetSheet(); });
   limitInput.addEventListener("input", () => {
@@ -1049,7 +1089,7 @@ function updateBetSheet() {
   if (betState.mode === "sell") {
     const s = computeSell();
     sheet.querySelector("[data-sell-tag]").innerHTML = `${MARKET_LABELS[betState.market]} · <span class="side-${betState.contract}">${betState.contract.toUpperCase()}</span>`;
-    sheet.querySelector("[data-sell-sub]").textContent = `${betState.holding} held · avg ${betState.avg}¢ · now ${s.priceCents}¢`;
+    sheet.querySelector("[data-sell-sub]").innerHTML = `<span>${betState.holding} Held</span><span aria-hidden="true">·</span><span>Bought at ${betState.avg}¢</span><span aria-hidden="true">·</span><span>Now ${s.priceCents}¢</span>`;
     $$("[data-sell-pct]", sheet).forEach((b) => {
       const target = Math.max(1, Math.round(betState.holding * Number(b.dataset.sellPct) / 100));
       b.classList.toggle("is-active", target === s.qty);
@@ -1058,7 +1098,7 @@ function updateBetSheet() {
     const rline = sheet.querySelector("[data-realized-line]");
     const win = s.realized >= 0;
     rline.classList.toggle("is-loss", !win);
-    rline.innerHTML = `Realised ${win ? "profit" : "loss"} of <strong>${money(Math.abs(s.realized))}</strong> after fees`;
+    rline.innerHTML = `Realised ${win ? "profit" : "loss"} of <strong>${money(Math.abs(s.realized))}</strong> after <a href="#" class="fees-link" data-fees-link>fees</a>`;
   }
 
   // Primary button label
@@ -1662,12 +1702,13 @@ function renderAuthedHome() {
 
 // Settled win — a banner that slides down over the header on any page (until dismissed)
 function renderSettledToast() {
-  if (!isAuthed()) return;
+  // The settled "You Won" banner is a game-b-only demo surface: it renders on
+  // EVERY load of game-b (no auth gate, no session-dismissal persistence) so the
+  // pattern is always visible there in a consistent spot. Dismiss/auto-dismiss
+  // only hide it for the current view — a refresh brings it back.
+  if (!document.body.classList.contains("game-b-body")) return;
   const reopen = USER.settled.find((s) => s.reopened);
   if (!reopen) return;
-  let dismissed = null;
-  try { dismissed = sessionStorage.getItem("gtl-settled-dismissed"); } catch (e) { /* ignore */ }
-  if (dismissed === reopen.gameId) return; // hidden only after the user taps Dismiss, and only for this session
   const g = GAMES.find((x) => x.id === reopen.gameId);
   if (!g) return;
   document.body.insertAdjacentHTML("beforeend", `
@@ -1686,17 +1727,16 @@ function renderSettledToast() {
     </div>`);
   const toast = $("#settledToast");
   let autoTimer = null;
-  const hide = (persist) => {
+  const hide = () => {
     if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
-    if (persist) { try { sessionStorage.setItem("gtl-settled-dismissed", reopen.gameId); } catch (e) { /* ignore */ } }
     toast.classList.remove("is-open");
     setTimeout(() => toast.remove(), 500);
   };
-  toast.querySelector("[data-settled-dismiss]").addEventListener("click", () => hide(true)); // explicit dismiss = gone for the session
+  toast.querySelector("[data-settled-dismiss]").addEventListener("click", () => hide()); // hide for this view only — it returns on the next refresh
   setTimeout(() => {                          // let the page settle first, then slide in after 5s
     if (!document.body.contains(toast)) return;
     toast.classList.add("is-open");          // slide down + start the 10s progress fill
-    autoTimer = setTimeout(() => hide(false), 10000); // auto-dismiss is transient — it returns on the next authed screen
+    autoTimer = setTimeout(() => hide(), 10000); // auto-dismiss is transient — the banner returns on the next refresh
   }, 5000);
 }
 

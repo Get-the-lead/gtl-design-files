@@ -655,10 +655,13 @@ body.sheet-open { overflow: hidden; }
 .bet-highlight { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding-top: var(--s2); }
 .bet-highlight .bet-label { margin-bottom: var(--s2); }
 .bet-total-big { font-family: var(--font-display); font-weight: 700; font-size: 2.8rem; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
-.bet-profit-line { font-size: var(--fs-body); color: var(--green); }
-.bet-profit-line strong { font-weight: 700; }
+/* "Potential profit of … after fees" outcome line — shared by BOTH bet drawers
+   (bet-a in app.js + bet-b): muted copy with a green amount, red amount on loss. */
+.potential-win { margin: var(--s2) 0 0; text-align: center; color: var(--ink-2); font-size: 12px; font-weight: 500; }
+.potential-win strong { color: var(--green); font-family: inherit; font-size: 12px; font-weight: 500; }
+.potential-win span { color: inherit; font-size: 12px; font-weight: 500; }
+.potential-win.is-loss strong { color: var(--no); }
 .fees-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-:root[data-theme="light"] .bet-profit-line { color: #15803d; }
 
 /* Your bet — expanding toggle (active wider, label + price inline), live ticking */
 .bet-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-pill); }
@@ -884,10 +887,8 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 .sell-readout .sell-tag .side-yes { color: var(--green); }
 .sell-readout .sell-tag .side-no { color: var(--no); }
 :root[data-theme="light"] .sell-readout .sell-tag .side-yes { color: #16a34a; }
-.sell-readout .sell-sub { color: var(--ink-2); font-size: var(--fs-label); }
+.sell-readout .sell-sub { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: var(--ink-2); font-size: var(--fs-label); }
 .qty-quick.q3 { grid-template-columns: repeat(3, 1fr); }
-.bet-profit-line.is-loss { color: var(--no); }
-:root[data-theme="light"] .bet-profit-line.is-loss { color: var(--no); }
 /* Sell footer — single full-width action */
 .bet-sheet[data-mode="sell"] [data-breakdown],
 .bet-sheet[data-mode="sell"] [data-bet-back] { display: none; }
@@ -895,7 +896,8 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 
 /* Toast notifications (success / error) ------------------------------ */
 .toast-stack {
-  position: fixed; top: calc(84px + env(safe-area-inset-top, 0)); left: 50%; transform: translateX(-50%);
+  /* In line with the header (sits on top of it via z-index), not below it */
+  position: fixed; top: calc(var(--s4) + env(safe-area-inset-top, 0)); left: 50%; transform: translateX(-50%);
   z-index: 300; display: flex; flex-direction: column; align-items: center; gap: var(--s2);
   width: min(440px, calc(100% - var(--s8))); pointer-events: none;
 }
@@ -903,7 +905,7 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
   pointer-events: auto; display: flex; align-items: center; gap: var(--s3);
   max-width: 100%; padding: var(--s3) var(--s5) var(--s3) var(--s3);
   border-radius: var(--r-pill);
-  background: var(--surface-2); border: 1px solid var(--line-2);
+  background: var(--bg); border: 1px solid var(--line-2); /* matches the app background */
   box-shadow: var(--shadow); color: var(--ink);
   font-size: var(--fs-label); font-weight: 600;
   animation: toast-in 0.32s var(--ease-out);

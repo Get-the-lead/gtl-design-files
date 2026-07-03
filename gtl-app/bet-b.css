@@ -1,0 +1,99 @@
+/* =========================================================================
+   BET DRAWER — VERSION B ("enter price")   [home-b only]
+
+   A second design of the bet drawer, ported from the home-v5 branch.
+   Loaded ONLY by home-b.html. The base sheet chrome (positioning, open/close
+   animation, footer, success screen, sell readout, toggles, summary) is
+   inherited from styles.css — this file only styles the NEW pieces of the v5
+   design: the Market/Limit order-kind toggle (top of the body price section),
+   the dollar-amount buy input, the limit price + contracts rows, and the
+   outcome lines. The header reuses the original team-scoreboard styling from
+   styles.css. Drawer B lives at #betSheetB / #betBackdropB so it can
+   never collide with the original #betSheet drawer.
+   ========================================================================= */
+
+/* The Market/Limit order-kind toggle reuses the shared `.seg` segmented control
+   (same height + selected style as the Bet Type control) — see styles.css. */
+
+/* --- Limit order: price + contracts rows ---------------------------------- */
+.limit-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); }
+.limit-copy { color: var(--ink-2); font-size: 12px; font-weight: 400; line-height: 1.45; }
+.limit-row .num-input-box { flex: 0 0 auto; width: 112px; }
+.limit-qty-field { display: flex; }
+.limit-qty-field .num-input {
+  flex: 0 0 auto;
+  width: 112px;
+  height: 44px;
+  border: 1px solid var(--line-2);
+  border-radius: 22px;
+  padding: 0 var(--s4);
+  font-size: 20px;
+  line-height: 42px;
+}
+.limit-qty-field .num-input:focus { border-color: var(--green); }
+
+/* Sell "contracts to sell" — v5 tightened the gap */
+.bet-field.contracts-field { gap: var(--s3); }
+
+/* --- Dollar-amount buy input ---------------------------------------------- */
+.money-input-box, .money-input-plain {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+}
+.money-input-box {
+  border: 1px solid var(--line-2);
+  border-radius: 24px;
+  background: var(--surface);
+}
+.money-input-box:focus-within { border-color: var(--green); background: var(--bg-2); }
+.money-input-plain {
+  width: fit-content;
+  max-width: 100%;
+  margin: var(--s1) auto 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  justify-items: start;
+  gap: 0;
+}
+.money-prefix {
+  color: var(--ink); /* an amount is entered → $ is white, matching the number */
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+/* At $0.00 (field showing its placeholder), the $ matches the muted price */
+.money-input-plain:has(.money-input:placeholder-shown) .money-prefix { color: var(--ink-3); }
+.money-input-box .money-input, .money-input-plain .money-input {
+  width: min(7ch, 70%);
+  height: 56px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 3rem;
+  line-height: 56px;
+}
+.money-input-plain .money-input {
+  width: auto;
+  min-width: 1ch;
+  max-width: 7ch;
+  padding-left: 0;
+  text-align: left;
+}
+.money-input::placeholder { color: var(--ink-3); }
+
+/* --- Outcome lines --------------------------------------------------------- */
+.buy-contracts { margin: -6px 0 0; text-align: center; color: var(--ink-3); font-size: var(--fs-label); font-weight: 600; }
+.buy-outcome { display: flex; flex-direction: column; align-items: center; gap: var(--s1); }
+/* .potential-win outcome line is now shared — see styles.css */
+.limit-total { display: none; margin: 0; color: var(--ink-2); font-size: 12px; font-weight: 500; }
+.limit-total strong { color: var(--ink); font-size: 12px; font-weight: 600; }
+
+/* In Limit mode the dollar-amount field is replaced by the price+contracts rows */
+.bet-sheet[data-order-kind="limit"] .amount-field { display: none !important; }
+.bet-sheet[data-order-kind="limit"] .limit-total { display: block; }

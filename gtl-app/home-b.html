@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Trade the moments that move the game (B)</title>
+  <meta name="description" content="Get the Lead. Trade live NFL and NBA games in seconds." />
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="home.css" />
+  <!-- home-b only: styling for the second "enter price" bet drawer -->
+  <link rel="stylesheet" href="bet-b.css" />
+</head>
+<body class="home-b-body">
+
+  <!-- Floating header (shared) -->
+  <header class="site-header" id="siteHeader"></header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <div class="hero-grid"><div class="hero-grid-plane"></div></div>
+        <div class="hero-glow"></div>
+      </div>
+      <div class="container hero-inner">
+        <div class="hero-trading">
+          <span class="live-dot"></span>
+          <span id="tradingCount" class="tnum">3,247</span> trading right now
+        </div>
+        <h1 class="hero-title">Trade the moments that move the game.</h1>
+        <p class="hero-sub">Back the lead on live NFL &amp; NBA. Buy and sell in seconds, as the game turns.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="#live">Live Games</a>
+          <a class="btn btn-glass btn-lg" href="signup.html">Create Account</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live games -->
+    <section class="section live" id="live">
+      <div class="container">
+        <div class="section-head center">
+          <span class="eyebrow">On now</span>
+          <h2>Live games</h2>
+        </div>
+
+        <!-- League filter strip -->
+        <div class="league-strip" id="leagueStrip" role="tablist" aria-label="Filter by league">
+          <button class="league-pill is-active" role="tab" aria-selected="true" data-league="nfl">
+            <span class="league-icon"><img src="assets/logos/league-nfl.png" alt="" /></span>
+            <span class="league-label">NFL</span>
+          </button>
+          <button class="league-pill" role="tab" aria-selected="false" data-league="nba">
+            <span class="league-icon"><img src="assets/logos/league-nba.png" alt="" /></span>
+            <span class="league-label">NBA</span>
+          </button>
+        </div>
+
+        <!-- Game tiles (rendered by app.js) -->
+        <div class="game-grid" id="gameGrid"></div>
+
+        <!-- NBA coming-soon state (shown when NBA is selected) -->
+        <div class="coming-soon" id="nbaSoon" hidden>
+          <img class="cs-logo" src="assets/logos/league-nba.png" alt="" />
+          <h3 class="cs-title">NBA Betting Coming Soon</h3>
+          <p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p>
+          <div class="cs-actions">
+            <button class="btn btn-secondary" data-nba-vote="yes">I'd bet on NBA</button>
+            <button class="btn btn-secondary" data-nba-vote="no">Not for me</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section how" id="how">
+      <div class="container">
+        <div class="section-head center">
+          <span class="eyebrow">How it works</span>
+          <h2>Four taps from watching to trading.</h2>
+        </div>
+
+        <ol class="flow">
+          <li class="flow-step">
+            <div class="flow-marker">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <span class="flow-num">01</span>
+            <h3 class="flow-title">Pick a market</h3>
+            <p class="flow-text">Choose a live game and one of three lead markets.</p>
+          </li>
+          <li class="flow-step">
+            <div class="flow-marker">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="11" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="7" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <span class="flow-num">02</span>
+            <h3 class="flow-title">View the order book</h3>
+            <p class="flow-text">See live Yes / No prices and where the market sits.</p>
+          </li>
+          <li class="flow-step">
+            <div class="flow-marker">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="flow-num">03</span>
+            <h3 class="flow-title">Buy</h3>
+            <p class="flow-text">Take a position at the live price in a single tap.</p>
+          </li>
+          <li class="flow-step">
+            <div class="flow-marker">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="flow-num">04</span>
+            <h3 class="flow-title">Cash Out or Settle</h3>
+            <p class="flow-text">Cash out early or let it settle when the moment lands.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="home-b.html" data-scroll-top>
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>
+            </span>
+            <span class="brand-word">GTL</span>
+          </a>
+          <p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>Product</h4>
+            <a href="#live">Live games</a>
+            <a href="#how">How it works</a>
+            <a href="#">Tutorial</a>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Contact</a>
+          </div>
+          <div class="footer-col">
+            <h4>Legal</h4>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+            <a href="#">Responsible play</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-base">
+        <span>© 2026 GTL Markets</span>
+        <span>21+. Please play responsibly.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared app logic, then the home-b-only second bet drawer (routes bet clicks to itself) -->
+  <script src="app.js" defer></script>
+  <script src="bet-b.js" defer></script>
+</body>
+</html>
