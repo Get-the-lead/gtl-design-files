@@ -7,3 +7,34 @@
 .game-b-body .mkt-head, .game-b-body .mkt-row { grid-template-columns: minmax(0, 1.3fr) minmax(72px, 0.7fr) minmax(72px, 0.7fr); }
 .game-b-body .mkt-name { order: -1; align-items: flex-start; text-align: left; }
 .game-b-body .mkt-head span:not(.col-yes):not(.col-no) { order: -1; } /* empty header cell → above the bet types */
+
+/* Stats section: game.html keeps the boxed cards; game-b presents the charts
+   ON THE PAGE — no card border/background/padding, sections split by a hairline. */
+.game-b-body .chart-card,
+.game-b-body .momentum-card {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  overflow: visible;
+}
+.game-b-body .momentum-card::before { content: none; } /* drop the card glow */
+.game-b-body .chart-grid-wrap,
+.game-b-body .momentum-grid { gap: 0; }
+.game-b-body .chart-card + .chart-card,
+.game-b-body .momentum-card + .momentum-card {
+  margin-top: var(--s8);
+  padding-top: var(--s8);
+  border-top: 1px solid var(--line);
+}
+/* No Betting/Game toggle on game-b: both sections are always stacked with their own
+   labels, at EVERY size (mobile matches the desktop layout instead of tab-toggling). */
+.game-b-body .stats-tabs,
+.game-b-body .stats-overall-head { display: none; }
+.game-b-body .stats-panel[hidden] { display: block; }
+.game-b-body .stats-panel + .stats-panel { margin-top: var(--s20); } /* big break between sections */
+.game-b-body .stats-section-label {
+  display: block; text-align: left;
+  font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h2); /* one heading larger */
+  margin-bottom: var(--s5);
+}

@@ -758,6 +758,7 @@ body.sheet-open { overflow: hidden; }
 
 /* Authenticated chrome ----------------------------------------------- */
 .wallet-chip {
+  position: relative;
   height: 48px;
   display: inline-flex; align-items: center; gap: var(--s2);
   padding: 0 var(--s5) 0 var(--s4);
@@ -768,6 +769,25 @@ body.sheet-open { overflow: hidden; }
 .wallet-chip .wallet-ico { width: 18px; height: 18px; color: var(--green); }
 .wallet-chip .wallet-amount { color: var(--ink); }
 :root[data-theme="light"] .wallet-chip .wallet-ico { color: #16a34a; }
+/* Settled win landing in the wallet — soft green pulse + count-up + floating "+$x" */
+.wallet-chip.wallet-credit { animation: wallet-credit 0.85s var(--ease-out); }
+@keyframes wallet-credit {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 55%, transparent); }
+  100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--green) 0%, transparent); }
+}
+.wallet-chip.wallet-credit .wallet-amount { animation: wallet-amt 1.1s var(--ease); }
+@keyframes wallet-amt { 0%, 55% { color: var(--green); } 100% { color: var(--ink); } }
+.wallet-pop {
+  position: absolute; right: var(--s4); top: 1px; z-index: 1;
+  color: var(--green); font-weight: 700; font-size: var(--fs-label);
+  pointer-events: none;
+  animation: wallet-pop 1.5s var(--ease-out) forwards;
+}
+@keyframes wallet-pop {
+  0% { opacity: 0; transform: translateY(6px); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
 .menu-logout { color: var(--no) !important; }
 .menu-logout:hover { background: var(--no-soft) !important; }
 
@@ -878,6 +898,11 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 }
 .settled-toast.is-open { transform: translateY(0); }
 .settled-toast .settled-card { pointer-events: auto; width: 100%; max-width: 440px; box-shadow: var(--shadow); }
+/* Desktop: sit under the floating header, aligned to the right (mobile stays centred) */
+@media (min-width: 1024px) {
+  .settled-toast { justify-content: flex-end; padding-top: calc(64px + var(--s4)); padding-inline: var(--s4); } /* --s4 right = matches the header's edge inset */
+  .settled-toast .settled-card { max-width: 380px; }
+}
 
 /* Sell mode in the bet drawer ---------------------------------------- */
 .bet-sheet[data-mode="sell"] .buy-only { display: none !important; }

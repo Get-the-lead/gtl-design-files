@@ -1831,8 +1831,38 @@ function renderSettledToast() {
   setTimeout(() => {                          // let the page settle first, then slide in after 5s
     if (!document.body.contains(toast)) return;
     toast.classList.add("is-open");          // slide down + start the 10s progress fill
+    animateWalletCredit(reopen.net);         // the win lands: count the header wallet up with a subtle pulse
     autoTimer = setTimeout(() => hide(), 10000); // auto-dismiss is transient — the banner returns on the next refresh
   }, 5000);
+}
+
+// Credit the header wallet chip as a settled win lands — count the balance up
+// from its current value with a soft green pulse + a floating "+$x".
+function animateWalletCredit(amount) {
+  if (!(amount > 0)) return;
+  const chip = $("#headerWallet .wallet-chip");
+  const amtEl = $("#headerWallet .wallet-amount");
+  if (!chip || !amtEl) return;
+  const from = USER.balance;
+  const to = USER.balance + amount;
+  USER.balance = to;
+  chip.classList.remove("wallet-credit"); void chip.offsetWidth; chip.classList.add("wallet-credit");
+  const pop = document.createElement("span");
+  pop.className = "wallet-pop tnum";
+  pop.textContent = `+${money(amount)}`;
+  chip.appendChild(pop);
+  setTimeout(() => pop.remove(), 1600);
+  let start = null;
+  const dur = 950;
+  const step = (now) => {
+    if (start === null) start = now;
+    const t = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    amtEl.textContent = money(from + (to - from) * eased);
+    if (t < 1) requestAnimationFrame(step);
+    else { amtEl.textContent = money(to); setTimeout(() => chip.classList.remove("wallet-credit"), 500); }
+  };
+  requestAnimationFrame(step);
 }
 
 function initPositionsCarousel() {
