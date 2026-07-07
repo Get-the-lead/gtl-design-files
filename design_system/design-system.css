@@ -1,0 +1,910 @@
+/* Design system catalog only. Production components stay owned by gtl-app/*.css. */
+
+.design-system-page {
+  --sidebar-width: 272px;
+  --ds-bg: #020304;
+  --ds-surface: #090b0d;
+  --ds-surface-2: #0d1013;
+  --border: var(--line);
+  --border2: var(--line-2);
+  --border3: rgba(255, 255, 255, 0.22);
+  --white-border: var(--line-2);
+  --green-border: var(--green-line);
+  --red-border: var(--no-line);
+  --gold-border: rgba(255, 206, 77, 0.36);
+  --blue-border: rgba(96, 165, 250, 0.34);
+  --accent: var(--green);
+  --accent-dim: var(--green-soft);
+  --accent-border: var(--green-line);
+  --accent-ink: #06210f;
+  --muted: var(--ink-3);
+  --muted2: var(--ink-2);
+  --muted3: var(--ink-3);
+  --text: var(--ink);
+  --surface2: var(--surface-2);
+  --surface3: var(--surface-3);
+  --transparent: transparent;
+  --overlay: rgba(0, 0, 0, 0.62);
+  --swatch-surface: color-mix(in srgb, var(--ds-surface-2) 82%, #000);
+  --page-glow: radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.08), transparent 46%);
+  --live-game-card-bg: #0f2115;
+  --live-game-card-border: var(--line);
+  background: var(--page-glow), var(--ds-bg);
+}
+
+.design-system-page :is(.side-nav, .window-content, .grid, .token-list, .foundation-grid, .spacing-demo, .radius-demo, .shadow-demo, .overlay-demo, .typography-demo, .component-stack, .form-grid, .field, .template-preview, .preview-lines, .pill-guide) {
+  display: grid;
+}
+
+.design-system-page :is(.window-controls, .panel-header, .token-list div, .check-row, .toggle-row, .breadcrumbs, .tabs, .command-bar, .card-top, .card-meta, .modal-header, .modal-actions) {
+  align-items: center;
+  display: flex;
+}
+
+.design-system-page .sidebar {
+  background: color-mix(in srgb, var(--ds-surface) 92%, #000);
+  border-right: 1px solid var(--line);
+  inset: 0 auto 0 0;
+  overflow-y: auto;
+  padding: var(--s6);
+  position: fixed;
+  width: var(--sidebar-width);
+  z-index: 30;
+}
+
+.design-system-page .side-nav {
+  gap: var(--s1);
+  margin-top: var(--s10);
+}
+
+.design-system-page .side-nav a {
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  padding: var(--s3) var(--s4);
+}
+
+.design-system-page .side-nav a:hover,
+.design-system-page .side-nav a.is-active {
+  background: var(--green-soft);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.design-system-page .mobile-topbar {
+  align-items: center;
+  background: color-mix(in srgb, var(--ds-surface) 94%, transparent);
+  border-bottom: 1px solid var(--line);
+  display: none;
+  height: var(--header-h);
+  justify-content: space-between;
+  padding: 0 var(--s4);
+  position: sticky;
+  top: 0;
+  z-index: 25;
+}
+
+.design-system-page .page-shell {
+  margin-left: var(--sidebar-width);
+  min-width: 0;
+  padding: 0 var(--s8) var(--s16);
+}
+
+.design-system-page .section {
+  margin: 0 auto;
+  max-width: 1216px;
+  padding-top: var(--s16);
+}
+
+.design-system-page .hero {
+  align-items: stretch;
+  display: grid;
+  gap: var(--s8);
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  min-height: 620px;
+}
+
+.design-system-page .hero-copy {
+  align-self: center;
+}
+
+.design-system-page .lede,
+.design-system-page .section-header p,
+.design-system-page .card p,
+.design-system-page .template-preview p,
+.design-system-page .toast span,
+.design-system-page .modal > p {
+  color: var(--ink-2);
+}
+
+.design-system-page :is(.hero-panel, .panel, .card) {
+  background: color-mix(in srgb, var(--ds-surface) 94%, #000);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  max-width: 100%;
+  min-width: 0;
+  padding: var(--s5);
+}
+
+.design-system-page .hero-panel {
+  align-self: center;
+  border-radius: var(--r-xl);
+}
+
+.design-system-page .metric-row,
+.design-system-page .swatch-grid,
+.design-system-page .card-grid {
+  display: grid;
+  gap: var(--s3);
+}
+
+.design-system-page .metric-row,
+.design-system-page .grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .foundation-grid,
+.design-system-page .card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.design-system-page .metric-row {
+  margin-bottom: var(--s4);
+}
+
+.design-system-page :is(.metric-row article, .swatch, .radius-demo div, .shadow-sample, .overlay-demo, .preview-top, .preview-form, .preview-grid span, .preview-lines span) {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.design-system-page :is(.metric-row article, .swatch, .radius-demo div, .shadow-sample, .overlay-demo) {
+  padding: var(--s3);
+}
+
+.design-system-page .metric-row span,
+.design-system-page .card-meta,
+.design-system-page .field small,
+.design-system-page .token-list span,
+.design-system-page .type-label {
+  color: var(--ink-3);
+}
+
+.design-system-page .metric-row strong,
+.design-system-page .card-meta strong {
+  color: var(--green);
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+}
+
+.design-system-page .brand {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--s3);
+}
+
+.design-system-page .brand-mark {
+  align-items: center;
+  background: var(--green);
+  border-radius: var(--r-md);
+  color: #06210f;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.design-system-page .brand small {
+  color: var(--ink-3);
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.design-system-page .mini-window {
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.design-system-page .window-bar {
+  align-items: center;
+  background: var(--surface-3);
+  display: flex;
+  gap: var(--s2);
+  padding: var(--s3);
+}
+
+.design-system-page .window-bar span {
+  background: var(--green);
+  border-radius: 50%;
+  height: 9px;
+  width: 9px;
+}
+
+.design-system-page .window-content,
+.design-system-page :is(.spacing-demo, .radius-demo, .shadow-demo, .typography-demo, .component-stack, .form-grid, .field, .template-preview, .preview-lines, .pill-guide, .button-showcase) {
+  gap: var(--s4);
+}
+
+.design-system-page .ds-font-sample,
+.design-system-page .ds-type-scale {
+  background: var(--ds-surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  display: grid;
+  gap: var(--s3);
+  padding: var(--s5);
+}
+
+.design-system-page .ds-font-sample p {
+  margin: 0;
+}
+
+.design-system-page .ds-font-display p {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.4rem + 2.5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.design-system-page .ds-font-ui p {
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--fs-lead);
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.design-system-page .ds-type-scale {
+  align-items: start;
+}
+
+.design-system-page .ds-type-scale :is(h1, h2, h3, p, small) {
+  margin: 0;
+}
+
+.design-system-page .skeleton {
+  background: linear-gradient(90deg, var(--surface-2), var(--surface-3), var(--surface-2));
+  border-radius: var(--r-md);
+  height: 12px;
+}
+
+.design-system-page .skeleton-title {
+  height: 24px;
+}
+
+.design-system-page .skeleton-short {
+  width: 62%;
+}
+
+.design-system-page .section-header {
+  margin-bottom: var(--s6);
+  max-width: 760px;
+}
+
+.design-system-page .panel-header {
+  gap: var(--s3);
+  justify-content: space-between;
+  margin-bottom: var(--s4);
+}
+
+.design-system-page .panel-header h3 {
+  margin: 0;
+}
+
+.design-system-page .swatch-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .swatch {
+  background: var(--swatch-surface);
+  display: grid;
+  gap: var(--s1);
+}
+
+.design-system-page .swatch span {
+  background: var(--swatch);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  height: 48px;
+}
+
+.design-system-page code {
+  color: var(--green);
+  font-size: var(--fs-eyebrow);
+  overflow-wrap: anywhere;
+}
+
+.design-system-page .token-list {
+  gap: var(--s2);
+}
+
+.design-system-page .token-list div {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  padding-bottom: var(--s2);
+}
+
+.design-system-page .token-list div:last-child {
+  border-bottom: 0;
+}
+
+.design-system-page .button,
+.design-system-page .button-primary,
+.design-system-page .button-secondary,
+.design-system-page .button-ghost,
+.design-system-page .button-tertiary {
+  align-items: center;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  font-weight: 700;
+  gap: var(--s2);
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 var(--s6);
+}
+
+.design-system-page .button-primary {
+  background: var(--green);
+  color: #06210f;
+}
+
+.design-system-page .button-secondary,
+.design-system-page .button-tertiary {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.design-system-page .button-ghost {
+  background: transparent;
+  border: 1px solid var(--line-2);
+  color: var(--ink);
+}
+
+.design-system-page .button-small {
+  min-height: 38px;
+  padding-inline: var(--s5);
+}
+
+.design-system-page .button-large {
+  min-height: 54px;
+  padding-inline: var(--s8);
+}
+
+.design-system-page :is(.button-row, .hero-actions, .modal-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+}
+
+.design-system-page .button-state-table {
+  display: grid;
+  gap: var(--s3);
+  overflow-x: auto;
+  width: 100%;
+}
+
+.design-system-page .button-state-table {
+  grid-template-columns: minmax(84px, 0.8fr) repeat(5, minmax(112px, 1fr));
+}
+
+.design-system-page .ds-button-state-table {
+  align-items: center;
+  grid-template-columns: minmax(92px, 0.75fr) repeat(5, minmax(138px, 1fr));
+}
+
+.design-system-page .ds-btn,
+.design-system-page .ds-icon-btn {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  font-family: var(--font-ui);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  gap: var(--s2);
+  height: 46px;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  min-width: 0;
+  padding: 0 var(--s5);
+  transition:
+    background 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    color 0.18s var(--ease),
+    opacity 0.18s var(--ease),
+    transform 0.14s var(--ease);
+  white-space: nowrap;
+}
+
+.design-system-page .ds-icon-btn {
+  flex: 0 0 auto;
+  padding: 0;
+  width: 46px;
+}
+
+.design-system-page .ds-icon-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.design-system-page .ds-btn-primary {
+  background: var(--green);
+  color: #06210f;
+  font-size: var(--fs-body);
+}
+
+.design-system-page .ds-btn-outline-yes {
+  background: var(--green-soft);
+  border-color: var(--green-line);
+  color: var(--green);
+}
+
+.design-system-page .ds-btn-outline-no {
+  background: var(--no-soft);
+  border-color: var(--no-line);
+  color: var(--no);
+}
+
+.design-system-page .ds-btn-neutral,
+.design-system-page .ds-icon-btn {
+  background: transparent;
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+
+.design-system-page .ds-btn-primary:hover,
+.design-system-page .ds-btn-primary.is-hovered {
+  background: var(--green-strong);
+}
+
+.design-system-page .ds-btn-outline-yes:hover,
+.design-system-page .ds-btn-outline-yes.is-hovered {
+  background: rgba(74, 222, 128, 0.22);
+  border-color: var(--green);
+}
+
+.design-system-page .ds-btn-outline-no:hover,
+.design-system-page .ds-btn-outline-no.is-hovered {
+  background: rgba(255, 93, 114, 0.22);
+  border-color: var(--no);
+}
+
+.design-system-page .ds-btn-neutral:hover,
+.design-system-page .ds-btn-neutral.is-hovered,
+.design-system-page .ds-icon-btn:hover,
+.design-system-page .ds-icon-btn.is-hovered {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.design-system-page .ds-btn.is-loading,
+.design-system-page .ds-icon-btn.is-loading {
+  cursor: wait;
+  opacity: 0.82;
+}
+
+.design-system-page .ds-btn:disabled,
+.design-system-page .ds-icon-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transform: none;
+}
+
+.design-system-page .ds-spinner {
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+  animation: price-spin 0.8s linear infinite;
+}
+
+.design-system-page .tag,
+.design-system-page .pill {
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 5px var(--s3);
+  text-transform: uppercase;
+}
+
+.design-system-page .tag,
+.design-system-page .pill-success {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.design-system-page .pill-warning {
+  background: rgba(255, 206, 77, 0.14);
+  color: var(--gold);
+}
+
+.design-system-page .pill-danger {
+  background: var(--no-soft);
+  color: var(--no);
+}
+
+.design-system-page .alert,
+.design-system-page .toast {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  display: grid;
+  gap: var(--s1);
+  padding: var(--s4);
+}
+
+.design-system-page .alert-info { background: rgba(96, 165, 250, 0.12); border-color: var(--blue-border); }
+.design-system-page .alert-success { background: var(--green-soft); border-color: var(--green-line); }
+.design-system-page .alert-warning { background: rgba(255, 206, 77, 0.14); border-color: var(--gold-border); }
+.design-system-page .alert-danger { background: var(--no-soft); border-color: var(--no-line); }
+
+.design-system-page .empty-state {
+  align-content: center;
+  min-height: 260px;
+  text-align: center;
+}
+
+.design-system-page .empty-icon {
+  background:
+    linear-gradient(var(--green), var(--green)) center / 20px 3px no-repeat,
+    var(--green-soft);
+  border-radius: 50%;
+  height: 56px;
+  margin-inline: auto;
+  width: 56px;
+}
+
+.design-system-page .modal {
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-xl);
+  color: var(--ink);
+  max-width: 440px;
+  padding: 0;
+}
+
+.design-system-page .modal::backdrop {
+  background: var(--overlay);
+}
+
+.design-system-page .modal-header,
+.design-system-page .modal-actions {
+  justify-content: space-between;
+  padding: var(--s4) var(--s5);
+}
+
+.design-system-page .modal-header {
+  border-bottom: 1px solid var(--line);
+}
+
+.design-system-page .modal > p {
+  margin: 0;
+  padding: var(--s5);
+}
+
+.design-system-page .modal-actions {
+  border-top: 1px solid var(--line);
+}
+
+.design-system-page .nav-backdrop {
+  display: none;
+}
+
+.design-system-page .component-inventory-grid,
+.design-system-page #product-components > .section-block,
+.design-system-page .navigation-preview,
+.design-system-page .utility-button-row {
+  margin-top: var(--s5);
+}
+
+.design-system-page .ds-live-card-panel .game-tile,
+.design-system-page .ds-position-demo .pos-card {
+  max-width: 390px;
+}
+
+.design-system-page .ds-live-card-panel .game-tile {
+  min-height: auto;
+}
+
+.design-system-page .ds-game-card-grid {
+  align-items: start;
+  gap: var(--s5);
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+}
+
+.design-system-page .ds-card-frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.design-system-page .ds-card-frame .panel-header {
+  margin-bottom: 0;
+}
+
+.design-system-page .ds-state-description {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  line-height: 1.45;
+  margin: 0;
+  min-height: 58px;
+}
+
+.design-system-page .ds-card-frame .game-tile {
+  font-size: var(--fs-body);
+  margin-inline: auto;
+  width: min(100%, 380px);
+}
+
+.design-system-page .ds-card-frame .tile-main {
+  padding: 32px var(--s5) 28px;
+}
+
+.design-system-page .ds-card-frame .team-logo {
+  height: 48px;
+  width: 48px;
+}
+
+.design-system-page .ds-card-frame .team-abbr {
+  font-size: var(--fs-eyebrow);
+}
+
+.design-system-page .ds-card-frame .team-score {
+  font-size: 36px;
+  line-height: 0.95;
+}
+
+.design-system-page .ds-card-frame .game-center .clock {
+  font-size: 1.05rem;
+}
+
+.design-system-page .ds-card-frame .foot-toggle {
+  font-size: var(--fs-label);
+}
+
+.design-system-page .ds-card-frame .price:disabled:hover {
+  background: currentColor;
+}
+
+.design-system-page .ds-card-frame .price.yes:disabled:hover {
+  background: var(--green-soft);
+}
+
+.design-system-page .ds-card-frame .price.no:disabled:hover {
+  background: var(--no-soft);
+}
+
+.design-system-page .ds-position-demo .pos-card {
+  margin-inline: auto;
+  width: min(100%, 376px);
+}
+
+.design-system-page .ds-subsection-header {
+  margin-top: var(--s12);
+}
+
+.design-system-page .ds-position-card-grid {
+  align-items: start;
+  gap: var(--s5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .ds-position-card-frame .pos-card {
+  flex: none;
+  margin-inline: auto;
+  max-width: 376px;
+  width: 100%;
+}
+
+.design-system-page .ds-position-card-frame .pos-media {
+  padding: var(--s5) var(--s5) var(--s4);
+}
+
+.design-system-page .ds-position-card-frame .team-score {
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+}
+
+.design-system-page .ds-settled-card-grid {
+  align-items: start;
+  gap: var(--s5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .ds-settled-card-frame .order-card {
+  margin-inline: auto;
+  max-width: 420px;
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .design-system-page .ds-game-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .ds-position-card-grid,
+  .design-system-page .ds-settled-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.design-system-page .ds-ticket-demo {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  min-height: 620px;
+  overflow: hidden;
+  position: relative;
+}
+
+.design-system-page .ds-ticket-demo .bet-sheet {
+  bottom: auto;
+  box-shadow: none;
+  left: auto;
+  margin: 0;
+  max-height: none;
+  position: absolute;
+  right: var(--s5);
+  top: var(--s5);
+  transform: none;
+  width: min(420px, calc(100% - var(--s10)));
+}
+
+.design-system-page .game-market-status-slot {
+  margin-bottom: 0;
+}
+
+.design-system-page .market-buttons {
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .market-btn {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  display: inline-flex;
+  gap: var(--s2);
+  justify-content: center;
+  min-height: 64px;
+}
+
+.design-system-page .market-btn.yes { background: var(--green-soft); color: var(--green); }
+.design-system-page .market-btn.no { background: var(--no-soft); color: var(--no); }
+
+.design-system-page .table-wrap {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.design-system-page table {
+  border-collapse: collapse;
+  min-width: 672px;
+  width: 100%;
+}
+
+.design-system-page th,
+.design-system-page td {
+  border-bottom: 1px solid var(--line);
+  padding: var(--s4);
+  text-align: left;
+}
+
+.design-system-page th {
+  color: var(--ink-3);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.design-system-page td {
+  color: var(--ink-2);
+}
+
+.design-system-page tr:last-child td {
+  border-bottom: 0;
+}
+
+.design-system-page .preview-top,
+.design-system-page .preview-form {
+  height: 64px;
+}
+
+.design-system-page .preview-grid {
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.design-system-page .preview-grid span {
+  height: 80px;
+}
+
+.design-system-page .preview-lines span {
+  height: 44px;
+}
+
+@media (max-width: 980px) {
+  .design-system-page .mobile-topbar {
+    display: flex;
+  }
+
+  .design-system-page .sidebar {
+    box-shadow: var(--shadow);
+    transform: translateX(-100%);
+    transition: transform 180ms var(--ease);
+  }
+
+  .design-system-page.nav-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .design-system-page .nav-backdrop {
+    background: var(--overlay);
+    inset: 0;
+    position: fixed;
+    z-index: 25;
+  }
+
+  .design-system-page.nav-open .nav-backdrop {
+    display: block;
+  }
+
+  .design-system-page .page-shell {
+    margin-left: 0;
+    padding: 0 var(--s4) var(--s10);
+  }
+
+  .design-system-page :is(.hero, .grid.two, .foundation-grid, .card-grid) {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .hero {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .design-system-page .section {
+    padding-top: var(--s10);
+  }
+
+  .design-system-page .hero {
+    padding-top: var(--s8);
+  }
+
+  .design-system-page :is(.panel, .card, .hero-panel) {
+    padding: var(--s4);
+  }
+
+  .design-system-page :is(.swatch-grid, .metric-row) {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .command-bar,
+  .design-system-page .modal-actions {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .design-system-page .button-row .button {
+    width: 100%;
+  }
+
+  .design-system-page .ds-ticket-demo .bet-sheet {
+    left: var(--s4);
+    right: var(--s4);
+    width: auto;
+  }
+}

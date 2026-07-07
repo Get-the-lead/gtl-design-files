@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GTL Design System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../gtl-app/tokens.css">
+    <link rel="stylesheet" href="../gtl-app/styles.css">
+    <link rel="stylesheet" href="../gtl-app/home.css">
+    <link rel="stylesheet" href="../gtl-app/game.css">
+    <link rel="stylesheet" href="../gtl-app/wallet.css">
+    <link rel="stylesheet" href="design-system.css">
+  </head>
+  <body class="design-system-page">
+    <aside class="sidebar" aria-label="Design system navigation">
+      <a class="brand" href="#overview" aria-label="GTL Design System home">
+        <span class="brand-mark">G</span>
+        <span>
+          <strong>GTL</strong>
+          <small>Design System</small>
+        </span>
+      </a>
+
+      <nav class="side-nav">
+        <a href="#overview" class="is-active">Overview</a>
+        <a href="#tokens">Tokens</a>
+        <a href="#typography">Typography</a>
+        <a href="#buttons">Buttons</a>
+        <a href="#pills">Pills</a>
+        <a href="#forms">Forms</a>
+        <a href="#navigation">Navigation</a>
+        <a href="#cards">Cards</a>
+        <a href="#tables">Tables</a>
+        <a href="#feedback">Feedback</a>
+        <a href="#dialogs">Dialogs</a>
+      </nav>
+    </aside>
+
+    <header class="mobile-topbar">
+      <a class="brand brand-compact" href="#overview" aria-label="GTL Design System home">
+        <span class="brand-mark">G</span>
+        <strong>GTL DS</strong>
+      </a>
+      <button class="icon-button" type="button" data-open-nav aria-label="Open navigation">
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+    </header>
+
+    <main class="page-shell">
+      <section id="overview" class="hero section">
+        <div class="hero-copy">
+          <p class="eyebrow">Dark-first interface reference</p>
+          <h1>GTL Design System</h1>
+          <p class="lede">A practical reference for building pages with mint-on-black foundations, data-heavy components, and reusable plain HTML, CSS, and JavaScript patterns.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#tokens">View Tokens</a>
+            <a class="button button-secondary" href="#cards">Live Cards</a>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="Design system snapshot">
+          <div class="metric-row">
+            <article>
+              <span>CSS classes</span>
+              <strong>295</strong>
+            </article>
+            <article>
+              <span>Tokens</span>
+              <strong>99</strong>
+            </article>
+          </div>
+          <div class="mini-window">
+            <div class="window-bar">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="window-content">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton"></div>
+              <div class="skeleton skeleton-short"></div>
+              <div class="window-controls">
+                <span class="pill pill-success">Ready</span>
+                <button class="button button-small button-primary" type="button">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tokens" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Foundation</p>
+          <h2>Design Tokens</h2>
+          <p>Use these CSS custom properties as the source of truth for visual decisions. The default theme is dark; add <code>data-colorway="wg"</code> to <code>html</code> or <code>body</code> for the light Vibe theme.</p>
+        </div>
+
+        <div class="grid two">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Color Palette</h3>
+              <span class="tag">CSS variables</span>
+            </div>
+            <div class="swatch-grid">
+              <div class="swatch"><span style="--swatch: var(--bg)"></span><strong>Background</strong><code>--bg</code></div>
+              <div class="swatch"><span style="--swatch: var(--bg2)"></span><strong>Background 2</strong><code>--bg2</code></div>
+              <div class="swatch"><span style="--swatch: var(--bg3)"></span><strong>Background 3</strong><code>--bg3</code></div>
+              <div class="swatch"><span style="--swatch: var(--surface)"></span><strong>Surface</strong><code>--surface</code></div>
+              <div class="swatch"><span style="--swatch: var(--surface2)"></span><strong>Surface 2</strong><code>--surface2</code></div>
+              <div class="swatch"><span style="--swatch: var(--surface3)"></span><strong>Surface 3</strong><code>--surface3</code></div>
+              <div class="swatch"><span style="--swatch: var(--text)"></span><strong>Text</strong><code>--text</code></div>
+              <div class="swatch"><span style="--swatch: var(--muted)"></span><strong>Muted</strong><code>--muted</code></div>
+              <div class="swatch"><span style="--swatch: var(--muted2)"></span><strong>Muted 2</strong><code>--muted2</code></div>
+              <div class="swatch"><span style="--swatch: var(--muted3)"></span><strong>Muted 3</strong><code>--muted3</code></div>
+              <div class="swatch"><span style="--swatch: var(--clock-text)"></span><strong>Clock Text</strong><code>--clock-text</code></div>
+              <div class="swatch"><span style="--swatch: var(--accent)"></span><strong>Accent</strong><code>--accent</code></div>
+              <div class="swatch"><span style="--swatch: var(--accent2)"></span><strong>Accent Hover</strong><code>--accent2</code></div>
+              <div class="swatch"><span style="--swatch: var(--accent-ink)"></span><strong>On Accent</strong><code>--accent-ink</code></div>
+              <div class="swatch"><span style="--swatch: var(--accent-dim)"></span><strong>Accent Dim</strong><code>--accent-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--green)"></span><strong>Positive</strong><code>--green</code></div>
+              <div class="swatch"><span style="--swatch: var(--green-dim)"></span><strong>Positive Dim</strong><code>--green-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--red)"></span><strong>No / Sell</strong><code>--red</code></div>
+              <div class="swatch"><span style="--swatch: var(--red-dim)"></span><strong>No / Sell Dim</strong><code>--red-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--gold)"></span><strong>Spread</strong><code>--gold</code></div>
+              <div class="swatch"><span style="--swatch: var(--gold-text)"></span><strong>Spread Text</strong><code>--gold-text</code></div>
+              <div class="swatch"><span style="--swatch: var(--gold-dim)"></span><strong>Spread Dim</strong><code>--gold-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--score-text)"></span><strong>Score</strong><code>--score-text</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue)"></span><strong>Info</strong><code>--blue</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue-dim)"></span><strong>Info Dim</strong><code>--blue-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--sage)"></span><strong>Sage</strong><code>--sage</code></div>
+              <div class="swatch"><span style="--swatch: var(--border)"></span><strong>Border Subtle</strong><code>--border</code></div>
+              <div class="swatch"><span style="--swatch: var(--border2)"></span><strong>Border</strong><code>--border2</code></div>
+              <div class="swatch"><span style="--swatch: var(--border3)"></span><strong>Border Strong</strong><code>--border3</code></div>
+              <div class="swatch"><span style="--swatch: var(--white-border)"></span><strong>White Border</strong><code>--white-border</code></div>
+              <div class="swatch"><span style="--swatch: var(--green-border)"></span><strong>Positive Border</strong><code>--green-border</code></div>
+              <div class="swatch"><span style="--swatch: var(--red-border)"></span><strong>Negative Border</strong><code>--red-border</code></div>
+              <div class="swatch"><span style="--swatch: var(--gold-border)"></span><strong>Warning Border</strong><code>--gold-border</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue-border)"></span><strong>Info Border</strong><code>--blue-border</code></div>
+              <div class="swatch"><span style="--swatch: var(--page-glow)"></span><strong>Page Glow</strong><code>--page-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--swatch-surface)"></span><strong>Swatch Surface</strong><code>--swatch-surface</code></div>
+              <div class="swatch"><span style="--swatch: var(--overlay)"></span><strong>Overlay</strong><code>--overlay</code></div>
+              <div class="swatch"><span style="--swatch: var(--transparent)"></span><strong>Transparent</strong><code>--transparent</code></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Typography Tokens</h3>
+              <span class="tag">Fonts</span>
+            </div>
+            <div class="token-list">
+              <div><code>--font-display</code><span>Space Grotesk, headings and scores</span></div>
+              <div><code>--font-ui</code><span>Inter, product UI and body text</span></div>
+              <div><code>--fs-eyebrow</code><span>Eyebrow labels</span></div>
+              <div><code>--fs-label</code><span>Buttons, metadata, compact controls</span></div>
+              <div><code>--fs-body</code><span>Default body and primary actions</span></div>
+              <div><code>--fs-lead</code><span>Lead copy and emphasized UI text</span></div>
+              <div><code>--fs-h3</code><span>Card headings</span></div>
+              <div><code>--fs-h2</code><span>Section headings</span></div>
+              <div><code>--fs-hero</code><span>Hero heading</span></div>
+              <div><code>--fs-score</code><span>Game-card scores</span></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="foundation-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Spacing</h3>
+              <span class="tag">Layout scale</span>
+            </div>
+            <div class="spacing-demo" aria-label="Spacing token examples">
+              <div><span style="--demo-space: var(--space-1)"></span><code>--space-1</code><strong>4px</strong></div>
+              <div><span style="--demo-space: var(--space-2)"></span><code>--space-2</code><strong>8px</strong></div>
+              <div><span style="--demo-space: var(--space-3)"></span><code>--space-3</code><strong>12px</strong></div>
+              <div><span style="--demo-space: var(--space-4)"></span><code>--space-4</code><strong>16px</strong></div>
+              <div><span style="--demo-space: var(--space-5)"></span><code>--space-5</code><strong>20px</strong></div>
+              <div><span style="--demo-space: var(--space-6)"></span><code>--space-6</code><strong>24px</strong></div>
+              <div><span style="--demo-space: var(--space-8)"></span><code>--space-8</code><strong>32px</strong></div>
+              <div><span style="--demo-space: var(--space-10)"></span><code>--space-10</code><strong>40px</strong></div>
+              <div><span style="--demo-space: var(--space-12)"></span><code>--space-12</code><strong>48px</strong></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Radius</h3>
+              <span class="tag">Shape</span>
+            </div>
+            <div class="radius-demo" aria-label="Radius token examples">
+              <div style="--demo-radius: var(--r)"><span></span><code>--r</code><strong>6px</strong></div>
+              <div style="--demo-radius: var(--rl)"><span></span><code>--rl</code><strong>10px</strong></div>
+              <div style="--demo-radius: var(--rxl)"><span></span><code>--rxl</code><strong>14px</strong></div>
+              <div style="--demo-radius: var(--radius-pill)"><span></span><code>--radius-pill</code><strong>999px</strong></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Shadow</h3>
+              <span class="tag">Elevation</span>
+            </div>
+            <div class="shadow-demo" aria-label="Shadow token examples">
+              <div class="shadow-sample shadow-sample-sm"><code>--shadow-sm</code><span>Subtle edge</span></div>
+              <div class="shadow-sample shadow-sample-md"><code>--shadow-md</code><span>Overlay and elevated surfaces</span></div>
+              <div class="shadow-sample focus-ring-sample"><code>--focus-ring</code><span>Keyboard focus</span></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Borders & Overlays</h3>
+              <span class="tag">System states</span>
+            </div>
+            <div class="token-list">
+              <div><code>--border</code><span>Low emphasis border</span></div>
+              <div><code>--border2</code><span>Default component border</span></div>
+              <div><code>--border3</code><span>Hover and focus emphasis</span></div>
+              <div><code>--overlay</code><span>Modal and mobile backdrop</span></div>
+            </div>
+            <div class="overlay-demo">
+              <span></span>
+              <strong>Overlay layer</strong>
+            </div>
+          </article>
+        </div>
+
+        <div class="grid two token-reference-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Component Colors</h3>
+              <span class="tag">gtl-app CSS</span>
+            </div>
+            <div class="swatch-grid">
+              <div class="swatch"><span style="--swatch: var(--edge-light)"></span><strong>Edge Light</strong><code>--edge-light</code></div>
+              <div class="swatch"><span style="--swatch: var(--edge-dark)"></span><strong>Edge Dark</strong><code>--edge-dark</code></div>
+              <div class="swatch"><span style="--swatch: var(--hairline)"></span><strong>Hairline</strong><code>--hairline</code></div>
+              <div class="swatch"><span style="--swatch: var(--surface-base)"></span><strong>Surface Base</strong><code>--surface-base</code></div>
+              <div class="swatch"><span style="--swatch: var(--surface-1)"></span><strong>Surface 1</strong><code>--surface-1</code></div>
+              <div class="swatch"><span style="--swatch: var(--surface-2)"></span><strong>Surface 2</strong><code>--surface-2</code></div>
+              <div class="swatch"><span style="--swatch: var(--accent-border)"></span><strong>Accent Border</strong><code>--accent-border</code></div>
+              <div class="swatch"><span style="--swatch: var(--on-accent)"></span><strong>On Accent</strong><code>--on-accent</code></div>
+              <div class="swatch"><span style="--swatch: var(--ink)"></span><strong>Ink</strong><code>--ink</code></div>
+              <div class="swatch"><span style="--swatch: var(--ink-dim)"></span><strong>Ink Dim</strong><code>--ink-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--label)"></span><strong>Label</strong><code>--label</code></div>
+              <div class="swatch"><span style="--swatch: var(--value)"></span><strong>Value</strong><code>--value</code></div>
+              <div class="swatch"><span style="--swatch: var(--live-game-card-bg)"></span><strong>Live Card</strong><code>--live-game-card-bg</code></div>
+              <div class="swatch"><span style="--swatch: var(--live-game-card-border)"></span><strong>Live Card Border</strong><code>--live-game-card-border</code></div>
+            </div>
+          </article>
+
+          <article class="panel open-positions">
+            <div class="panel-header">
+              <h3>Position Colors</h3>
+              <span class="tag">Scoped tokens</span>
+            </div>
+            <div class="swatch-grid">
+              <div class="swatch"><span style="--swatch: var(--position-surface-base)"></span><strong>Surface Base</strong><code>--position-surface-base</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-surface-1)"></span><strong>Surface 1</strong><code>--position-surface-1</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-hairline)"></span><strong>Hairline</strong><code>--position-hairline</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-edge-light)"></span><strong>Edge Light</strong><code>--position-edge-light</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-accent)"></span><strong>Accent</strong><code>--position-accent</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-on-accent)"></span><strong>On Accent</strong><code>--position-on-accent</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-accent-dim)"></span><strong>Accent Dim</strong><code>--position-accent-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-ink)"></span><strong>Ink</strong><code>--position-ink</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-ink-dim)"></span><strong>Ink Dim</strong><code>--position-ink-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-label)"></span><strong>Label</strong><code>--position-label</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-value)"></span><strong>Value</strong><code>--position-value</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-gain)"></span><strong>Gain</strong><code>--position-gain</code></div>
+              <div class="swatch"><span style="--swatch: var(--position-loss)"></span><strong>Loss</strong><code>--position-loss</code></div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel colorway-preview" data-colorway="wg">
+          <div class="panel-header">
+            <h3>Light Colorway</h3>
+            <span class="tag">data-colorway="wg"</span>
+          </div>
+          <div class="swatch-grid">
+            <div class="swatch"><span style="--swatch: var(--bg)"></span><strong>Background</strong><code>--bg</code></div>
+            <div class="swatch"><span style="--swatch: var(--bg2)"></span><strong>Background 2</strong><code>--bg2</code></div>
+            <div class="swatch"><span style="--swatch: var(--bg3)"></span><strong>Background 3</strong><code>--bg3</code></div>
+            <div class="swatch"><span style="--swatch: var(--surface)"></span><strong>Surface</strong><code>--surface</code></div>
+            <div class="swatch"><span style="--swatch: var(--surface2)"></span><strong>Surface 2</strong><code>--surface2</code></div>
+            <div class="swatch"><span style="--swatch: var(--surface3)"></span><strong>Surface 3</strong><code>--surface3</code></div>
+            <div class="swatch"><span style="--swatch: var(--text)"></span><strong>Text</strong><code>--text</code></div>
+            <div class="swatch"><span style="--swatch: var(--muted)"></span><strong>Muted</strong><code>--muted</code></div>
+            <div class="swatch"><span style="--swatch: var(--muted2)"></span><strong>Muted 2</strong><code>--muted2</code></div>
+            <div class="swatch"><span style="--swatch: var(--muted3)"></span><strong>Muted 3</strong><code>--muted3</code></div>
+            <div class="swatch"><span style="--swatch: var(--accent)"></span><strong>Accent</strong><code>--accent</code></div>
+            <div class="swatch"><span style="--swatch: var(--accent2)"></span><strong>Accent Hover</strong><code>--accent2</code></div>
+            <div class="swatch"><span style="--swatch: var(--accent-ink)"></span><strong>On Accent</strong><code>--accent-ink</code></div>
+            <div class="swatch"><span style="--swatch: var(--accent-dim)"></span><strong>Accent Dim</strong><code>--accent-dim</code></div>
+            <div class="swatch"><span style="--swatch: var(--green)"></span><strong>Positive</strong><code>--green</code></div>
+            <div class="swatch"><span style="--swatch: var(--green-dim)"></span><strong>Positive Dim</strong><code>--green-dim</code></div>
+            <div class="swatch"><span style="--swatch: var(--sage)"></span><strong>Sage</strong><code>--sage</code></div>
+            <div class="swatch"><span style="--swatch: var(--gold-text)"></span><strong>Gold Text</strong><code>--gold-text</code></div>
+            <div class="swatch"><span style="--swatch: var(--page-glow)"></span><strong>Page Glow</strong><code>--page-glow</code></div>
+            <div class="swatch"><span style="--swatch: var(--swatch-surface)"></span><strong>Swatch Surface</strong><code>--swatch-surface</code></div>
+            <div class="swatch"><span style="--swatch: var(--overlay)"></span><strong>Overlay</strong><code>--overlay</code></div>
+            <div class="swatch"><span style="--swatch: var(--border)"></span><strong>Border</strong><code>--border</code></div>
+            <div class="swatch"><span style="--swatch: var(--border2)"></span><strong>Border 2</strong><code>--border2</code></div>
+            <div class="swatch"><span style="--swatch: var(--border3)"></span><strong>Border 3</strong><code>--border3</code></div>
+            <div class="swatch"><span style="--swatch: var(--green-border)"></span><strong>Positive Border</strong><code>--green-border</code></div>
+          </div>
+          <div class="token-list colorway-channel"><div><code>--accent-rgb</code><span>22, 163, 74</span></div></div>
+        </article>
+
+        <article class="panel token-channel-panel">
+          <div class="panel-header">
+            <h3>Color Channels & Runtime Tokens</h3>
+            <span class="tag">Implementation</span>
+          </div>
+          <div class="token-list">
+            <div><code>--black-rgb</code><span>0, 0, 0</span></div>
+            <div><code>--accent-rgb</code><span>74, 222, 128</span></div>
+            <div><code>--red-rgb</code><span>248, 113, 113</span></div>
+            <div><code>--gold-rgb</code><span>251, 191, 36</span></div>
+            <div><code>--blue-rgb</code><span>96, 165, 250</span></div>
+            <div><code>--button-spinner-color</code><span>Resolved by button variant</span></div>
+            <div><code>--execution-offset</code><span>Execution toggle position</span></div>
+            <div><code>--sidebar-width</code><span>272px documentation layout</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section id="typography" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Content</p>
+          <h2>Typography</h2>
+          <p>Clear hierarchy, readable line lengths, and practical text styles.</p>
+        </div>
+
+        <article class="panel typography-demo ds-font-family-demo">
+          <div class="ds-font-sample ds-font-display">
+            <span class="type-label">Display family</span>
+            <code>--font-display: "Space Grotesk", system-ui, -apple-system, sans-serif</code>
+            <p>Markets, scores, and decisions.</p>
+          </div>
+          <div class="ds-font-sample ds-font-ui">
+            <span class="type-label">UI family</span>
+            <code>--font-ui: "Inter", system-ui, -apple-system, sans-serif</code>
+            <p>Used for buttons, body copy, labels, forms, navigation, and dense product UI.</p>
+          </div>
+          <div class="ds-type-scale">
+            <span class="type-label">Scale examples</span>
+            <h1>Hero headline</h1>
+            <h2>Section heading</h2>
+            <h3>Card heading</h3>
+            <p>Body text stays readable across trading surfaces and documentation.</p>
+            <small>Small text is reserved for metadata, helper copy, timestamps, and captions.</small>
+          </div>
+        </article>
+      </section>
+
+      <section id="buttons" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Actions</p>
+          <h2>Buttons</h2>
+          <p>Use primary buttons once per surface for the most important action.</p>
+        </div>
+
+        <div class="panel component-stack button-showcase">
+          <div class="button-state-table ds-button-state-table">
+            <span class="type-label">State</span>
+            <span class="type-label">Primary</span>
+            <span class="type-label">Secondary</span>
+            <span class="type-label">Tertiary</span>
+            <span class="type-label">Neutral</span>
+            <span class="type-label">Icon</span>
+
+            <span class="type-label">Default</span>
+            <button class="ds-btn ds-btn-primary" type="button">View Live Games</button>
+            <button class="ds-btn ds-btn-outline-yes" type="button">Buy Yes</button>
+            <button class="ds-btn ds-btn-outline-no" type="button">Sell No</button>
+            <button class="ds-btn ds-btn-neutral" type="button">See Details</button>
+            <button class="ds-icon-btn" type="button" aria-label="Search"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+
+            <span class="type-label">Hover</span>
+            <button class="ds-btn ds-btn-primary is-hovered" type="button">View Live Games</button>
+            <button class="ds-btn ds-btn-outline-yes is-hovered" type="button">Buy Yes</button>
+            <button class="ds-btn ds-btn-outline-no is-hovered" type="button">Sell No</button>
+            <button class="ds-btn ds-btn-neutral is-hovered" type="button">See Details</button>
+            <button class="ds-icon-btn is-hovered" type="button" aria-label="Search hover"><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+
+            <span class="type-label">Loading</span>
+            <button class="ds-btn ds-btn-primary is-loading" type="button"><span class="ds-spinner" aria-hidden="true"></span>View Live Games</button>
+            <button class="ds-btn ds-btn-outline-yes is-loading" type="button"><span class="ds-spinner" aria-hidden="true"></span>Buy Yes</button>
+            <button class="ds-btn ds-btn-outline-no is-loading" type="button"><span class="ds-spinner" aria-hidden="true"></span>Sell No</button>
+            <button class="ds-btn ds-btn-neutral is-loading" type="button"><span class="ds-spinner" aria-hidden="true"></span>See Details</button>
+            <button class="ds-icon-btn is-loading" type="button" aria-label="Search loading"><span class="ds-spinner" aria-hidden="true"></span></button>
+
+            <span class="type-label">Disabled</span>
+            <button class="ds-btn ds-btn-primary" type="button" disabled>View Live Games</button>
+            <button class="ds-btn ds-btn-outline-yes" type="button" disabled>Buy Yes</button>
+            <button class="ds-btn ds-btn-outline-no" type="button" disabled>Sell No</button>
+            <button class="ds-btn ds-btn-neutral" type="button" disabled>See Details</button>
+            <button class="ds-icon-btn" type="button" aria-label="Search disabled" disabled><span class="material-symbols-outlined" aria-hidden="true">search</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section id="pills" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Game status</p>
+          <h2>Status Pills</h2>
+          <p>Use pills to communicate the market or game state before users read the full card.</p>
+        </div>
+
+        <div class="panel pill-guide">
+          <article>
+            <div class="live-game-card live-status-sample">
+              <div class="game-actions">
+                <div class="live-info">
+                  <span data-live-clock>08:42</span>
+                  <span>·</span>
+                  <strong>Q2</strong>
+                </div>
+              </div>
+            </div>
+            <div>
+              <strong>Game is live</strong>
+              <p>Show the live dot, game clock, and quarter when the game is currently in progress and markets are open for trading.</p>
+            </div>
+          </article>
+          <article>
+            <div class="live-game-card live-status-sample">
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="pill pill-interrupted">Interrupted</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <strong>Game is interrupted</strong>
+              <p>Show for temporary delays, reviews, weather pauses, injury stoppages, or broadcast interruptions.</p>
+            </div>
+          </article>
+          <article>
+            <div class="live-game-card live-status-sample">
+              <div class="game-actions">
+                <div class="live-info">
+                  <span class="pill pill-suspended">Suspended</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <strong>Markets are suspended</strong>
+              <p>Show when trading is paused and users cannot place orders until the market reopens.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="forms" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Input</p>
+          <h2>Forms</h2>
+          <p>Labels are always visible. Helper text explains constraints or outcomes.</p>
+        </div>
+
+        <div class="grid two">
+          <form class="panel form-grid">
+            <label class="field">
+              <span>Full name</span>
+              <input type="text" value="Alex Morgan">
+            </label>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" placeholder="name@company.com">
+              <small>Use a work email for team access.</small>
+            </label>
+            <label class="field">
+              <span>Role</span>
+              <select>
+                <option>Product</option>
+                <option>Design</option>
+                <option>Engineering</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Project notes</span>
+              <textarea rows="4" placeholder="Add context for reviewers"></textarea>
+            </label>
+          </form>
+
+          <article class="panel form-grid">
+            <label class="check-row">
+              <input type="checkbox" checked>
+              <span>Send weekly summary</span>
+            </label>
+            <label class="check-row">
+              <input type="radio" name="plan" checked>
+              <span>Standard workflow</span>
+            </label>
+            <label class="check-row">
+              <input type="radio" name="plan">
+              <span>Advanced workflow</span>
+            </label>
+            <div class="toggle-row">
+              <span>Public profile</span>
+              <button class="toggle is-on" type="button" aria-pressed="true" data-toggle><span></span></button>
+            </div>
+            <label class="field">
+              <span>Confidence</span>
+              <input type="range" min="0" max="100" value="72">
+            </label>
+          </article>
+        </div>
+      </section>
+
+      <section id="navigation" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Structure</p>
+          <h2>Navigation</h2>
+          <p>Tabs, breadcrumbs, and compact menus keep page movement predictable.</p>
+        </div>
+
+        <article class="panel component-stack">
+          <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <a href="#">Home</a>
+            <span>/</span>
+            <a href="#">Projects</a>
+            <span>/</span>
+            <strong>Design System</strong>
+          </nav>
+          <div class="tabs" role="tablist">
+            <button class="tab is-active" type="button">Overview</button>
+            <button class="tab" type="button">Components</button>
+            <button class="tab" type="button">Guidelines</button>
+          </div>
+          <div class="command-bar">
+            <div class="search-field">
+              <span class="material-symbols-outlined" aria-hidden="true">search</span>
+              <input type="search" placeholder="Search components">
+            </div>
+            <button class="button button-secondary" type="button">Filter</button>
+            <button class="button button-primary" type="button">Create</button>
+          </div>
+        </article>
+      </section>
+
+
+      <section id="cards" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Surfaces</p>
+          <h2>Cards</h2>
+          <p>Live game cards are the primary repeated surface in the app. Use the exact component markup below for production pages.</p>
+        </div>
+
+        <div class="card-grid live-card-grid ds-game-card-grid">
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Default</h3><span class="tag">Live</span></div>
+            <p class="ds-state-description">Default live-game card state. The card shows only See Bets until the user expands it to view the available markets.</p>
+            <article class="game-tile" data-league="nfl" style="--home-color:#00338d;--away-color:#008e97">
+              <a class="tile-main" href="../gtl-app/game.html?id=bills-dolphins" aria-label="Open MIA at BUF">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">BUF</span><span class="team-score tnum">24</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q3</span><span class="clock tnum">11:05</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">MIA</span><span class="team-score tnum">20</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <button class="foot-toggle" type="button" data-expand aria-expanded="false">
+                  <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="toggle-label">See Bets</span>
+                  <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>                <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">
+                  <div class="mkt-grid">
+                    <div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>
+                    <div class="mkt-row">
+                      <span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span>
+                      <button class="price yes" type="button" data-game="buf-mia" data-market="gtl" data-side="yes" aria-label="Get the Lead Yes 64 cents">64&cent;</button>
+                      <button class="price no" type="button" data-game="buf-mia" data-market="gtl" data-side="no" aria-label="Get the Lead No 36 cents">36&cent;</button>
+                    </div>
+                    <div class="mkt-row">
+                      <span class="mkt-name">TIE</span>
+                      <button class="price yes" type="button" data-game="buf-mia" data-market="tie" data-side="yes" aria-label="Tie Yes 18 cents">18&cent;</button>
+                      <button class="price no" type="button" data-game="buf-mia" data-market="tie" data-side="no" aria-label="Tie No 82 cents">82&cent;</button>
+                    </div>
+                    <div class="mkt-row">
+                      <span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span>
+                      <button class="price yes" type="button" data-game="buf-mia" data-market="ktl" data-side="yes" aria-label="Keep the Lead Yes 71 cents">71&cent;</button>
+                      <button class="price no" type="button" data-game="buf-mia" data-market="ktl" data-side="no" aria-label="Keep the Lead No 29 cents">29&cent;</button>
+                    </div>
+                  </div>
+                  <a class="view-game" href="../gtl-app/game.html?id=bills-dolphins">View Game</a>
+                </div></div></div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Trading Paused</h3><span class="tag">Recalculating</span></div>
+            <p class="ds-state-description">Static recalculation state. Use this when trading is paused while markets are being recalculated; it does not auto-update in the design system.</p>
+            <article class="game-tile is-paused" data-league="nfl" style="--home-color:#e31837;--away-color:#aa0000">
+              <a class="tile-main" href="../gtl-app/game.html?id=chiefs-49ers" aria-label="Open SF at KC">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-kc.png" alt="Chiefs" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">KC</span><span class="team-score tnum">17</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q2</span><span class="clock tnum">08:42</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-sf.png" alt="49ers" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">SF</span><span class="team-score tnum">14</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <div class="trade-pause" role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Lead Required</h3><span class="tag">Market waiting</span></div>
+            <p class="ds-state-description">Waiting-for-lead state. Use this when no team has taken the lead yet; the market message replaces the See Bets control.</p>
+            <article class="game-tile is-paused" data-league="nfl" style="--home-color:#241773;--away-color:#fb4f14">
+              <a class="tile-main" href="../gtl-app/game.html?id=ravens-bengals" aria-label="Open CIN at BAL">
+                <div class="game-row">
+                  <div class="team team-home">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-bal.png" alt="Ravens" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">BAL</span><span class="team-score tnum">0</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q1</span><span class="clock tnum">14:22</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-cin.png" alt="Bengals" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">CIN</span><span class="team-score tnum">0</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <div class="trade-pause" role="status"><span class="pause-dot"></span><span>Markets open when a team takes the lead.</span></div>
+              </div>
+            </article>
+          </article>
+        </div>
+
+        <div class="section-header ds-subsection-header">
+          <p class="eyebrow">Portfolio cards</p>
+          <h2>Open Position Cards</h2>
+          <p>Open position cards are used on the authenticated home hero and portfolio page to summarize active contracts.</p>
+        </div>
+
+        <div class="card-grid ds-position-card-grid">
+          <article class="panel ds-card-frame ds-position-card-frame">
+            <div class="panel-header"><h3>Positive Return</h3><span class="tag">Open</span></div>
+            <article class="pos-card pos-card--a" style="--home-color:#00338d;--away-color:#008e97">
+              <a class="pos-media" href="../gtl-app/game.html?id=bills-dolphins" aria-label="Open MIA at BUF">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">BUF</span><span class="team-score tnum">24</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q3</span><span class="clock tnum">11:05</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">MIA</span><span class="team-score tnum">20</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="pos-info">
+                <div class="oc-summary">
+                  <div class="oc-row">
+                    <span class="oc-tag">Get the Lead</span>
+                    <span class="oc-vr-head">Value &amp; Return</span>
+                  </div>
+                  <div class="oc-row">
+                    <span class="oc-sub"><span class="side-yes">YES</span> &middot; 18 contracts</span>
+                    <span class="oc-figures"><span class="tnum">$12.42</span> &middot; <span class="oc-pnl up tnum">+$2.94</span></span>
+                  </div>
+                </div>
+                <div class="oc-actions">
+                  <button class="oc-buy" type="button">Buy More</button>
+                  <button class="oc-sell" type="button">Sell</button>
+                </div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame ds-position-card-frame">
+            <div class="panel-header"><h3>Negative Return</h3><span class="tag">Open</span></div>
+            <article class="pos-card pos-card--a" style="--home-color:#e31837;--away-color:#aa0000">
+              <a class="pos-media" href="../gtl-app/game.html?id=chiefs-49ers" aria-label="Open SF at KC">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-kc.png" alt="Chiefs" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">KC</span><span class="team-score tnum">17</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q2</span><span class="clock tnum">08:42</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-sf.png" alt="49ers" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">SF</span><span class="team-score tnum">14</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="pos-info">
+                <div class="oc-summary">
+                  <div class="oc-row">
+                    <span class="oc-tag">Keep the Lead</span>
+                    <span class="oc-vr-head">Value &amp; Return</span>
+                  </div>
+                  <div class="oc-row">
+                    <span class="oc-sub"><span class="side-no">NO</span> &middot; 12 contracts</span>
+                    <span class="oc-figures"><span class="tnum">$7.68</span> &middot; <span class="oc-pnl down tnum">-$1.56</span></span>
+                  </div>
+                </div>
+                <div class="oc-actions">
+                  <button class="oc-buy" type="button">Buy More</button>
+                  <button class="oc-sell" type="button">Sell</button>
+                </div>
+              </div>
+            </article>
+          </article>
+        </div>
+
+        <div class="section-header ds-subsection-header">
+          <p class="eyebrow">Portfolio cards</p>
+          <h2>Settled Cards</h2>
+          <p>Settled cards summarize completed positions and make the final win or loss state easy to scan.</p>
+        </div>
+
+        <div class="card-grid ds-settled-card-grid">
+          <article class="panel ds-card-frame ds-settled-card-frame">
+            <div class="panel-header"><h3>Won</h3><span class="tag">Settled</span></div>
+            <article class="order-card settled" style="--home-color:#00338d;--away-color:#008e97">
+              <div class="oc-top">
+                <span class="oc-logos"><img src="../gtl-app/assets/logos/nfl-buf.png" alt=""><img src="../gtl-app/assets/logos/nfl-mia.png" alt=""></span>
+                <span class="oc-match">
+                  <span class="oc-teams">BUF &middot; MIA</span>
+                </span>
+                <span class="result-pill win">Won</span>
+              </div>
+              <div class="oc-mid">
+                <span class="oc-pos">
+                  <span class="oc-tag">Get the Lead &middot; <span class="side-yes">YES</span></span>
+                  <span class="oc-sub">100 contracts &middot; avg 45&cent;</span>
+                </span>
+                <span class="oc-val">
+                  <span class="oc-settled-pnl up tnum">+$54.10</span>
+                </span>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame ds-settled-card-frame">
+            <div class="panel-header"><h3>Lost</h3><span class="tag">Settled</span></div>
+            <article class="order-card settled" style="--home-color:#e31837;--away-color:#aa0000">
+              <div class="oc-top">
+                <span class="oc-logos"><img src="../gtl-app/assets/logos/nfl-kc.png" alt=""><img src="../gtl-app/assets/logos/nfl-sf.png" alt=""></span>
+                <span class="oc-match">
+                  <span class="oc-teams">KC &middot; SF</span>
+                </span>
+                <span class="result-pill loss">Lost</span>
+              </div>
+              <div class="oc-mid">
+                <span class="oc-pos">
+                  <span class="oc-tag">Keep the Lead &middot; <span class="side-no">NO</span></span>
+                  <span class="oc-sub">60 contracts &middot; avg 55&cent;</span>
+                </span>
+                <span class="oc-val">
+                  <span class="oc-settled-pnl down tnum">-$33.00</span>
+                </span>
+              </div>
+            </article>
+          </article>
+        </div>
+      </section>
+
+      <section id="tables" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Data</p>
+          <h2>Tables</h2>
+          <p>Tables support scanning, comparison, and repeated operational tasks.</p>
+        </div>
+
+        <div class="panel table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Status</th>
+                <th>Owner</th>
+                <th>Last update</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Buttons</td>
+                <td><span class="pill pill-success">LIVE</span></td>
+                <td>Design</td>
+                <td>Jun 26, 2026</td>
+              </tr>
+              <tr>
+                <td>Forms</td>
+                <td><span class="pill pill-warning">SPREAD</span></td>
+                <td>Product</td>
+                <td>Jun 26, 2026</td>
+              </tr>
+              <tr>
+                <td>Dialogs</td>
+                <td><span class="pill pill-suspended">SUSPENDED</span></td>
+                <td>Engineering</td>
+                <td>Jun 26, 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="feedback" class="section">
+        <div class="section-header">
+          <p class="eyebrow">States</p>
+          <h2>Feedback</h2>
+          <p>Use alerts, banners, progress, and empty states to communicate status.</p>
+        </div>
+
+        <div class="grid two">
+          <div class="component-stack">
+            <div class="alert alert-info"><strong>Info</strong><span>Changes save automatically while editing.</span></div>
+            <div class="alert alert-success"><strong>Success</strong><span>The component has been published.</span></div>
+            <div class="alert alert-warning"><strong>Warning</strong><span>Some tokens are missing responsive values.</span></div>
+            <div class="alert alert-danger"><strong>Error</strong><span>Unable to load the requested asset.</span></div>
+          </div>
+          <article class="panel empty-state">
+            <div class="empty-icon"></div>
+            <h3>No components selected</h3>
+            <p>Select a category or search for a component to inspect its styles.</p>
+            <button class="button button-primary" type="button">Browse Library</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="dialogs" class="section">
+        <div class="section-header">
+          <p class="eyebrow">Overlays</p>
+          <h2>Dialogs</h2>
+          <p>Dialogs interrupt the flow only for focused decisions or confirmations.</p>
+        </div>
+
+        <article class="panel component-stack">
+          <button class="button button-primary" type="button" data-open-modal>Open Dialog</button>
+          <div class="toast" role="status">
+            <strong>Saved</strong>
+            <span>Design system changes are ready for review.</span>
+          </div>
+        </article>
+      </section>
+
+    </main>
+
+    <div class="nav-backdrop" data-close-nav></div>
+
+    <dialog class="modal" data-modal>
+      <div class="modal-header">
+        <h3>Publish component</h3>
+        <button class="icon-button" type="button" data-close-modal aria-label="Close dialog"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+      </div>
+      <p>This confirms the component is ready to use as a reference for future pages.</p>
+      <div class="modal-actions">
+        <button class="button button-ghost" type="button" data-close-modal>Cancel</button>
+        <button class="button button-primary" type="button" data-close-modal>Publish</button>
+      </div>
+    </dialog>
+
+    <script src="script.js"></script>
+  </body>
+</html>
