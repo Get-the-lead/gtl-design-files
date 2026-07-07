@@ -98,6 +98,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .btn-secondary { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
 .btn-secondary:hover { background: var(--surface-3); }
 
+.btn-danger { background: var(--no-soft); color: var(--no); border-color: var(--no-line); display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); }
+.btn-danger:hover { background: rgba(255, 93, 114, 0.22); }
+.btn-danger svg { width: 18px; height: 18px; }
+
 /* Glass button — matches the floating header bar */
 .btn-glass {
   background: rgba(13, 15, 17, 0.66);
@@ -430,10 +434,10 @@ body.menu-open #headerAuth { display: none; }
 .hpos-list .ocb-v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 
 @media (min-width: 768px) {
-  /* Desktop: widen back out to show the wordmark and set the count in a prominent dark circle */
-  .hpos-trigger { width: auto; padding: 0 var(--s4) 0 var(--s2); }
+  /* Desktop: dark pill with green wordmark; count set in a green circle matching the GTL logo mark */
+  .hpos-trigger { width: auto; padding: 0 var(--s2) 0 var(--s4); background: var(--surface-2); border-color: var(--line-2); color: var(--ink); }
   .hpos-word { display: inline; }
-  .hpos-num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #06210f; color: var(--green); font-size: var(--fs-body); font-weight: 700; }
+  .hpos-num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: #06210f; font-size: var(--fs-body); font-weight: 700; }
 }
 :root[data-theme="light"] .hpos-panel { background: rgba(255, 255, 255, 0.97); }
 
@@ -703,6 +707,34 @@ body.sheet-open { overflow: hidden; }
 }
 @keyframes price-blip { 0% { opacity: 0.45; } 100% { opacity: 1; } }
 @keyframes price-spin { to { transform: rotate(360deg); } }
+.qty-total { margin-top: var(--s3); text-align: center; font-size: var(--fs-label); color: var(--ink-2); }
+.qty-total strong { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Segmented tab component — shared by the game stats panels and the orders page */
+.stats-tabs {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s2);
+  padding: var(--s1); margin: 0 0 var(--s6);
+  border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface);
+}
+.stats-tab {
+  min-height: 44px; border: none; border-radius: var(--r-pill); background: transparent;
+  color: var(--ink-2); font-family: var(--font-ui); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.01em; cursor: pointer;
+  transition: background 0.18s var(--ease), color 0.18s var(--ease);
+}
+.stats-tab.is-active { background: var(--green-soft); color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+
+/* Conflict warning — this buy takes the opposite side of a position already held in the game */
+.bet-conflict {
+  display: flex; align-items: flex-start; gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  border-radius: var(--r-md);
+  background: rgba(255, 206, 77, 0.12);
+  border: 1px solid rgba(255, 206, 77, 0.4);
+  color: var(--ink); font-size: var(--fs-label); line-height: 1.35;
+}
+.bet-conflict[hidden] { display: none; }
+.bet-conflict .warn-ico { flex: 0 0 auto; width: 18px; height: 18px; color: var(--gold); margin-top: 1px; }
+.bet-conflict strong { font-weight: 700; }
 .qty-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s2); }
 .qty-quick button { height: 40px; border-radius: var(--r-pill); border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink-2); font-weight: 600; font-size: var(--fs-label); }
 .qty-quick button.is-active { border-color: var(--green-line); background: var(--green-soft); color: var(--green); }
@@ -971,6 +1003,24 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 .gate-desc { margin: 0; color: var(--ink-2); font-size: var(--fs-body); }
 .gate-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s4); }
 .gate-actions .btn { --btn-h: 52px; width: 100%; }
+/* Position-conflict gate — auth-gate chrome, but a side-by-side action row (Continue on the right) */
+.pos-gate .gate-actions { flex-direction: row; }
+.pos-gate .gate-actions .btn { flex: 1; }
+/* Custom "don't show again" checkbox below the buttons */
+.pos-gate-check { display: flex; align-items: center; justify-content: center; gap: var(--s2); margin-top: var(--s5); font-size: var(--fs-label); color: var(--ink-2); cursor: pointer; }
+.pos-gate-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+.pos-check-box {
+  flex: 0 0 auto; width: 20px; height: 20px; display: inline-grid; place-items: center;
+  border: 1.5px solid var(--line-2); border-radius: 6px; background: var(--surface-2); color: transparent;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+.pos-check-box svg { width: 13px; height: 13px; }
+.pos-gate-check input:checked + .pos-check-box { background: var(--green); border-color: var(--green); color: #06210f; }
+.pos-gate-check input:focus-visible + .pos-check-box { outline: 2px solid var(--green); outline-offset: 2px; }
+@media (min-width: 768px) {
+  .pos-gate { width: min(560px, calc(100% - var(--s10))); }
+  .pos-gate .gate-body { padding: 56px; }
+}
 /* Close — a secondary button below the modal, over the backdrop */
 .gate-close {
   position: fixed; z-index: 201; left: 50%; bottom: calc(var(--s6) + env(safe-area-inset-bottom, 0));

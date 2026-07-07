@@ -112,12 +112,11 @@
 /* Markets — same betting language as the home cards (YES/NO columns,
    pill prices, GTL/TIE/KTL + subtitles), scaled up for the detail page */
 .markets { padding-top: var(--s10); }
-.markets .section-head { margin-bottom: var(--s6); }
 
 .mkt-head, .mkt-row { display: grid; grid-template-columns: 0.9fr 1.2fr 0.9fr; align-items: center; gap: var(--s4); }
 .mkt-head { padding-bottom: var(--s1); } /* tightened 8px (was --s3) so the header sits closer to the first row */
 .mkt-head span { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
-.mkt-head .col-yes, .mkt-head .col-no { justify-self: center; }
+.mkt-head .col-yes, .mkt-head .col-no, .mkt-head .col-market { justify-self: center; } /* Markets sits centred over the market-name column */
 
 .mkt-row { padding: var(--s4) 0; }
 .mkt-row + .mkt-row { border-top: 1px solid var(--line); }
@@ -126,7 +125,7 @@
    while the market is about to update (game 1 only; driven by initGameRecalc).
    Replicates the home live-card's paused message; theme-adaptive text since it
    sits on the page background here (home.css's .trade-pause isn't loaded). */
-.game-recalc { width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--s2); padding: 10px 0; color: var(--ink); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.02em; }
+.game-recalc { width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--s2); padding: 10px 0; margin-bottom: var(--s6); color: var(--ink); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.02em; }
 .game-recalc[hidden] { display: none; }
 .game-recalc .pause-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); animation: pause-pulse 1.2s var(--ease) infinite; }
 @keyframes pause-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); } 100% { box-shadow: 0 0 0 10px rgba(255, 206, 77, 0); } }
@@ -157,33 +156,7 @@
 
 /* Stats -------------------------------------------------------------- */
 .stats-section { padding-top: var(--s12); padding-bottom: var(--s16); }
-.stats-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--s2);
-  padding: var(--s1);
-  margin: 0 0 var(--s6);
-  border: 1px solid var(--line);
-  border-radius: var(--r-pill);
-  background: var(--surface);
-}
-.stats-tab {
-  min-height: 44px;
-  border: none;
-  border-radius: var(--r-pill);
-  background: transparent;
-  color: var(--ink-2);
-  font-family: var(--font-ui);
-  font-size: var(--fs-label);
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  transition: background 0.18s var(--ease), color 0.18s var(--ease);
-}
-.stats-tab.is-active {
-  background: var(--green-soft);
-  color: var(--green);
-  box-shadow: inset 0 0 0 1px var(--green);
-}
+/* .stats-tabs / .stats-tab (segmented tab component) live in styles.css — shared with the orders page */
 .stats-panel[hidden] { display: none; }
 .stats-section-label { display: none; } /* mobile: tabs are the section labels; shown on desktop */
 .stat-cards {
@@ -479,6 +452,12 @@
 .bets-table .side-yes { color: var(--green); font-weight: 700; }
 .bets-table .side-no { color: var(--no); font-weight: 700; }
 
+/* Blank state — a game whose market has not opened yet (no orders / no trades) */
+.book.is-empty .book-row { border: 1px solid var(--line); color: var(--ink-3); opacity: 0.72; }
+.market-empty-note { margin: var(--s4) 0 0; color: var(--ink-2); font-size: var(--fs-label); font-weight: 600; text-align: center; }
+.flow-bars.is-empty .flow-bar { background: var(--surface-2); border: 1px solid var(--line); }
+.bets-table .empty-row { padding: var(--s5) var(--s2); color: var(--ink-3); text-align: center; font-weight: 600; }
+
 /* ===== Game stats — score worm (stepped, with quarter watermarks + lead-change marks) ===== */
 .worm-legend { display: flex; gap: var(--s4); margin-top: var(--s2); }
 .worm-key { display: inline-flex; align-items: center; gap: var(--s2); color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
@@ -526,6 +505,16 @@
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .betbar.is-visible { transform: none; }
+
+/* With a floating position dock, the betbar rises from BEHIND it (lower z), 8px above, on show.
+   It also fades so no sliver shows between the floating cards while it rests behind them. */
+.has-open-position .betbar {
+  z-index: 58; bottom: var(--open-pos-h, 0px);
+  transform: translateY(100%); opacity: 0;
+  transition: transform 0.32s var(--ease-out), opacity 0.32s var(--ease-out);
+}
+.has-open-position .betbar.is-visible { transform: none; opacity: 1; }
+.has-open-position .betbar-inner { padding-block: var(--s2); } /* 8px separation from the card */
 .betbar-inner {
   display: flex;
   align-items: center;
@@ -534,9 +523,76 @@
 }
 .betbar-cta { pointer-events: auto; width: 100%; --btn-h: 52px; padding-inline: var(--s10); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
 
+/* Floating open-position dock (demo: BUF/MIA) — pinned to the bottom; the betbar rises from behind it.
+   Multiple positions scroll horizontally, like the home Open Positions carousel. */
+.game-open-position {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60; /* above the betbar (58 when a dock is present) so "View Bets" comes up from behind */
+  pointer-events: none;
+  padding: var(--s8) 0 env(safe-area-inset-bottom, 0);
+  background: linear-gradient(to bottom, transparent, var(--bg) var(--s8)); /* short top fade, solid behind the cards */
+}
+.gop-heading {
+  pointer-events: none; margin: 0; text-align: center;
+  font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);
+}
+.gop-scroller {
+  pointer-events: auto;
+  display: flex; align-items: flex-start; gap: var(--s3);
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  /* 6% side inset centres an 88%-wide card (leftover split evenly), so the first card isn't flush-left */
+  padding: var(--s3) 6% var(--s4);
+}
+.gop-scroller::-webkit-scrollbar { display: none; }
+.gop-card {
+  flex: 0 0 clamp(280px, 88%, 360px); scroll-snap-align: center;
+  padding: var(--s3) var(--s4) var(--s2);
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+}
+.gop-info { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; text-align: center; }
+.gop-tag { font-size: var(--fs-label); font-weight: 700; color: var(--ink); }
+.gop-sub { font-size: var(--fs-eyebrow); color: var(--ink-2); }
+/* Toggle — "Buy More / Sell" title with hairlines + chevrons; expands the buttons below */
+.gop-toggle {
+  display: flex; align-items: center; gap: var(--s3); width: 100%; margin-top: var(--s2);
+  background: none; border: none; cursor: pointer;
+  font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);
+}
+.gop-toggle::before, .gop-toggle::after { content: ""; flex: 1; height: 1px; background: var(--line-2); }
+.gop-toggle .chev { width: 14px; height: 14px; display: inline-flex; transition: transform 0.25s var(--ease); }
+.gop-card.is-open .gop-toggle .chev { transform: rotate(180deg); }
+.gop-toggle:hover { color: var(--ink); }
+.gop-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s var(--ease-out); }
+.gop-card.is-open .gop-panel { grid-template-rows: 1fr; }
+.gop-panel-inner { overflow: hidden; }
+.gop-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); padding-top: var(--s3); }
+
+/* Room to scroll clear of the floating dock (and the betbar above it) */
+.game-body.has-open-position { padding-bottom: calc(96px + var(--open-pos-h, 0px)); }
+
 @media (min-width: 768px) {
   .markets, .stats-section { max-width: 760px; }
   .betbar-inner { max-width: 760px; }
+  .gop-scroller { max-width: 760px; margin-inline: auto; }
+}
+@media (min-width: 1024px) {
+  /* Desktop: positions flow in the left column under the bet rows, stacked as horizontal rows */
+  .game-open-position { position: static; z-index: auto; pointer-events: auto; flex-shrink: 0; margin-top: var(--s16); padding: 0; background: none; }
+  .gop-heading { text-align: left; padding-inline: var(--s5); }
+  .gop-scroller { flex-direction: column; align-items: stretch; overflow: visible; max-width: none; margin-inline: 0; padding: var(--s3) var(--s5) 0; }
+  .gop-card { display: flex; flex-direction: row; align-items: center; gap: var(--s4); flex: 0 0 auto; padding: var(--s4); }
+  .gop-info { flex: 1; align-items: flex-start; text-align: left; }
+  .gop-foot { flex: 0 0 auto; }
+  .gop-toggle { display: none; } /* no toggle on desktop — actions are always shown */
+  .gop-panel { grid-template-rows: 1fr; } /* keep the buttons expanded */
+  .gop-panel-inner { overflow: visible; }
+  .gop-actions { display: flex; gap: var(--s2); padding-top: 0; }
+  .gop-actions .oc-buy, .gop-actions .oc-sell { padding-inline: var(--s6); }
+  .game-body.has-open-position { padding-bottom: 0; }
 }
 
 /* Back-to-games button in the right column — desktop only */
@@ -578,7 +634,7 @@
 
   /* LEFT — sticky + fills the available height; scrollbar appears only when it overflows.
      Flex column: children STRETCH to equal width (betting edges match the scorecard),
-     and the group is vertically centred (safe = falls back to top-align when it overflows). */
+     top-aligned so the scoreboard sits at the top and positions flow below the bet rows. */
   .game-col-left {
     position: sticky;
     top: 104px;                               /* pinned just under the floating header */
@@ -588,7 +644,7 @@
     scrollbar-gutter: stable;
     display: flex;
     flex-direction: column;
-    justify-content: safe center;
+    justify-content: flex-start;
     padding: var(--s5); /* insets scoreboard/betting from the column edges; fade is page-level now */
   }
   .game-col-left > .gb, .game-col-left > .markets { flex-shrink: 0; } /* keep natural size; scroll rather than squish */
@@ -600,7 +656,6 @@
   .game-col-left .gb-score { grid-template-columns: auto auto auto; justify-content: center; gap: var(--s6); }
   .game-col-left .gb-topbar { display: none; } /* back button lives in the right column */
   .game-col-left .markets { margin-top: var(--s6); padding-top: 0; } /* betting sits under the scoreboard */
-  .game-col-left .markets .section-head { display: none; } /* no Markets / Back the lead label on desktop */
   .game-col-left .bet-help { text-align: center; } /* "tap a price to start" centred */
 
   /* RIGHT — normal page flow; header clearance comes from the layout's margin-top */

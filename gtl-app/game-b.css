@@ -6,7 +6,8 @@
    so each row/header stays a single clean row (name → col 1, Yes → col 2, No → col 3). */
 .game-b-body .mkt-head, .game-b-body .mkt-row { grid-template-columns: minmax(0, 1.3fr) minmax(72px, 0.7fr) minmax(72px, 0.7fr); }
 .game-b-body .mkt-name { order: -1; align-items: flex-start; text-align: left; }
-.game-b-body .mkt-head span:not(.col-yes):not(.col-no) { order: -1; } /* empty header cell → above the bet types */
+.game-b-body .mkt-head span:not(.col-yes):not(.col-no) { order: -1; } /* "Markets" header → left, above the bet types */
+.game-b-body .mkt-head .col-market { justify-self: start; } /* left-aligned to match the left-aligned bet names */
 
 /* Stats section: game.html keeps the boxed cards; game-b presents the charts
    ON THE PAGE — no card border/background/padding, sections split by a hairline. */

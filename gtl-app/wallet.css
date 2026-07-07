@@ -1,68 +1,148 @@
-/* GTL v2 — wallet page: balance, add funds, orders */
+/* GTL v2 — orders page: tabs, compact order rows, order detail, floating balance dock */
 
-.wallet { padding-top: 96px; padding-bottom: var(--s20); max-width: 720px; }
+.wallet { padding-top: 96px; padding-bottom: 128px; max-width: 720px; }
+@media (min-width: 768px) { .wallet { padding-top: 144px; } } /* matches the authed home hero's desktop top clearance */
 
-.wallet-title { margin-bottom: var(--s6); text-align: left; }
-.wallet-title .eyebrow { display: block; margin-bottom: var(--s2); }
-.wallet-title h1 { font-size: var(--fs-h2); line-height: 1.05; }
+.wallet-head { margin-bottom: var(--s6); }
+.wallet-head h1 { font-size: var(--fs-h2); line-height: 1.05; }
+.wallet-desc { margin-top: var(--s2); color: var(--ink-2); font-size: var(--fs-label); max-width: 46ch; }
 
-/* Balance card — green-tinted hero */
-.balance-card {
-  position: relative; overflow: hidden; isolation: isolate;
-  display: flex; flex-direction: column; gap: var(--s5);
-  padding: var(--s8) var(--s6);
-  border-radius: var(--r-xl);
-  background: var(--surface);
-  border: 1px solid var(--green-line);
-  margin-bottom: var(--s8);
-}
-.balance-card::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.6;
-  background:
-    radial-gradient(80% 120% at 0% 0%, rgba(74, 222, 128, 0.18), transparent 60%),
-    radial-gradient(80% 120% at 100% 100%, rgba(74, 222, 128, 0.1), transparent 60%);
-}
-.balance-label { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
-.balance-amount { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 1.8rem + 4vw, 3.6rem); line-height: 1; font-variant-numeric: tabular-nums; }
-.balance-actions { display: flex; gap: var(--s3); }
-.balance-actions .btn { flex: 1; --btn-h: 50px; }
+/* Portfolio overview stats */
+.portfolio-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); margin-bottom: 56px; }
+.pstat { display: flex; flex-direction: column; gap: var(--s1); padding: var(--s4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+.pstat-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.pstat-v { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h3); font-variant-numeric: tabular-nums; }
+.pstat-v.up { color: var(--green); }
+.pstat-v.down { color: var(--no); }
+@media (min-width: 600px) { .portfolio-stats { grid-template-columns: repeat(4, 1fr); } }
 
-/* Add funds — inline panel */
-.addfunds { margin: calc(var(--s8) * -1 + var(--s2)) 0 var(--s8); }
-.addfunds[hidden] { display: none; }
-.addfunds-inner {
-  padding: var(--s6);
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  border: 1px solid var(--line-2);
+/* Orders tab panels (the .stats-tabs component itself is shared, in styles.css) */
+.order-panel[hidden] { display: none; }
+.order-group + .order-group { margin-top: var(--s20); } /* 80px between sections */
+/* Desktop: drop the Orders/Settled toggle and list all four groups (Current · Pending · Settled · Cancelled) */
+@media (min-width: 1024px) {
+  #orderTabs { display: none; }
+  .order-panel[hidden] { display: block; }
+  .order-panel + .order-panel { margin-top: var(--s20); } /* 80px between the two panels' sections */
 }
-.addfunds h3 { font-family: var(--font-display); font-size: var(--fs-h3); margin-bottom: var(--s4); }
-.addfunds-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s2); margin-bottom: var(--s4); }
-.addfunds-quick button { height: 48px; border-radius: var(--r-pill); border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink); font-weight: 700; font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
-.addfunds-quick button.is-active { border-color: var(--green-line); background: var(--green-soft); color: var(--green); }
-:root[data-theme="light"] .addfunds-quick button.is-active { color: #16a34a; }
-.addfunds-amount { display: flex; align-items: baseline; justify-content: center; gap: var(--s1); margin-bottom: var(--s5); }
-.addfunds-amount .af-sign { font-family: var(--font-display); font-weight: 700; font-size: 1.8rem; color: var(--ink-3); }
-.addfunds-amount input {
-  width: auto; min-width: 0; max-width: 220px; text-align: center;
-  border: none; background: none; color: var(--ink);
-  font-family: var(--font-display); font-weight: 700; font-size: 2.6rem;
-  font-variant-numeric: tabular-nums;
+.order-group-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--s4); }
+.order-group-head h2 { font-size: var(--fs-h3); }
+.order-group-head .count { font-size: var(--fs-label); font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.order-list { display: flex; flex-direction: column; gap: var(--s2); }
+.order-list.is-collapsed .order-row:nth-child(n+6) { display: none; } /* show first 5 until "Show all" */
+.order-showall { display: block; width: 100%; margin-top: var(--s3); padding: var(--s3); background: none; border: none; color: var(--green); font-weight: 700; font-size: var(--fs-label); cursor: pointer; }
+.order-showall:hover { text-decoration: underline; }
+
+/* Compact order row — logos · bet type · value → taps into the detail view */
+.order-row {
+  display: flex; align-items: center; gap: var(--s3); width: 100%; text-align: left;
+  padding: var(--s3) var(--s4);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); cursor: pointer;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
 }
-.addfunds-amount input:focus { outline: none; }
-.addfunds-actions { display: flex; gap: var(--s3); }
+.order-row:hover { background: var(--surface-2); border-color: var(--line-2); }
+.or-logos { display: inline-flex; flex: 0 0 auto; }
+.or-logos img { width: 26px; height: 26px; object-fit: contain; }
+.or-logos img:last-child { margin-left: -8px; }
+.or-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.or-type { font-weight: 700; font-size: var(--fs-label); color: var(--ink); }
+.or-teams { font-size: var(--fs-eyebrow); color: var(--ink-3); }
+.or-value { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex: 0 0 auto; }
+.or-amount { font-weight: 700; font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+.or-pnl { font-size: var(--fs-eyebrow); font-weight: 600; font-variant-numeric: tabular-nums; }
+.or-pnl.up { color: var(--green); }
+.or-pnl.down { color: var(--no); }
+.or-status { font-size: var(--fs-eyebrow); font-weight: 600; color: var(--gold); }
+.or-status.cancelled { color: var(--ink-3); }
+.or-chev { flex: 0 0 auto; width: 18px; height: 18px; color: var(--ink-3); display: inline-flex; }
+.or-chev svg { width: 100%; height: 100%; }
+
+.wallet-empty { padding: var(--s8); text-align: center; color: var(--ink-3); border: 1px dashed var(--line-2); border-radius: var(--r-lg); font-size: var(--fs-label); }
+
+/* Order detail sub-view */
+.order-back { display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s2) 0; margin-bottom: var(--s4); background: none; border: none; color: var(--ink-2); font-weight: 600; font-size: var(--fs-label); cursor: pointer; }
+.order-back svg { width: 18px; height: 18px; transform: rotate(180deg); }
+.order-back:hover { color: var(--ink); }
+/* Flat summary (no card) — resembles the bet drawer's order summary */
+.order-detail { display: flex; flex-direction: column; gap: var(--s5); }
+.od-game { display: flex; align-items: center; gap: var(--s3); }
+.od-game .or-logos img { width: 34px; height: 34px; }
+.od-game-meta { display: flex; flex-direction: column; gap: 2px; }
+.od-teams { font-weight: 700; font-size: var(--fs-lead); }
+.od-league { font-size: var(--fs-eyebrow); color: var(--ink-3); }
+.od-headline { display: flex; align-items: baseline; gap: var(--s3); }
+.od-big { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-hero); line-height: 1; }
+.od-big.up { color: var(--green); }
+.od-big.down { color: var(--no); }
+.od-big.muted { color: var(--ink-2); }
+.od-pnl { font-weight: 700; font-variant-numeric: tabular-nums; }
+.od-pnl.up { color: var(--green); }
+.od-pnl.down { color: var(--no); }
+
+/* Status chip on the detail's Status row */
+.status-chip { display: inline-flex; padding: 3px 12px; border-radius: var(--r-pill); font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.status-chip.open { background: var(--green-soft); color: var(--green); }
+.status-chip.pending { background: rgba(255, 206, 77, 0.14); color: var(--gold); }
+.status-chip.cancelled { background: var(--surface-3); color: var(--ink-3); }
+.status-chip.settled { background: var(--surface-3); color: var(--ink-2); }
+
+/* Buy More / Sell (or Cancel) float at the bottom, like the game-page pattern */
+.order-actions-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; pointer-events: none; padding: 0 var(--s4) calc(var(--s4) + env(safe-area-inset-bottom, 0)); }
+.oad-inner { pointer-events: auto; max-width: 720px; margin-inline: auto; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s3); }
+.oad-inner .btn { --btn-h: 52px; box-shadow: var(--shadow); }
+
+/* Add funds — inline panel revealed by Top Up */
+/* Top Up — a bottom sheet on mobile, a centred modal on desktop (mirrors the bet drawer) */
+.addfunds-backdrop {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0, 0, 0, 0.55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease);
+}
+.addfunds-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.addfunds-sheet {
+  position: fixed; z-index: 201; left: 0; right: 0; bottom: 0;
+  width: 100%; max-width: 520px; margin-inline: auto;
+  background: var(--bg); border: 1px solid var(--line-2); border-bottom: none;
+  border-radius: var(--r-xl) var(--r-xl) 0 0; box-shadow: var(--shadow);
+  transform: translateY(101%); transition: transform 0.4s var(--ease-out);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.addfunds-sheet.is-open { transform: none; }
+.addfunds-inner { padding: var(--s6); }
+@media (min-width: 768px) {
+  .addfunds-sheet {
+    top: 50%; left: 50%; right: auto; bottom: auto;
+    width: min(460px, calc(100vw - 48px)); max-width: none;
+    border: 1px solid var(--line-2); border-radius: var(--r-xl);
+    transform: translate(-50%, -48%) scale(0.98); opacity: 0; visibility: hidden;
+    transition: transform 0.32s var(--ease-out), opacity 0.24s var(--ease), visibility 0s linear 0.24s;
+    padding-bottom: 0;
+  }
+  .addfunds-sheet.is-open { transform: translate(-50%, -50%) scale(1); opacity: 1; visibility: visible; transition: transform 0.32s var(--ease-out), opacity 0.24s var(--ease); }
+}
+.addfunds-sheet h3 { font-family: var(--font-display); font-size: var(--fs-h3); margin-bottom: var(--s4); }
+/* Amount — the bet drawer's big num-input in a bordered box (chips reuse the shared .qty-quick) */
+.addfunds-amount { display: flex; align-items: baseline; justify-content: center; gap: var(--s2); border: 1px solid var(--line-2); border-radius: 20px; padding: var(--s3) var(--s5); }
+.addfunds-amount:focus-within { border-color: var(--green); }
+.addfunds-amount .af-sign { font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; color: var(--ink-3); }
+.addfunds-amount .num-input { width: auto; max-width: 200px; border: none; padding: 0; }
+.addfunds-actions { display: flex; gap: var(--s3); margin-top: var(--s6); }
 .addfunds-actions .btn { flex: 1; --btn-h: 50px; }
 .addfunds-note { margin: var(--s4) 0 0; text-align: center; color: var(--ink-3); font-size: var(--fs-eyebrow); }
 
-/* Order sections */
-.wallet-section { margin-top: var(--s10); }
-.wallet-section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--s5); }
-.wallet-section-head h2 { font-size: var(--fs-h3); }
-.wallet-section-head .count { font-size: var(--fs-label); font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.order-list { display: grid; grid-template-columns: 1fr; gap: var(--s4); }
-@media (min-width: 600px) { .order-list { grid-template-columns: 1fr 1fr; } }
-
-.wallet-empty { padding: var(--s8); text-align: center; color: var(--ink-3); border: 1px dashed var(--line-2); border-radius: var(--r-lg); font-size: var(--fs-label); }
+/* Floating balance dock — available balance + Top Up, pinned to the bottom (hidden on the detail view) */
+.wallet-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; pointer-events: none; padding: 0 var(--s4) calc(var(--s4) + env(safe-area-inset-bottom, 0)); }
+.wallet-dock-inner {
+  pointer-events: auto; max-width: 720px; margin-inline: auto;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s4);
+  padding: var(--s3) var(--s3) var(--s3) var(--s5);
+  background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--r-pill); box-shadow: var(--shadow);
+}
+.wd-balance { display: flex; flex-direction: column; gap: 1px; }
+.wd-label { font-size: var(--fs-eyebrow); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); font-weight: 600; }
+.wd-amount { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-lead); font-variant-numeric: tabular-nums; }
+.wd-topup { --btn-h: 44px; padding-inline: var(--s6); flex: 0 0 auto; }
+body.order-detail-open .wallet-dock { display: none; }
 
 /* Signed-out guard */
 .wallet-guard { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--s5); padding: var(--s16) var(--s5); }
