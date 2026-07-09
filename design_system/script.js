@@ -10,6 +10,18 @@ const toggles = document.querySelectorAll("[data-toggle]");
 const expandButtons = document.querySelectorAll("[data-expand]");
 const drawerSection = document.querySelector("#drawers");
 const drawerViewButtons = document.querySelectorAll("[data-drawer-view]");
+const pageTabs = document.querySelectorAll("[data-page-tab]");
+const pageFrames = document.querySelectorAll("[data-page-frame]");
+const pageFrameCards = document.querySelectorAll("[data-page-frame-card]");
+const pageFrameLabels = document.querySelectorAll("[data-page-frame-label]");
+const pageTitle = document.querySelector("[data-page-title]");
+const pageFrameOpenLinks = document.querySelectorAll("[data-page-frame-open]");
+const pagePreview = document.querySelector("[data-page-preview]");
+const pageZoomButtons = document.querySelectorAll("[data-page-zoom]");
+const pageZoomValue = document.querySelector("[data-page-zoom='reset']");
+const flatDocTabs = document.querySelectorAll("[data-flat-doc]");
+const flatLayContent = document.querySelector("[data-flat-lay-content]");
+let pageZoom = 1;
 
 function toHex(value) {
   const hex = Math.max(0, Math.min(255, Number(value))).toString(16).padStart(2, "0");
@@ -55,6 +67,324 @@ function describeColorSwatches() {
     }
 
     swatch.append(meta);
+  });
+}
+
+const flatDocs = {
+  auth: {
+    title: "Authentication Screens",
+    description: "Full mobile states for sign-in, account creation, recovery, verification, and auth feedback.",
+    groups: [
+      { title: "Default states", frames: [
+        { label: "Sign in", type: "auth", mode: "signin" },
+        { label: "Create account", type: "auth", mode: "register" },
+        { label: "Forgot password", type: "auth", mode: "forgot" },
+        { label: "Reset password", type: "auth", mode: "reset" },
+        { label: "Email verification", type: "auth", mode: "verify" },
+      ] },
+      { title: "Feedback states", frames: [
+        { label: "Loading state", type: "auth", mode: "loading" },
+        { label: "Error state", type: "auth", mode: "error" },
+      ] },
+    ],
+  },
+  home: {
+    title: "Home Page",
+    description: "Mobile homepage variants for guest, signed-in, market availability, position context, and failure states.",
+    groups: [
+      { title: "Default states", frames: [
+        { label: "Logged out default", type: "home", mode: "guest" },
+        { label: "Logged in default", type: "home", mode: "logged" },
+        { label: "No live games", type: "home", mode: "noLive" },
+        { label: "With live games", type: "home", mode: "live" },
+        { label: "With open positions", type: "home", mode: "positions" },
+      ] },
+      { title: "System states", frames: [
+        { label: "Loading state", type: "home", mode: "loading" },
+        { label: "Error / empty state", type: "home", mode: "error" },
+      ] },
+    ],
+  },
+  game: {
+    title: "Game Page",
+    description: "Game detail page variants covering live market access, unavailable markets, position context, refresh, and errors.",
+    groups: [
+      { title: "Default states", frames: [
+        { label: "Live game default", type: "game", mode: "live" },
+        { label: "Pregame unavailable", type: "game", mode: "pregame" },
+        { label: "Betting paused after score change", type: "game", mode: "paused" },
+        { label: "No position", type: "game", mode: "none" },
+      ] },
+      { title: "Trading states", frames: [
+        { label: "With open position", type: "game", mode: "position" },
+        { label: "With pending order", type: "game", mode: "pending" },
+        { label: "Stale price / data refresh state", type: "game", mode: "stale" },
+        { label: "Error state", type: "game", mode: "error" },
+      ] },
+    ],
+  },
+  drawer: {
+    title: "Buy / Sell Drawer",
+    description: "Bottom-sheet states for market orders, limit orders, validation, confirmation, and outcomes.",
+    groups: [
+      { title: "Order entry", frames: [
+        { label: "Buy market order", type: "drawer", mode: "buyMarket" },
+        { label: "Buy limit order", type: "drawer", mode: "buyLimit" },
+        { label: "Sell market order", type: "drawer", mode: "sellMarket" },
+        { label: "Sell limit order", type: "drawer", mode: "sellLimit" },
+      ] },
+      { title: "Feedback states", frames: [
+        { label: "Insufficient balance", type: "drawer", mode: "balance" },
+        { label: "Invalid limit price", type: "drawer", mode: "invalid" },
+        { label: "Pending limit order confirmation", type: "drawer", mode: "pending" },
+        { label: "Success state", type: "drawer", mode: "success" },
+        { label: "Error state", type: "drawer", mode: "error" },
+      ] },
+    ],
+  },
+  tracker: {
+    title: "Tracker / Positions",
+    description: "Portfolio tracking states for open exposure, win/loss context, conflicts, sell preview, and feedback.",
+    groups: [
+      { title: "Position states", frames: [
+        { label: "No open positions", type: "tracker", mode: "empty" },
+        { label: "With open positions", type: "tracker", mode: "open" },
+        { label: "Winning position", type: "tracker", mode: "winning" },
+        { label: "Losing position", type: "tracker", mode: "losing" },
+        { label: "Conflicting positions", type: "tracker", mode: "conflict" },
+        { label: "Sell preview", type: "tracker", mode: "sell" },
+      ] },
+      { title: "System states", frames: [
+        { label: "Loading state", type: "tracker", mode: "loading" },
+        { label: "Error state", type: "tracker", mode: "error" },
+      ] },
+    ],
+  },
+  pending: {
+    title: "Pending Orders",
+    description: "Pending order states for empty, active buy/sell orders, editing, cancellation, filled orders, and errors.",
+    groups: [
+      { title: "Order states", frames: [
+        { label: "No pending orders", type: "pending", mode: "empty" },
+        { label: "With pending buy order", type: "pending", mode: "buy" },
+        { label: "With pending sell order", type: "pending", mode: "sell" },
+        { label: "Edit limit price", type: "pending", mode: "edit" },
+        { label: "Cancel confirmation", type: "pending", mode: "cancel" },
+        { label: "Order filled state", type: "pending", mode: "filled" },
+        { label: "Error state", type: "pending", mode: "error" },
+      ] },
+    ],
+  },
+  account: {
+    title: "Settled / Account",
+    description: "Account and history views covering settled activity, profile, credits, loading, and errors.",
+    groups: [
+      { title: "History and account states", frames: [
+        { label: "Settled empty state", type: "account", mode: "settledEmpty" },
+        { label: "Settled history", type: "account", mode: "settled" },
+        { label: "Account overview", type: "account", mode: "overview" },
+        { label: "Profile", type: "account", mode: "profile" },
+        { label: "Credits / balance", type: "account", mode: "credits" },
+        { label: "Loading state", type: "account", mode: "loading" },
+        { label: "Error state", type: "account", mode: "error" },
+      ] },
+    ],
+  },
+};
+
+const teamLogos = {
+  buf: "../gtl-app/assets/logos/nfl-buf.png",
+  mia: "../gtl-app/assets/logos/nfl-mia.png",
+  kc: "../gtl-app/assets/logos/nfl-kc.png",
+  sf: "../gtl-app/assets/logos/nfl-sf.png",
+  bos: "../gtl-app/assets/logos/nba-bos.png",
+  ny: "../gtl-app/assets/logos/nba-ny.png",
+};
+
+function logoPair(a = "buf", b = "mia") {
+  return `<span class="flat-logo-pair"><img src="${teamLogos[a]}" alt=""><img src="${teamLogos[b]}" alt=""></span>`;
+}
+
+function flatHeader(label = "GTL", chip = "Live") {
+  return `<div class="flat-mini-header"><span class="flat-brand">${label}</span><span class="flat-chip">${chip}</span></div>`;
+}
+
+function flatNav(active = "Home") {
+  return `<div class="flat-bottom-nav"><span>${active === "Home" ? "Home" : "Home"}</span><span>${active === "Orders" ? "Orders" : "Markets"}</span><span>${active === "Account" ? "Account" : "Wallet"}</span></div>`;
+}
+
+function flatGameTile(paused = false) {
+  return `<div class="flat-game-tile" style="--home-color:#00338d;--away-color:#008e97">
+    <div class="flat-score-row">
+      <span class="flat-team"><img src="${teamLogos.buf}" alt=""><strong>BUF</strong></span>
+      <span class="flat-score">24 - 20</span>
+      <span class="flat-team"><img src="${teamLogos.mia}" alt=""><strong>MIA</strong></span>
+    </div>
+    ${paused ? `<div class="flat-status loading" style="min-height:64px"><strong>Trading paused</strong><span>Repricing markets after score change.</span></div>` : flatMarkets()}
+  </div>`;
+}
+
+function flatMarkets(disabled = false) {
+  const yes = disabled ? "--" : "64c";
+  const no = disabled ? "--" : "36c";
+  return `<div class="flat-market-grid">
+    <div class="flat-market-row"><span>GTL</span><b class="flat-price yes">${yes}</b><b class="flat-price no">${no}</b></div>
+    <div class="flat-market-row"><span>TIE</span><b class="flat-price yes">${disabled ? "--" : "18c"}</b><b class="flat-price no">${disabled ? "--" : "82c"}</b></div>
+    <div class="flat-market-row"><span>KTL</span><b class="flat-price yes">${disabled ? "--" : "71c"}</b><b class="flat-price no">${disabled ? "--" : "29c"}</b></div>
+  </div>`;
+}
+
+function flatRows(count = 3, variant = "neutral") {
+  const rows = [
+    { a: "BUF vs MIA", b: "GTL YES - 120 contracts", c: "$76.80", d: "+$19.20", logo: ["buf", "mia"], cls: "flat-up" },
+    { a: "KC vs SF", b: "Tie NO - pending", c: "$44.00", d: "22c limit", logo: ["kc", "sf"], cls: "" },
+    { a: "BOS vs NYK", b: "KTL YES - settled", c: "$54.10", d: "Won", logo: ["bos", "ny"], cls: "flat-up" },
+    { a: "KC vs SF", b: "GTL NO - 80 contracts", c: "$32.00", d: "-$12.40", logo: ["kc", "sf"], cls: "flat-down" },
+  ];
+  return rows.slice(0, count).map((row, index) => `<div class="flat-row">
+    ${logoPair(row.logo[0], row.logo[1])}
+    <span class="flat-row-main"><strong>${variant === "pending" ? (index % 2 ? "Pending sell" : "Pending buy") : row.a}</strong><span>${row.b}</span></span>
+    <span class="flat-row-side"><strong>${row.c}</strong><span class="${row.cls}">${row.d}</span></span>
+  </div>`).join("");
+}
+
+function flatStatus(kind, title, copy) {
+  return `<div class="flat-status ${kind}"><strong>${title}</strong><span>${copy}</span></div>`;
+}
+
+function flatLoading() {
+  return `<div class="flat-card"><div class="flat-skeleton"></div><div class="flat-skeleton"></div><div class="flat-skeleton short"></div></div>
+    <div class="flat-card"><div class="flat-skeleton"></div><div class="flat-skeleton short"></div></div>`;
+}
+
+function renderAuthFrame(mode) {
+  const content = {
+    signin: ["Welcome back", "Login to GTL", "Email", "Password", "Login"],
+    register: ["Step 1 of 3", "Create your account", "Email", "Continue", "Create Account"],
+    forgot: ["Reset password", "Forgot your password?", "Email", "Send Reset Link", "Back to Login"],
+    reset: ["New password", "Set a new password", "New password", "Confirm password", "Update Password"],
+    loading: ["Welcome back", "Login to GTL", "Email", "Password", "Processing..."],
+    error: ["Welcome back", "Login to GTL", "sam", "Password", "Login"],
+  }[mode];
+  if (mode === "verify") {
+    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 2 of 3</span><h3>Check your email</h3><p>Enter the 6-digit code sent to alex@gtl.test.</p><div class="flat-code-row"><span>4</span><span>8</span><span>2</span><span></span><span></span><span></span></div><div class="flat-primary">Verify Email</div></div></div>`;
+  }
+  const error = mode === "error";
+  return `<div class="flat-screen is-auth"><div class="flat-auth-card">
+    <span class="flat-chip">${content[0]}</span><h3>${content[1]}</h3><p>Trade the live games with your GTL account.</p>
+    <div class="flat-field ${error ? "is-error" : ""}">${content[2]}</div>
+    <div class="flat-field">${content[3]}</div>
+    ${error ? `<p class="field-error">Enter a valid email address.</p>` : ""}
+    <div class="flat-primary">${content[4]}</div>
+    <p class="flat-copy">Continue with Google or Apple</p>
+  </div></div>`;
+}
+
+function renderHomeFrame(mode) {
+  let main = "";
+  if (mode === "loading") main = flatLoading();
+  else if (mode === "error") main = flatStatus("error", "Unable to load markets", "Refresh the page or try again later.");
+  else if (mode === "noLive") main = flatStatus("empty", "No live games right now", "Upcoming markets will appear here before kickoff.");
+  else {
+    main = `<h2 class="flat-hero-title">${mode === "logged" || mode === "positions" ? "Welcome back, Alex." : "Trade the moments that move the game."}</h2>
+      <p class="flat-copy">${mode === "positions" ? "Track open exposure before entering another live market." : "Back the lead on live NFL and NBA."}</p>
+      <div class="flat-btn-row"><span class="flat-primary">Live Games</span><span class="flat-secondary">${mode === "guest" ? "Create Account" : "Portfolio"}</span></div>
+      ${mode === "positions" ? `<div class="flat-list">${flatRows(2)}</div>` : flatGameTile(mode === "live" ? false : false)}`;
+  }
+  return `<div class="flat-screen">${flatHeader("GTL", mode === "guest" ? "Login" : "$240.50")}${main}${flatNav("Home")}</div>`;
+}
+
+function renderGameFrame(mode) {
+  let banner = "";
+  let markets = flatMarkets(mode === "pregame");
+  if (mode === "paused" || mode === "stale") banner = flatStatus("loading", mode === "stale" ? "Refreshing prices" : "Trading paused", mode === "stale" ? "Latest market data is being checked." : "Recalculating markets after score change.");
+  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Game")}${flatStatus("error", "Game unavailable", "Live data could not be loaded.")}${flatNav("Orders")}</div>`;
+  const extra = {
+    none: flatStatus("empty", "No position in this game", "Choose a market to enter."),
+    position: `<div class="flat-list">${flatRows(1)}</div>`,
+    pending: `<div class="flat-list">${flatRows(1, "pending")}</div>`,
+  }[mode] || "";
+  return `<div class="flat-screen">${flatHeader("GTL", mode === "pregame" ? "Pregame" : "Q3 11:05")}
+    <div class="flat-game-tile" style="--home-color:#00338d;--away-color:#008e97"><div class="flat-score-row"><span class="flat-team"><img src="${teamLogos.buf}" alt=""><strong>BUF</strong></span><span class="flat-score">${mode === "pregame" ? "0 - 0" : "24 - 20"}</span><span class="flat-team"><img src="${teamLogos.mia}" alt=""><strong>MIA</strong></span></div></div>
+    ${banner}${markets}${extra}<div class="flat-card"><h3>Inside the game</h3><p>Lead changes, volume, and order flow.</p></div>${flatNav("Orders")}</div>`;
+}
+
+function renderDrawerFrame(mode) {
+  const sell = mode.startsWith("sell");
+  const limit = mode.toLowerCase().includes("limit") || mode === "invalid" || mode === "pending";
+  const error = mode === "balance" || mode === "invalid" || mode === "error";
+  const success = mode === "success";
+  if (success) {
+    return `<div class="flat-screen is-drawer"><div class="flat-drawer"><div class="flat-drawer-handle"></div>${flatStatus("empty", "Order placed", "You are in the game.")}<div class="flat-primary">Done</div></div></div>`;
+  }
+  return `<div class="flat-screen is-drawer"><div class="flat-drawer"><div class="flat-drawer-handle"></div>
+    <h3>${sell ? "Sell position" : "Buy contract"}</h3><p class="flat-copy">BUF vs MIA - Get the Lead ${sell ? "YES" : "YES"}</p>
+    <div class="flat-btn-row"><span class="flat-price yes">Yes 64c</span><span class="flat-price no">No 36c</span></div>
+    <div class="flat-field">${sell ? "Contracts to sell: 60" : "Contracts: 100"}</div>
+    ${limit ? `<div class="flat-field ${mode === "invalid" ? "is-error" : ""}">Limit price: ${mode === "invalid" ? "104c" : "52c"}</div>` : ""}
+    ${mode === "pending" ? flatStatus("loading", "Limit order pending", "Waiting for the market to reach 52c.") : ""}
+    ${error ? flatStatus("error", mode === "balance" ? "Insufficient balance" : mode === "invalid" ? "Invalid limit price" : "Order failed", mode === "balance" ? "Add funds before placing this bet." : "Check the order and try again.") : ""}
+    <div class="flat-summary"><div><span>Subtotal</span><strong>$64.00</strong></div><div><span>Fee</span><strong>$1.28</strong></div><div><span>Total</span><strong>$65.28</strong></div></div>
+    <div class="flat-primary">${sell ? "Sell" : limit ? "Place Limit" : "Quick Bet"}</div>
+  </div></div>`;
+}
+
+function renderTrackerFrame(mode) {
+  if (mode === "loading") return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}${flatLoading()}${flatNav("Orders")}</div>`;
+  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}${flatStatus("error", "Positions unavailable", "Could not load open exposure.")}${flatNav("Orders")}</div>`;
+  if (mode === "empty") return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}${flatStatus("empty", "No open positions", "Your live positions will appear here.")}${flatNav("Orders")}</div>`;
+  const headline = { winning: "+$19.20 unrealized", losing: "-$13.80 unrealized", conflict: "Conflicting sides", sell: "Sell preview" }[mode] || "Open positions";
+  return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}<h2 class="flat-hero-title">${headline}</h2><div class="flat-list">${flatRows(mode === "conflict" ? 3 : 2)}</div>${mode === "sell" ? renderDrawerFrame("sellMarket").replace('class="flat-screen is-drawer"', 'class="flat-card"') : ""}${flatNav("Orders")}</div>`;
+}
+
+function renderPendingFrame(mode) {
+  if (mode === "empty") return `<div class="flat-screen">${flatHeader("GTL", "Orders")}${flatStatus("empty", "No pending orders", "Limit orders will appear here.")}${flatNav("Orders")}</div>`;
+  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Orders")}${flatStatus("error", "Pending orders unavailable", "Try refreshing the page.")}${flatNav("Orders")}</div>`;
+  const panel = {
+    edit: `<div class="flat-card"><h3>Edit limit price</h3><div class="flat-field">New limit: 48c</div><div class="flat-primary">Save changes</div></div>`,
+    cancel: `<div class="flat-card"><h3>Cancel order?</h3><p>This pending limit order will be removed.</p><div class="flat-btn-row"><span class="flat-secondary">Keep</span><span class="flat-primary">Cancel</span></div></div>`,
+    filled: flatStatus("empty", "Order filled", "Your limit order became an open position."),
+  }[mode] || "";
+  return `<div class="flat-screen">${flatHeader("GTL", "Orders")}<h2 class="flat-hero-title">Pending orders</h2><div class="flat-list">${flatRows(mode === "sell" ? 2 : 1, "pending")}</div>${panel}${flatNav("Orders")}</div>`;
+}
+
+function renderAccountFrame(mode) {
+  if (mode === "loading") return `<div class="flat-screen">${flatHeader("GTL", "Account")}${flatLoading()}${flatNav("Account")}</div>`;
+  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Account")}${flatStatus("error", "Account unavailable", "We could not load your account.")}${flatNav("Account")}</div>`;
+  if (mode === "settledEmpty") return `<div class="flat-screen">${flatHeader("GTL", "Settled")}${flatStatus("empty", "No settled bets", "Completed trades will appear here.")}${flatNav("Account")}</div>`;
+  const content = {
+    settled: `<h2 class="flat-hero-title">Settled history</h2><div class="flat-list">${flatRows(4)}</div>`,
+    overview: `<h2 class="flat-hero-title">Account overview</h2><div class="flat-card"><h3>Alex Morgan</h3><p>alex@gtl.test</p></div><div class="flat-list">${flatRows(2)}</div>`,
+    profile: `<h2 class="flat-hero-title">Profile</h2><div class="flat-field">Display name: Alex Morgan</div><div class="flat-field">Email: alex@gtl.test</div><div class="flat-field">Notifications: On</div>`,
+    credits: `<h2 class="flat-hero-title">$240.50</h2><p class="flat-copy">Available balance</p><div class="flat-primary">Top Up</div><div class="flat-list">${flatRows(2)}</div>`,
+  }[mode];
+  return `<div class="flat-screen">${flatHeader("GTL", "Account")}${content}${flatNav("Account")}</div>`;
+}
+
+function renderFlatFrame(frame) {
+  const renderers = {
+    auth: renderAuthFrame,
+    home: renderHomeFrame,
+    game: renderGameFrame,
+    drawer: renderDrawerFrame,
+    tracker: renderTrackerFrame,
+    pending: renderPendingFrame,
+    account: renderAccountFrame,
+  };
+  const screen = renderers[frame.type](frame.mode);
+  return `<article class="flat-frame-wrap"><div class="flat-frame-label">${frame.label}</div><div class="flat-phone">${screen}</div></article>`;
+}
+
+function renderFlatDoc(docId = "auth") {
+  const doc = flatDocs[docId] || flatDocs.auth;
+  if (!flatLayContent) return;
+  flatLayContent.innerHTML = `<div class="flat-doc-head"><h2>${doc.title}</h2><p>${doc.description}</p></div>
+    ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${group.title}</h3></div><div class="flat-frame-row">${group.frames.map(renderFlatFrame).join("")}</div></section>`).join("")}`;
+
+  flatDocTabs.forEach((button) => {
+    const active = button.dataset.flatDoc === docId;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", String(active));
   });
 }
 
@@ -136,6 +466,97 @@ function showSection(sectionId, options = {}) {
 
 function sectionFromHash() {
   return window.location.hash.replace("#", "") || "overview";
+}
+
+function setPageZoom(nextZoom) {
+  pageZoom = Math.max(0.5, Math.min(1.5, Math.round(nextZoom * 100) / 100));
+  pagePreview?.style.setProperty("--page-zoom", String(pageZoom));
+  if (pageZoomValue) pageZoomValue.textContent = `${Math.round(pageZoom * 100)}%`;
+
+  pageZoomButtons.forEach((button) => {
+    const action = button.dataset.pageZoom;
+    button.disabled = (action === "out" && pageZoom <= 0.5) || (action === "in" && pageZoom >= 1.5);
+  });
+}
+
+function pagePreviewSrc(src, authState, params = {}) {
+  if (!authState && !Object.keys(params).length) return src;
+  const url = new URL(src, window.location.href);
+  if (authState) url.searchParams.set("ds-auth", authState);
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+  const filename = url.pathname.split("/").pop();
+  return `../gtl-app/${filename}?${url.searchParams.toString()}`;
+}
+
+function setPageFrameMode(compareAuth) {
+  pagePreview?.classList.toggle("is-dual", compareAuth);
+  pageFrameCards.forEach((card) => {
+    card.hidden = !compareAuth && card.dataset.pageFrameCard !== "guest";
+  });
+}
+
+function gamePreviewSrc(frameMode) {
+  const sources = {
+    auth: "../gtl-app/game.html?id=kc-sf",
+    empty: "../gtl-app/game.html?id=dal-phi",
+    guest: "../gtl-app/game.html?id=buf-mia",
+  };
+  return sources[frameMode] || sources.guest;
+}
+
+function loadPagePreview(button) {
+  const nextSrc = button.dataset.pageSrc;
+  const nextName = button.dataset.pageName || button.textContent?.trim() || "Page";
+  const compareAuth = button.dataset.pageCompareAuth === "true";
+  const compareGame = button.dataset.pageCompareGame === "true";
+  const compareFrames = compareAuth || compareGame;
+  if (!nextSrc) return;
+
+  pageTabs.forEach((tab) => {
+    const active = tab === button;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+
+  setPageFrameMode(compareFrames);
+
+  pageFrameLabels.forEach((label) => {
+    const authLabels = { auth: "Logged in", empty: "No open positions", guest: "Guest" };
+    const gameLabels = { auth: "Paused after score change", empty: "Opens after first score", guest: "Live game default" };
+    const labelMap = compareGame ? gameLabels : authLabels;
+    label.textContent = compareFrames ? labelMap[label.dataset.pageFrameLabel] : nextName;
+  });
+
+  pageFrames.forEach((frame) => {
+    const frameMode = frame.dataset.pageFrame;
+    if (frameMode !== "guest" && !compareFrames) return;
+    const authState = frameMode === "guest" ? "guest" : "logged";
+    const extraParams = frameMode === "empty" ? { "ds-positions": "empty" } : {};
+    frame.src = compareGame
+      ? gamePreviewSrc(frameMode)
+      : compareAuth
+      ? pagePreviewSrc(nextSrc, authState, extraParams)
+      : pagePreviewSrc(nextSrc, button.dataset.pageAuth);
+    frame.title = compareAuth
+      ? `${nextName} ${frameMode === "empty" ? "no open positions" : authState} preview`
+      : compareGame
+      ? `${nextName} ${frameMode === "auth" ? "paused" : frameMode === "empty" ? "opens after first score" : "live"} preview`
+      : `${nextName} page preview`;
+  });
+  pageFrameOpenLinks.forEach((link) => {
+    const frameMode = link.dataset.pageFrameOpen;
+    if (frameMode !== "guest" && !compareFrames) return;
+    const authState = frameMode === "guest" ? "guest" : "logged";
+    const extraParams = frameMode === "empty" ? { "ds-positions": "empty" } : {};
+    link.href = compareGame
+      ? gamePreviewSrc(frameMode)
+      : compareAuth
+      ? pagePreviewSrc(nextSrc, authState, extraParams)
+      : pagePreviewSrc(nextSrc, button.dataset.pageAuth);
+  });
+  if (pageTitle) pageTitle.textContent = nextName;
 }
 
 function setDrawerView(view) {
@@ -340,6 +761,27 @@ drawerViewButtons.forEach((button) => {
   });
 });
 
+pageTabs.forEach((button) => {
+  button.addEventListener("click", () => {
+    loadPagePreview(button);
+  });
+});
+
+pageZoomButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const action = button.dataset.pageZoom;
+    if (action === "in") setPageZoom(pageZoom + 0.1);
+    if (action === "out") setPageZoom(pageZoom - 0.1);
+    if (action === "reset") setPageZoom(1);
+  });
+});
+
+flatDocTabs.forEach((button) => {
+  button.addEventListener("click", () => {
+    renderFlatDoc(button.dataset.flatDoc);
+  });
+});
+
 window.addEventListener("hashchange", () => {
   showSection(sectionFromHash(), { instant: true });
 });
@@ -347,6 +789,9 @@ window.addEventListener("hashchange", () => {
 createLimitOpenDrawerState();
 setDrawerView(drawerSection?.dataset.drawerViewMode);
 drawerSection?.querySelectorAll(".bet-sheet").forEach(updateDrawerPreview);
+setPageZoom(pageZoom);
+loadPagePreview(document.querySelector("[data-page-tab].is-active") || pageTabs[0]);
+renderFlatDoc(document.querySelector("[data-flat-doc].is-active")?.dataset.flatDoc || "auth");
 showSection(sectionFromHash(), { instant: true });
 describeColorSwatches();
 
