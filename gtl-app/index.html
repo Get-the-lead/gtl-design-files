@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Enter passphrase</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
+
+  <!-- Local, gitignored passphrase. Copy gate.config.example.js -> gate.config.js -->
+  <script src="gate.config.js"></script>
+</head>
+<body class="auth-body">
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <div class="auth-head">
+        <span class="eyebrow">Restricted</span>
+        <h1>Enter passphrase</h1>
+        <p>This preview is private. Enter the passphrase to continue.</p>
+      </div>
+
+      <form class="auth-form" id="gateForm" novalidate>
+        <div class="field">
+          <label for="passphrase">Passphrase</label>
+          <div class="field-pass">
+            <input class="field-input" id="passphrase" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Enter passphrase" required />
+            <button class="pass-toggle" type="button" data-pass-toggle aria-label="Show passphrase">
+              <svg class="icon-show" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+              <svg class="icon-hide" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 10.7a3 3 0 0 0 4.2 4.2M9.4 5.2A10.6 10.6 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.4 4.1M6.5 6.6A17.4 17.4 0 0 0 2 12s3.5 7 10 7c1.2 0 2.3-.2 3.3-.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <p class="field-error" id="gateError" hidden>Incorrect passphrase. Try again.</p>
+        </div>
+
+        <button class="btn btn-primary auth-submit" type="submit">Unlock</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      /* Passphrase comes from gate.config.js (gitignored). See
+         gate.config.example.js for the template.
+         NOTE: this is a client-side gate for a private preview only.
+         It is NOT real security — the value is downloaded by the
+         browser. Do not use it to protect anything sensitive. */
+      var PASSPHRASE = window.GTL_PASSPHRASE;
+      if (typeof PASSPHRASE === 'undefined') {
+        console.warn('[gate] gate.config.js missing — copy gate.config.example.js to gate.config.js');
+      }
+
+      var form   = document.getElementById('gateForm');
+      var input  = document.getElementById('passphrase');
+      var errorEl = document.getElementById('gateError');
+
+      // Show/hide passphrase toggle (mirrors login.html)
+      var toggle = document.querySelector('[data-pass-toggle]');
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          var show = input.type === 'password';
+          input.type = show ? 'text' : 'password';
+          toggle.classList.toggle('is-shown', show);
+          toggle.setAttribute('aria-label', show ? 'Hide passphrase' : 'Show passphrase');
+        });
+      }
+
+      // Clear the error state as the user types again
+      input.addEventListener('input', function () {
+        input.classList.remove('is-error');
+        errorEl.hidden = true;
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (input.value === PASSPHRASE) {
+          try { sessionStorage.setItem('gtl-gate', 'ok'); } catch (err) {}
+          window.location.href = 'home.html';
+        } else {
+          input.classList.add('is-error');
+          errorEl.hidden = false;
+          input.value = '';
+          input.focus();
+        }
+      });
+
+      input.focus();
+    })();
+  </script>
+</body>
+</html>
