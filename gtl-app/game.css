@@ -530,6 +530,9 @@ body.gop-open .betbar-cta { display: none !important; } /* focus the popup while
 .gop-open-label { display: none; }
 .gop-trigger[aria-expanded="true"] .gop-open-label { display: inline; }
 .gop-trigger[aria-expanded="true"] .gop-closed-label { display: none; }
+/* Open state ("Hide") is a secondary button, not the primary green */
+.gop-trigger[aria-expanded="true"] { background: var(--surface-2); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+.gop-trigger[aria-expanded="true"]:hover { background: var(--surface-3); }
 .has-open-position .betbar.is-visible .gop-game { display: none; } /* "N Game Positions" → "N Positions" */
 
 /* Dim + blur backdrop behind the popup (mobile/tablet; the page locks) */
@@ -555,6 +558,8 @@ body.gop-open .gop-backdrop { opacity: 1; pointer-events: auto; }
 body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
 /* Cards reuse the header dropdown's .hpos-list styling; just size the list here */
 .gop-pop .hpos-list { max-width: 400px; margin-inline: auto; width: 100%; }
+/* No scoreboard on these cards, so the bet type gets even top padding */
+.gop-pop .pos-card--b .pos-info { padding-top: var(--s5); }
 .gop-heading {
   margin: 0 0 var(--s2); text-align: center;
   font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);

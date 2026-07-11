@@ -928,21 +928,39 @@ function renderGamePage() {
   if (g.id === OPEN_POSITION_DEMO_GAME_ID) initGameOpenPosition(openPositionDemos);
 }
 
-// The Open Positions card set — variant A for each, variant B for the last — exactly as the
-// header dropdown renders it. Shared so the game pop-up and the header stay identical.
+// The Open Positions card set for the HEADER dropdown — variant A for each, B for the last.
 const openPositionCards = (list) => list.map((p, i) => (i === list.length - 1 ? positionCardB(p, i) : positionCardA(p, i))).join("");
 
+// The game pop-up's own card: the variant-B body (bet type centred, then Contracts / Value /
+// Return as three columns) but WITHOUT the scoreboard — redundant on the game's own page.
+// The tinted card background is kept.
+function gopPositionCard(p, i) {
+  const { g, value, pnl } = posFigures(p);
+  const up = pnl >= 0;
+  const betType = `${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
+  return `<article class="pos-card pos-card--b" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="pos-info">
+      <div class="ocb-type">${betType}</div>
+      <div class="ocb-stats">
+        <div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">${p.qty}</span></div>
+        <div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">${money(value)}</span></div>
+        <div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl ${up ? "up" : "down"}">${signed(pnl)}</span></div>
+      </div>
+      ${posActions(i)}
+    </div>
+  </article>`;
+}
+
 function gameOpenPositionHTML(list) {
-  // The dock is now a single "N Game Positions" button injected into the bottom bar
+  // The dock is a single "N Game Positions" button injected into the bottom bar
   // (see initGameOpenPosition). This markup is the pop-up panel that button reveals,
-  // plus its dim/blur backdrop. The cards reuse the header dropdown's .hpos-list cards.
-  // On desktop the panel sits inline in the left column.
+  // plus its dim/blur backdrop. On desktop the panel sits inline in the left column.
   return `
     <div class="game-open-position" id="gameOpenPosition" role="region" aria-label="Your open positions in this game">
       <div class="gop-backdrop" data-gop-backdrop></div>
       <div class="gop-pop" id="gopPop">
         <p class="gop-heading">Game Open Positions</p>
-        <div class="hpos-list">${openPositionCards(list)}</div>
+        <div class="hpos-list">${list.map((p, i) => gopPositionCard(p, i)).join("")}</div>
       </div>
     </div>`;
 }
@@ -1004,7 +1022,7 @@ function initGameOpenPosition(list) {
 // Rebuild the game's position cards (e.g. after Buy More adds contracts).
 function refreshGameOpenPosition() {
   const listEl = $("#gopPop .hpos-list");
-  if (listEl) listEl.innerHTML = openPositionCards(openPositionDemos);
+  if (listEl) listEl.innerHTML = openPositionDemos.map((p, i) => gopPositionCard(p, i)).join("");
 }
 
 // Game 1's detail page: every ~9s the market "recalculates" — the recalculating
