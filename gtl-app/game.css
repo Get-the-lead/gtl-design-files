@@ -630,12 +630,13 @@ body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
     height: calc(100vh - 104px - var(--s6));  /* fills the height left below the header */
     overflow-y: auto;                         /* internal scroll ONLY when content won't fit */
     overscroll-behavior: contain;
-    scrollbar-gutter: stable;
+    scrollbar-width: none;                    /* hide the scrollbar — still scrolls */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     padding: var(--s5); /* insets scoreboard/betting from the column edges; fade is page-level now */
   }
+  .game-col-left::-webkit-scrollbar { display: none; } /* WebKit: hide the internal scrollbar */
   .game-col-left > .gb, .game-col-left > .markets { flex-shrink: 0; } /* keep natural size; scroll rather than squish */
   /* scoreboard is now just content sitting on the panel fade — no card box of its own */
   .game-col-left .gb { background: transparent; border-radius: 0; overflow: visible; padding: var(--s6) 0 var(--s8); }
