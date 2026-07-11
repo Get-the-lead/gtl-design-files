@@ -526,7 +526,7 @@
 body.gop-open .betbar-cta { display: none !important; } /* focus the popup while it's open */
 
 /* The "N Game Positions" toggle — same primary style as View Bets */
-.gop-trigger { pointer-events: auto; --btn-h: 52px; flex: 1; padding-inline: var(--s6); box-shadow: var(--shadow); }
+.gop-trigger { pointer-events: auto; --btn-h: 52px; flex: 1; padding-inline: var(--s6); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
 .gop-open-label { display: none; }
 .gop-trigger[aria-expanded="true"] .gop-open-label { display: inline; }
 .gop-trigger[aria-expanded="true"] .gop-closed-label { display: none; }
