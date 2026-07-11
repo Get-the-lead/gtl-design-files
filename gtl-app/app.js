@@ -960,38 +960,83 @@ function gopCardHTML(p, i) {
   </article>`;
 }
 function gameOpenPositionHTML(list) {
+  // The dock is now a single "N Game Positions" button injected into the bottom bar
+  // (see initGameOpenPosition). This markup is the pop-up panel that button reveals,
+  // plus its dim/blur backdrop. On desktop the panel sits inline in the left column.
   return `
     <div class="game-open-position" id="gameOpenPosition" role="region" aria-label="Your open positions in this game">
-      <p class="gop-heading">Game Open Positions</p>
-      <div class="gop-scroller">${list.map((p, i) => gopCardHTML(p, i)).join("")}</div>
+      <div class="gop-backdrop" data-gop-backdrop></div>
+      <div class="gop-pop" id="gopPop">
+        <p class="gop-heading">Game Open Positions</p>
+        <div class="gop-list">${list.map((p, i) => gopCardHTML(p, i)).join("")}</div>
+      </div>
     </div>`;
 }
 
 function initGameOpenPosition(list) {
-  const dock = $("#gameOpenPosition");
-  if (!dock) return;
-  dock.addEventListener("click", (e) => {
+  const wrap = $("#gameOpenPosition");
+  if (!wrap) return;
+  document.body.classList.add("has-open-position");
+
+  // Inject the "N Game Positions" toggle into the bottom bar so it shares the row with
+  // "View Bets" (same primary-button style). CSS drops the word "Game" to "N Positions"
+  // when View Bets slides in (keyed off .betbar.is-visible).
+  const barInner = $("#betBar .betbar-inner");
+  let trigger = barInner ? barInner.querySelector(".gop-trigger") : null;
+  if (barInner && !trigger) {
+    trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "btn btn-primary gop-trigger";
+    trigger.setAttribute("data-gop-toggle", "");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", "gopPop");
+    trigger.innerHTML = `<span class="gop-open-label">Hide</span><span class="gop-closed-label"><span class="gop-num">${list.length}</span><span class="gop-game"> Game</span> Positions</span>`;
+    barInner.insertBefore(trigger, barInner.firstChild);
+  }
+
+  const setOpen = (open) => {
+    document.body.classList.toggle("gop-open", open);
+    if (trigger) trigger.setAttribute("aria-expanded", open ? "true" : "false");
+  };
+  const closeGop = () => setOpen(false);
+
+  // Toggle the popup; dismiss on a tap outside it (backdrop / dimmed page) or Escape.
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-gop-toggle]")) {
+      setOpen(!document.body.classList.contains("gop-open"));
+    } else if (document.body.classList.contains("gop-open") && !e.target.closest("#gopPop") && !e.target.closest("#betBar")) {
+      closeGop();
+    }
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeGop(); });
+
+  // Card interactions inside the popup — Buy More / Sell expand + drawers.
+  const pop = $("#gopPop");
+  if (pop) pop.addEventListener("click", (e) => {
     const expand = e.target.closest("[data-gop-expand]");
     const buy = e.target.closest("[data-gop-buy]");
     const sell = e.target.closest("[data-gop-sell]");
     if (expand) {
       const card = expand.closest(".gop-card");
-      const open = card.classList.toggle("is-open");
-      expand.setAttribute("aria-expanded", open ? "true" : "false");
+      const isOpen = card.classList.toggle("is-open");
+      expand.setAttribute("aria-expanded", isOpen ? "true" : "false");
       const label = card.querySelector(".gop-toggle-label");
-      if (label) label.textContent = open ? "Hide" : "Buy More / Sell";
+      if (label) label.textContent = isOpen ? "Hide" : "Buy More / Sell";
     } else if (buy) {
+      closeGop();
       openBuy(list[Number(buy.dataset.gopBuy)]);
     } else if (sell) {
+      closeGop();
       openSell(list[Number(sell.dataset.gopSell)]);
     }
   });
-  document.body.classList.add("has-open-position");
-  // Publish the dock's height so the betbar rises above it and page content clears it (updates on expand).
-  const sync = () => document.documentElement.style.setProperty("--open-pos-h", `${dock.offsetHeight}px`);
-  sync();
-  if ("ResizeObserver" in window) new ResizeObserver(sync).observe(dock);
-  window.addEventListener("resize", sync);
+
+  // Publish the bar height so the popup sits just above it (updates if it reflows).
+  const bar = $("#betBar");
+  const syncBar = () => { if (bar) document.documentElement.style.setProperty("--gop-bar-h", `${bar.offsetHeight}px`); };
+  syncBar();
+  if ("ResizeObserver" in window && bar) new ResizeObserver(syncBar).observe(bar);
+  window.addEventListener("resize", syncBar);
 }
 // Refresh each card's figures (e.g. after Buy More adds contracts) — leaves expand state + buttons intact.
 function refreshGameOpenPosition() {

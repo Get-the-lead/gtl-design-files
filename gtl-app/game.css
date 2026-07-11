@@ -506,47 +506,59 @@
 }
 .betbar.is-visible { transform: none; }
 
-/* With a floating position dock, the betbar rises from BEHIND it (lower z), 8px above, on show.
-   It also fades so no sliver shows between the floating cards while it rests behind them. */
+/* With game positions present, the bottom bar is ALWAYS on screen — it carries the
+   "N Game Positions" toggle (injected into .betbar-inner) alongside "View Bets". */
 .has-open-position .betbar {
-  z-index: 58; bottom: var(--open-pos-h, 0px);
-  transform: translateY(100%); opacity: 0;
-  transition: transform 0.32s var(--ease-out), opacity 0.32s var(--ease-out);
+  z-index: 60; bottom: 0;
+  transform: none; opacity: 1;
 }
-.has-open-position .betbar.is-visible { transform: none; opacity: 1; }
-.has-open-position .betbar-inner { padding-block: var(--s2); } /* 8px separation from the card */
 .betbar-inner {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--s3);
   padding-block: var(--s5);
 }
 .betbar-cta { pointer-events: auto; width: 100%; --btn-h: 52px; padding-inline: var(--s10); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
+/* "View Bets" stays hidden until the markets scroll out of view, then joins the row inline */
+.has-open-position .betbar-cta { display: none; width: auto; flex: 1; padding-inline: var(--s6); }
+.has-open-position .betbar.is-visible .betbar-cta { display: inline-flex; }
+body.gop-open .betbar-cta { display: none !important; } /* focus the popup while it's open */
 
-/* Floating open-position dock (demo: BUF/MIA) — pinned to the bottom; the betbar rises from behind it.
-   Multiple positions scroll horizontally, like the home Open Positions carousel. */
-.game-open-position {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  z-index: 60; /* above the betbar (58 when a dock is present) so "View Bets" comes up from behind */
-  pointer-events: none;
-  padding: var(--s8) 0 env(safe-area-inset-bottom, 0);
-  background: linear-gradient(to bottom, transparent, var(--bg) var(--s8)); /* short top fade, solid behind the cards */
+/* The "N Game Positions" toggle — same primary style as View Bets */
+.gop-trigger { pointer-events: auto; --btn-h: 52px; flex: 1; padding-inline: var(--s6); box-shadow: var(--shadow); }
+.gop-open-label { display: none; }
+.gop-trigger[aria-expanded="true"] .gop-open-label { display: inline; }
+.gop-trigger[aria-expanded="true"] .gop-closed-label { display: none; }
+.has-open-position .betbar.is-visible .gop-game { display: none; } /* "N Game Positions" → "N Positions" */
+
+/* Dim + blur backdrop behind the popup (mobile/tablet; the page locks) */
+.gop-backdrop {
+  position: fixed; inset: 0; z-index: 55;
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none; transition: opacity 0.28s var(--ease);
 }
+body.gop-open .gop-backdrop { opacity: 1; pointer-events: auto; }
+@media (max-width: 1023px) { body.gop-open { overflow: hidden; } }
+
+/* Pop-up panel of position cards — sits just above the bottom bar, slides up on open */
+.gop-pop {
+  position: fixed; left: 0; right: 0; bottom: var(--gop-bar-h, 84px); z-index: 59;
+  display: flex; flex-direction: column; gap: var(--s3);
+  padding: var(--s4);
+  max-height: calc(100dvh - var(--gop-bar-h, 84px) - 72px);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  opacity: 0; transform: translateY(12px); pointer-events: none;
+  transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+}
+body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
+.gop-list { display: flex; flex-direction: column; gap: var(--s3); }
 .gop-heading {
-  pointer-events: none; margin: 0; text-align: center;
+  margin: 0 0 var(--s1); text-align: center;
   font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);
 }
-.gop-scroller {
-  pointer-events: auto;
-  display: flex; align-items: flex-start; gap: var(--s3);
-  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-  /* 6% side inset centres an 88%-wide card (leftover split evenly), so the first card isn't flush-left */
-  padding: var(--s3) 6% var(--s4);
-}
-.gop-scroller::-webkit-scrollbar { display: none; }
 .gop-card {
-  flex: 0 0 clamp(280px, 88%, 360px); scroll-snap-align: center;
   padding: var(--s3) var(--s4) var(--s2);
   background: var(--surface-2);
   border: 1px solid var(--line-2);
@@ -571,20 +583,22 @@
 .gop-panel-inner { overflow: hidden; }
 .gop-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); padding-top: var(--s3); }
 
-/* Room to scroll clear of the floating dock (and the betbar above it) */
-.game-body.has-open-position { padding-bottom: calc(96px + var(--open-pos-h, 0px)); }
+/* Room to scroll clear of the bottom bar */
+.game-body.has-open-position { padding-bottom: calc(var(--gop-bar-h, 84px) + var(--s4)); }
 
 @media (min-width: 768px) {
   .markets, .stats-section { max-width: 760px; }
   .betbar-inner { max-width: 760px; }
-  .gop-scroller { max-width: 760px; margin-inline: auto; }
+  .gop-list { max-width: 760px; margin-inline: auto; width: 100%; }
 }
 @media (min-width: 1024px) {
-  /* Desktop: positions flow in the left column under the bet rows, stacked as horizontal rows */
-  .game-open-position { position: static; z-index: auto; pointer-events: auto; flex-shrink: 0; margin-top: var(--s16); padding: 0; background: none; }
-  .gop-heading { text-align: left; padding-inline: var(--s5); }
-  .gop-scroller { flex-direction: column; align-items: stretch; overflow: visible; max-width: none; margin-inline: 0; padding: var(--s3) var(--s5) 0; }
-  .gop-card { display: flex; flex-direction: row; align-items: center; gap: var(--s4); flex: 0 0 auto; padding: var(--s4); }
+  /* Desktop: the panel flows inline in the left column (no bottom bar, no popup) */
+  .game-open-position { position: static; z-index: auto; pointer-events: auto; flex-shrink: 0; margin-top: var(--s16); }
+  .gop-backdrop { display: none; }
+  .gop-pop { position: static; opacity: 1; transform: none; pointer-events: auto; max-height: none; overflow: visible; padding: 0; }
+  .gop-heading { text-align: left; padding-inline: var(--s5); margin-bottom: var(--s3); }
+  .gop-list { max-width: none; margin-inline: 0; padding: 0 var(--s5); }
+  .gop-card { display: flex; flex-direction: row; align-items: center; gap: var(--s4); padding: var(--s4); }
   .gop-info { flex: 1; align-items: flex-start; text-align: left; }
   .gop-foot { flex: 0 0 auto; }
   .gop-toggle { display: none; } /* no toggle on desktop — actions are always shown */
