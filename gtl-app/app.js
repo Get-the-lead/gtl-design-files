@@ -124,12 +124,12 @@ const tradePauseHTML = (message) => `<div class="trade-pause" role="status"><spa
 function betPanel(g) {
   const href = gamePageHref(g);
   const row = (label, sub, full, key) => `<div class="mkt-row">
-      <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
       <button class="price yes" data-game="${g.id}" data-market="${key}" data-side="yes" aria-label="${full} Yes ${g.markets[key].yes} cents">${g.markets[key].yes}¢</button>
+      <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
       <button class="price no" data-game="${g.id}" data-market="${key}" data-side="no" aria-label="${full} No ${g.markets[key].no} cents">${g.markets[key].no}¢</button>
     </div>`;
   return `<div class="mkt-grid">
-      <div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>
+      <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
       ${row("GTL", "Get the Lead", "Get the Lead", "gtl")}
       ${row("TIE", "", "Tie", "tie")}
       ${row("KTL", "Keep the Lead", "Keep the Lead", "ktl")}
