@@ -281,7 +281,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   color: var(--ink);
   transition: background 0.18s var(--ease);
 }
-.menu-nav a:hover { background: rgba(255, 255, 255, 0.06); }
+/* Only tint on real hover devices — on touch the mobile menu, :hover sticks after a tap
+   and lingers until the menu is closed, which reads as a stuck selection. */
+@media (hover: hover) { .menu-nav a:hover { background: rgba(255, 255, 255, 0.06); } }
 .menu-appearance { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
 .menu-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: auto; padding-top: var(--s5); border-top: 1px solid var(--line); }
 body.menu-open { overflow: hidden; }
@@ -376,6 +378,25 @@ body.menu-open #headerAuth { display: none; }
 .hpos-panel[hidden] { display: none; }
 .hpos-list { display: flex; flex-direction: column; gap: var(--s3); }
 
+/* Mobile: dim + blur the page behind the open dropdown and lock the page so only
+   the positions themselves scroll. Sits above the page but below the header chips. */
+.hpos-backdrop {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s var(--ease);
+}
+@media (max-width: 767px) {
+  .hpos-backdrop.is-open { opacity: 1; pointer-events: auto; }
+  body.pos-open { overflow: hidden; }
+  .hpos-panel {
+    max-height: calc(100vh - 96px);
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* The Open Positions dropdown renders each position as the home page's 3rd carousel
    card (variant C). These mirror that card's styles from home.css, scoped here so the
    dropdown is styled on EVERY page (home.css isn't loaded outside home.html). flex is
@@ -394,6 +415,22 @@ body.menu-open #headerAuth { display: none; }
 }
 .hpos-list .pos-card .pos-media { background: transparent; }
 .hpos-list .pos-card .pos-media::before { content: none; }
+/* Light mode: match the home carousel — fade the dropdown card to white, not black */
+:root[data-theme="light"] .hpos-list .pos-card { background: var(--surface); }
+:root[data-theme="light"] .hpos-list .pos-card::before {
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.84));
+}
+
+/* Light mode: on a white position card the scoreboard text flips to dark ink so it stays
+   readable (the settled banner and game tiles keep their dark media — they aren't .pos-card). */
+:root[data-theme="light"] .pos-card .team-abbr { color: rgba(13, 20, 17, 0.72); }
+:root[data-theme="light"] .pos-card .team.is-leading .team-score { color: var(--ink); }
+:root[data-theme="light"] .pos-card .team:not(.is-leading) .team-score { color: rgba(13, 20, 17, 0.55); }
+:root[data-theme="light"] .pos-card .game-center .period { color: rgba(13, 20, 17, 0.55); }
+:root[data-theme="light"] .pos-card .game-center .clock { color: var(--ink); }
 .hpos-list .pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
 .hpos-list .pos-info.occ { gap: var(--s3); }
 .hpos-list .pos-card--c .pos-info { padding-top: calc(var(--s4) - 12px); }
@@ -434,12 +471,21 @@ body.menu-open #headerAuth { display: none; }
 .hpos-list .ocb-v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 
 @media (min-width: 768px) {
-  /* Desktop: dark pill with green wordmark; count set in a green circle matching the GTL logo mark */
-  .hpos-trigger { width: auto; padding: 0 var(--s2) 0 var(--s4); background: var(--surface-2); border-color: var(--line-2); color: var(--ink); }
+  /* Desktop: dark pill with green wordmark; count set in a green circle matching the GTL logo mark.
+     Background matches the wallet chip (.floating-btn) so the two header chips read as one set. */
+  .hpos-trigger {
+    width: auto; padding: 0 var(--s2) 0 var(--s4);
+    background: rgba(13, 15, 17, 0.66); border-color: var(--line-2); color: var(--ink);
+    -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
+  }
   .hpos-word { display: inline; }
   .hpos-num { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: #06210f; font-size: var(--fs-body); font-weight: 700; }
 }
 :root[data-theme="light"] .hpos-panel { background: rgba(255, 255, 255, 0.97); }
+/* Light mode: same glass as the wallet chip */
+@media (min-width: 768px) {
+  :root[data-theme="light"] .hpos-trigger { background: rgba(255, 255, 255, 0.72); }
+}
 
 /* Footer ------------------------------------------------------------- */
 .site-footer {
@@ -522,7 +568,10 @@ body.sheet-open { overflow: hidden; }
 .bet-sheet {
   position: fixed; z-index: 201; left: 0; right: 0; bottom: 0;
   width: 100%; max-width: 520px; margin-inline: auto;
-  max-height: 92vh; display: flex; flex-direction: column;
+  /* Stop a hard 56px below the top so the handle is always reachable to close */
+  max-height: calc(100vh - 56px);
+  max-height: calc(100dvh - 56px);
+  display: flex; flex-direction: column;
   background: var(--bg);
   border: 1px solid var(--line-2); border-bottom: none;
   border-radius: var(--r-xl) var(--r-xl) 0 0;

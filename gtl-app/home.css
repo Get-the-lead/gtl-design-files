@@ -103,6 +103,15 @@
 }
 .pos-card .pos-media { background: transparent; }
 .pos-card .pos-media::before { content: none; } /* card gradient handles the tint now */
+/* Light mode: the card belongs to the light UI — fade to white (not black) and keep the
+   team colours vivid. (Media text is flipped to dark ink in styles.css so it stays readable.) */
+:root[data-theme="light"] .pos-card { background: var(--surface); }
+:root[data-theme="light"] .pos-card::before {
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.84));
+}
 /* Desktop: size the cards so exactly three fit the row (no overflow → no dots) */
 @media (min-width: 1024px) {
   .pos-card { flex-basis: calc((100% - 2 * var(--s4)) / 3); }

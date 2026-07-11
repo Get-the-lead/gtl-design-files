@@ -334,7 +334,25 @@ function initHeader() {
   }
 
   // Open Positions dropdown (delegated — the trigger is (re)built by applyAuthChrome)
-  const closePos = () => { const p = $("#hposPanel"); if (p) { p.setAttribute("hidden", ""); $("[data-hpos-toggle]")?.setAttribute("aria-expanded", "false"); } };
+  let posBackdrop = null;
+  const ensurePosBackdrop = () => {
+    if (!posBackdrop) {
+      posBackdrop = document.createElement("div");
+      posBackdrop.className = "hpos-backdrop";
+      posBackdrop.addEventListener("click", () => closePos()); // tap the dim to dismiss
+      document.body.appendChild(posBackdrop);
+    }
+    return posBackdrop;
+  };
+  const setPosOpen = (open) => {
+    document.body.classList.toggle("pos-open", open); // mobile: lock the page behind
+    ensurePosBackdrop().classList.toggle("is-open", open);
+  };
+  const closePos = () => {
+    const p = $("#hposPanel");
+    if (p) { p.setAttribute("hidden", ""); $("[data-hpos-toggle]")?.setAttribute("aria-expanded", "false"); }
+    setPosOpen(false);
+  };
   document.addEventListener("click", (e) => {
     const pnl = $("#hposPanel");
     if (!pnl) return;
@@ -343,6 +361,7 @@ function initHeader() {
       const willOpen = pnl.hasAttribute("hidden");
       pnl.toggleAttribute("hidden", !willOpen);
       $("[data-hpos-toggle]")?.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      setPosOpen(willOpen);
     } else if (e.target.closest(".hpos-panel")) {
       if (e.target.closest("[data-buy], [data-sell]")) closePos(); // Buy/Sell opens the bet sheet — close the dropdown behind it
     } else {
@@ -2038,14 +2057,15 @@ function renderSettledToast() {
   // pattern is always visible there in a consistent spot. Dismiss/auto-dismiss
   // only hide it for the current view — a refresh brings it back.
   if (!document.body.classList.contains("game-b-body")) return;
-  const reopen = USER.settled.find((s) => s.reopened);
+  const reopenIdx = USER.settled.findIndex((s) => s.reopened);
+  const reopen = USER.settled[reopenIdx];
   if (!reopen) return;
   const g = GAMES.find((x) => x.id === reopen.gameId);
   if (!g) return;
   document.body.insertAdjacentHTML("beforeend", `
     <div class="settled-toast" id="settledToast" role="status" aria-label="Settled bet — you won">
       <div class="settled-card" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-        <div class="pos-media">${gameMedia(g, `<span class="period">Settled</span><span class="sc-won">You Won</span>`)}</div>
+        <a class="pos-media" href="wallet.html?order=settled:${reopenIdx}" aria-label="View this settled bet in your portfolio">${gameMedia(g, `<span class="period">Settled</span><span class="sc-won">You Won</span>`)}</a>
         <div class="settled-body">
           <span class="settled-profit tnum">${signed(reopen.net)}</span>
           <div class="settled-actions">
@@ -2281,6 +2301,19 @@ function initWallet() {
     btn.textContent = collapsed ? `Show all ${list.children.length}` : "Hide all";
   }));
   initAddFunds();
+  // Deep link — the settled "You Won" card links to wallet.html?order=settled:<i> so a tap
+  // lands directly on that order's detail. Clear the param so Back returns to the list.
+  const orderParam = new URLSearchParams(location.search).get("order");
+  if (orderParam) {
+    const [type, iStr] = orderParam.split(":");
+    const i = Number(iStr);
+    const lists = { open: USER.positions, pending: USER.pending, cancelled: USER.cancelled, settled: USER.settled };
+    if (lists[type] && lists[type][i]) {
+      walletTab = (type === "settled" || type === "cancelled") ? "settled" : "active";
+      history.replaceState(null, "", location.pathname);
+      openOrderDetail(type, i);
+    }
+  }
 }
 
 function initOrderTabs() {
