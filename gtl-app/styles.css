@@ -50,6 +50,39 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 
 .section-head { margin-bottom: var(--s8); }
 .section-head h2 { font-size: var(--fs-h2); margin-top: var(--s2); }
+
+/* -------------------------------------------------------------------
+   Support / help page template — a back button, left-aligned head, and
+   a numbered body list. Reused by fees.html and future help pages
+   (the page keeps the floating site header; the back button sits below it).
+   ------------------------------------------------------------------- */
+.support-page {
+  width: 100%; max-width: 640px; margin-inline: auto;
+  padding: 96px var(--s5) var(--s16);
+  text-align: left;
+}
+.support-back {
+  display: inline-flex; align-items: center; gap: var(--s1);
+  margin-bottom: var(--s8);
+  padding: 6px var(--s3) 6px var(--s2);
+  border: none; background: none; cursor: pointer;
+  color: var(--ink-2); font-family: var(--font-ui); font-weight: 600; font-size: var(--fs-label);
+  border-radius: var(--r-pill); text-decoration: none;
+  transition: background 0.18s var(--ease), color 0.18s var(--ease);
+}
+.support-back:hover { background: var(--surface-2); color: var(--ink); }
+.support-back svg { width: 18px; height: 18px; transform: rotate(180deg); }
+.support-head { margin-bottom: var(--s10); }
+.support-head h1 { font-size: var(--fs-h2); margin: var(--s3) 0 var(--s4); }
+.support-lead { color: var(--ink-2); font-size: var(--fs-lead); line-height: 1.6; margin: 0; }
+.support-lead strong { color: var(--ink); font-weight: 700; }
+.support-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s6); }
+.support-item { display: grid; grid-template-columns: auto 1fr; gap: var(--s4); align-items: start; }
+.support-num { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-label); color: var(--green); padding-top: 3px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+:root[data-theme="light"] .support-num { color: #16a34a; }
+.support-item h3 { font-size: var(--fs-h3); margin: 0 0 var(--s2); }
+.support-item p { color: var(--ink-2); font-size: var(--fs-body); line-height: 1.6; margin: 0; }
+.support-item p strong { color: var(--ink); font-weight: 700; }
 .section-head .eyebrow + h2 { margin-top: var(--s3); }
 .section-head.center { text-align: center; display: flex; flex-direction: column; align-items: center; }
 

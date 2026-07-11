@@ -1795,6 +1795,15 @@ function maybeReopenBet() {
 }
 
 // Fees page — populate the collapsed "continue bet" bar from the carried state
+// Shared back button for support/help pages — go back in history, else fall back to the href.
+function initBackButtons() {
+  $$("[data-page-back]").forEach((el) => el.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (history.length > 1) history.back();
+    else location.href = el.getAttribute("href") || "home.html";
+  }));
+}
+
 function initFeesPage() {
   const mini = $("#betMini");
   if (!mini) return;
@@ -2645,6 +2654,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderGamePage();
   initBetSheet();
   initFeesPage();
+  initBackButtons();
   initWallet();
   maybeReopenBet();
   // auth screens
