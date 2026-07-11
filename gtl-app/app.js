@@ -928,47 +928,21 @@ function renderGamePage() {
   if (g.id === OPEN_POSITION_DEMO_GAME_ID) initGameOpenPosition(openPositionDemos);
 }
 
-// A simplified open-position card that floats at the bottom of a game page (demo: BUF/MIA).
-// Mirrors the home card's essentials — bet type · side · contracts · value · return — and keeps
-// Buy More / Sell, wired straight to the buy/sell drawers for this position.
-function gopInfoHTML(p) {
-  const { value, pnl } = posFigures(p);
-  const up = pnl >= 0;
-  return `
-    <span class="gop-tag">${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span></span>
-    <span class="gop-sub">${p.qty} contracts · <span class="tnum">${money(value)}</span> · <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>`;
-}
-// One position card: summary + a "Buy More / Sell" toggle that expands to reveal the buttons
-// (mirrors the home live-game card's See Bets pattern).
-function gopCardHTML(p, i) {
-  const { g } = posFigures(p);
-  return `<article class="gop-card" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <div class="gop-info">${gopInfoHTML(p)}</div>
-    <div class="gop-foot">
-      <button class="gop-toggle" type="button" data-gop-expand aria-expanded="false">
-        <span class="chev">${CHEVRON_DOWN}</span>
-        <span class="gop-toggle-label">Buy More / Sell</span>
-        <span class="chev">${CHEVRON_DOWN}</span>
-      </button>
-      <div class="gop-panel"><div class="gop-panel-inner">
-        <div class="oc-actions gop-actions">
-          <button class="oc-buy" type="button" data-gop-buy="${i}">Buy More</button>
-          <button class="oc-sell" type="button" data-gop-sell="${i}">Sell</button>
-        </div>
-      </div></div>
-    </div>
-  </article>`;
-}
+// The Open Positions card set — variant A for each, variant B for the last — exactly as the
+// header dropdown renders it. Shared so the game pop-up and the header stay identical.
+const openPositionCards = (list) => list.map((p, i) => (i === list.length - 1 ? positionCardB(p, i) : positionCardA(p, i))).join("");
+
 function gameOpenPositionHTML(list) {
   // The dock is now a single "N Game Positions" button injected into the bottom bar
   // (see initGameOpenPosition). This markup is the pop-up panel that button reveals,
-  // plus its dim/blur backdrop. On desktop the panel sits inline in the left column.
+  // plus its dim/blur backdrop. The cards reuse the header dropdown's .hpos-list cards.
+  // On desktop the panel sits inline in the left column.
   return `
     <div class="game-open-position" id="gameOpenPosition" role="region" aria-label="Your open positions in this game">
       <div class="gop-backdrop" data-gop-backdrop></div>
       <div class="gop-pop" id="gopPop">
         <p class="gop-heading">Game Open Positions</p>
-        <div class="gop-list">${list.map((p, i) => gopCardHTML(p, i)).join("")}</div>
+        <div class="hpos-list">${openPositionCards(list)}</div>
       </div>
     </div>`;
 }
@@ -1010,25 +984,14 @@ function initGameOpenPosition(list) {
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeGop(); });
 
-  // Card interactions inside the popup — Buy More / Sell expand + drawers.
+  // Buy More / Sell inside a card open the drawer for that game position (data-buy/-sell
+  // index into this game's positions, not USER.positions — so we bind here, not bindPositionActions).
   const pop = $("#gopPop");
   if (pop) pop.addEventListener("click", (e) => {
-    const expand = e.target.closest("[data-gop-expand]");
-    const buy = e.target.closest("[data-gop-buy]");
-    const sell = e.target.closest("[data-gop-sell]");
-    if (expand) {
-      const card = expand.closest(".gop-card");
-      const isOpen = card.classList.toggle("is-open");
-      expand.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      const label = card.querySelector(".gop-toggle-label");
-      if (label) label.textContent = isOpen ? "Hide" : "Buy More / Sell";
-    } else if (buy) {
-      closeGop();
-      openBuy(list[Number(buy.dataset.gopBuy)]);
-    } else if (sell) {
-      closeGop();
-      openSell(list[Number(sell.dataset.gopSell)]);
-    }
+    const buy = e.target.closest("[data-buy]");
+    const sell = e.target.closest("[data-sell]");
+    if (buy) { closeGop(); openBuy(list[Number(buy.dataset.buy)]); }
+    else if (sell) { closeGop(); openSell(list[Number(sell.dataset.sell)]); }
   });
 
   // Publish the bar height so the popup sits just above it (updates if it reflows).
@@ -1038,12 +1001,10 @@ function initGameOpenPosition(list) {
   if ("ResizeObserver" in window && bar) new ResizeObserver(syncBar).observe(bar);
   window.addEventListener("resize", syncBar);
 }
-// Refresh each card's figures (e.g. after Buy More adds contracts) — leaves expand state + buttons intact.
+// Rebuild the game's position cards (e.g. after Buy More adds contracts).
 function refreshGameOpenPosition() {
-  $$("#gameOpenPosition .gop-card").forEach((card, i) => {
-    const info = card.querySelector(".gop-info");
-    if (info && openPositionDemos[i]) info.innerHTML = gopInfoHTML(openPositionDemos[i]);
-  });
+  const listEl = $("#gopPop .hpos-list");
+  if (listEl) listEl.innerHTML = openPositionCards(openPositionDemos);
 }
 
 // Game 1's detail page: every ~9s the market "recalculates" — the recalculating
@@ -2048,7 +2009,7 @@ function applyAuthChrome() {
           <span class="hpos-close" aria-hidden="true">${ICON_CLOSE}</span>
         </button>
         <div class="hpos-panel" id="hposPanel" role="menu" hidden>
-          <div class="hpos-list">${USER.positions.map((p, i) => (i === USER.positions.length - 1 ? positionCardB(p, i) : positionCardA(p, i))).join("")}</div>
+          <div class="hpos-list">${openPositionCards(USER.positions)}</div>
         </div>`;
       bindPositionActions(positions.querySelector(".hpos-list"));
     } else {

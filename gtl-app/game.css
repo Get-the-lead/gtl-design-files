@@ -553,35 +553,12 @@ body.gop-open .gop-backdrop { opacity: 1; pointer-events: auto; }
   transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
 }
 body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
-.gop-list { display: flex; flex-direction: column; gap: var(--s3); }
+/* Cards reuse the header dropdown's .hpos-list styling; just size the list here */
+.gop-pop .hpos-list { max-width: 400px; margin-inline: auto; width: 100%; }
 .gop-heading {
-  margin: 0 0 var(--s1); text-align: center;
+  margin: 0 0 var(--s2); text-align: center;
   font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);
 }
-.gop-card {
-  padding: var(--s3) var(--s4) var(--s2);
-  background: var(--surface-2);
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow);
-}
-.gop-info { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; text-align: center; }
-.gop-tag { font-size: var(--fs-label); font-weight: 700; color: var(--ink); }
-.gop-sub { font-size: var(--fs-eyebrow); color: var(--ink-2); }
-/* Toggle — "Buy More / Sell" title with hairlines + chevrons; expands the buttons below */
-.gop-toggle {
-  display: flex; align-items: center; gap: var(--s3); width: 100%; margin-top: var(--s2);
-  background: none; border: none; cursor: pointer;
-  font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);
-}
-.gop-toggle::before, .gop-toggle::after { content: ""; flex: 1; height: 1px; background: var(--line-2); }
-.gop-toggle .chev { width: 14px; height: 14px; display: inline-flex; transition: transform 0.25s var(--ease); }
-.gop-card.is-open .gop-toggle .chev { transform: rotate(180deg); }
-.gop-toggle:hover { color: var(--ink); }
-.gop-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s var(--ease-out); }
-.gop-card.is-open .gop-panel { grid-template-rows: 1fr; }
-.gop-panel-inner { overflow: hidden; }
-.gop-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); padding-top: var(--s3); }
 
 /* Room to scroll clear of the bottom bar */
 .game-body.has-open-position { padding-bottom: calc(var(--gop-bar-h, 84px) + var(--s4)); }
@@ -589,23 +566,14 @@ body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
 @media (min-width: 768px) {
   .markets, .stats-section { max-width: 760px; }
   .betbar-inner { max-width: 760px; }
-  .gop-list { max-width: 760px; margin-inline: auto; width: 100%; }
 }
 @media (min-width: 1024px) {
   /* Desktop: the panel flows inline in the left column (no bottom bar, no popup) */
   .game-open-position { position: static; z-index: auto; pointer-events: auto; flex-shrink: 0; margin-top: var(--s16); }
   .gop-backdrop { display: none; }
   .gop-pop { position: static; opacity: 1; transform: none; pointer-events: auto; max-height: none; overflow: visible; padding: 0; }
+  .gop-pop .hpos-list { max-width: none; margin-inline: 0; padding-inline: var(--s5); }
   .gop-heading { text-align: left; padding-inline: var(--s5); margin-bottom: var(--s3); }
-  .gop-list { max-width: none; margin-inline: 0; padding: 0 var(--s5); }
-  .gop-card { display: flex; flex-direction: row; align-items: center; gap: var(--s4); padding: var(--s4); }
-  .gop-info { flex: 1; align-items: flex-start; text-align: left; }
-  .gop-foot { flex: 0 0 auto; }
-  .gop-toggle { display: none; } /* no toggle on desktop — actions are always shown */
-  .gop-panel { grid-template-rows: 1fr; } /* keep the buttons expanded */
-  .gop-panel-inner { overflow: visible; }
-  .gop-actions { display: flex; gap: var(--s2); padding-top: 0; }
-  .gop-actions .oc-buy, .gop-actions .oc-sell { padding-inline: var(--s6); }
   .game-body.has-open-position { padding-bottom: 0; }
 }
 
