@@ -524,6 +524,8 @@
 .has-open-position .betbar-cta { display: none; width: auto; flex: 1; padding-inline: var(--s6); }
 .has-open-position .betbar.is-visible .betbar-cta { display: inline-flex; }
 body.gop-open .betbar-cta { display: none !important; } /* focus the popup while it's open */
+/* When the HEADER Open Positions dropdown is open, the game bar must not sit over it */
+body.pos-open .betbar { display: none; }
 
 /* The "N Game Positions" toggle — same primary style as View Bets */
 .gop-trigger { pointer-events: auto; --btn-h: 52px; flex: 1; padding-inline: var(--s6); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
