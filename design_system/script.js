@@ -19,7 +19,7 @@ const pageFrameOpenLinks = document.querySelectorAll("[data-page-frame-open]");
 const pagePreview = document.querySelector("[data-page-preview]");
 const pageZoomButtons = document.querySelectorAll("[data-page-zoom]");
 const pageZoomValue = document.querySelector("[data-page-zoom='reset']");
-const flatDocTabs = document.querySelectorAll("[data-flat-doc]");
+const flatDeviceTabs = document.querySelectorAll("[data-flat-device]");
 const flatLayContent = document.querySelector("[data-flat-lay-content]");
 let pageZoom = 1;
 
@@ -73,7 +73,7 @@ function describeColorSwatches() {
 const flatDocs = {
   auth: {
     title: "Authentication Screens",
-    description: "Full mobile states for sign-in, account creation, recovery, verification, and auth feedback.",
+    description: "Full states for sign-in, account creation, recovery, verification, and auth feedback.",
     groups: [
       { title: "Default states", frames: [
         { label: "Sign in", type: "auth", mode: "signin" },
@@ -90,7 +90,7 @@ const flatDocs = {
   },
   home: {
     title: "Home Page",
-    description: "Mobile homepage variants for guest, signed-in, market availability, position context, and failure states.",
+    description: "Homepage variants for guest, signed-in, market availability, position context, and failure states.",
     groups: [
       { title: "Default states", frames: [
         { label: "Logged out default", type: "home", mode: "guest" },
@@ -257,41 +257,224 @@ function flatLoading() {
     <div class="flat-card"><div class="flat-skeleton"></div><div class="flat-skeleton short"></div></div>`;
 }
 
-function renderAuthFrame(mode) {
-  const content = {
-    signin: ["Welcome back", "Login to GTL", "Email", "Password", "Login"],
-    register: ["Step 1 of 3", "Create your account", "Email", "Continue", "Create Account"],
-    forgot: ["Reset password", "Forgot your password?", "Email", "Send Reset Link", "Back to Login"],
-    reset: ["New password", "Set a new password", "New password", "Confirm password", "Update Password"],
-    loading: ["Welcome back", "Login to GTL", "Email", "Password", "Processing..."],
-    error: ["Welcome back", "Login to GTL", "sam", "Password", "Login"],
-  }[mode];
-  if (mode === "verify") {
-    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 2 of 3</span><h3>Check your email</h3><p>Enter the 6-digit code sent to alex@gtl.test.</p><div class="flat-code-row"><span>4</span><span>8</span><span>2</span><span></span><span></span><span></span></div><div class="flat-primary">Verify Email</div></div></div>`;
+const googleMark = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.7-.06-1.4-.18-2.06H12v3.9h5.9a5.04 5.04 0 0 1-2.18 3.31v2.75h3.53c2.07-1.9 3.25-4.71 3.25-7.9z"/><path fill="#34A853" d="M12 23c2.94 0 5.4-.97 7.2-2.63l-3.52-2.75c-.98.66-2.23 1.05-3.68 1.05-2.83 0-5.23-1.91-6.08-4.48H2.28v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.92 14.19a6.6 6.6 0 0 1 0-4.38V6.97H2.28a11 11 0 0 0 0 10.06l3.64-2.84z"/><path fill="#EA4335" d="M12 5.13c1.6 0 3.03.55 4.16 1.62l3.12-3.12A10.98 10.98 0 0 0 12 1 10.99 10.99 0 0 0 2.28 6.97l3.64 2.84C6.77 7.04 9.17 5.13 12 5.13z"/></svg>`;
+const appleMark = `<svg class="apple-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.66c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.13.94-3.94.94-.81 0-2.07-.92-3.4-.9-1.75.03-3.36 1.02-4.26 2.58-1.82 3.15-.47 7.82 1.3 10.38.86 1.25 1.89 2.66 3.24 2.61 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.28 3.13-2.54.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.46-4.6zM14.6 5.1c.72-.87 1.2-2.08 1.07-3.28-1.03.04-2.28.69-3.02 1.56-.66.76-1.24 1.99-1.09 3.16 1.15.09 2.32-.58 3.04-1.44z"/></svg>`;
+const closeIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+const backIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const showIcon = `<svg class="icon-show" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>`;
+const sentIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function authShell(inner, cardClass = "") {
+  return `<div class="flat-screen is-auth">
+    <main class="auth-main">
+      <div class="auth-card ${cardClass}">
+        <span class="auth-close" aria-hidden="true">${closeIcon}</span>
+        ${inner}
+      </div>
+    </main>
+  </div>`;
+}
+
+function authHead(eyebrow, title, copy) {
+  return `<div class="auth-head"><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p>${copy}</p></div>`;
+}
+
+function socialRow() {
+  return `<div class="social-row">
+    <button class="social-btn" type="button" tabindex="-1">${googleMark}Continue with Google</button>
+    <button class="social-btn" type="button" tabindex="-1">${appleMark}Continue with Apple</button>
+  </div>`;
+}
+
+function field(label, placeholder, options = {}) {
+  const type = options.type || "text";
+  const id = `flat-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+  const errorClass = options.error ? " is-error" : "";
+  if (options.passwordToggle) {
+    return `<div class="field"><label for="${id}">${label}</label><div class="field-pass"><input class="field-input${errorClass}" id="${id}" type="${type}" placeholder="${placeholder}" value="${options.value || ""}" tabindex="-1" readonly><button class="pass-toggle" type="button" tabindex="-1" aria-hidden="true">${showIcon}</button></div>${options.hint ? `<span class="field-hint">${options.hint}</span>` : ""}${options.error ? `<p class="field-error">${options.error}</p>` : ""}</div>`;
   }
-  const error = mode === "error";
-  return `<div class="flat-screen is-auth"><div class="flat-auth-card">
-    <span class="flat-chip">${content[0]}</span><h3>${content[1]}</h3><p>Trade the live games with your GTL account.</p>
-    <div class="flat-field ${error ? "is-error" : ""}">${content[2]}</div>
-    <div class="flat-field">${content[3]}</div>
-    ${error ? `<p class="field-error">Enter a valid email address.</p>` : ""}
-    <div class="flat-primary">${content[4]}</div>
-    <p class="flat-copy">Continue with Google or Apple</p>
-  </div></div>`;
+  return `<div class="field"><label for="${id}">${label}</label><input class="field-input${errorClass}" id="${id}" type="${type}" placeholder="${placeholder}" value="${options.value || ""}" tabindex="-1" readonly>${options.hint ? `<span class="field-hint">${options.hint}</span>` : ""}${options.error ? `<p class="field-error">${options.error}</p>` : ""}</div>`;
+}
+
+function authFoot(copy, action) {
+  return `<p class="auth-foot">${copy} <span>${action}</span></p>`;
+}
+
+function renderAuthFrame(mode) {
+  if (mode === "register") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span></span><span></span></div>
+      <div class="auth-steps" data-step="1"><div class="auth-step" data-step="1">
+        ${authHead("Step 1 of 3", "Create your account", "Start trading the live games in under a minute.")}
+        ${socialRow()}<div class="auth-divider">or</div>
+        <div class="auth-form">${field("Email", "you@email.com", { type: "email" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+        <p class="auth-fineprint">By continuing you agree to GTL's <span>Terms</span> and <span>Privacy Policy</span>. 21+ only.</p>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "reset") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span></span></div>
+      <div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("Step 2 of 3", "Create a password", "Keep your account secure with a strong password.")}
+        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "verify") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span></div>
+      <div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("Step 3 of 3", "Verify it's you", `We sent a 6-digit code to <span class="code-sent-to">alex@gtl.test</span>.`)}
+        <div class="auth-form"><div class="code-input"><input class="code-box is-filled" type="text" value="4" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="8" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="2" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
+        <p class="code-resend">Didn't get a code? <span>Resend</span></p>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "forgot") {
+    return authShell(`<span class="step-back">${backIcon}Back</span>
+      ${authHead("Reset password", "Forgot your password?", "Enter your email and we'll send you a link to reset it.")}
+      <div class="auth-form">${field("Email", "you@email.com", { type: "email" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Send Reset Link</button></div>
+      <div class="auth-sent"><div class="sent-check">${sentIcon}</div><h1>Check your email</h1><p>We've sent a reset link to <span class="code-sent-to">alex@gtl.test</span>. It expires in 30 minutes.</p><span class="btn btn-secondary auth-submit">Back to Login</span><p class="code-resend">Didn't get it? <span>Resend Link</span></p></div>
+      ${authFoot("Remembered it?", "Login")}`);
+  }
+  const isError = mode === "error";
+  const isLoading = mode === "loading";
+  return authShell(`${authHead("Welcome back", "Login to GTL", "Pick up where you left off and trade the live games.")}
+    ${socialRow()}<div class="auth-divider">or</div>
+    <div class="auth-form">${field("Email", "you@email.com", { type: "email", value: isError ? "sam" : "", error: isError ? "Enter a valid email address." : "" })}${field("Password", "Your password", { type: "password", passwordToggle: true })}<div class="field-row"><span></span><span class="link-green">Forgot Password?</span></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">${isLoading ? "Processing..." : "Login"}</button></div>
+    ${authFoot("New to GTL?", "Create an Account")}`);
+}
+
+const logoSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 5 20 18H4Z"/></svg>`;
+const chevronDown = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+const homeGames = [
+  {
+    id: "buf-mia",
+    league: "nfl",
+    period: "Q3",
+    clock: "11:05",
+    paused: { message: "Trading paused. Recalculating markets.", clears: true },
+    home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", logo: teamLogos.buf },
+    away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: teamLogos.mia },
+    markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
+  },
+  {
+    id: "kc-sf",
+    league: "nfl",
+    period: "Q2",
+    clock: "08:42",
+    home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", logo: teamLogos.kc },
+    away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D", logo: teamLogos.sf },
+    markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 64, no: 36 } },
+  },
+  {
+    id: "dal-phi",
+    league: "nfl",
+    period: "Q1",
+    clock: "12:44",
+    paused: { message: "Markets open when a team takes the lead.", clears: false },
+    home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: "../gtl-app/assets/logos/nfl-dal.png" },
+    away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: "../gtl-app/assets/logos/nfl-phi.png" },
+    markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 64, no: 36 }, ktl: { yes: 50, no: 50 } },
+  },
+];
+
+function homeHeader(authed = false, positions = false) {
+  return `<header class="site-header ds-static-header">
+    <div class="header-row">
+      <div class="header-left">
+        <span class="brand-pill">
+          <span class="brand floating-logo floating-btn brand-link"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL Markets</span></span>
+          <span class="brand floating-logo floating-btn brand-menu"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span>
+          <span class="header-nav-slot"><nav class="header-nav" aria-label="Primary navigation"><span>Home</span><span>Live Games</span><span>How it Works</span>${authed ? "<span>Portfolio</span><span class=\"header-nav-sep\"></span><button class=\"header-nav-logout\" type=\"button\">Logout</button>" : ""}</nav></span>
+        </span>
+        <span class="theme-switch floating-btn"><span class="theme-switch-track"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">☼</span><span class="theme-option theme-moon">☾</span></span></span>
+      </div>
+      <div class="header-right">${authed ? `<span class="header-wallet"><span class="wallet-chip floating-btn"><svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wallet-amount tnum">$240.50</span></span></span>${positions ? `<span class="header-positions"><span class="hpos-trigger"><span class="hpos-word">Open Positions</span><span class="hpos-num tnum">3</span><span class="hpos-close">${closeIcon}</span></span></span>` : ""}` : `<span class="header-auth"><span class="btn header-login floating-btn">Login</span></span>`}</div>
+    </div>
+  </header>`;
+}
+
+function homeTeamBlock(g, side) {
+  const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
+  const t = g[side];
+  return `<div class="team team-${side}${lead === side ? " is-leading" : ""}"><img class="team-logo" src="${t.logo}" alt="${t.name}"><div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div></div>`;
+}
+
+function homeGameMedia(g, center = `<span class="period">${g.period}</span><span class="clock tnum">${g.clock}</span>`) {
+  return `<div class="game-row">${homeTeamBlock(g, "home")}<div class="game-center">${center}</div>${homeTeamBlock(g, "away")}</div>`;
+}
+
+function homeBetPanel(g) {
+  const row = (label, sub, key) => `<div class="mkt-row"><span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span><button class="price yes" type="button" tabindex="-1">${g.markets[key].yes}¢</button><button class="price no" type="button" tabindex="-1">${g.markets[key].no}¢</button></div>`;
+  return `<div class="mkt-grid"><div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>${row("GTL", "Get the Lead", "gtl")}${row("TIE", "", "tie")}${row("KTL", "Keep the Lead", "ktl")}</div><span class="view-game">View Game</span>`;
+}
+
+function homeGameTile(g, open = false) {
+  return `<article class="game-tile${g.paused ? " is-paused" : ""}${open ? " is-open" : ""}" data-league="${g.league}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="tile-main">${homeGameMedia(g)}</div>
+    <div class="tile-foot">${g.paused ? `<div class="trade-pause"><span class="pause-dot"></span><span>${g.paused.message}</span></div>` : ""}<button class="foot-toggle" type="button" tabindex="-1"><span class="chev">${chevronDown}</span><span class="toggle-label">${open ? "Hide Bets" : "See Bets"}</span><span class="chev">${chevronDown}</span></button><div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${homeBetPanel(g)}</div></div></div></div>
+  </article>`;
+}
+
+function homeLeagueStrip(active = "nfl") {
+  return `<div class="league-strip" role="tablist" aria-label="Filter by league">
+    <button class="league-pill${active === "nfl" ? " is-active" : ""}" type="button" tabindex="-1"><span class="league-icon"><img src="../gtl-app/assets/logos/league-nfl.png" alt=""></span><span class="league-label">NFL</span></button>
+    <button class="league-pill${active === "nba" ? " is-active" : ""}" type="button" tabindex="-1"><span class="league-icon"><img src="../gtl-app/assets/logos/league-nba.png" alt=""></span><span class="league-label">NBA</span></button>
+  </div>`;
+}
+
+function homeHero(mode) {
+  if (mode === "logged" || mode === "positions") {
+    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><span class="eyebrow">Welcome back</span><h1>Welcome back, Alex.</h1></div>${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></section>`;
+  }
+  return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner"><div class="hero-trading"><span class="live-dot"></span><span class="tnum">3,247</span> trading right now</div><h1 class="hero-title">Trade the moments that move the game.</h1><p class="hero-sub">Back the lead on live NFL &amp; NBA. Buy and sell in seconds, as the game turns.</p><div class="hero-cta"><span class="btn btn-primary btn-lg">Live Games</span><span class="btn btn-glass btn-lg">Create Account</span></div></div></section>`;
+}
+
+function homePositionsBlock() {
+  return `<div class="authed-stack"><div class="positions-block"><div class="positions-head"><span class="eyebrow">Open Positions</span></div><div class="pos-carousel">${homePositionCard("a")}${homePositionCard("c")}${homePositionCard("b")}</div><div class="pos-footer"><span>View All</span><div class="pos-dots"><button class="pos-dot is-active" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button></div><span>View Settled</span></div></div></div>`;
+}
+
+function homeEmptyPositions() {
+  return `<div class="authed-stack"><div class="coming-soon authed-empty-positions"><h3 class="cs-title">No open positions yet</h3><p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p><div class="pos-footer no-scroll"><span>View All</span><span>View Settled</span></div></div></div>`;
+}
+
+function homePositionCard(variant) {
+  const g = variant === "b" ? homeGames[1] : homeGames[0];
+  const style = `--home-color:${g.home.color};--away-color:${g.away.color}`;
+  const actions = `<div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>`;
+  if (variant === "c") {
+    return `<article class="pos-card pos-card--c" style="${style}"><div class="pos-media">${homeGameMedia(g, `<span class="period qtime">3 Quarter Time</span>`)}</div><div class="pos-info occ"><div class="occ-total tnum">$76.80</div><div class="occ-bar up"><span class="occ-bar-center"></span><span class="occ-bar-fill up" style="left:50%;width:25%"></span></div><div class="occ-bottom"><span class="oc-tag occ-type">Get the Lead · <span class="side-yes">YES</span></span><span class="occ-change up tnum">+$19.20</span></div>${actions}</div></article>`;
+  }
+  if (variant === "b") {
+    return `<article class="pos-card pos-card--b" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="ocb-type">Keep the Lead · <span class="side-no">NO</span></div><div class="ocb-stats"><div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">80</span></div><div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">$44.00</span></div><div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl down">-$4.80</span></div></div>${actions}</div></article>`;
+  }
+  return `<article class="pos-card pos-card--a" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">Get the Lead</span><span class="oc-vr-head">Value &amp; Return</span></div><div class="oc-row"><span class="oc-sub"><span class="side-yes">YES</span> · 120 contracts</span><span class="oc-figures"><span class="tnum">$76.80</span> · <span class="oc-pnl up tnum">+$19.20</span></span></div></div>${actions}</div></article>`;
+}
+
+function homeLiveSection(mode) {
+  let content = `<div class="game-grid">${homeGames.map((g, i) => homeGameTile(g, i === 1)).join("")}</div>`;
+  if (mode === "noLive") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nfl.png" alt=""><h3 class="cs-title">No live games right now</h3><p class="cs-desc">Upcoming markets will appear here before kickoff.</p></div>`;
+  if (mode === "loading") content = `<div class="game-grid"><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article></div>`;
+  if (mode === "error") content = `<div class="coming-soon"><h3 class="cs-title">Unable to load markets</h3><p class="cs-desc">Refresh the page or try again later.</p><div class="cs-actions"><span class="btn btn-secondary">Try again</span></div></div>`;
+  return `<section class="section live"><div class="container"><div class="section-head center"><span class="eyebrow">On now</span><h2>Live games</h2></div>${homeLeagueStrip()}${content}</div></section>`;
+}
+
+function homeHowSection() {
+  const steps = [
+    ["01", "Pick a market", "Choose a live game and one of three lead markets."],
+    ["02", "View the order book", "See live Yes / No prices and where the market sits."],
+    ["03", "Buy", "Take a position at the live price in a single tap."],
+    ["04", "Cash Out or Settle", "Cash out early or let it settle when the moment lands."],
+  ];
+  return `<section class="section how"><div class="container"><div class="section-head center"><span class="eyebrow">How it works</span><h2>Four taps from watching to trading.</h2></div><ol class="flow">${steps.map(([n, title, copy]) => `<li class="flow-step"><div class="flow-marker">${logoSvg}</div><span class="flow-num">${n}</span><h3 class="flow-title">${title}</h3><p class="flow-text">${copy}</p></li>`).join("")}</ol></div></section>`;
+}
+
+function homeFooter() {
+  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><span class="brand"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Product</h4><span>Live games</span><span>How it works</span><span>Tutorial</span></div><div class="footer-col"><h4>Company</h4><span>About</span><span>Careers</span><span>Contact</span></div><div class="footer-col"><h4>Legal</h4><span>Terms</span><span>Privacy</span><span>Responsible play</span></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>21+. Please play responsibly.</span></div></div></footer>`;
 }
 
 function renderHomeFrame(mode) {
-  let main = "";
-  if (mode === "loading") main = flatLoading();
-  else if (mode === "error") main = flatStatus("error", "Unable to load markets", "Refresh the page or try again later.");
-  else if (mode === "noLive") main = flatStatus("empty", "No live games right now", "Upcoming markets will appear here before kickoff.");
-  else {
-    main = `<h2 class="flat-hero-title">${mode === "logged" || mode === "positions" ? "Welcome back, Alex." : "Trade the moments that move the game."}</h2>
-      <p class="flat-copy">${mode === "positions" ? "Track open exposure before entering another live market." : "Back the lead on live NFL and NBA."}</p>
-      <div class="flat-btn-row"><span class="flat-primary">Live Games</span><span class="flat-secondary">${mode === "guest" ? "Create Account" : "Portfolio"}</span></div>
-      ${mode === "positions" ? `<div class="flat-list">${flatRows(2)}</div>` : flatGameTile(mode === "live" ? false : false)}`;
-  }
-  return `<div class="flat-screen">${flatHeader("GTL", mode === "guest" ? "Login" : "$240.50")}${main}${flatNav("Home")}</div>`;
+  const authed = mode === "logged" || mode === "positions";
+  return `<div class="flat-screen is-home">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter()}</div>`;
 }
 
 function renderGameFrame(mode) {
@@ -375,14 +558,19 @@ function renderFlatFrame(frame) {
   return `<article class="flat-frame-wrap"><div class="flat-frame-label">${frame.label}</div><div class="flat-phone">${screen}</div></article>`;
 }
 
-function renderFlatDoc(docId = "auth") {
-  const doc = flatDocs[docId] || flatDocs.auth;
-  if (!flatLayContent) return;
-  flatLayContent.innerHTML = `<div class="flat-doc-head"><h2>${doc.title}</h2><p>${doc.description}</p></div>
-    ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${group.title}</h3></div><div class="flat-frame-row">${group.frames.map(renderFlatFrame).join("")}</div></section>`).join("")}`;
+function renderFlatDocSection(doc) {
+  return `<section class="flat-page-group"><div class="flat-doc-head"><h2>${doc.title}</h2><p>${doc.description}</p></div>
+    ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${group.title}</h3></div><div class="flat-frame-row">${group.frames.map(renderFlatFrame).join("")}</div></section>`).join("")}</section>`;
+}
 
-  flatDocTabs.forEach((button) => {
-    const active = button.dataset.flatDoc === docId;
+function renderFlatDevice(device = "mobile") {
+  if (!flatLayContent) return;
+  const currentDevice = ["mobile", "tablet", "desktop"].includes(device) ? device : "mobile";
+  flatLayContent.dataset.flatDevice = currentDevice;
+  flatLayContent.innerHTML = Object.values(flatDocs).map(renderFlatDocSection).join("");
+
+  flatDeviceTabs.forEach((button) => {
+    const active = button.dataset.flatDevice === currentDevice;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-selected", String(active));
   });
@@ -776,9 +964,9 @@ pageZoomButtons.forEach((button) => {
   });
 });
 
-flatDocTabs.forEach((button) => {
+flatDeviceTabs.forEach((button) => {
   button.addEventListener("click", () => {
-    renderFlatDoc(button.dataset.flatDoc);
+    renderFlatDevice(button.dataset.flatDevice);
   });
 });
 
@@ -790,8 +978,8 @@ createLimitOpenDrawerState();
 setDrawerView(drawerSection?.dataset.drawerViewMode);
 drawerSection?.querySelectorAll(".bet-sheet").forEach(updateDrawerPreview);
 setPageZoom(pageZoom);
-loadPagePreview(document.querySelector("[data-page-tab].is-active") || pageTabs[0]);
-renderFlatDoc(document.querySelector("[data-flat-doc].is-active")?.dataset.flatDoc || "auth");
+if (pageTabs.length) loadPagePreview(document.querySelector("[data-page-tab].is-active") || pageTabs[0]);
+renderFlatDevice(document.querySelector("[data-flat-device].is-active")?.dataset.flatDevice || "mobile");
 showSection(sectionFromHash(), { instant: true });
 describeColorSwatches();
 

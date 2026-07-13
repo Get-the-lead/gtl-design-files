@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../gtl-app/home.css">
     <link rel="stylesheet" href="../gtl-app/game.css">
     <link rel="stylesheet" href="../gtl-app/wallet.css">
+    <link rel="stylesheet" href="../gtl-app/auth.css">
     <link rel="stylesheet" href="design-system.css">
   </head>
   <body class="design-system-page">
@@ -28,7 +29,6 @@
       <nav class="side-nav">
         <a href="#overview" class="is-active">Overview</a>
         <a href="#pages">Pages</a>
-        <a href="#page-flat-lays">Page Flat Lays</a>
         <a href="#tokens">Colors</a>
         <a href="#spacing">Spacing</a>
         <a href="#radius">Radius</a>
@@ -99,69 +99,18 @@
       <section id="pages" class="section">
         <div class="section-header">
           <h2>Pages</h2>
-          <p>Preview the active GTL app pages from one place. Variants with -b are excluded.</p>
+          <p>Flat lay overview of every page state, organized by device, page, and state group.</p>
         </div>
 
-        <article class="panel ds-pages-panel">
-          <div class="panel-header">
-            <h3 data-page-title>Home</h3>
-            <div class="ds-page-actions">
-              <div class="ds-page-zoom" aria-label="Page preview zoom controls">
-                <button class="ds-icon-btn" type="button" aria-label="Zoom out" data-page-zoom="out"><span class="material-symbols-outlined" aria-hidden="true">remove</span></button>
-                <button class="ds-page-zoom-value" type="button" data-page-zoom="reset" aria-label="Reset zoom">100%</button>
-                <button class="ds-icon-btn" type="button" aria-label="Zoom in" data-page-zoom="in"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
-              </div>
-            </div>
+        <article class="panel ds-pages-panel flat-lays-section">
+          <div class="flat-doc-tabs" role="tablist" aria-label="Page flat lay device groups">
+            <button class="is-active" type="button" data-flat-device="mobile" aria-selected="true">Mobile Pages</button>
+            <button type="button" data-flat-device="tablet" aria-selected="false">Tablet Pages</button>
+            <button type="button" data-flat-device="desktop" aria-selected="false">Desktop Pages</button>
           </div>
 
-          <div class="ds-page-tabs" role="tablist" aria-label="GTL app pages">
-            <button class="is-active" type="button" role="tab" aria-selected="true" data-page-tab data-page-name="Home" data-page-src="../gtl-app/home.html" data-page-compare-auth="true">Home</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Game" data-page-src="../gtl-app/game.html" data-page-compare-game="true">Game</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Portfolio" data-page-src="../gtl-app/wallet.html" data-page-auth="logged">Portfolio</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Login" data-page-src="../gtl-app/login.html">Login</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Password" data-page-src="../gtl-app/forgot.html">Password</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Register" data-page-src="../gtl-app/signup.html">Register</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Fees" data-page-src="../gtl-app/fees.html">Fees</button>
-          </div>
-
-          <div class="ds-page-preview" data-page-preview style="--page-zoom: 1;">
-            <div class="ds-page-stage">
-              <div class="ds-page-canvas" data-page-canvas>
-                <div class="ds-page-frame-card" data-page-frame-card="guest">
-                  <div class="ds-page-frame-label"><span data-page-frame-label="guest">Guest</span><a href="../gtl-app/home.html" target="_blank" rel="noopener" data-page-frame-open="guest">Open page</a></div>
-                  <iframe title="Home guest preview" data-page-frame="guest"></iframe>
-                </div>
-                <div class="ds-page-frame-card" data-page-frame-card="auth">
-                  <div class="ds-page-frame-label"><span data-page-frame-label="auth">Logged in</span><a href="../gtl-app/home.html" target="_blank" rel="noopener" data-page-frame-open="auth">Open page</a></div>
-                  <iframe title="Home logged-in preview" data-page-frame="auth"></iframe>
-                </div>
-                <div class="ds-page-frame-card" data-page-frame-card="empty">
-                  <div class="ds-page-frame-label"><span data-page-frame-label="empty">No open positions</span><a href="../gtl-app/home.html" target="_blank" rel="noopener" data-page-frame-open="empty">Open page</a></div>
-                  <iframe title="Home no open positions preview" data-page-frame="empty"></iframe>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="flat-lay-canvas" data-flat-lay-content></div>
         </article>
-      </section>
-
-      <section id="page-flat-lays" class="section flat-lays-section">
-        <div class="flat-lays-hero">
-          <h1>Page Flat Lays</h1>
-          <p>Mobile page-level documentation for designers, developers, and stakeholders. Each frame is a static full-screen variant for fast comparison, organized like a Figma canvas.</p>
-        </div>
-
-        <div class="flat-doc-tabs" role="tablist" aria-label="Page flat lay documentation">
-          <button class="is-active" type="button" data-flat-doc="auth" aria-selected="true">Authentication Screens</button>
-          <button type="button" data-flat-doc="home" aria-selected="false">Home Page</button>
-          <button type="button" data-flat-doc="game" aria-selected="false">Game Page</button>
-          <button type="button" data-flat-doc="drawer" aria-selected="false">Buy / Sell Drawer</button>
-          <button type="button" data-flat-doc="tracker" aria-selected="false">Tracker / Positions</button>
-          <button type="button" data-flat-doc="pending" aria-selected="false">Pending Orders</button>
-          <button type="button" data-flat-doc="account" aria-selected="false">Settled / Account</button>
-        </div>
-
-        <div class="flat-lay-canvas" data-flat-lay-content></div>
       </section>
 
       <section id="tokens" class="section">
@@ -200,8 +149,9 @@
               <div class="swatch"><span style="--swatch: var(--gold-text)"></span><strong>Spread Text</strong><code>--gold-text</code></div>
               <div class="swatch"><span style="--swatch: var(--gold-dim)"></span><strong>Spread Dim</strong><code>--gold-dim</code></div>
               <div class="swatch"><span style="--swatch: var(--score-text)"></span><strong>Score</strong><code>--score-text</code></div>
-              <div class="swatch"><span style="--swatch: var(--blue)"></span><strong>Info</strong><code>--blue</code></div>
-              <div class="swatch"><span style="--swatch: var(--blue-dim)"></span><strong>Info Dim</strong><code>--blue-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue)"></span><strong>KTL / Volume</strong><code>--blue</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue-soft)"></span><strong>KTL Highlight</strong><code>--blue-soft</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue-dim)"></span><strong>KTL Area Fill</strong><code>--blue-dim</code></div>
               <div class="swatch"><span style="--swatch: var(--sage)"></span><strong>Sage</strong><code>--sage</code></div>
             </div>
           </section>
@@ -244,10 +194,10 @@
             </div>
           </section>
 
-          <section class="color-token-group colorway-preview" data-colorway="wg" aria-labelledby="light-colorway-title">
+          <section class="color-token-group colorway-preview" data-theme-preview="light" aria-labelledby="light-colorway-title">
           <div class="panel-header">
             <h3 id="light-colorway-title">Light Colorway</h3>
-            <span class="tag">data-colorway="wg"</span>
+            <span class="tag">:root[data-theme="light"]</span>
           </div>
           <div class="swatch-grid">
             <div class="swatch"><span style="--swatch: var(--bg)"></span><strong>Background</strong><code>--bg</code></div>
@@ -266,6 +216,8 @@
             <div class="swatch"><span style="--swatch: var(--accent-dim)"></span><strong>Accent Dim</strong><code>--accent-dim</code></div>
             <div class="swatch"><span style="--swatch: var(--green)"></span><strong>Positive</strong><code>--green</code></div>
             <div class="swatch"><span style="--swatch: var(--green-dim)"></span><strong>Positive Dim</strong><code>--green-dim</code></div>
+            <div class="swatch"><span style="--swatch: var(--red)"></span><strong>No / Sell</strong><code>--red</code></div>
+            <div class="swatch"><span style="--swatch: var(--gold)"></span><strong>Spread</strong><code>--gold</code></div>
             <div class="swatch"><span style="--swatch: var(--sage)"></span><strong>Sage</strong><code>--sage</code></div>
             <div class="swatch"><span style="--swatch: var(--gold-text)"></span><strong>Gold Text</strong><code>--gold-text</code></div>
           </div>
@@ -279,9 +231,9 @@
           <div class="token-list">
             <div><code>--black-rgb</code><span>0, 0, 0</span></div>
             <div><code>--accent-rgb</code><span>74, 222, 128</span></div>
-            <div><code>--red-rgb</code><span>248, 113, 113</span></div>
-            <div><code>--gold-rgb</code><span>251, 191, 36</span></div>
-            <div><code>--blue-rgb</code><span>96, 165, 250</span></div>
+            <div><code>--red-rgb</code><span>255, 93, 114</span></div>
+            <div><code>--gold-rgb</code><span>255, 206, 77</span></div>
+            <div><code>--blue-rgb</code><span>143, 183, 255</span></div>
           </div>
           </section>
         </div>
@@ -299,15 +251,18 @@
             <span class="tag">Layout scale</span>
           </div>
           <div class="spacing-demo" aria-label="Spacing token examples">
-            <div><span style="--demo-space: var(--space-1)"></span><code>--space-1</code><strong>4px</strong></div>
-            <div><span style="--demo-space: var(--space-2)"></span><code>--space-2</code><strong>8px</strong></div>
-            <div><span style="--demo-space: var(--space-3)"></span><code>--space-3</code><strong>12px</strong></div>
-            <div><span style="--demo-space: var(--space-4)"></span><code>--space-4</code><strong>16px</strong></div>
-            <div><span style="--demo-space: var(--space-5)"></span><code>--space-5</code><strong>20px</strong></div>
-            <div><span style="--demo-space: var(--space-6)"></span><code>--space-6</code><strong>24px</strong></div>
-            <div><span style="--demo-space: var(--space-8)"></span><code>--space-8</code><strong>32px</strong></div>
-            <div><span style="--demo-space: var(--space-10)"></span><code>--space-10</code><strong>40px</strong></div>
-            <div><span style="--demo-space: var(--space-12)"></span><code>--space-12</code><strong>48px</strong></div>
+            <div><span style="--demo-space: var(--s1)"></span><code>--s1</code><strong>4px</strong></div>
+            <div><span style="--demo-space: var(--s2)"></span><code>--s2</code><strong>8px</strong></div>
+            <div><span style="--demo-space: var(--s3)"></span><code>--s3</code><strong>12px</strong></div>
+            <div><span style="--demo-space: var(--s4)"></span><code>--s4</code><strong>16px</strong></div>
+            <div><span style="--demo-space: var(--s5)"></span><code>--s5</code><strong>20px</strong></div>
+            <div><span style="--demo-space: var(--s6)"></span><code>--s6</code><strong>24px</strong></div>
+            <div><span style="--demo-space: var(--s8)"></span><code>--s8</code><strong>32px</strong></div>
+            <div><span style="--demo-space: var(--s10)"></span><code>--s10</code><strong>40px</strong></div>
+            <div><span style="--demo-space: var(--s12)"></span><code>--s12</code><strong>48px</strong></div>
+            <div><span style="--demo-space: var(--s16)"></span><code>--s16</code><strong>64px</strong></div>
+            <div><span style="--demo-space: var(--s20)"></span><code>--s20</code><strong>80px</strong></div>
+            <div><span style="--demo-space: var(--s24)"></span><code>--s24</code><strong>96px</strong></div>
           </div>
         </article>
       </section>
@@ -346,8 +301,8 @@
           </div>
           <div class="shadow-demo" aria-label="Shadow token examples">
             <div class="shadow-sample shadow-sample-sm"><code>--shadow-sm</code><span>Subtle edge</span></div>
-            <div class="shadow-sample shadow-sample-md"><code>--shadow-md</code><span>Overlay and elevated surfaces</span></div>
-            <div class="shadow-sample focus-ring-sample"><code>--focus-ring</code><span>Keyboard focus</span></div>
+            <div class="shadow-sample shadow-sample-md"><code>--shadow</code><span>Overlay and elevated surfaces</span></div>
+            <div class="shadow-sample focus-ring-sample"><code>focus-visible</code><span>2px solid var(--green)</span></div>
           </div>
         </article>
       </section>
@@ -387,8 +342,8 @@
               <div class="swatch"><span style="--swatch: var(--hairline)"></span><strong>Hairline</strong><code>--hairline</code></div>
               <div class="swatch"><span style="--swatch: var(--accent-border)"></span><strong>Accent Border</strong><code>--accent-border</code></div>
               <div class="swatch"><span style="--swatch: var(--live-game-card-border)"></span><strong>Live Card Border</strong><code>--live-game-card-border</code></div>
-              <div class="swatch"><span style="--swatch: var(--position-hairline)"></span><strong>Position Hairline</strong><code>--position-hairline</code></div>
-              <div class="swatch"><span style="--swatch: var(--position-edge-light)"></span><strong>Position Edge Light</strong><code>--position-edge-light</code></div>
+              <div class="swatch"><span style="--swatch: var(--line)"></span><strong>Position Hairline</strong><code>--line</code></div>
+              <div class="swatch"><span style="--swatch: var(--line-2)"></span><strong>Position Edge Light</strong><code>--line-2</code></div>
             </div>
           </article>
         </div>
@@ -408,6 +363,10 @@
             </div>
             <div class="swatch-grid">
               <div class="swatch"><span style="--swatch: var(--page-glow)"></span><strong>Page Glow</strong><code>--page-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--green-glow)"></span><strong>Live Pulse Glow</strong><code>--green-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--gold-glow)"></span><strong>Paused Pulse Glow</strong><code>--gold-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--hero-blue-glow)"></span><strong>Hero Blue Glow</strong><code>--hero-blue-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--hero-violet-glow)"></span><strong>Hero Violet Glow</strong><code>--hero-violet-glow</code></div>
               <div class="swatch"><span style="--swatch: var(--swatch-surface)"></span><strong>Swatch Surface</strong><code>--swatch-surface</code></div>
               <div class="swatch"><span style="--swatch: var(--overlay)"></span><strong>Overlay</strong><code>--overlay</code></div>
               <div class="swatch"><span style="--swatch: var(--transparent)"></span><strong>Transparent</strong><code>--transparent</code></div>
@@ -441,6 +400,7 @@
           <div class="token-list">
             <div><code>--font-display</code><span>Space Grotesk, headings and scores</span></div>
             <div><code>--font-ui</code><span>Inter, product UI and body text</span></div>
+            <div><code>--fs-eyebrow</code><span>Small uppercase labels, captions, timestamps</span></div>
             <div><code>--fs-label</code><span>Buttons, metadata, compact controls</span></div>
             <div><code>--fs-body</code><span>Default body and primary actions</span></div>
             <div><code>--fs-lead</code><span>Lead copy and emphasized UI text</span></div>
@@ -448,6 +408,7 @@
             <div><code>--fs-h2</code><span>Section headings</span></div>
             <div><code>--fs-hero</code><span>Hero heading</span></div>
             <div><code>--fs-score</code><span>Game-card scores</span></div>
+            <div><code>--fs-score-lg</code><span>Primary game-page scoreboard</span></div>
           </div>
         </article>
 
@@ -751,7 +712,7 @@
                   <div class="bet-sheet-handle" aria-hidden="true"></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>75 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 57&cent;</span><span aria-hidden="true">&middot;</span><span>Now 69&cent;</span></span></div>
-                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game — this bet takes the opposite side.</span></div>
+                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game, this bet takes the opposite side.</span></div>
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
@@ -772,7 +733,7 @@
                   <div class="bet-scoreboard" data-bet-grab style="--home-color:#e31837;--away-color:#aa0000"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-kc.png" alt="Chiefs"><div class="bs-meta"><span class="bs-abbr">KC</span><span class="bs-score tnum">17</span></div></div><div class="bs-center"><span class="bs-period">Q2</span><span class="bs-clock tnum">08:42</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-sf.png" alt="49ers"><div class="bs-meta"><span class="bs-abbr">SF</span><span class="bs-score tnum">14</span></div></div></div></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>75 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 57&cent;</span><span aria-hidden="true">&middot;</span><span>Now 69&cent;</span></span></div>
-                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game — this bet takes the opposite side.</span></div>
+                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game, this bet takes the opposite side.</span></div>
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
