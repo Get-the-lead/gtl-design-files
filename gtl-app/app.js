@@ -1879,11 +1879,19 @@ const USER = {
 };
 
 const AUTH_KEY = "gtl-auth";
-function getAuth() { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (e) { return null; } }
+function getAuth() {
+  const previewAuth = new URLSearchParams(location.search).get("ds-auth");
+  if (previewAuth === "logged") return { name: "Alex Morgan", email: "alex@gtl.test" };
+  if (previewAuth === "guest") return null;
+  try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (e) { return null; }
+}
 function isAuthed() { return !!getAuth(); }
 function setAuth(user) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(user)); } catch (e) { /* ignore */ } }
 function clearAuth() { try { localStorage.removeItem(AUTH_KEY); } catch (e) { /* ignore */ } }
 function currentName() { const a = getAuth(); return (a && a.name) || USER.name; }
+function currentPositions() {
+  return new URLSearchParams(location.search).get("ds-positions") === "empty" ? [] : USER.positions;
+}
 function nameFromEmail(email) {
   if (!email) return USER.name;
   const local = String(email).split("@")[0].replace(/[._+-]+/g, " ").trim();
@@ -2027,7 +2035,8 @@ function applyAuthChrome() {
   }
   const positions = $("#headerPositions");
   if (positions) {
-    const n = authed ? USER.positions.length : 0;
+    const openPositions = currentPositions();
+    const n = authed ? openPositions.length : 0;
     if (n) {
       positions.innerHTML = `
         <button class="hpos-trigger" data-hpos-toggle aria-expanded="false" aria-haspopup="true" aria-controls="hposPanel" aria-label="${n} open positions">
@@ -2036,7 +2045,7 @@ function applyAuthChrome() {
           <span class="hpos-close" aria-hidden="true">${ICON_CLOSE}</span>
         </button>
         <div class="hpos-panel" id="hposPanel" role="menu" hidden>
-          <div class="hpos-list">${openPositionCards(USER.positions)}</div>
+          <div class="hpos-list">${openPositionCards(openPositions)}</div>
         </div>`;
       bindPositionActions(positions.querySelector(".hpos-list"));
     } else {
@@ -2061,13 +2070,10 @@ function renderAuthedHome() {
 
   heroInner.classList.add("authed");
   // Render each position card, then swap the display order of the 2nd and 3rd cards.
-  const posCards = USER.positions.map((p, i) => positionCardA(p, i));
+  const openPositions = currentPositions();
+  const posCards = openPositions.map((p, i) => positionCardA(p, i));
   if (posCards.length >= 3) [posCards[1], posCards[2]] = [posCards[2], posCards[1]];
-  heroInner.innerHTML = `
-    <div class="hero-greeting">
-      <h1>Hey ${currentName()}</h1>
-    </div>
-    <div class="authed-stack">
+  const positionsContent = posCards.length ? `
       <div class="positions-block">
         <div class="positions-head"><span class="eyebrow">Open Positions</span></div>
         <div class="pos-carousel" id="positionList">${posCards.join("")}</div>
@@ -2076,10 +2082,24 @@ function renderAuthedHome() {
           <div class="pos-dots" id="posDots"></div>
           <a href="wallet.html#settled">View Settled</a>
         </div>
-      </div>
+      </div>` : `
+      <div class="coming-soon authed-empty-positions">
+        <h3 class="cs-title">No open positions yet</h3>
+        <p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p>
+        <div class="pos-footer no-scroll">
+          <a href="wallet.html">View All</a>
+          <a href="wallet.html#settled">View Settled</a>
+        </div>
+      </div>`;
+  heroInner.innerHTML = `
+    <div class="hero-greeting">
+      <h1>Hey ${currentName()}</h1>
+    </div>
+    <div class="authed-stack">
+      ${positionsContent}
       <a class="btn btn-primary authed-cta" href="#live">Live Games</a>
     </div>`;
-  bindPositionActions($("#positionList"));
+  if (posCards.length) bindPositionActions($("#positionList"));
   initPositionsCarousel();
 }
 

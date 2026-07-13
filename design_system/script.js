@@ -20,6 +20,7 @@ const pagePreview = document.querySelector("[data-page-preview]");
 const pageZoomButtons = document.querySelectorAll("[data-page-zoom]");
 const pageZoomValue = document.querySelector("[data-page-zoom='reset']");
 const flatDeviceTabs = document.querySelectorAll("[data-flat-device]");
+const flatDocTabs = document.querySelector("[data-flat-doc-tabs]");
 const flatLayContent = document.querySelector("[data-flat-lay-content]");
 let pageZoom = 1;
 
@@ -97,6 +98,7 @@ const flatDocs = {
         { label: "Logged in default", type: "home", mode: "logged" },
         { label: "No live games", type: "home", mode: "noLive" },
         { label: "With live games", type: "home", mode: "live" },
+        { label: "NBA selected", type: "home", mode: "nba" },
         { label: "With open positions", type: "home", mode: "positions" },
       ] },
       { title: "System states", frames: [
@@ -113,13 +115,7 @@ const flatDocs = {
         { label: "Live game default", type: "game", mode: "live" },
         { label: "Pregame unavailable", type: "game", mode: "pregame" },
         { label: "Betting paused after score change", type: "game", mode: "paused" },
-        { label: "No position", type: "game", mode: "none" },
-      ] },
-      { title: "Trading states", frames: [
-        { label: "With open position", type: "game", mode: "position" },
-        { label: "With pending order", type: "game", mode: "pending" },
-        { label: "Stale price / data refresh state", type: "game", mode: "stale" },
-        { label: "Error state", type: "game", mode: "error" },
+        { label: "Game stats selected", type: "game", mode: "gameStats" },
       ] },
     ],
   },
@@ -197,6 +193,10 @@ const teamLogos = {
   mia: "../gtl-app/assets/logos/nfl-mia.png",
   kc: "../gtl-app/assets/logos/nfl-kc.png",
   sf: "../gtl-app/assets/logos/nfl-sf.png",
+  dalNfl: "../gtl-app/assets/logos/nfl-dal.png",
+  phi: "../gtl-app/assets/logos/nfl-phi.png",
+  den: "../gtl-app/assets/logos/nba-den.png",
+  dal: "../gtl-app/assets/logos/nba-dal.png",
   bos: "../gtl-app/assets/logos/nba-bos.png",
   ny: "../gtl-app/assets/logos/nba-ny.png",
 };
@@ -404,14 +404,29 @@ function homeGameMedia(g, center = `<span class="period">${g.period}</span><span
 }
 
 function homeBetPanel(g) {
+  return homeBetPanelLive(g);
   const row = (label, sub, key) => `<div class="mkt-row"><span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span><button class="price yes" type="button" tabindex="-1">${g.markets[key].yes}¢</button><button class="price no" type="button" tabindex="-1">${g.markets[key].no}¢</button></div>`;
   return `<div class="mkt-grid"><div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>${row("GTL", "Get the Lead", "gtl")}${row("TIE", "", "tie")}${row("KTL", "Keep the Lead", "ktl")}</div><span class="view-game">View Game</span>`;
+}
+
+function homeBetPanelLive(g) {
+  const row = (label, sub, full, key) => `<div class="mkt-row">
+      <button class="price yes" type="button" tabindex="-1" aria-label="${full} Yes ${g.markets[key].yes} cents">${g.markets[key].yes}¢</button>
+      <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
+      <button class="price no" type="button" tabindex="-1" aria-label="${full} No ${g.markets[key].no} cents">${g.markets[key].no}¢</button>
+    </div>`;
+  return `<div class="mkt-grid">
+      <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
+      ${row("GTL", "Get the Lead", "Get the Lead", "gtl")}
+      ${row("TIE", "", "Tie", "tie")}
+      ${row("KTL", "Keep the Lead", "Keep the Lead", "ktl")}
+    </div><span class="view-game">View Game</span>`;
 }
 
 function homeGameTile(g, open = false) {
   return `<article class="game-tile${g.paused ? " is-paused" : ""}${open ? " is-open" : ""}" data-league="${g.league}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
     <div class="tile-main">${homeGameMedia(g)}</div>
-    <div class="tile-foot">${g.paused ? `<div class="trade-pause"><span class="pause-dot"></span><span>${g.paused.message}</span></div>` : ""}<button class="foot-toggle" type="button" tabindex="-1"><span class="chev">${chevronDown}</span><span class="toggle-label">${open ? "Hide Bets" : "See Bets"}</span><span class="chev">${chevronDown}</span></button><div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${homeBetPanel(g)}</div></div></div></div>
+    <div class="tile-foot">${g.paused ? `<div class="trade-pause"><span class="pause-dot"></span><span>${g.paused.message}</span></div>` : ""}<button class="foot-toggle" type="button" tabindex="-1"><span class="chev">${chevronDown}</span><span class="toggle-label">${open ? "Hide Bets" : "See Bets"}</span><span class="chev">${chevronDown}</span></button><div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">${homeBetPanelLive(g)}</div></div></div></div>
   </article>`;
 }
 
@@ -424,17 +439,52 @@ function homeLeagueStrip(active = "nfl") {
 
 function homeHero(mode) {
   if (mode === "logged" || mode === "positions") {
-    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><span class="eyebrow">Welcome back</span><h1>Welcome back, Alex.</h1></div>${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></section>`;
+    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey Alex Morgan</h1></div><div class="authed-stack">${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
   }
   return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner"><div class="hero-trading"><span class="live-dot"></span><span class="tnum">3,247</span> trading right now</div><h1 class="hero-title">Trade the moments that move the game.</h1><p class="hero-sub">Back the lead on live NFL &amp; NBA. Buy and sell in seconds, as the game turns.</p><div class="hero-cta"><span class="btn btn-primary btn-lg">Live Games</span><span class="btn btn-glass btn-lg">Create Account</span></div></div></section>`;
 }
 
 function homePositionsBlock() {
-  return `<div class="authed-stack"><div class="positions-block"><div class="positions-head"><span class="eyebrow">Open Positions</span></div><div class="pos-carousel">${homePositionCard("a")}${homePositionCard("c")}${homePositionCard("b")}</div><div class="pos-footer"><span>View All</span><div class="pos-dots"><button class="pos-dot is-active" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button></div><span>View Settled</span></div></div></div>`;
+  return `<div class="positions-block"><div class="positions-head"><span class="eyebrow">Open Positions</span></div><div class="pos-carousel">${homePositionCardA("kc")}${homePositionCardA("ny")}${homePositionCardA("den")}</div><div class="pos-footer"><a href="javascript:void(0)" tabindex="-1">View All</a><div class="pos-dots"><button class="pos-dot is-active" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button></div><a href="javascript:void(0)" tabindex="-1">View Settled</a></div></div>`;
 }
 
 function homeEmptyPositions() {
-  return `<div class="authed-stack"><div class="coming-soon authed-empty-positions"><h3 class="cs-title">No open positions yet</h3><p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p><div class="pos-footer no-scroll"><span>View All</span><span>View Settled</span></div></div></div>`;
+  return `<div class="coming-soon authed-empty-positions"><h3 class="cs-title">No open positions yet</h3><p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p><div class="pos-footer no-scroll"><span>View All</span><span>View Settled</span></div></div>`;
+}
+
+function homePositionCardA(variant) {
+  const positions = {
+    kc: {
+      game: { period: "Q2", clock: "08:42", home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", logo: teamLogos.kc }, away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D", logo: teamLogos.sf } },
+      market: "Get the Lead",
+      side: "yes",
+      qty: 150,
+      value: "$57.00",
+      pnl: "+$10.50",
+    },
+    den: {
+      game: { period: "Q4", clock: "01:33", home: { abbr: "DEN", name: "Nuggets", score: 102, color: "#FEC524", logo: teamLogos.den }, away: { abbr: "DAL", name: "Mavericks", score: 99, color: "#00538C", logo: teamLogos.dal } },
+      market: "Get the Lead",
+      side: "no",
+      qty: 90,
+      value: "$60.30",
+      pnl: "+$6.30",
+    },
+    ny: {
+      game: { period: "Q4", clock: "05:18", home: { abbr: "NYK", name: "Knicks", score: 84, color: "#F58426", logo: teamLogos.ny }, away: { abbr: "BOS", name: "Celtics", score: 89, color: "#007A33", logo: teamLogos.bos } },
+      market: "Keep the Lead",
+      side: "yes",
+      qty: 100,
+      value: "$63.00",
+      pnl: "-$7.00",
+    },
+  };
+  const p = positions[variant] || positions.kc;
+  const g = p.game;
+  const up = !p.pnl.startsWith("-");
+  const style = `--home-color:${g.home.color};--away-color:${g.away.color}`;
+  const actions = `<div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>`;
+  return `<article class="pos-card pos-card--a" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">${p.market}</span><span class="oc-vr-head">Value &amp; Return</span></div><div class="oc-row"><span class="oc-sub"><span class="side-${p.side}">${p.side.toUpperCase()}</span> · ${p.qty} contracts</span><span class="oc-figures"><span class="tnum">${p.value}</span> · <span class="oc-pnl ${up ? "up" : "down"} tnum">${p.pnl}</span></span></div></div>${actions}</div></article>`;
 }
 
 function homePositionCard(variant) {
@@ -453,19 +503,20 @@ function homePositionCard(variant) {
 function homeLiveSection(mode) {
   let content = `<div class="game-grid">${homeGames.map((g, i) => homeGameTile(g, i === 1)).join("")}</div>`;
   if (mode === "noLive") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nfl.png" alt=""><h3 class="cs-title">No live games right now</h3><p class="cs-desc">Upcoming markets will appear here before kickoff.</p></div>`;
+  if (mode === "nba") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nba.png" alt=""><h3 class="cs-title">NBA Betting Coming Soon</h3><p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p><div class="cs-actions"><span class="btn btn-secondary">I'd bet on NBA</span><span class="btn btn-secondary">Not for me</span></div></div>`;
   if (mode === "loading") content = `<div class="game-grid"><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article></div>`;
   if (mode === "error") content = `<div class="coming-soon"><h3 class="cs-title">Unable to load markets</h3><p class="cs-desc">Refresh the page or try again later.</p><div class="cs-actions"><span class="btn btn-secondary">Try again</span></div></div>`;
-  return `<section class="section live"><div class="container"><div class="section-head center"><span class="eyebrow">On now</span><h2>Live games</h2></div>${homeLeagueStrip()}${content}</div></section>`;
+  return `<section class="section live"><div class="container"><div class="section-head center"><span class="eyebrow">On now</span><h2>Live games</h2></div>${homeLeagueStrip(mode === "nba" ? "nba" : "nfl")}${content}</div></section>`;
 }
 
 function homeHowSection() {
   const steps = [
-    ["01", "Pick a market", "Choose a live game and one of three lead markets."],
-    ["02", "View the order book", "See live Yes / No prices and where the market sits."],
-    ["03", "Buy", "Take a position at the live price in a single tap."],
-    ["04", "Cash Out or Settle", "Cash out early or let it settle when the moment lands."],
+    ["01", "Pick a market", "Choose a live game and one of three lead markets.", `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`],
+    ["02", "View the order book", "See live Yes / No prices and where the market sits.", `<svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="11" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="7" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>`],
+    ["03", "Buy", "Take a position at the live price in a single tap.", `<svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
+    ["04", "Cash Out or Settle", "Cash out early or let it settle when the moment lands.", `<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
   ];
-  return `<section class="section how"><div class="container"><div class="section-head center"><span class="eyebrow">How it works</span><h2>Four taps from watching to trading.</h2></div><ol class="flow">${steps.map(([n, title, copy]) => `<li class="flow-step"><div class="flow-marker">${logoSvg}</div><span class="flow-num">${n}</span><h3 class="flow-title">${title}</h3><p class="flow-text">${copy}</p></li>`).join("")}</ol></div></section>`;
+  return `<section class="section how"><div class="container"><div class="section-head center"><span class="eyebrow">How it works</span><h2>Four taps from watching to trading.</h2></div><ol class="flow">${steps.map(([n, title, copy, icon]) => `<li class="flow-step"><div class="flow-marker">${icon}</div><span class="flow-num">${n}</span><h3 class="flow-title">${title}</h3><p class="flow-text">${copy}</p></li>`).join("")}</ol></div></section>`;
 }
 
 function homeFooter() {
@@ -474,16 +525,241 @@ function homeFooter() {
 
 function renderHomeFrame(mode) {
   const authed = mode === "logged" || mode === "positions";
-  return `<div class="flat-screen is-home">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter()}</div>`;
+  return `<div class="flat-screen is-home is-home-${mode}">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter()}</div>`;
+}
+
+const gameFrameData = {
+  live: {
+    league: "NBA",
+    period: "Q4",
+    clock: "05:18",
+    home: { abbr: "NYK", name: "Knicks", score: 84, color: "#F58426", logo: teamLogos.ny },
+    away: { abbr: "BOS", name: "Celtics", score: 89, color: "#007A33", logo: teamLogos.bos },
+    markets: { gtl: { yes: 41, no: 59 }, tie: { yes: 17, no: 83 }, ktl: { yes: 63, no: 37 } },
+  },
+  pregame: {
+    league: "NFL",
+    period: "Q1",
+    clock: "14:22",
+    waiting: true,
+    message: "Markets open when a team takes the lead.",
+    home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: teamLogos.dalNfl },
+    away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: teamLogos.phi },
+    markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 64, no: 36 }, ktl: { yes: 50, no: 50 } },
+  },
+  paused: {
+    league: "NFL",
+    period: "Q3",
+    clock: "11:05",
+    recalc: true,
+    message: "Trading paused. Recalculating markets.",
+    home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", logo: teamLogos.buf },
+    away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: teamLogos.mia },
+    markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
+  },
+};
+
+const flatDocViews = {
+  home: flatDocs.home,
+  game: flatDocs.game,
+  portfolio: {
+    ...flatDocs.tracker,
+    title: "Portfolio Page",
+    description: "Portfolio and position-tracker variants for open exposure, sell previews, loading, and empty states.",
+  },
+  login: {
+    title: "Login Page",
+    description: "Static sign-in and account recovery states from the authentication flow.",
+    groups: [
+      { title: "Login states", frames: [
+        { label: "Sign in", type: "auth", mode: "signin" },
+        { label: "Forgot password", type: "auth", mode: "forgot" },
+        { label: "Reset password", type: "auth", mode: "reset" },
+        { label: "Loading state", type: "auth", mode: "loading" },
+        { label: "Error state", type: "auth", mode: "error" },
+      ] },
+    ],
+  },
+  registration: {
+    title: "Registration Page",
+    description: "Static account creation and verification states from the authentication flow.",
+    groups: [
+      { title: "Registration states", frames: [
+        { label: "Create account", type: "auth", mode: "register" },
+        { label: "Email verification", type: "auth", mode: "verify" },
+        { label: "Loading state", type: "auth", mode: "loading" },
+        { label: "Error state", type: "auth", mode: "error" },
+      ] },
+    ],
+  },
+  drawer: flatDocs.drawer,
+  pending: flatDocs.pending,
+  account: flatDocs.account,
+};
+const flatDocOrder = ["home", "game", "portfolio", "login", "registration", "drawer", "pending", "account"];
+const flatDocTabLabels = {
+  home: "Home",
+  game: "Game",
+  portfolio: "Portfolio",
+  login: "Login",
+  registration: "Registration",
+  drawer: "Buy / Sell",
+  pending: "Pending Orders",
+  account: "Account",
+};
+let activeFlatDevice = "mobile";
+let activeFlatDoc = "home";
+
+function gameScoreboard(g) {
+  const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
+  const team = (side) => `<div class="gb-team"><img class="gb-logo" src="${g[side].logo}" alt="${g[side].name}"><span class="gb-abbr">${g[side].abbr}</span></div>`;
+  return `<section class="gb" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="gb-glow"></div>
+    <div class="container gb-inner">
+      <div class="gb-topbar"><span class="gb-back"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</span></div>
+      <div class="gb-score-stack">
+        <span class="live-badge game-clock-badge"><span class="game-period"><span class="live-dot"></span>${g.period}</span><span class="game-clock tnum">${g.clock}</span></span>
+        <div class="gb-score">${team("home")}<div class="gb-numbers"><span class="gb-num tnum${lead === "home" ? " is-leading" : ""}">${g.home.score}</span><span class="gb-dash">–</span><span class="gb-num tnum${lead === "away" ? " is-leading" : ""}">${g.away.score}</span></div>${team("away")}</div>
+      </div>
+      <p class="gb-league">${g.league}</p>
+    </div>
+  </section>`;
+}
+
+function gameMarkets(g) {
+  const disabled = g.waiting || g.recalc;
+  const row = (label, sub, key) => `<div class="mkt-row">
+    <button class="price yes" type="button" tabindex="-1"${disabled ? " disabled" : ""}>${g.waiting ? "–" : `${g.markets[key].yes}¢`}</button>
+    <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
+    <button class="price no" type="button" tabindex="-1"${disabled ? " disabled" : ""}>${g.waiting ? "–" : `${g.markets[key].no}¢`}</button>
+  </div>`;
+  return `<section class="container markets${g.recalc ? " is-recalc" : ""}">
+    ${g.message ? `<div class="game-recalc"><span class="pause-dot"></span><span>${g.message}</span></div>` : ""}
+    <div class="mkt-grid"><div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>${row("GTL", "Get the Lead", "gtl")}${row("TIE", "", "tie")}${row("KTL", "Keep the Lead", "ktl")}</div>
+    <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>
+  </section>`;
+}
+
+function gameMomentumPreview(g) {
+  const stats = [
+    { label: "Turnovers", home: 9, away: 12 },
+    { label: "Possession %", home: 48, away: 52 },
+    { label: g.league === "NBA" ? "Assists" : "Total Yards", home: g.league === "NBA" ? 19 : 318, away: g.league === "NBA" ? 23 : 286 },
+  ];
+  const statRow = (s) => {
+    const max = Math.max(s.home, s.away) || 1;
+    return `<div class="stat-block">
+      <div class="stat-caption"><span class="stat-val tnum">${s.home}</span><span class="stat-label">${s.label}</span><span class="stat-val tnum">${s.away}</span></div>
+      <div class="stat-bar-c">
+        <span class="stat-fill-h" style="width:${((s.home / max) * 50).toFixed(1)}%"></span>
+        <span class="stat-fill-a" style="width:${((s.away / max) * 50).toFixed(1)}%"></span>
+      </div>
+    </div>`;
+  };
+  return `<div class="momentum-grid">
+    <div class="momentum-card worm-card">
+      <div class="momentum-head"><span>Score Worm</span></div>
+      <div class="worm-legend"><span class="worm-key"><i style="background:${g.home.color}"></i>${g.home.abbr} ahead</span><span class="worm-key"><i style="background:${g.away.color}"></i>${g.away.abbr} ahead</span></div>
+      <div class="worm-wrap">
+        <div class="worm-quarters" aria-hidden="true"><span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span></div>
+        <div class="worm-axis" aria-hidden="true"><span>+8</span><span>0</span><span>-8</span></div>
+        <span class="worm-mark" style="left:22%"></span><span class="worm-mark" style="left:47%"></span><span class="worm-mark" style="left:72%"></span>
+        <svg class="worm-svg" viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Score margin over the game, 3 lead changes">
+          <defs><linearGradient id="ds-worm-${g.home.abbr}-${g.away.abbr}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="132"><stop offset="0" stop-color="${g.home.color}"></stop><stop offset="0.5" stop-color="${g.home.color}"></stop><stop offset="0.5" stop-color="${g.away.color}"></stop><stop offset="1" stop-color="${g.away.color}"></stop></linearGradient></defs>
+          <line class="worm-zero" x1="0" y1="66" x2="320" y2="66"></line>
+          <path class="worm-line" d="M0 66 L35 58 L70 76 L110 70 L150 50 L190 44 L230 62 L270 82 L320 90" style="stroke:url(#ds-worm-${g.home.abbr}-${g.away.abbr})"></path>
+        </svg>
+      </div>
+      <div class="worm-stats"><div class="worm-stat"><strong class="tnum">3</strong><span>Lead Changes</span></div><div class="worm-stat"><strong class="tnum">5</strong><span>Ties</span></div></div>
+    </div>
+    <div class="momentum-card stats-card">
+      <div class="stats-teams"><img class="stats-logo" src="${g.home.logo}" alt="${g.home.name}"><span class="stats-title">Game Stats</span><img class="stats-logo" src="${g.away.logo}" alt="${g.away.name}"></div>
+      <div class="stat-list">${stats.map(statRow).join("")}</div>
+    </div>
+  </div>`;
+}
+
+function gameStatsPreview(g, activePanel = "market") {
+  const waiting = !!g.waiting;
+  const marketActive = activePanel !== "game";
+  const gameActive = activePanel === "game";
+  const bid = Math.max(2, g.markets.gtl.yes - 1);
+  const ask = Math.min(98, g.markets.gtl.yes + 1);
+  const asks = [
+    { price: ask + 3, size: 890, pct: 58 },
+    { price: ask + 2, size: 1040, pct: 68 },
+    { price: ask + 1, size: 1260, pct: 82 },
+    { price: ask, size: 1510, pct: 100 },
+  ];
+  const bids = [
+    { price: bid, size: 1430, pct: 95 },
+    { price: bid - 1, size: 1180, pct: 78 },
+    { price: bid - 2, size: 960, pct: 64 },
+    { price: bid - 3, size: 760, pct: 50 },
+  ];
+  const emptyBookRow = `<div class="book-row"><span class="book-price tnum">--</span><span class="book-size tnum">0</span></div>`;
+  const bookRow = (level, side) => `<div class="book-row book-${side}">
+    <span class="book-depth"><span class="book-depth-fill" style="width:${level.pct}%"></span></span>
+    <span class="book-price tnum">${level.price}¢</span>
+    <span class="book-size tnum">${level.size.toLocaleString("en-US")}</span>
+  </div>`;
+  const flow = [
+    { label: "Q1", val: waiting ? 0 : 42, pct: waiting ? 6 : 52 },
+    { label: "Q2", val: waiting ? 0 : 68, pct: waiting ? 6 : 84 },
+    { label: "Q3", val: waiting ? 0 : 57, pct: waiting ? 6 : 70 },
+    { label: "Q4", val: waiting ? 0 : 81, pct: waiting ? 6 : 100 },
+  ];
+  const bets = [
+    ["11:58", "GTL", "Yes", g.markets.gtl.yes + 2, 150],
+    ["10:42", "TIE", "No", g.markets.tie.no - 1, 250],
+    ["09:15", "KTL", "Yes", g.markets.ktl.yes + 4, 100],
+    ["08:03", "GTL", "No", g.markets.gtl.no - 3, 300],
+    ["06:37", "TIE", "Yes", g.markets.tie.yes + 1, 200],
+  ];
+  return `<section class="container stats-section" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="section-head center stats-overall-head"><span class="eyebrow">Stats</span><h2>Inside the game</h2></div>
+    <div class="stats-tabs" role="tablist" aria-label="Game statistics views"><button class="stats-tab${marketActive ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(marketActive)}" tabindex="-1">Market Stats</button><button class="stats-tab${gameActive ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(gameActive)}" tabindex="-1">Game Stats</button></div>
+    <div class="stats-panel"${marketActive ? "" : " hidden"}>
+    <h3 class="stats-section-label">Market Stats</h3>
+    <div class="chart-grid-wrap">
+      <article class="chart-card">
+        <div class="chart-head"><span>Market Book</span><strong class="tnum">${waiting ? "0¢ / 0¢" : `${bid}¢ / ${ask}¢`}</strong></div>
+        <div class="book${waiting ? " is-empty" : ""}">
+          <div class="book-side">${waiting ? Array.from({ length: 4 }, () => emptyBookRow).join("") : asks.map((level) => bookRow(level, "ask")).join("")}</div>
+          <div class="book-spread"><span>Spread</span><strong class="tnum">${waiting ? "--" : `${ask - bid}¢`}</strong></div>
+          <div class="book-side">${waiting ? Array.from({ length: 4 }, () => emptyBookRow).join("") : bids.map((level) => bookRow(level, "bid")).join("")}</div>
+        </div>
+        ${waiting ? `<p class="market-empty-note">No orders yet. Markets open when a team takes the lead.</p>` : ""}
+      </article>
+      <article class="chart-card">
+        <div class="chart-head"><span>Order Flow</span><strong class="tnum">${waiting ? "0 bets" : `${flow.reduce((sum, item) => sum + item.val, 0)} bets`}</strong></div>
+        <div class="flow-bars${waiting ? " is-empty" : ""}">${flow.map((item) => `<span class="flow-bar" style="height:${item.pct}%"><em class="flow-cap tnum">${item.val}</em></span>`).join("")}</div>
+        <div class="flow-axis">${flow.map((item) => `<span>${item.label}</span>`).join("")}</div>
+        <table class="bets-table">
+          <thead><tr><th>Time</th><th>Market</th><th>Side</th><th class="num">Price</th><th class="num">Size</th></tr></thead>
+          <tbody>${waiting ? `<tr><td colspan="5" class="empty-row">No trades yet</td></tr>` : bets.map(([time, market, side, price, size]) => `<tr><td class="tnum">${time}</td><td>${market}</td><td><span class="side-${side.toLowerCase()}">${side}</span></td><td class="num tnum">${price}¢</td><td class="num tnum">${size}</td></tr>`).join("")}</tbody>
+        </table>
+      </article>
+    </div>
+    </div>
+    <div class="stats-panel"${gameActive ? "" : " hidden"}>
+      <h3 class="stats-section-label">Game Stats</h3>
+      ${gameMomentumPreview(g)}
+    </div>
+  </section>`;
 }
 
 function renderGameFrame(mode) {
+  if (mode === "live" || mode === "pregame" || mode === "paused" || mode === "gameStats") {
+    const g = mode === "gameStats" ? gameFrameData.live : gameFrameData[mode];
+    const statsPanel = mode === "gameStats" ? "game" : "market";
+    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(false)}<main>${gameScoreboard(g)}${gameMarkets(g)}${gameStatsPreview(g, statsPanel)}</main></div>`;
+  }
   let banner = "";
   let markets = flatMarkets(mode === "pregame");
   if (mode === "paused" || mode === "stale") banner = flatStatus("loading", mode === "stale" ? "Refreshing prices" : "Trading paused", mode === "stale" ? "Latest market data is being checked." : "Recalculating markets after score change.");
   if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Game")}${flatStatus("error", "Game unavailable", "Live data could not be loaded.")}${flatNav("Orders")}</div>`;
   const extra = {
-    none: flatStatus("empty", "No position in this game", "Choose a market to enter."),
     position: `<div class="flat-list">${flatRows(1)}</div>`,
     pending: `<div class="flat-list">${flatRows(1, "pending")}</div>`,
   }[mode] || "";
@@ -555,7 +831,7 @@ function renderFlatFrame(frame) {
     account: renderAccountFrame,
   };
   const screen = renderers[frame.type](frame.mode);
-  return `<article class="flat-frame-wrap"><div class="flat-frame-label">${frame.label}</div><div class="flat-phone">${screen}</div></article>`;
+  return `<article class="flat-frame-wrap flat-frame--${frame.type}"><div class="flat-frame-label">${frame.label}</div><div class="flat-phone">${screen}</div></article>`;
 }
 
 function renderFlatDocSection(doc) {
@@ -563,17 +839,35 @@ function renderFlatDocSection(doc) {
     ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${group.title}</h3></div><div class="flat-frame-row">${group.frames.map(renderFlatFrame).join("")}</div></section>`).join("")}</section>`;
 }
 
-function renderFlatDevice(device = "mobile") {
-  if (!flatLayContent) return;
-  const currentDevice = ["mobile", "tablet", "desktop"].includes(device) ? device : "mobile";
-  flatLayContent.dataset.flatDevice = currentDevice;
-  flatLayContent.innerHTML = Object.values(flatDocs).map(renderFlatDocSection).join("");
+function renderFlatDocTabs() {
+  if (!flatDocTabs) return;
+  flatDocTabs.innerHTML = flatDocOrder
+    .filter((key) => flatDocViews[key])
+    .map((key) => {
+      const active = key === activeFlatDoc;
+      return `<button class="${active ? "is-active" : ""}" type="button" data-flat-doc="${key}" role="tab" aria-selected="${String(active)}">${flatDocTabLabels[key] || flatDocViews[key].title}</button>`;
+    })
+    .join("");
+}
 
+function syncFlatDeviceTabs() {
+  const pagesActive = document.getElementById("pages")?.classList.contains("is-active-section");
   flatDeviceTabs.forEach((button) => {
-    const active = button.dataset.flatDevice === currentDevice;
-    button.classList.toggle("is-active", active);
+    const active = button.dataset.flatDevice === activeFlatDevice;
+    button.classList.toggle("is-device-active", active);
+    button.classList.toggle("is-active", Boolean(pagesActive && active));
     button.setAttribute("aria-selected", String(active));
   });
+}
+
+function renderFlatDevice(device = activeFlatDevice, docKey = activeFlatDoc) {
+  if (!flatLayContent) return;
+  activeFlatDevice = ["mobile", "tablet", "desktop"].includes(device) ? device : "mobile";
+  activeFlatDoc = flatDocViews[docKey] ? docKey : flatDocOrder.find((key) => flatDocViews[key]) || Object.keys(flatDocViews)[0];
+  flatLayContent.dataset.flatDevice = activeFlatDevice;
+  flatLayContent.innerHTML = renderFlatDocSection(flatDocViews[activeFlatDoc]);
+  renderFlatDocTabs();
+  syncFlatDeviceTabs();
 }
 
 function closeNavigation() {
@@ -642,7 +936,11 @@ function showSection(sectionId, options = {}) {
   });
 
   navLinks.forEach((link) => {
-    link.classList.toggle("is-active", link.getAttribute("href") === `#${nextId}`);
+    if (link.dataset.flatDevice) {
+      link.classList.toggle("is-active", nextId === "pages" && link.dataset.flatDevice === activeFlatDevice);
+    } else {
+      link.classList.toggle("is-active", link.getAttribute("href") === `#${nextId}`);
+    }
   });
 
   if (options.updateHash && window.location.hash !== `#${nextId}`) {
@@ -966,8 +1264,14 @@ pageZoomButtons.forEach((button) => {
 
 flatDeviceTabs.forEach((button) => {
   button.addEventListener("click", () => {
-    renderFlatDevice(button.dataset.flatDevice);
+    renderFlatDevice(button.dataset.flatDevice, activeFlatDoc);
   });
+});
+
+flatDocTabs?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-flat-doc]");
+  if (!button) return;
+  renderFlatDevice(activeFlatDevice, button.dataset.flatDoc);
 });
 
 window.addEventListener("hashchange", () => {
@@ -979,7 +1283,7 @@ setDrawerView(drawerSection?.dataset.drawerViewMode);
 drawerSection?.querySelectorAll(".bet-sheet").forEach(updateDrawerPreview);
 setPageZoom(pageZoom);
 if (pageTabs.length) loadPagePreview(document.querySelector("[data-page-tab].is-active") || pageTabs[0]);
-renderFlatDevice(document.querySelector("[data-flat-device].is-active")?.dataset.flatDevice || "mobile");
+renderFlatDevice(document.querySelector("[data-flat-device].is-device-active")?.dataset.flatDevice || "mobile", activeFlatDoc);
 showSection(sectionFromHash(), { instant: true });
 describeColorSwatches();
 

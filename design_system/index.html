@@ -28,7 +28,10 @@
 
       <nav class="side-nav">
         <a href="#overview" class="is-active">Overview</a>
-        <a href="#pages">Pages</a>
+        <span class="side-nav-label">Pages</span>
+        <a href="#pages" data-flat-device="mobile" class="is-device-active" aria-selected="true">Mobile Pages</a>
+        <a href="#pages" data-flat-device="tablet" aria-selected="false">Tablet Pages</a>
+        <a href="#pages" data-flat-device="desktop" aria-selected="false">Desktop Pages</a>
         <a href="#tokens">Colors</a>
         <a href="#spacing">Spacing</a>
         <a href="#radius">Radius</a>
@@ -103,11 +106,7 @@
         </div>
 
         <article class="panel ds-pages-panel flat-lays-section">
-          <div class="flat-doc-tabs" role="tablist" aria-label="Page flat lay device groups">
-            <button class="is-active" type="button" data-flat-device="mobile" aria-selected="true">Mobile Pages</button>
-            <button type="button" data-flat-device="tablet" aria-selected="false">Tablet Pages</button>
-            <button type="button" data-flat-device="desktop" aria-selected="false">Desktop Pages</button>
-          </div>
+          <div class="flat-doc-tabs" role="tablist" aria-label="Page type groups" data-flat-doc-tabs></div>
 
           <div class="flat-lay-canvas" data-flat-lay-content></div>
         </article>
@@ -862,27 +861,81 @@
                   <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                   <span class="toggle-label">See Bets</span>
                   <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                </button>                <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">
-                  <div class="mkt-grid">
-                    <div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>
-                    <div class="mkt-row">
-                      <span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span>
-                      <button class="price yes" type="button" data-game="buf-mia" data-market="gtl" data-side="yes" aria-label="Get the Lead Yes 64 cents">64&cent;</button>
-                      <button class="price no" type="button" data-game="buf-mia" data-market="gtl" data-side="no" aria-label="Get the Lead No 36 cents">36&cent;</button>
-                    </div>
-                    <div class="mkt-row">
-                      <span class="mkt-name">TIE</span>
-                      <button class="price yes" type="button" data-game="buf-mia" data-market="tie" data-side="yes" aria-label="Tie Yes 18 cents">18&cent;</button>
-                      <button class="price no" type="button" data-game="buf-mia" data-market="tie" data-side="no" aria-label="Tie No 82 cents">82&cent;</button>
-                    </div>
-                    <div class="mkt-row">
-                      <span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span>
-                      <button class="price yes" type="button" data-game="buf-mia" data-market="ktl" data-side="yes" aria-label="Keep the Lead Yes 71 cents">71&cent;</button>
-                      <button class="price no" type="button" data-game="buf-mia" data-market="ktl" data-side="no" aria-label="Keep the Lead No 29 cents">29&cent;</button>
-                    </div>
+	                </button>
+	                <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">
+	                  <div class="mkt-grid">
+	                    <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
+	                    <div class="mkt-row">
+	                      <button class="price yes" type="button" data-game="buf-mia" data-market="gtl" data-side="yes" aria-label="Get the Lead Yes 64 cents">64&cent;</button>
+	                      <span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span>
+	                      <button class="price no" type="button" data-game="buf-mia" data-market="gtl" data-side="no" aria-label="Get the Lead No 36 cents">36&cent;</button>
+	                    </div>
+	                    <div class="mkt-row">
+	                      <button class="price yes" type="button" data-game="buf-mia" data-market="tie" data-side="yes" aria-label="Tie Yes 18 cents">18&cent;</button>
+	                      <span class="mkt-name">TIE</span>
+	                      <button class="price no" type="button" data-game="buf-mia" data-market="tie" data-side="no" aria-label="Tie No 82 cents">82&cent;</button>
+	                    </div>
+	                    <div class="mkt-row">
+	                      <button class="price yes" type="button" data-game="buf-mia" data-market="ktl" data-side="yes" aria-label="Keep the Lead Yes 71 cents">71&cent;</button>
+	                      <span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span>
+	                      <button class="price no" type="button" data-game="buf-mia" data-market="ktl" data-side="no" aria-label="Keep the Lead No 29 cents">29&cent;</button>
+	                    </div>
                   </div>
                   <a class="view-game" href="javascript:void(0)">View Game</a>
                 </div></div></div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Countdown</h3><span class="tag">Pregame</span></div>
+            <p class="ds-state-description">Pregame countdown state. Use this before markets open when kickoff is close and the card should show a 10-minute countdown instead of betting controls.</p>
+            <article class="game-tile is-countdown" data-league="nfl" style="--home-color:#003594;--away-color:#004c54">
+              <a class="tile-main" href="javascript:void(0)" aria-label="Open PHI at DAL">
+                <div class="game-row">
+                  <div class="team team-home">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-dal.png" alt="Cowboys" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">DAL</span><span class="team-score tnum">0</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Pregame</span><span class="clock tnum">0:00</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-phi.png" alt="Eagles" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">PHI</span><span class="team-score tnum">0</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <div class="game-countdown" role="status">
+                  <span class="countdown-dot"></span>
+                  <span>Game starts in:</span>
+                  <strong class="countdown-time tnum"><span>09</span><span aria-hidden="true">:</span><span>59</span></strong>
+                </div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Final Winner</h3><span class="tag">Final</span></div>
+            <p class="ds-state-description">Completed game state. Use this after the game has ended and one team is confirmed as the winner.</p>
+            <article class="game-tile is-final" data-league="nfl" style="--home-color:#00338d;--away-color:#008e97">
+              <a class="tile-main" href="javascript:void(0)" aria-label="Final MIA at BUF">
+                <div class="game-row">
+                  <div class="team team-home is-leading is-winner">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">BUF</span><span class="team-score tnum">31</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Final</span><span class="clock tnum">0:00</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">MIA</span><span class="team-score tnum">24</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <div class="game-final" role="status">
+                  <span class="final-dot"></span>
+                  <span>Game ended: <strong>BUF won</strong></span>
+                </div>
               </div>
             </article>
           </article>
