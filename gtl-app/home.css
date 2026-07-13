@@ -103,6 +103,15 @@
 }
 .pos-card .pos-media { background: transparent; }
 .pos-card .pos-media::before { content: none; } /* card gradient handles the tint now */
+/* Light mode: the card belongs to the light UI — fade to white (not black) and keep the
+   team colours vivid. (Media text is flipped to dark ink in styles.css so it stays readable.) */
+:root[data-theme="light"] .pos-card { background: var(--surface); }
+:root[data-theme="light"] .pos-card::before {
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.84));
+}
 /* Desktop: size the cards so exactly three fit the row (no overflow → no dots) */
 @media (min-width: 1024px) {
   .pos-card { flex-basis: calc((100% - 2 * var(--s4)) / 3); }
@@ -275,24 +284,19 @@
 .foot-panel-inner { overflow: hidden; }
 .foot-panel-pad { padding-top: var(--s3); }
 
-/* Bets grid — market names on the left, Yes/No price columns grouped on the right */
-.mkt-head, .mkt-row { display: grid; grid-template-columns: minmax(96px, 1fr) minmax(72px, 0.58fr) minmax(72px, 0.58fr); align-items: center; gap: var(--s3); }
+/* Bets grid — Yes on the left, market name centred, No on the right (original layout) */
+.mkt-head, .mkt-row { display: grid; grid-template-columns: 0.82fr 1.36fr 0.82fr; align-items: center; gap: var(--s3); }
 .mkt-head { padding-bottom: var(--s2); }
 .mkt-head span { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.92); }
-.mkt-head .col-market { justify-self: start; }
-.mkt-head .col-yes, .mkt-head .col-no {
-  width: 72px;
-  justify-self: end;
-  text-align: center;
-}
+.mkt-head .col-yes, .mkt-head .col-no, .mkt-head .col-market { justify-self: center; }
 
 .mkt-row { padding: var(--s3) 0; }
 .mkt-row + .mkt-row { border-top: 1px solid rgba(255, 255, 255, 0.07); }
-.mkt-name { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: left; font-size: var(--fs-body); font-weight: 600; line-height: 1.15; color: rgba(255, 255, 255, 0.95); }
+.mkt-name { display: flex; flex-direction: column; align-items: center; gap: 1px; text-align: center; font-size: var(--fs-body); font-weight: 600; line-height: 1.15; color: rgba(255, 255, 255, 0.95); }
 .mkt-sub { font-size: var(--fs-eyebrow); font-weight: 500; color: rgba(255, 255, 255, 0.5); }
 
 .price {
-  justify-self: end;
+  justify-self: stretch;
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 72px;
   padding: 10px 14px; border-radius: var(--r-pill);

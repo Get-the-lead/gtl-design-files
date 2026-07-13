@@ -5,3 +5,11 @@
 **/.codex/
 **/.impeccable/
 PRODUCT.md
+
+# Local gate passphrase — keep out of git
+gate.config.js
+**/gate.config.js
+
+# macOS
+.DS_Store
+**/.DS_Store

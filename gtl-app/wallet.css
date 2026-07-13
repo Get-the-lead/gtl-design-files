@@ -102,6 +102,10 @@
 .addfunds-sheet {
   position: fixed; z-index: 201; left: 0; right: 0; bottom: 0;
   width: 100%; max-width: 520px; margin-inline: auto;
+  /* Match the bet drawer: never taller than 56px below the top */
+  max-height: calc(100vh - 56px);
+  max-height: calc(100dvh - 56px);
+  overflow-y: auto;
   background: var(--bg); border: 1px solid var(--line-2); border-bottom: none;
   border-radius: var(--r-xl) var(--r-xl) 0 0; box-shadow: var(--shadow);
   transform: translateY(101%); transition: transform 0.4s var(--ease-out);
