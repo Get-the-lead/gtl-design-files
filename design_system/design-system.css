@@ -1817,8 +1817,95 @@
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.12), transparent 44%),
     var(--bg);
-  justify-content: end;
-  padding: var(--s4);
+  display: block;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet-backdrop {
+  inset: 0;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet {
+  border-bottom: none;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  margin-inline: auto;
+  max-height: calc(100% - 18px);
+  max-width: 520px;
+  opacity: 1;
+  overflow: hidden;
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  top: auto;
+  transform: none;
+  visibility: visible;
+  width: 100%;
+  z-index: 2;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-scoreboard {
+  cursor: default;
+  flex: 0 0 auto;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet-handle {
+  display: block;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--s3);
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet-footer {
+  flex: 0 0 auto;
+  padding-top: var(--s3);
+}
+
+.design-system-page .flat-screen.is-drawer .bet-step {
+  gap: var(--s4);
+}
+
+.design-system-page .flat-screen.is-drawer .bet-field.contracts-field {
+  gap: var(--s3);
+}
+
+.design-system-page .flat-screen.is-drawer .bet-conflict {
+  margin-bottom: 0;
+}
+
+.design-system-page .flat-screen.is-drawer .contracts-input-box {
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-drawer .contracts-input-box .num-input {
+  border: 0;
+  border-radius: 0;
+  height: 42px;
+  line-height: 42px;
+  padding: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-drawer .num-input.is-error {
+  color: var(--no);
+}
+
+.design-system-page .flat-screen.is-drawer .bet-success {
+  position: absolute;
 }
 
 .design-system-page .flat-mini-header {
@@ -1930,6 +2017,118 @@
   font-size: var(--fs-label);
   line-height: 1.5;
   margin: var(--s1) 0 0;
+}
+
+.design-system-page .account-profile-card {
+  align-items: center;
+  display: flex;
+  gap: var(--s3);
+}
+
+.design-system-page .account-avatar {
+  align-items: center;
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: flex;
+  flex: 0 0 48px;
+  font-size: var(--fs-label);
+  font-weight: 900;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: 0;
+  width: 48px;
+}
+
+.design-system-page .account-profile-copy {
+  min-width: 0;
+}
+
+.design-system-page .account-profile-copy p {
+  overflow-wrap: anywhere;
+}
+
+.design-system-page .account-settings-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.design-system-page .account-setting-row {
+  align-items: center;
+  display: flex;
+  gap: var(--s3);
+  justify-content: space-between;
+  min-height: 54px;
+  padding: 0 var(--s4);
+}
+
+.design-system-page .account-setting-row + .account-setting-row {
+  border-top: 1px solid var(--line);
+}
+
+.design-system-page .account-setting-row span {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .account-setting-row strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.design-system-page .account-provider {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--s2);
+  justify-content: flex-end;
+}
+
+.design-system-page .account-provider span {
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  display: flex;
+  font-size: 0.68rem;
+  font-weight: 900;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+
+.design-system-page .account-provider.password span {
+  background: var(--green-soft);
+  border-color: color-mix(in srgb, var(--green) 40%, transparent);
+  color: #0b3a1b;
+}
+
+.design-system-page .account-provider.google span {
+  background: #fff;
+  color: #1f1f1f;
+}
+
+.design-system-page .account-provider.apple span {
+  background: #111;
+  color: #fff;
+  font-size: 0.5rem;
+}
+
+.design-system-page .account-password-action {
+  width: 100%;
+}
+
+.design-system-page .account-auth-note {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+  line-height: 1.45;
+  margin: 0;
 }
 
 .design-system-page .flat-field {

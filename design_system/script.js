@@ -160,21 +160,6 @@ const flatDocs = {
       ] },
     ],
   },
-  pending: {
-    title: "Pending Orders",
-    description: "Pending order states for empty, active buy/sell orders, editing, cancellation, filled orders, and errors.",
-    groups: [
-      { title: "Order states", frames: [
-        { label: "No pending orders", type: "pending", mode: "empty" },
-        { label: "With pending buy order", type: "pending", mode: "buy" },
-        { label: "With pending sell order", type: "pending", mode: "sell" },
-        { label: "Edit limit price", type: "pending", mode: "edit" },
-        { label: "Cancel confirmation", type: "pending", mode: "cancel" },
-        { label: "Order filled state", type: "pending", mode: "filled" },
-        { label: "Error state", type: "pending", mode: "error" },
-      ] },
-    ],
-  },
   account: {
     title: "Settled / Account",
     description: "Account and history views covering settled activity, profile, credits, loading, and errors.",
@@ -183,7 +168,9 @@ const flatDocs = {
         { label: "Settled empty state", type: "account", mode: "settledEmpty" },
         { label: "Settled history", type: "account", mode: "settled" },
         { label: "Account overview", type: "account", mode: "overview" },
-        { label: "Profile", type: "account", mode: "profile" },
+        { label: "Profile - password account", type: "account", mode: "profilePassword" },
+        { label: "Profile - Google account", type: "account", mode: "profileGoogle" },
+        { label: "Profile - Apple account", type: "account", mode: "profileApple" },
         { label: "Credits / balance", type: "account", mode: "credits" },
         { label: "Loading state", type: "account", mode: "loading" },
         { label: "Error state", type: "account", mode: "error" },
@@ -618,10 +605,9 @@ const flatDocViews = {
     ],
   },
   drawer: flatDocs.drawer,
-  pending: flatDocs.pending,
   account: flatDocs.account,
 };
-const flatDocOrder = ["home", "game", "portfolio", "login", "registration", "drawer", "pending", "account"];
+const flatDocOrder = ["home", "game", "portfolio", "login", "registration", "drawer", "account"];
 const flatDocTabLabels = {
   home: "Home",
   game: "Game",
@@ -629,7 +615,6 @@ const flatDocTabLabels = {
   login: "Login",
   registration: "Registration",
   drawer: "Buy / Sell",
-  pending: "Pending Orders",
   account: "Account",
 };
 let activeFlatDevice = "mobile";
@@ -795,24 +780,63 @@ function renderGameFrame(mode) {
     ${banner}${markets}${extra}<div class="flat-card"><h3>Inside the game</h3><p>Lead changes, volume, and order flow.</p></div>${flatNav("Orders")}</div>`;
 }
 
+const drawerCheckIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const drawerWarnIcon = `<svg class="warn-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+
+function drawerScoreboardHTML() {
+  return `<div class="bet-scoreboard" data-bet-grab style="--home-color:#00338d;--away-color:#008e97">
+    <div class="bs-glow" aria-hidden="true"></div>
+    <div class="bs-row">
+      <div class="bs-team bs-home is-leading"><img class="bs-logo" src="${teamLogos.buf}" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div>
+      <div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div>
+      <div class="bs-team bs-away"><img class="bs-logo" src="${teamLogos.mia}" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div>
+    </div>
+  </div>`;
+}
+
 function renderDrawerFrame(mode) {
   const sell = mode.startsWith("sell");
   const limit = mode.toLowerCase().includes("limit") || mode === "invalid" || mode === "pending";
-  const error = mode === "balance" || mode === "invalid" || mode === "error";
+  const step = mode === "pending" ? "2" : "1";
   const success = mode === "success";
-  if (success) {
-    return `<div class="flat-screen is-drawer"><div class="flat-drawer"><div class="flat-drawer-handle"></div>${flatStatus("empty", "Order placed", "You are in the game.")}<div class="flat-primary">Done</div></div></div>`;
-  }
-  return `<div class="flat-screen is-drawer"><div class="flat-drawer"><div class="flat-drawer-handle"></div>
-    <h3>${sell ? "Sell position" : "Buy contract"}</h3><p class="flat-copy">BUF vs MIA - Get the Lead ${sell ? "YES" : "YES"}</p>
-    <div class="flat-btn-row"><span class="flat-price yes">Yes 64c</span><span class="flat-price no">No 36c</span></div>
-    <div class="flat-field">${sell ? "Contracts to sell: 60" : "Contracts: 100"}</div>
-    ${limit ? `<div class="flat-field ${mode === "invalid" ? "is-error" : ""}">Limit price: ${mode === "invalid" ? "104c" : "52c"}</div>` : ""}
-    ${mode === "pending" ? flatStatus("loading", "Limit order pending", "Waiting for the market to reach 52c.") : ""}
-    ${error ? flatStatus("error", mode === "balance" ? "Insufficient balance" : mode === "invalid" ? "Invalid limit price" : "Order failed", mode === "balance" ? "Add funds before placing this bet." : "Check the order and try again.") : ""}
-    <div class="flat-summary"><div><span>Subtotal</span><strong>$64.00</strong></div><div><span>Fee</span><strong>$1.28</strong></div><div><span>Total</span><strong>$65.28</strong></div></div>
-    <div class="flat-primary">${sell ? "Sell" : limit ? "Place Limit" : "Quick Bet"}</div>
-  </div></div>`;
+  const invalid = mode === "invalid";
+  const balance = mode === "balance";
+  const error = mode === "error";
+  const primary = sell ? "Sell" : limit ? "Place Limit" : "Quick Bet";
+  const total = sell ? "$37.63" : limit ? "$52.00" : "$64.00";
+  const profit = sell ? "$15.12" : limit ? "$46.96" : "$34.72";
+  const conflict = balance
+    ? `<div class="bet-conflict buy-only" role="alert">${drawerWarnIcon}<span><strong>Insufficient balance.</strong> Add funds before placing this bet.</span></div>`
+    : error
+    ? `<div class="bet-conflict buy-only" role="alert">${drawerWarnIcon}<span><strong>Order failed.</strong> Check the order and try again.</span></div>`
+    : "";
+  const sheetClass = success ? "bet-sheet is-open is-success" : "bet-sheet is-open";
+  return `<div class="flat-screen is-drawer"><div class="bet-sheet-backdrop is-open"></div>
+    <aside class="${sheetClass}" data-step="${step}" data-mode="${sell ? "sell" : "buy"}" aria-hidden="false" aria-label="${sell ? "Sell position" : "Place a bet"}">
+      ${drawerScoreboardHTML()}
+      <div class="bet-sheet-handle" aria-hidden="true"></div>
+      <div class="bet-sheet-body">
+        <div class="bet-step bet-step-1">
+          <div class="sell-only sell-readout"><span class="sell-tag">Get the Lead · <span class="side-yes">YES</span></span><span class="sell-sub"><span>120 Held</span><span aria-hidden="true">·</span><span>Bought at 38¢</span><span aria-hidden="true">·</span><span>Now 64¢</span></span></div>
+          ${conflict}
+          <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><div class="num-input-box contracts-input-box"><input class="num-input" type="text" inputmode="numeric" value="${limit ? "100" : "100"}" aria-label="Number of contracts"></div><div class="qty-quick"><button type="button">50</button><button class="is-active" type="button">100</button><button type="button">500</button><button type="button">1000</button></div><p class="qty-total" hidden></p></div>
+          <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><div class="num-input-box contracts-input-box"><input class="num-input" type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"></div><div class="qty-quick q3"><button type="button">25%</button><button class="is-active" type="button">50%</button><button type="button">All</button></div></div>
+          <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" type="button">GTL</button><button type="button">TIE</button><button type="button">KTL</button></div></div>
+          <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum">64¢</span></button><button class="bt-opt no" type="button"><span class="bt-side">No</span><span class="bt-price tnum">36¢</span></button></div><button class="limit-toggle" type="button" aria-expanded="${limit ? "true" : "false"}">${limit ? "Hide Limit" : "Set a Limit"}</button><div class="limit-section"${limit ? "" : " hidden"}><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input${invalid ? " is-error" : ""}" type="text" inputmode="numeric" value="${invalid ? "104" : "52"}" aria-label="Limit price in cents"><span class="num-suffix">¢</span></div><p class="limit-minmax">${invalid ? "Max 64¢" : "Min 1¢ · Max 64¢"}</p></div></div>
+          <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum">${total}</span><p class="potential-win">Potential profit of <strong>${profit}</strong> <span>after <a href="#" class="fees-link">fees</a></span></p></div>
+          <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum">$37.63</span><p class="potential-win">Realised profit of <strong>$15.12</strong> <span>after <a href="#" class="fees-link">fees</a></span></p></div>
+        </div>
+        <div class="bet-step bet-step-2">
+          <div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong>${limit ? "52¢" : "64¢"}</strong></div><div class="summary-row"><span>Contracts</span><strong>${sell ? "60" : "100"}</strong></div><div class="summary-row"><span>Subtotal</span><strong>${sell ? "$38.40" : total}</strong></div><div class="summary-row"><span>Trading fee</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>${sell ? "You receive" : "Total to pay"}</span><strong>${sell ? "$37.63" : "$65.28"}</strong></div></div></div>
+          <div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong>${sell ? "$60.00" : "$100.00"}</strong></div><div class="summary-row"><span>Potential profit</span><strong>${profit}</strong></div><div class="summary-row"><span>Fees</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>Net potential gain</span><strong>${sell ? "$37.63" : "$33.44"}</strong></div></div></div>
+        </div>
+      </div>
+      <footer class="bet-sheet-footer"><button class="bet-secondary" type="button">See Details</button><button class="btn btn-primary bet-primary" type="button">${primary}</button></footer>
+      <div class="bet-success">
+        <div class="success-content"><div class="bet-success-head"><span class="bet-success-check">${drawerCheckIcon}</span><h3 class="bet-success-title">Bet placed!</h3><p class="bet-success-sub">100 × Get the Lead YES</p></div><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong>64¢</strong></div><div class="summary-row"><span>Contracts</span><strong>100</strong></div><div class="summary-row"><span>Subtotal</span><strong>$64.00</strong></div><div class="summary-row"><span>Trading fee</span><strong>$1.28</strong></div><div class="summary-row total"><span>Total paid</span><strong>$65.28</strong></div></div></div><button class="bet-secondary cancel-bet" type="button">Cancel Bet</button></div><button class="btn btn-primary success-close" type="button">Close</button>
+      </div>
+    </aside>
+  </div>`;
 }
 
 const walletGames = {
@@ -993,15 +1017,24 @@ function renderTrackerFrame(mode) {
   return walletFrameHTML({ tab: mode === "settled" ? "settled" : "active" });
 }
 
-function renderPendingFrame(mode) {
-  if (mode === "empty") return `<div class="flat-screen">${flatHeader("GTL", "Orders")}${flatStatus("empty", "No pending orders", "Limit orders will appear here.")}${flatNav("Orders")}</div>`;
-  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Orders")}${flatStatus("error", "Pending orders unavailable", "Try refreshing the page.")}${flatNav("Orders")}</div>`;
-  const panel = {
-    edit: `<div class="flat-card"><h3>Edit limit price</h3><div class="flat-field">New limit: 48c</div><div class="flat-primary">Save changes</div></div>`,
-    cancel: `<div class="flat-card"><h3>Cancel order?</h3><p>This pending limit order will be removed.</p><div class="flat-btn-row"><span class="flat-secondary">Keep</span><span class="flat-primary">Cancel</span></div></div>`,
-    filled: flatStatus("empty", "Order filled", "Your limit order became an open position."),
-  }[mode] || "";
-  return `<div class="flat-screen">${flatHeader("GTL", "Orders")}<h2 class="flat-hero-title">Pending orders</h2><div class="flat-list">${flatRows(mode === "sell" ? 2 : 1, "pending")}</div>${panel}${flatNav("Orders")}</div>`;
+function accountProfileHTML({ email, provider, hasPassword }) {
+  const providerLabel = provider === "google" ? "Google" : provider === "apple" ? "Apple" : "Email and password";
+  const providerClass = provider === "google" ? "google" : provider === "apple" ? "apple" : "password";
+  const providerMark = provider === "google" ? "G" : provider === "apple" ? "Apple" : "••";
+  return `<h2 class="flat-hero-title">Account</h2>
+    <div class="flat-card account-profile-card">
+      <div class="account-avatar">AM</div>
+      <div class="account-profile-copy">
+        <h3>Alex Morgan</h3>
+        <p>${email}</p>
+      </div>
+    </div>
+    <div class="account-settings-list">
+      <div class="account-setting-row"><span>Email</span><strong>${email}</strong></div>
+      <div class="account-setting-row"><span>Connected with</span><strong><span class="account-provider ${providerClass}"><span>${providerMark}</span>${providerLabel}</span></strong></div>
+      <div class="account-setting-row"><span>Notifications</span><strong>On</strong></div>
+    </div>
+    ${hasPassword ? `<button class="flat-primary account-password-action" type="button" tabindex="-1">Change password</button>` : `<p class="account-auth-note">Password changes are managed through your ${providerLabel} account.</p>`}`;
 }
 
 function renderAccountFrame(mode) {
@@ -1010,8 +1043,10 @@ function renderAccountFrame(mode) {
   if (mode === "settledEmpty") return `<div class="flat-screen">${flatHeader("GTL", "Settled")}${flatStatus("empty", "No settled bets", "Completed trades will appear here.")}${flatNav("Account")}</div>`;
   const content = {
     settled: `<h2 class="flat-hero-title">Settled history</h2><div class="flat-list">${flatRows(4)}</div>`,
-    overview: `<h2 class="flat-hero-title">Account overview</h2><div class="flat-card"><h3>Alex Morgan</h3><p>alex@gtl.test</p></div><div class="flat-list">${flatRows(2)}</div>`,
-    profile: `<h2 class="flat-hero-title">Profile</h2><div class="flat-field">Display name: Alex Morgan</div><div class="flat-field">Email: alex@gtl.test</div><div class="flat-field">Notifications: On</div>`,
+    overview: `${accountProfileHTML({ email: "alex@gtl.test", provider: "password", hasPassword: true })}<div class="flat-list">${flatRows(2)}</div>`,
+    profilePassword: accountProfileHTML({ email: "alex@gtl.test", provider: "password", hasPassword: true }),
+    profileGoogle: accountProfileHTML({ email: "alex.morgan@gmail.com", provider: "google", hasPassword: false }),
+    profileApple: accountProfileHTML({ email: "alex@icloud.com", provider: "apple", hasPassword: false }),
     credits: `<h2 class="flat-hero-title">$240.50</h2><p class="flat-copy">Available balance</p><div class="flat-primary">Top Up</div><div class="flat-list">${flatRows(2)}</div>`,
   }[mode];
   return `<div class="flat-screen">${flatHeader("GTL", "Account")}${content}${flatNav("Account")}</div>`;
@@ -1024,7 +1059,6 @@ function renderFlatFrame(frame) {
     game: renderGameFrame,
     drawer: renderDrawerFrame,
     tracker: renderTrackerFrame,
-    pending: renderPendingFrame,
     account: renderAccountFrame,
   };
   const screen = renderers[frame.type](frame.mode);
