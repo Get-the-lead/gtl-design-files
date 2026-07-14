@@ -1109,9 +1109,14 @@
   min-height: var(--flat-frame-h, 760px);
 }
 
-.design-system-page .flat-frame--game .flat-phone {
+.design-system-page .flat-frame--game .flat-phone,
+.design-system-page .flat-frame--tracker .flat-phone {
   height: auto;
   min-height: var(--flat-frame-h, 760px);
+}
+
+.design-system-page .flat-frame--tracker .flat-phone {
+  min-height: 0;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] {
@@ -1170,8 +1175,8 @@
   padding: var(--s8);
 }
 
-.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home),
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home) {
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-wallet),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-wallet) {
   display: grid;
   grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
   grid-auto-rows: max-content;
@@ -1547,6 +1552,127 @@
   to {
     background-position: calc(100% + 180px) 50%, 50% 50%;
   }
+}
+
+.design-system-page .flat-screen.is-wallet {
+  background: var(--bg);
+  display: block;
+  gap: 0;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  scrollbar-width: none;
+}
+
+.design-system-page .flat-screen.is-wallet::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-wallet .site-header {
+  inset: 0 0 auto;
+  position: absolute;
+}
+
+.design-system-page .flat-screen.is-wallet .brand-pill {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-right: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-screen.is-wallet .brand-link,
+.design-system-page .flat-screen.is-wallet .header-nav,
+.design-system-page .flat-screen.is-wallet .header-left > .theme-switch {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-wallet .brand-menu {
+  display: inline-flex;
+}
+
+.design-system-page .flat-screen.is-wallet .site-header .brand-mark {
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: grid;
+  height: 34px;
+  place-items: center;
+  width: 34px;
+}
+
+.design-system-page .flat-screen.is-wallet .site-header .brand-mark svg {
+  height: 20px;
+  width: 20px;
+}
+
+.design-system-page .flat-screen.is-wallet :is(a, button, .btn, .brand, .wallet-chip, .hpos-trigger, .stats-tab, .order-row) {
+  pointer-events: none;
+}
+
+.design-system-page .flat-screen.is-wallet .wallet {
+  max-width: 720px;
+  padding-bottom: 112px;
+}
+
+.design-system-page .flat-screen.is-wallet .portfolio-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: var(--s10);
+}
+
+.design-system-page .flat-screen.is-wallet .order-group + .order-group {
+  margin-top: var(--s12);
+}
+
+.design-system-page .flat-screen.is-wallet .wallet-dock,
+.design-system-page .flat-screen.is-wallet .order-actions-dock {
+  bottom: var(--s4);
+  left: var(--s4);
+  padding: 0;
+  position: sticky;
+  right: var(--s4);
+  z-index: 8;
+}
+
+.design-system-page .flat-screen.is-wallet .wallet-dock-inner,
+.design-system-page .flat-screen.is-wallet .oad-inner {
+  max-width: none;
+}
+
+.design-system-page .flat-screen.is-wallet .addfunds-backdrop,
+.design-system-page .flat-screen.is-wallet .addfunds-sheet {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-wallet .order-actions-dock {
+  margin-top: var(--s8);
+}
+
+.design-system-page .flat-screen.is-wallet .wallet-error-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.design-system-page .flat-screen.is-wallet .wallet-error-state strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+}
+
+.design-system-page .flat-screen.is-wallet .wallet-error-state span {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-wallet .wallet-error-state .btn {
+  --btn-h: 38px;
+  margin-top: var(--s2);
+  padding-inline: var(--s4);
 }
 
 .design-system-page .flat-screen.is-game {

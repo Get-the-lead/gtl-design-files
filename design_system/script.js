@@ -113,6 +113,8 @@ const flatDocs = {
     groups: [
       { title: "Default states", frames: [
         { label: "Live game default", type: "game", mode: "live" },
+        { label: "Starting soon countdown", type: "game", mode: "countdown" },
+        { label: "Final - away team won", type: "game", mode: "final" },
         { label: "Pregame unavailable", type: "game", mode: "pregame" },
         { label: "Betting paused after score change", type: "game", mode: "paused" },
         { label: "Game stats selected", type: "game", mode: "gameStats" },
@@ -139,20 +141,22 @@ const flatDocs = {
     ],
   },
   tracker: {
-    title: "Tracker / Positions",
-    description: "Portfolio tracking states for open exposure, win/loss context, conflicts, sell preview, and feedback.",
+    title: "Portfolio",
+    description: "Wallet portfolio states from wallet.html for live positions, pending limit orders, settled bets, cancelled orders, and order detail.",
     groups: [
-      { title: "Position states", frames: [
-        { label: "No open positions", type: "tracker", mode: "empty" },
-        { label: "With open positions", type: "tracker", mode: "open" },
-        { label: "Winning position", type: "tracker", mode: "winning" },
-        { label: "Losing position", type: "tracker", mode: "losing" },
-        { label: "Conflicting positions", type: "tracker", mode: "conflict" },
-        { label: "Sell preview", type: "tracker", mode: "sell" },
+      { title: "Wallet states", frames: [
+        { label: "Orders overview", type: "tracker", mode: "open" },
+        { label: "Settled tab", type: "tracker", mode: "settled" },
+        { label: "Empty orders", type: "tracker", mode: "empty" },
       ] },
       { title: "System states", frames: [
         { label: "Loading state", type: "tracker", mode: "loading" },
         { label: "Error state", type: "tracker", mode: "error" },
+      ] },
+      { title: "Order detail states", frames: [
+        { label: "Current detail", type: "tracker", mode: "detailCurrent" },
+        { label: "Pending detail", type: "tracker", mode: "detailPending" },
+        { label: "Settled detail", type: "tracker", mode: "detailSettled" },
       ] },
     ],
   },
@@ -547,6 +551,17 @@ const gameFrameData = {
     away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: teamLogos.phi },
     markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 64, no: 36 }, ktl: { yes: 50, no: 50 } },
   },
+  countdown: {
+    league: "NFL",
+    period: "Starts in",
+    clock: "9:59",
+    countdown: true,
+    waiting: true,
+    message: "Markets open when the game starts.",
+    home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: teamLogos.dalNfl },
+    away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: teamLogos.phi },
+    markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 50, no: 50 }, ktl: { yes: 50, no: 50 } },
+  },
   paused: {
     league: "NFL",
     period: "Q3",
@@ -557,6 +572,16 @@ const gameFrameData = {
     away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: teamLogos.mia },
     markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
   },
+  final: {
+    league: "NBA",
+    period: "Final",
+    clock: "",
+    final: true,
+    message: "Game final. Winning contracts have settled.",
+    home: { abbr: "NYK", name: "Knicks", score: 98, color: "#F58426", logo: teamLogos.ny },
+    away: { abbr: "BOS", name: "Celtics", score: 104, color: "#007A33", logo: teamLogos.bos },
+    markets: { gtl: { yes: 0, no: 100 }, tie: { yes: 0, no: 100 }, ktl: { yes: 100, no: 0 } },
+  },
 };
 
 const flatDocViews = {
@@ -565,7 +590,7 @@ const flatDocViews = {
   portfolio: {
     ...flatDocs.tracker,
     title: "Portfolio Page",
-    description: "Portfolio and position-tracker variants for open exposure, sell previews, loading, and empty states.",
+    description: "Wallet page variants for portfolio stats, orders, settled history, order detail, loading, and empty states.",
   },
   login: {
     title: "Login Page",
@@ -612,31 +637,33 @@ let activeFlatDoc = "home";
 
 function gameScoreboard(g) {
   const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
+  const winner = lead ? g[lead] : null;
   const team = (side) => `<div class="gb-team"><img class="gb-logo" src="${g[side].logo}" alt="${g[side].name}"><span class="gb-abbr">${g[side].abbr}</span></div>`;
-  return `<section class="gb" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+  return `<section class="gb${g.final ? " is-final" : ""}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
     <div class="gb-glow"></div>
     <div class="container gb-inner">
       <div class="gb-topbar"><span class="gb-back"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</span></div>
       <div class="gb-score-stack">
-        <span class="live-badge game-clock-badge"><span class="game-period"><span class="live-dot"></span>${g.period}</span><span class="game-clock tnum">${g.clock}</span></span>
+        <span class="live-badge game-clock-badge"><span class="game-period${g.final ? " is-final" : ""}${g.countdown ? " is-countdown" : ""}">${g.final ? "" : `<span class="${g.countdown ? "countdown-dot" : "live-dot"}"></span>`}${g.period}</span>${g.clock ? `<span class="game-clock tnum${g.countdown ? " is-countdown" : ""}">${g.clock}</span>` : ""}</span>
         <div class="gb-score">${team("home")}<div class="gb-numbers"><span class="gb-num tnum${lead === "home" ? " is-leading" : ""}">${g.home.score}</span><span class="gb-dash">–</span><span class="gb-num tnum${lead === "away" ? " is-leading" : ""}">${g.away.score}</span></div>${team("away")}</div>
       </div>
       <p class="gb-league">${g.league}</p>
+      ${g.final && winner ? `<p class="gb-result"><strong>${winner.abbr} won</strong><span>Final score</span></p>` : ""}
     </div>
   </section>`;
 }
 
 function gameMarkets(g) {
-  const disabled = g.waiting || g.recalc;
+  const disabled = g.waiting || g.recalc || g.final;
   const row = (label, sub, key) => `<div class="mkt-row">
     <button class="price yes" type="button" tabindex="-1"${disabled ? " disabled" : ""}>${g.waiting ? "–" : `${g.markets[key].yes}¢`}</button>
     <span class="mkt-name">${label}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span>
     <button class="price no" type="button" tabindex="-1"${disabled ? " disabled" : ""}>${g.waiting ? "–" : `${g.markets[key].no}¢`}</button>
   </div>`;
-  return `<section class="container markets${g.recalc ? " is-recalc" : ""}">
+  return `<section class="container markets${g.recalc ? " is-recalc" : ""}${g.final ? " is-final" : ""}">
     ${g.message ? `<div class="game-recalc"><span class="pause-dot"></span><span>${g.message}</span></div>` : ""}
     <div class="mkt-grid"><div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>${row("GTL", "Get the Lead", "gtl")}${row("TIE", "", "tie")}${row("KTL", "Keep the Lead", "ktl")}</div>
-    <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>
+    <p class="bet-help">${g.final ? "Game final. Markets are settled." : "Tap a price to start your bet · Prices updated every 10 seconds"}</p>
   </section>`;
 }
 
@@ -750,9 +777,9 @@ function gameStatsPreview(g, activePanel = "market") {
 }
 
 function renderGameFrame(mode) {
-  if (mode === "live" || mode === "pregame" || mode === "paused" || mode === "gameStats") {
+  if (mode === "live" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "gameStats" || mode === "final") {
     const g = mode === "gameStats" ? gameFrameData.live : gameFrameData[mode];
-    const statsPanel = mode === "gameStats" ? "game" : "market";
+    const statsPanel = mode === "gameStats" || mode === "final" ? "game" : "market";
     return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(false)}<main>${gameScoreboard(g)}${gameMarkets(g)}${gameStatsPreview(g, statsPanel)}</main></div>`;
   }
   let banner = "";
@@ -788,12 +815,182 @@ function renderDrawerFrame(mode) {
   </div></div>`;
 }
 
+const walletGames = {
+  "kc-sf": { league: "NFL", period: "Q2", clock: "08:42", home: { abbr: "KC", score: 17, logo: teamLogos.kc, color: "#E31837" }, away: { abbr: "SF", score: 14, logo: teamLogos.sf, color: "#B3995D" }, markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 64, no: 36 } } },
+  "den-dal": { league: "NBA", period: "Q3", clock: "04:18", home: { abbr: "DEN", score: 84, logo: teamLogos.den, color: "#0E2240" }, away: { abbr: "DAL", score: 80, logo: teamLogos.dal, color: "#00538C" }, markets: { gtl: { yes: 52, no: 48 }, tie: { yes: 16, no: 84 }, ktl: { yes: 44, no: 56 } } },
+  "ny-bos": { league: "NBA", period: "Q4", clock: "05:18", home: { abbr: "NYK", score: 84, logo: teamLogos.ny, color: "#F58426" }, away: { abbr: "BOS", score: 89, logo: teamLogos.bos, color: "#007A33" }, markets: { gtl: { yes: 41, no: 59 }, tie: { yes: 17, no: 83 }, ktl: { yes: 63, no: 37 } } },
+  "buf-mia": { league: "NFL", period: "Final", clock: "", home: { abbr: "BUF", score: 27, logo: teamLogos.buf, color: "#00338D" }, away: { abbr: "MIA", score: 24, logo: teamLogos.mia, color: "#008E97" }, markets: { gtl: { yes: 100, no: 0 }, tie: { yes: 0, no: 100 }, ktl: { yes: 100, no: 0 } } },
+  "lal-gs": { league: "NBA", period: "Final", clock: "", home: { abbr: "LAL", score: 101, logo: "../gtl-app/assets/logos/nba-lal.png", color: "#552583" }, away: { abbr: "GS", score: 113, logo: "../gtl-app/assets/logos/nba-gs.png", color: "#1D428A" }, markets: { gtl: { yes: 0, no: 100 }, tie: { yes: 0, no: 100 }, ktl: { yes: 0, no: 100 } } },
+};
+
+const walletUser = {
+  balance: 248.5,
+  positions: [
+    { gameId: "kc-sf", market: "gtl", side: "yes", qty: 150, avg: 31, date: "2026-07-06" },
+    { gameId: "den-dal", market: "gtl", side: "no", qty: 90, avg: 60, date: "2026-07-05" },
+    { gameId: "ny-bos", market: "ktl", side: "yes", qty: 100, avg: 70, date: "2026-07-06" },
+  ],
+  pending: [
+    { gameId: "kc-sf", market: "tie", side: "no", qty: 200, limit: 22, date: "2026-07-07" },
+    { gameId: "den-dal", market: "ktl", side: "yes", qty: 75, limit: 44, date: "2026-07-06" },
+  ],
+  settled: [
+    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 100, avg: 45, result: "win", net: 54.1, date: "2026-06-28" },
+    { gameId: "lal-gs", market: "ktl", side: "yes", qty: 60, avg: 55, result: "loss", net: -33, date: "2026-06-25" },
+    { gameId: "kc-sf", market: "gtl", side: "no", qty: 80, avg: 40, result: "win", net: 41.2, date: "2026-06-30" },
+    { gameId: "ny-bos", market: "gtl", side: "yes", qty: 50, avg: 62, result: "loss", net: -31, date: "2026-06-22" },
+    { gameId: "den-dal", market: "ktl", side: "no", qty: 120, avg: 48, result: "win", net: 66.4, date: "2026-07-01" },
+    { gameId: "buf-mia", market: "ktl", side: "yes", qty: 40, avg: 52, result: "loss", net: -20.8, date: "2026-06-20" },
+  ],
+  cancelled: [
+    { gameId: "lal-gs", market: "gtl", side: "yes", qty: 120, limit: 35, date: "2026-07-02" },
+    { gameId: "kc-sf", market: "ktl", side: "yes", qty: 60, limit: 41, date: "2026-07-01" },
+  ],
+};
+
+const walletMarketLabels = { gtl: "Get the Lead", tie: "Tie", ktl: "Keep the Lead" };
+const walletChevron = `<svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const walletMoney = (value) => `$${Math.abs(value).toFixed(2)}`;
+const walletSigned = (value) => `${value >= 0 ? "+" : "-"}${walletMoney(value)}`;
+const walletDate = (iso) => {
+  const d = new Date(`${iso}T00:00:00`);
+  return Number.isNaN(d.valueOf()) ? "" : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+};
+
+function walletFigures(order) {
+  const g = walletGames[order.gameId];
+  const cur = g.markets[order.market][order.side];
+  const value = (cur / 100) * order.qty;
+  const cost = (order.avg / 100) * order.qty;
+  return { g, cur, value, cost, pnl: value - cost };
+}
+
+function walletOrderRow(order, type, index) {
+  const g = walletGames[order.gameId];
+  const betType = `${walletMarketLabels[order.market]} · <span class="side-${order.side}">${order.side.toUpperCase()}</span>`;
+  let valueHTML = "";
+  if (type === "open") {
+    const { value, pnl } = walletFigures(order);
+    valueHTML = `<span class="or-amount tnum">${walletMoney(value)}</span><span class="or-pnl ${pnl >= 0 ? "up" : "down"} tnum">${walletSigned(pnl)}</span>`;
+  } else if (type === "pending") {
+    valueHTML = `<span class="or-amount tnum">${walletMoney((order.limit / 100) * order.qty)}</span><span class="or-status">Pending</span>`;
+  } else if (type === "cancelled") {
+    valueHTML = `<span class="or-amount tnum">${walletMoney((order.limit / 100) * order.qty)}</span><span class="or-status cancelled">Cancelled</span>`;
+  } else {
+    const win = order.result === "win";
+    valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${walletSigned(order.net)}</span><span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>`;
+  }
+  return `<button class="order-row" type="button" tabindex="-1" data-order-open="${type}:${index}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <span class="or-logos"><img src="${g.home.logo}" alt=""><img src="${g.away.logo}" alt=""></span>
+    <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${g.home.abbr} · ${g.away.abbr}${order.date ? ` · ${walletDate(order.date)}` : ""}</span></span>
+    <span class="or-value">${valueHTML}</span>
+    <span class="or-chev" aria-hidden="true">${walletChevron}</span>
+  </button>`;
+}
+
+function walletOrderGroup(title, list, type, empty) {
+  const rows = list.length ? list.map((order, index) => walletOrderRow(order, type, index)).join("") : `<div class="wallet-empty">${empty}</div>`;
+  return `<div class="order-group"><div class="order-group-head"><h2>${title}</h2><span class="count">${list.length}</span></div><div class="order-list${list.length > 5 ? " is-collapsed" : ""}">${rows}</div>${list.length > 5 ? `<button class="order-showall" type="button" tabindex="-1" aria-expanded="false">Show all ${list.length}</button>` : ""}</div>`;
+}
+
+function walletStatsHTML(empty = false) {
+  const positions = empty ? [] : walletUser.positions;
+  const pending = empty ? [] : walletUser.pending;
+  const settled = empty ? [] : walletUser.settled;
+  const openPnl = positions.reduce((sum, order) => sum + walletFigures(order).pnl, 0);
+  const openValue = positions.reduce((sum, order) => sum + walletFigures(order).value, 0);
+  const settledNet = settled.reduce((sum, order) => sum + order.net, 0);
+  const totalProfit = openPnl + settledNet;
+  const totalBets = positions.length + pending.length + settled.length;
+  const wins = settled.filter((order) => order.result === "win").length;
+  const winRate = settled.length ? Math.round((wins / settled.length) * 100) : 0;
+  const stat = (label, value, cls = "") => `<div class="pstat"><span class="pstat-k">${label}</span><span class="pstat-v ${cls} tnum">${value}</span></div>`;
+  return `<div class="portfolio-stats">${stat("Total profit", walletSigned(totalProfit), totalProfit >= 0 ? "up" : "down")}${stat("Total bets", totalBets)}${stat("Win rate", `${winRate}%`)}${stat("Open value", walletMoney(openValue))}</div>`;
+}
+
+function walletFrameHTML({ tab = "active", empty = false } = {}) {
+  const positions = empty ? [] : walletUser.positions;
+  const pending = empty ? [] : walletUser.pending;
+  const settled = empty ? [] : walletUser.settled;
+  const cancelled = empty ? [] : walletUser.cancelled;
+  return `<div class="flat-screen is-wallet">${homeHeader(true)}
+    <main class="wallet container">
+      <div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your live positions, pending limit orders and settled bets - all in one place.</p></div>
+      ${walletStatsHTML(empty)}
+      <div class="stats-tabs" id="orderTabs" role="tablist" aria-label="Orders">
+        <button class="stats-tab${tab === "active" ? " is-active" : ""}" type="button" role="tab" tabindex="-1" aria-selected="${tab === "active"}">Orders</button>
+        <button class="stats-tab${tab === "settled" ? " is-active" : ""}" type="button" role="tab" tabindex="-1" aria-selected="${tab === "settled"}">Settled</button>
+      </div>
+      <div class="order-panel" data-order-panel="active"${tab === "active" ? "" : " hidden"}>${walletOrderGroup("Current", positions, "open", "No current orders.")}${walletOrderGroup("Pending", pending, "pending", "No pending orders.")}</div>
+      <div class="order-panel" data-order-panel="settled"${tab === "settled" ? "" : " hidden"}>${walletOrderGroup("Settled", settled, "settled", "No settled orders yet.")}${walletOrderGroup("Cancelled", cancelled, "cancelled", "No cancelled orders.")}</div>
+      <div class="wallet-dock"><div class="wallet-dock-inner"><span class="wd-balance"><span class="wd-label">Available balance</span><span class="wd-amount tnum">${walletMoney(walletUser.balance)}</span></span><button class="btn btn-primary wd-topup" type="button" tabindex="-1">Top Up</button></div></div>
+    </main>
+  </div>`;
+}
+
+function walletDetailFrameHTML(type, index) {
+  const order = type === "pending" ? walletUser.pending[index] : type === "settled" ? walletUser.settled[index] : walletUser.positions[index];
+  const g = walletGames[order.gameId];
+  const betType = `${walletMarketLabels[order.market]} · <span class="side-${order.side}">${order.side.toUpperCase()}</span>`;
+  let headline = "";
+  let rows = "";
+  let actions = "";
+  if (type === "pending") {
+    const value = (order.limit / 100) * order.qty;
+    headline = `<span class="od-big tnum">${walletMoney(value)}</span>`;
+    rows = `<div class="summary-row"><span>Your bet</span><strong>${betType}</strong></div>
+          <div class="summary-row"><span>Status</span><strong><span class="status-chip pending">Pending</span></strong></div>
+          <div class="summary-row"><span>Order date</span><strong>${walletDate(order.date)}</strong></div>
+          <div class="summary-row"><span>Limit price</span><strong>${order.limit}¢</strong></div>
+          <div class="summary-row"><span>Contracts</span><strong>${order.qty}</strong></div>
+          <div class="summary-row total"><span>Order value</span><strong>${walletMoney(value)}</strong></div>`;
+    actions = `<div class="order-actions-dock"><div class="oad-inner"><button class="btn btn-secondary" type="button" tabindex="-1">Edit order</button><button class="btn btn-danger" type="button" tabindex="-1">Cancel order</button></div></div>`;
+  } else if (type === "settled") {
+    const win = order.result === "win";
+    headline = `<span class="od-big ${win ? "up" : "down"} tnum">${walletSigned(order.net)}</span>`;
+    rows = `<div class="summary-row"><span>Your bet</span><strong>${betType}</strong></div>
+          <div class="summary-row"><span>Status</span><strong><span class="status-chip settled">Settled</span></strong></div>
+          <div class="summary-row"><span>Order date</span><strong>${walletDate(order.date)}</strong></div>
+          <div class="summary-row"><span>Contracts</span><strong>${order.qty}</strong></div>
+          <div class="summary-row"><span>Average price</span><strong>${order.avg}¢</strong></div>
+          <div class="summary-row total"><span>Net return</span><strong>${walletSigned(order.net)}</strong></div>`;
+  } else {
+    const { cur, value, cost, pnl } = walletFigures(order);
+    const up = pnl >= 0;
+    headline = `<span class="od-big tnum">${walletMoney(value)}</span><span class="od-pnl ${up ? "up" : "down"} tnum">${walletSigned(pnl)}</span>`;
+    rows = `<div class="summary-row"><span>Your bet</span><strong>${betType}</strong></div>
+          <div class="summary-row"><span>Status</span><strong><span class="status-chip open">Current</span></strong></div>
+          <div class="summary-row"><span>Order date</span><strong>${walletDate(order.date)}</strong></div>
+          <div class="summary-row"><span>Contracts</span><strong>${order.qty}</strong></div>
+          <div class="summary-row"><span>Average price</span><strong>${order.avg}¢</strong></div>
+          <div class="summary-row"><span>Current price</span><strong>${cur}¢</strong></div>
+          <div class="summary-row"><span>Cost basis</span><strong>${walletMoney(cost)}</strong></div>
+          <div class="summary-row total"><span>Current value</span><strong>${walletMoney(value)}</strong></div>`;
+    actions = `<div class="order-actions-dock"><div class="oad-inner"><button class="btn btn-secondary" type="button" tabindex="-1">Buy More</button><button class="btn btn-primary" type="button" tabindex="-1">Sell</button></div></div>`;
+  }
+  return `<div class="flat-screen is-wallet is-wallet-detail">${homeHeader(true)}
+    <main class="wallet container">
+      <button class="order-back" type="button" tabindex="-1">${walletChevron}<span>Orders</span></button>
+      <div class="order-detail">
+        <div class="od-game"><span class="or-logos"><img src="${g.home.logo}" alt=""><img src="${g.away.logo}" alt=""></span><span class="od-game-meta"><span class="od-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span><span class="od-league">${g.league.toUpperCase()} · ${g.period} ${g.clock}</span></span></div>
+        <div class="od-headline">${headline}</div>
+        <div class="summary od-summary">
+          ${rows}
+        </div>
+      </div>
+      ${actions}
+    </main>
+  </div>`;
+}
+
 function renderTrackerFrame(mode) {
-  if (mode === "loading") return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}${flatLoading()}${flatNav("Orders")}</div>`;
-  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}${flatStatus("error", "Positions unavailable", "Could not load open exposure.")}${flatNav("Orders")}</div>`;
-  if (mode === "empty") return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}${flatStatus("empty", "No open positions", "Your live positions will appear here.")}${flatNav("Orders")}</div>`;
-  const headline = { winning: "+$19.20 unrealized", losing: "-$13.80 unrealized", conflict: "Conflicting sides", sell: "Sell preview" }[mode] || "Open positions";
-  return `<div class="flat-screen">${flatHeader("GTL", "Portfolio")}<h2 class="flat-hero-title">${headline}</h2><div class="flat-list">${flatRows(mode === "conflict" ? 3 : 2)}</div>${mode === "sell" ? renderDrawerFrame("sellMarket").replace('class="flat-screen is-drawer"', 'class="flat-card"') : ""}${flatNav("Orders")}</div>`;
+  if (mode === "loading") return `<div class="flat-screen is-wallet">${homeHeader(true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your live positions, pending limit orders and settled bets - all in one place.</p></div>${flatLoading()}</main></div>`;
+  if (mode === "error") return `<div class="flat-screen is-wallet">${homeHeader(true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your live positions, pending limit orders and settled bets - all in one place.</p></div><div class="wallet-empty wallet-error-state"><strong>Positions unavailable</strong><span>Could not load open exposure.</span><button class="btn btn-secondary" type="button" tabindex="-1">Reload</button></div></main></div>`;
+  if (mode === "empty") return walletFrameHTML({ empty: true });
+  if (mode === "detailCurrent") return walletDetailFrameHTML("open", 0);
+  if (mode === "detailPending") return walletDetailFrameHTML("pending", 0);
+  if (mode === "detailSettled") return walletDetailFrameHTML("settled", 0);
+  return walletFrameHTML({ tab: mode === "settled" ? "settled" : "active" });
 }
 
 function renderPendingFrame(mode) {

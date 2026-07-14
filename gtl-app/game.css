@@ -69,6 +69,26 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.gb-score-stack .game-period.is-final {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.9);
+}
+.gb-score-stack .game-period.is-countdown {
+  background: rgba(143, 183, 255, 0.16);
+  color: var(--blue);
+}
+.gb-score-stack .game-clock.is-countdown {
+  color: var(--blue);
+}
+.gb-score-stack .countdown-dot {
+  animation: pause-pulse 1.2s var(--ease) infinite;
+  background: var(--blue);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(143, 183, 255, 0.36);
+  flex: none;
+  height: 9px;
+  width: 9px;
+}
 .gb-score-stack .game-clock {
   font-family: var(--font-display);
   font-size: clamp(1.05rem, 0.92rem + 0.7vw, 1.35rem);
@@ -108,6 +128,23 @@
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.7);
 }
+.gb-result {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: var(--s3) 0 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+.gb-result strong {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: var(--fs-lead);
+}
+.gb-result span {
+  color: rgba(255, 255, 255, 0.62);
+}
 
 /* Markets — same betting language as the home cards (YES/NO columns,
    pill prices, GTL/TIE/KTL + subtitles), scaled up for the detail page */
@@ -129,8 +166,17 @@
 .game-recalc[hidden] { display: none; }
 .game-recalc .pause-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); animation: pause-pulse 1.2s var(--ease) infinite; }
 @keyframes pause-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); } 100% { box-shadow: 0 0 0 10px rgba(255, 206, 77, 0); } }
+.markets.is-final .game-recalc {
+  color: var(--ink-2);
+}
+.markets.is-final .game-recalc .pause-dot {
+  animation: none;
+  background: var(--ink-3);
+  box-shadow: none;
+}
 /* while recalculating, the prices dim + lock */
 .markets.is-recalc .mkt-grid { opacity: 0.5; transition: opacity 0.2s var(--ease); }
+.markets.is-final .mkt-grid { opacity: 0.72; }
 .mkt-row .price:disabled { cursor: default; }
 .mkt-name { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; font-size: var(--fs-h3); font-weight: 700; line-height: 1.1; color: var(--ink); }
 .mkt-sub { font-size: var(--fs-label); font-weight: 500; color: var(--ink-2); }
