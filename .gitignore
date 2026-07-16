@@ -6,6 +6,10 @@
 **/.impeccable/
 PRODUCT.md
 
+# Project-scoped Codex instructions and allowlisted skill mirrors
+!/.agents/
+!/.agents/**
+
 # Local gate passphrase - keep out of git
 gate.config.js
 **/gate.config.js

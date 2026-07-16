@@ -1,0 +1,4 @@
+interface:
+  display_name: "Forge Task"
+  short_description: "Track confirmed work in The Forge"
+  default_prompt: "Use $forge-task to track this confirmed piece of work in The Forge."
