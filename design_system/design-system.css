@@ -1133,6 +1133,11 @@
   border-radius: 28px;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-frame--game .flat-phone {
+  height: auto;
+  min-height: var(--flat-frame-h, 900px);
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-phone {
   border: 1px solid rgba(21, 25, 23, 0.18);
   border-radius: 12px;
@@ -1762,6 +1767,251 @@
 
 .design-system-page .flat-screen.is-game .mkt-head span {
   justify-self: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game {
+  height: auto;
+  min-height: var(--flat-frame-h, 900px);
+  overflow: visible;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game main {
+  height: auto;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game main::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .site-header {
+  padding-inline: var(--s6);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb {
+  background: #070809;
+  isolation: isolate;
+  min-height: 360px;
+  overflow: hidden;
+  padding: 92px 0 var(--s8);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-glow {
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-inner {
+  max-width: 704px;
+  padding-inline: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-score-stack {
+  gap: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-score {
+  gap: var(--s7);
+  grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-logo {
+  height: 72px;
+  width: 72px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-num,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-dash {
+  font-size: 4.2rem;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .markets,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .stats-section {
+  max-width: 704px;
+  padding-left: var(--s5);
+  padding-right: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .markets {
+  padding-top: var(--s8);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .mkt-head,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .mkt-row {
+  gap: var(--s3);
+  grid-template-columns: minmax(116px, 0.85fr) minmax(180px, 1.3fr) minmax(116px, 0.85fr);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .price {
+  min-height: 48px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .stats-section {
+  margin-inline: auto;
+  padding-bottom: var(--s8);
+  padding-top: var(--s9);
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .stats-overall-head {
+  margin-bottom: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .stats-tabs {
+  margin-bottom: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .chart-grid-wrap,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .momentum-grid {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .chart-card,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .momentum-card {
+  border-radius: var(--r-lg);
+  min-width: 0;
+  padding: var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .chart-head {
+  margin-bottom: var(--s3);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .book-row {
+  height: 26px;
+  padding-inline: var(--s3);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .flow-bars {
+  height: 92px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table {
+  font-size: var(--fs-eyebrow);
+  margin-top: var(--s4);
+  table-layout: fixed;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table th,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table td {
+  overflow: hidden;
+  padding: var(--s2) 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table th:nth-child(1),
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table td:nth-child(1) {
+  width: 18%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table th:nth-child(2),
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table td:nth-child(2),
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table th:nth-child(3),
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table td:nth-child(3) {
+  width: 17%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .worm-wrap {
+  height: 116px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .worm-quarters span {
+  font-size: 2.25rem;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-frame--game .flat-phone {
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game {
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+  overflow: visible;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game main {
+  height: auto;
+  overflow: visible;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .site-header {
+  padding-inline: var(--s7);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb {
+  background: #070809;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 100px 0 var(--s9);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-glow {
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-inner,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .markets,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-section {
+  max-width: 960px;
+  padding-left: var(--s7);
+  padding-right: var(--s7);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-score {
+  gap: var(--s10);
+  grid-template-columns: minmax(160px, 1fr) auto minmax(160px, 1fr);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-logo {
+  height: 86px;
+  width: 86px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .markets {
+  padding-top: var(--s9);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .mkt-head,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .mkt-row {
+  grid-template-columns: minmax(160px, 0.9fr) minmax(240px, 1.25fr) minmax(160px, 0.9fr);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-section {
+  margin-inline: auto;
+  padding-bottom: var(--s10);
+  padding-top: var(--s10);
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .chart-grid-wrap,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .momentum-grid {
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .chart-card,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .momentum-card {
+  min-width: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .bets-table {
+  table-layout: fixed;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .bets-table th,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .bets-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .design-system-page .flat-screen.is-auth .auth-close {
