@@ -107,6 +107,15 @@ const flatDocs = {
       ] },
     ],
   },
+  welcome: {
+    title: "Welcome Home",
+    description: "Post-registration welcome screen showing credited balance and the primary route into live betting.",
+    groups: [
+      { title: "Post-signup states", frames: [
+        { label: "Welcome credits", type: "welcome", mode: "credits" },
+      ] },
+    ],
+  },
   game: {
     title: "Game Page",
     description: "Game detail page variants covering live market access, unavailable markets, position context, refresh, and errors.",
@@ -519,6 +528,28 @@ function renderHomeFrame(mode) {
   return `<div class="flat-screen is-home is-home-${mode}">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter()}</div>`;
 }
 
+function renderWelcomeFrame() {
+  return `<div class="flat-screen is-welcome">${homeHeader(true)}
+    <main class="welcome-main container">
+      <section class="welcome-panel" aria-labelledby="dsWelcomeTitle">
+        <div class="welcome-copy">
+          <p class="welcome-kicker">Welcome, <span>Alex</span></p>
+          <h1 id="dsWelcomeTitle">You got <span>$1,500.00</span> in betting credits.</h1>
+          <p>Use them on live GTL markets. Pick a game, back the lead, and trade the swing as it happens.</p>
+        </div>
+        <div class="credit-ticket" aria-label="Welcome credit balance">
+          <span class="ticket-label">Available credits</span>
+          <span class="ticket-value tnum">$1,500.00</span>
+          <span class="ticket-note">Ready to use on your first bet</span>
+        </div>
+        <div class="welcome-actions">
+          <span class="btn btn-primary btn-lg">Start betting</span>
+        </div>
+      </section>
+    </main>
+  </div>`;
+}
+
 const gameFrameData = {
   live: {
     league: "NBA",
@@ -573,6 +604,7 @@ const gameFrameData = {
 
 const flatDocViews = {
   home: flatDocs.home,
+  welcome: flatDocs.welcome,
   game: flatDocs.game,
   portfolio: {
     ...flatDocs.tracker,
@@ -607,9 +639,10 @@ const flatDocViews = {
   drawer: flatDocs.drawer,
   account: flatDocs.account,
 };
-const flatDocOrder = ["home", "game", "portfolio", "login", "registration", "drawer", "account"];
+const flatDocOrder = ["home", "welcome", "game", "portfolio", "login", "registration", "drawer", "account"];
 const flatDocTabLabels = {
   home: "Home",
+  welcome: "Welcome",
   game: "Game",
   portfolio: "Portfolio",
   login: "Login",
@@ -1056,6 +1089,7 @@ function renderFlatFrame(frame) {
   const renderers = {
     auth: renderAuthFrame,
     home: renderHomeFrame,
+    welcome: renderWelcomeFrame,
     game: renderGameFrame,
     drawer: renderDrawerFrame,
     tracker: renderTrackerFrame,
