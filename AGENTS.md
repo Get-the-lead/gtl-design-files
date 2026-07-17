@@ -41,6 +41,43 @@ There is no package manager, build step, or automated test suite in this repo.
 
 Forge project: `get-the-lead` (Get The Lead).
 
+### Private MCP connection
+
+Use the project-pinned production Forge MCP endpoint for live Forge context:
+
+`https://www.app-theforge.com/api/mcp?project=get-the-lead`
+
+The repository-local `.codex/config.toml` reuses the shared read-only
+`FORGE_MCP_TOKEN`; Forge enforces the `get-the-lead` project pin server-side.
+The token is shown once: never paste it into this repository, an agent
+instruction, a committed MCP configuration, logs, or chat messages.
+
+For a terminal session, load the credential without adding it to shell history:
+
+```bash
+export FORGE_MCP_URL="https://www.app-theforge.com/api/mcp?project=get-the-lead"
+read -s "FORGE_MCP_TOKEN?Paste Forge token: "
+export FORGE_MCP_TOKEN
+echo
+```
+
+Register the endpoint with the agent or chat client using Bearer authentication
+from `FORGE_MCP_TOKEN`. Verify the connection from the Forge repository:
+
+```bash
+cd /Users/samblandford/Developer/applications/the-forge
+pnpm mcp:smoke
+```
+
+A working project-pinned connection reports eight discovered tools, identifies
+`get-the-lead` in `forge_health`, returns only `get-the-lead` from
+`forge_list_projects`, and ends with `Forge MCP read smoke passed.` Never request
+another project slug. Project-pinned connections intentionally omit the
+cross-project Daily Focus tool. If Forge MCP authentication, transport, or
+project pinning fails, report that failure explicitly; do not silently treat
+repository files as fresh Forge state. Revoke unused or exposed credentials
+from **Account → Agent access**.
+
 Use Forge when work needs to persist beyond the current conversation:
 
 - Use `forge-task` for confirmed implementation work, bugs, or follow-ups. Do
