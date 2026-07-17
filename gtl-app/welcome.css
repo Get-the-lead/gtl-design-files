@@ -1,0 +1,137 @@
+/* GTL welcome bonus screen */
+
+.welcome-body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.welcome-main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding-top: calc(var(--header-h) + var(--s12));
+  padding-bottom: var(--s12);
+}
+
+.welcome-panel {
+  width: min(100%, 760px);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s8);
+  padding: clamp(var(--s8), 8vw, var(--s16)) var(--s5);
+}
+
+.welcome-panel::before {
+  content: "";
+  position: absolute;
+  inset: 8% -10% auto;
+  height: 62%;
+  z-index: -1;
+  background:
+    radial-gradient(45% 60% at 50% 28%, var(--green-glow), transparent 70%),
+    radial-gradient(42% 48% at 25% 70%, rgba(96, 140, 250, 0.18), transparent 70%),
+    radial-gradient(42% 48% at 78% 72%, rgba(255, 206, 77, 0.13), transparent 70%);
+  filter: blur(10px);
+}
+
+.welcome-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s4);
+}
+
+.welcome-kicker {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-body);
+  font-weight: 700;
+}
+
+.welcome-copy h1 {
+  max-width: 12ch;
+  font-size: var(--fs-hero);
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.welcome-copy h1 span {
+  color: var(--green);
+}
+
+.welcome-copy p:last-child {
+  margin: 0;
+  max-width: 50ch;
+  color: var(--ink-2);
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.credit-ticket {
+  width: min(100%, 430px);
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s6);
+  border: 1px solid var(--green-line);
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(180deg, rgba(74, 222, 128, 0.13), rgba(74, 222, 128, 0.04)),
+    var(--surface);
+}
+
+.ticket-label,
+.ticket-note {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  font-weight: 700;
+}
+
+.ticket-label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.ticket-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 10vw, 4.4rem);
+  line-height: 1;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.welcome-actions {
+  width: min(100%, 430px);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s3);
+}
+
+.welcome-actions .btn {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .welcome-panel {
+    animation: welcome-in 0.48s var(--ease-out) both;
+  }
+
+  .credit-ticket {
+    animation: ticket-in 0.58s var(--ease-out) 0.08s both;
+  }
+}
+
+@keyframes welcome-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes ticket-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}

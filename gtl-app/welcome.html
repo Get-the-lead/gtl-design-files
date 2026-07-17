@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Welcome</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="welcome.css" />
+</head>
+<body class="welcome-body">
+
+  <header class="site-header" id="siteHeader"></header>
+
+  <main class="welcome-main container" id="welcomeMain">
+    <section class="welcome-panel" aria-labelledby="welcomeTitle">
+      <div class="welcome-copy">
+        <p class="welcome-kicker">Welcome, <span data-welcome-name>player</span></p>
+        <h1 id="welcomeTitle">You got <span data-welcome-bonus>$1,500.00</span> in betting credits.</h1>
+        <p>Use them on live GTL markets. Pick a game, back the lead, and trade the swing as it happens.</p>
+      </div>
+
+      <div class="credit-ticket" aria-label="Welcome credit balance">
+        <span class="ticket-label">Available credits</span>
+        <span class="ticket-value tnum" data-welcome-balance>$1,500.00</span>
+        <span class="ticket-note">Ready to use on your first bet</span>
+      </div>
+
+      <div class="welcome-actions">
+        <a class="btn btn-primary btn-lg" href="home.html#live" data-welcome-primary>Start betting</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
