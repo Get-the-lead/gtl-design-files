@@ -15,7 +15,7 @@ inaccurate.
 
 ## Stack
 
-Plain HTML · CSS · JavaScript
+Plain HTML · CSS · JavaScript · Supabase (review layer only)
 
 There is no package manager, build step, or automated test suite in this repo.
 
@@ -23,6 +23,8 @@ There is no package manager, build step, or automated test suite in this repo.
 
 - `gtl-app/` — active application pages, styles, scripts, and assets
 - `design_system/` — active visual reference and component catalogue
+- `review/` — private, standalone design-review shell; never import it from `gtl-app/`
+- `supabase/` — tracked review database configuration and migrations
 - `archive/` — superseded explorations; do not extend these
 
 ## Design rules
@@ -36,6 +38,10 @@ There is no package manager, build step, or automated test suite in this repo.
   reusable component, token, or pattern.
 - Never expose, print, or commit the private preview passphrase or other
   credentials. `gtl-app/gate.config.js` is local-only.
+- Keep review functionality isolated from the prototype. Production prototype
+  deployments must serve `gtl-app/` only; review deployments serve the repository
+  root so `review/` can wrap the same files. Only browser-safe Supabase publishable
+  keys may appear in `review/config.js`; never place secret or service-role keys there.
 
 ## Forge
 
