@@ -7,6 +7,13 @@
     <title>GTL Design Review</title>
     <link rel="preconnect" href="https://esm.sh" />
     <link rel="stylesheet" href="review.css" />
+    <!-- The review shell is already the access boundary, so let the prototype
+         iframe skip its private-preview passphrase gate. The iframe is
+         same-origin, so it shares this sessionStorage entry; seeding it here in
+         <head> (before the <body> iframe is parsed) suppresses each page's
+         redirect to index.html. Direct visitors to the deployed prototype are
+         unaffected. -->
+    <script>try{sessionStorage.setItem('gtl-gate','ok');}catch(e){}</script>
     <script src="config.js"></script>
     <script type="module" src="review.js"></script>
   </head>
