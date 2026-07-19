@@ -1512,6 +1512,11 @@
   justify-self: center;
 }
 
+.design-system-page .flat-screen.is-home .cs-actions-single {
+  grid-template-columns: minmax(0, 220px);
+  justify-content: center;
+}
+
 .design-system-page .flat-screen.is-home .mkt-name {
   display: flex;
   flex-direction: column;
@@ -1568,9 +1573,19 @@
   scrollbar-width: none;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-home.is-home-positions .pos-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
 .design-system-page .flat-screen.is-home.is-home-positions .pos-card {
   flex: 0 0 clamp(316px, 94%, 376px);
   scroll-snap-align: start;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-home.is-home-positions .pos-card {
+  flex: 0 0 100%;
 }
 
 .design-system-page .flat-screen.is-home.is-home-positions .pos-footer {
@@ -1631,7 +1646,7 @@
 }
 
 .design-system-page .flat-screen.is-home .footer-cols {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--s4);
 }
 
@@ -1657,6 +1672,13 @@
   align-items: flex-start;
   flex-direction: column;
   gap: var(--s2);
+}
+
+.design-system-page .flat-screen.is-game-countdown .game-period.is-countdown,
+.design-system-page .flat-screen.is-game-final .game-period.is-final {
+  font-family: var(--font-ui);
+  font-size: var(--fs-label);
+  font-weight: 600;
 }
 
 .design-system-page .flat-screen.is-home .ds-home-skeleton {
@@ -1743,7 +1765,7 @@
 
 .design-system-page .flat-screen.is-wallet .wallet {
   max-width: 720px;
-  padding-bottom: 112px;
+  padding-bottom: var(--s16);
 }
 
 .design-system-page .flat-screen.is-wallet .portfolio-stats {
@@ -1801,6 +1823,23 @@
   --btn-h: 38px;
   margin-top: var(--s2);
   padding-inline: var(--s4);
+}
+
+.design-system-page .flat-screen.is-wallet .or-logos > img {
+  flex: 0 0 26px;
+  height: 26px;
+  object-fit: contain;
+  width: 26px;
+}
+
+.design-system-page .flat-screen.is-wallet .or-logos > img + img {
+  margin-left: -8px;
+}
+
+.design-system-page .flat-screen.is-wallet .od-game .or-logos > img {
+  flex-basis: 34px;
+  height: 34px;
+  width: 34px;
 }
 
 .design-system-page .flat-screen.is-game {
@@ -2266,11 +2305,37 @@
 .design-system-page .flat-screen.is-drawer .contracts-input-box .num-input {
   border: 0;
   border-radius: 0;
+  font-size: 2.3rem;
   height: 42px;
   line-height: 42px;
   padding: 0;
   text-align: center;
   width: 100%;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .contracts-input-box .num-input,
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .bet-total-big {
+  font-size: 2.3rem;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .limit-input-box {
+  gap: 0;
+  justify-content: center;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .limit-input-box .num-input {
+  flex: 0 0 auto;
+  padding: 0;
+  text-align: right;
+  width: 2ch;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .limit-input-box .num-input.is-error {
+  width: 3ch;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .limit-input-box .num-suffix {
+  flex: 0 0 auto;
 }
 
 .design-system-page .flat-screen.is-drawer .num-input.is-error {
@@ -3356,6 +3421,10 @@
   width: 48px;
 }
 
+.design-system-page .ds-card-frame .team-logo .team-mark-abbr {
+  font-size: 0.86rem;
+}
+
 .design-system-page .ds-card-frame .team-abbr {
   font-size: var(--fs-label);
 }
@@ -3435,6 +3504,28 @@
 .design-system-page .ds-order-row-frame .order-row {
   margin-inline: auto;
   max-width: 420px;
+}
+
+.design-system-page #cards .ds-order-row-frame .or-logo {
+  border-radius: 8px;
+  flex: 0 0 26px;
+  height: 26px;
+  width: 26px;
+}
+
+.design-system-page #cards .ds-order-row-frame .or-logos > img {
+  flex: 0 0 26px;
+  height: 26px;
+  object-fit: contain;
+  width: 26px;
+}
+
+.design-system-page #cards .ds-order-row-frame .or-logos > img + img {
+  margin-left: -8px;
+}
+
+.design-system-page .ds-order-row-frame .or-logo .team-mark-abbr {
+  font-size: 0.56rem;
 }
 
 @media (max-width: 980px) {

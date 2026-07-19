@@ -79,6 +79,7 @@ const flatDocs = {
       { title: "Default states", frames: [
         { label: "Sign in", type: "auth", mode: "signin" },
         { label: "Create account", type: "auth", mode: "register" },
+        { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
         { label: "Email verification", type: "auth", mode: "verify" },
@@ -97,7 +98,6 @@ const flatDocs = {
         { label: "Logged out default", type: "home", mode: "guest" },
         { label: "Logged in default", type: "home", mode: "logged" },
         { label: "No live games", type: "home", mode: "noLive" },
-        { label: "With live games", type: "home", mode: "live" },
         { label: "NBA selected", type: "home", mode: "nba" },
         { label: "With open positions", type: "home", mode: "positions" },
       ] },
@@ -171,16 +171,13 @@ const flatDocs = {
   },
   account: {
     title: "Settled / Account",
-    description: "Account and history views covering settled activity, profile, credits, loading, and errors.",
+    description: "Account views covering profile, credits, loading, and errors.",
     groups: [
       { title: "History and account states", frames: [
-        { label: "Settled empty state", type: "account", mode: "settledEmpty" },
-        { label: "Settled history", type: "account", mode: "settled" },
         { label: "Account overview", type: "account", mode: "overview" },
         { label: "Profile - password account", type: "account", mode: "profilePassword" },
         { label: "Profile - Google account", type: "account", mode: "profileGoogle" },
         { label: "Profile - Apple account", type: "account", mode: "profileApple" },
-        { label: "Credits / balance", type: "account", mode: "credits" },
         { label: "Loading state", type: "account", mode: "loading" },
         { label: "Error state", type: "account", mode: "error" },
       ] },
@@ -308,6 +305,14 @@ function renderAuthFrame(mode) {
         ${socialRow()}<div class="auth-divider">or</div>
         <div class="auth-form">${field("Email", "you@email.com", { type: "email" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
         <p class="auth-fineprint">By continuing you agree to GTL's <span>Terms</span> and <span>Privacy Policy</span>. 21+ only.</p>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "registerPassword") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span></span></div>
+      <div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("Step 2 of 3", "Create a password", "Keep your account secure with a strong password.")}
+        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "reset") {
@@ -439,7 +444,7 @@ function homeLeagueStrip(active = "nfl") {
 
 function homeHero(mode) {
   if (mode === "logged" || mode === "positions") {
-    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey Alex Morgan</h1></div><div class="authed-stack">${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
+    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey alexmorgan</h1></div><div class="authed-stack">${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
   }
   return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner"><div class="hero-trading"><span class="live-dot"></span><span class="tnum">3,247</span> trading right now</div><h1 class="hero-title">Trade the moments that move the game.</h1><p class="hero-sub">Back the lead on live NFL &amp; NBA. Buy and sell in seconds, as the game turns.</p><div class="hero-cta"><span class="btn btn-primary btn-lg">Live Games</span><span class="btn btn-glass btn-lg">Create Account</span></div></div></section>`;
 }
@@ -449,7 +454,7 @@ function homePositionsBlock() {
 }
 
 function homeEmptyPositions() {
-  return `<div class="coming-soon authed-empty-positions"><h3 class="cs-title">No open positions yet</h3><p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p><div class="pos-footer no-scroll"><span>View All</span><span>View Settled</span></div></div>`;
+  return `<div class="coming-soon authed-empty-positions"><h3 class="cs-title">No open positions yet</h3><p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p></div>`;
 }
 
 function homePositionCardA(variant) {
@@ -505,7 +510,7 @@ function homeLiveSection(mode) {
   if (mode === "noLive") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nfl.png" alt=""><h3 class="cs-title">No live games right now</h3><p class="cs-desc">Upcoming markets will appear here before kickoff.</p></div>`;
   if (mode === "nba") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nba.png" alt=""><h3 class="cs-title">NBA Betting Coming Soon</h3><p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p><div class="cs-actions"><span class="btn btn-secondary">I'd bet on NBA</span><span class="btn btn-secondary">Not for me</span></div></div>`;
   if (mode === "loading") content = `<div class="game-grid"><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article></div>`;
-  if (mode === "error") content = `<div class="coming-soon"><h3 class="cs-title">Unable to load markets</h3><p class="cs-desc">Refresh the page or try again later.</p><div class="cs-actions"><span class="btn btn-secondary">Try again</span></div></div>`;
+  if (mode === "error") content = `<div class="coming-soon"><h3 class="cs-title">Unable to load markets</h3><p class="cs-desc">Refresh the page or try again later.</p><div class="cs-actions cs-actions-single"><span class="btn btn-secondary">Try again</span></div></div>`;
   return `<section class="section live"><div class="container"><div class="section-head center"><span class="eyebrow">On now</span><h2>Live games</h2></div>${homeLeagueStrip(mode === "nba" ? "nba" : "nfl")}${content}</div></section>`;
 }
 
@@ -520,7 +525,7 @@ function homeHowSection() {
 }
 
 function homeFooter() {
-  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><span class="brand"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Product</h4><span>Live games</span><span>How it works</span><span>Tutorial</span></div><div class="footer-col"><h4>Company</h4><span>About</span><span>Careers</span><span>Contact</span></div><div class="footer-col"><h4>Legal</h4><span>Terms</span><span>Privacy</span><span>Responsible play</span></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>21+. Please play responsibly.</span></div></div></footer>`;
+  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><span class="brand"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Company</h4><span>About</span><span>Careers</span><span>Contact</span></div><div class="footer-col"><h4>Legal</h4><span>Terms</span><span>Privacy</span><span>Responsible play</span></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>21+. Please play responsibly.</span></div></div></footer>`;
 }
 
 function renderHomeFrame(mode) {
@@ -630,6 +635,7 @@ const flatDocViews = {
     groups: [
       { title: "Registration states", frames: [
         { label: "Create account", type: "auth", mode: "register" },
+        { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Email verification", type: "auth", mode: "verify" },
         { label: "Loading state", type: "auth", mode: "loading" },
         { label: "Error state", type: "auth", mode: "error" },
@@ -855,7 +861,7 @@ function renderDrawerFrame(mode) {
           <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><div class="num-input-box contracts-input-box"><input class="num-input" type="text" inputmode="numeric" value="${limit ? "100" : "100"}" aria-label="Number of contracts"></div><div class="qty-quick"><button type="button">50</button><button class="is-active" type="button">100</button><button type="button">500</button><button type="button">1000</button></div><p class="qty-total" hidden></p></div>
           <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><div class="num-input-box contracts-input-box"><input class="num-input" type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"></div><div class="qty-quick q3"><button type="button">25%</button><button class="is-active" type="button">50%</button><button type="button">All</button></div></div>
           <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" type="button">GTL</button><button type="button">TIE</button><button type="button">KTL</button></div></div>
-          <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum">64¢</span></button><button class="bt-opt no" type="button"><span class="bt-side">No</span><span class="bt-price tnum">36¢</span></button></div><button class="limit-toggle" type="button" aria-expanded="${limit ? "true" : "false"}">${limit ? "Hide Limit" : "Set a Limit"}</button><div class="limit-section"${limit ? "" : " hidden"}><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input${invalid ? " is-error" : ""}" type="text" inputmode="numeric" value="${invalid ? "104" : "52"}" aria-label="Limit price in cents"><span class="num-suffix">¢</span></div><p class="limit-minmax">${invalid ? "Max 64¢" : "Min 1¢ · Max 64¢"}</p></div></div>
+          <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum">64¢</span></button><button class="bt-opt no" type="button"><span class="bt-side">No</span><span class="bt-price tnum">36¢</span></button></div><button class="limit-toggle" type="button" aria-expanded="${limit ? "true" : "false"}">${limit ? "Hide Limit" : "Set a Limit"}</button><div class="limit-section"${limit ? "" : " hidden"}><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input${invalid ? " is-error" : ""}" data-limit-input type="text" inputmode="numeric" value="${invalid ? "104" : "52"}" aria-label="Limit price in cents"><span class="num-suffix">¢</span></div><p class="limit-minmax" data-limit-minmax>${invalid ? "Max 64¢" : "Min 1¢ · Max 64¢"}</p></div></div>
           <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum">${total}</span><p class="potential-win">Potential profit of <strong>${profit}</strong> <span>after <a href="#" class="fees-link">fees</a></span></p></div>
           <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum">$37.63</span><p class="potential-win">Realised profit of <strong>$15.12</strong> <span>after <a href="#" class="fees-link">fees</a></span></p></div>
         </div>
@@ -980,7 +986,6 @@ function walletFrameHTML({ tab = "active", empty = false } = {}) {
       </div>
       <div class="order-panel" data-order-panel="active"${tab === "active" ? "" : " hidden"}>${walletOrderGroup("Current", positions, "open", "No current orders.")}${walletOrderGroup("Pending", pending, "pending", "No pending orders.")}</div>
       <div class="order-panel" data-order-panel="settled"${tab === "settled" ? "" : " hidden"}>${walletOrderGroup("Settled", settled, "settled", "No settled orders yet.")}${walletOrderGroup("Cancelled", cancelled, "cancelled", "No cancelled orders.")}</div>
-      <div class="wallet-dock"><div class="wallet-dock-inner"><span class="wd-balance"><span class="wd-label">Available balance</span><span class="wd-amount tnum">${walletMoney(walletUser.balance)}</span></span><button class="btn btn-primary wd-topup" type="button" tabindex="-1">Top Up</button></div></div>
     </main>
   </div>`;
 }
@@ -1071,18 +1076,15 @@ function accountProfileHTML({ email, provider, hasPassword }) {
 }
 
 function renderAccountFrame(mode) {
-  if (mode === "loading") return `<div class="flat-screen">${flatHeader("GTL", "Account")}${flatLoading()}${flatNav("Account")}</div>`;
-  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Account")}${flatStatus("error", "Account unavailable", "We could not load your account.")}${flatNav("Account")}</div>`;
-  if (mode === "settledEmpty") return `<div class="flat-screen">${flatHeader("GTL", "Settled")}${flatStatus("empty", "No settled bets", "Completed trades will appear here.")}${flatNav("Account")}</div>`;
+  if (mode === "loading") return `<div class="flat-screen">${flatHeader("GTL", "Account")}${flatLoading()}</div>`;
+  if (mode === "error") return `<div class="flat-screen">${flatHeader("GTL", "Account")}${flatStatus("error", "Account unavailable", "We could not load your account.")}</div>`;
   const content = {
-    settled: `<h2 class="flat-hero-title">Settled history</h2><div class="flat-list">${flatRows(4)}</div>`,
-    overview: `${accountProfileHTML({ email: "alex@gtl.test", provider: "password", hasPassword: true })}<div class="flat-list">${flatRows(2)}</div>`,
+    overview: accountProfileHTML({ email: "alex@gtl.test", provider: "password", hasPassword: true }),
     profilePassword: accountProfileHTML({ email: "alex@gtl.test", provider: "password", hasPassword: true }),
     profileGoogle: accountProfileHTML({ email: "alex.morgan@gmail.com", provider: "google", hasPassword: false }),
     profileApple: accountProfileHTML({ email: "alex@icloud.com", provider: "apple", hasPassword: false }),
-    credits: `<h2 class="flat-hero-title">$240.50</h2><p class="flat-copy">Available balance</p><div class="flat-primary">Top Up</div><div class="flat-list">${flatRows(2)}</div>`,
   }[mode];
-  return `<div class="flat-screen">${flatHeader("GTL", "Account")}${content}${flatNav("Account")}</div>`;
+  return `<div class="flat-screen">${flatHeader("GTL", "Account")}${content}</div>`;
 }
 
 function renderFlatFrame(frame) {

@@ -643,7 +643,7 @@
                         <button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button>
                         <div class="limit-section" data-limit-section hidden>
                           <span class="bet-label">Max limit price</span>
-                          <div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div>
+                          <div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div>
                           <p class="limit-minmax" data-limit-minmax></p>
                         </div>
                       </div>
@@ -680,7 +680,7 @@
                       <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                       <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                       <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                      <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                      <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                       <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$64.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$34.72</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                       <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$37.63</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$15.12</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     </div>
@@ -716,7 +716,7 @@
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$15.50</span><p class="potential-win">Potential profit of <strong data-profit-big>$33.84</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$26.03</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$4.56</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>31&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>50</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$15.50</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.31</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$15.81</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$50.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$33.84</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.66</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$33.18</strong></div></div></div></div></div>
@@ -737,7 +737,7 @@
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$15.50</span><p class="potential-win">Potential profit of <strong data-profit-big>$33.84</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$26.03</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$4.56</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>31&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>50</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$15.50</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.31</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$15.81</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$50.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$33.84</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.66</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$33.18</strong></div></div></div></div></div>
@@ -768,7 +768,7 @@
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$64.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$34.72</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$37.63</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$15.12</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>64&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>60</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$38.40</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.77</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$37.63</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$60.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$15.12</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.77</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$37.63</strong></div></div></div></div></div>
@@ -789,7 +789,7 @@
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$64.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$34.72</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$37.63</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$15.12</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>64&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>60</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$38.40</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.77</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$37.63</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$60.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$15.12</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.77</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$37.63</strong></div></div></div></div></div>
@@ -884,6 +884,33 @@
                   </div>
                   <a class="view-game" href="javascript:void(0)">View Game</a>
                 </div></div></div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>No Team Logos</h3><span class="tag">Fallback</span></div>
+            <p class="ds-state-description">Live-game card fallback for missing team assets. Use the team abbreviation inside the logo slot while team artwork is unavailable.</p>
+            <article class="game-tile" data-league="nba" style="--home-color:#5b2bbf;--away-color:#d97706">
+              <a class="tile-main" href="javascript:void(0)" aria-label="Open PHX at LA">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <span class="team-mark team-logo is-fallback" aria-label="LA" style="--team-color:#5b2bbf"><span class="team-mark-abbr">LA</span></span>
+                    <div class="team-meta"><span class="team-abbr">LA</span><span class="team-score tnum">92</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q4</span><span class="clock tnum">06:12</span></div>
+                  <div class="team team-away">
+                    <span class="team-mark team-logo is-fallback" aria-label="PHX" style="--team-color:#d97706"><span class="team-mark-abbr">PHX</span></span>
+                    <div class="team-meta"><span class="team-abbr">PHX</span><span class="team-score tnum">88</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <button class="foot-toggle" type="button" data-expand aria-expanded="false">
+                  <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="toggle-label">See Bets</span>
+                  <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>
               </div>
             </article>
           </article>
@@ -1045,6 +1072,41 @@
           </article>
 
           <article class="panel ds-card-frame ds-open-position-frame">
+            <div class="panel-header"><h3>No Team Logos</h3><span class="tag">Open</span></div>
+            <article class="pos-card pos-card--a" style="--home-color:#0f766e;--away-color:#be123c">
+              <a class="pos-media" href="javascript:void(0)" aria-label="Open SEA at CHI">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <span class="team-mark team-logo is-fallback" aria-label="SEA" style="--team-color:#0f766e"><span class="team-mark-abbr">SEA</span></span>
+                    <div class="team-meta"><span class="team-abbr">SEA</span><span class="team-score tnum">27</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q3</span><span class="clock tnum">03:44</span></div>
+                  <div class="team team-away">
+                    <span class="team-mark team-logo is-fallback" aria-label="CHI" style="--team-color:#be123c"><span class="team-mark-abbr">CHI</span></span>
+                    <div class="team-meta"><span class="team-abbr">CHI</span><span class="team-score tnum">21</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="pos-info">
+                <div class="oc-summary">
+                  <div class="oc-row">
+                    <span class="oc-tag">Get the Lead</span>
+                    <span class="oc-vr-head">Value &amp; Return</span>
+                  </div>
+                  <div class="oc-row">
+                    <span class="oc-sub"><span class="side-yes">YES</span> &middot; 140 contracts</span>
+                    <span class="oc-figures"><span class="tnum">$84.00</span> &middot; <span class="oc-pnl up tnum">+$14.00</span></span>
+                  </div>
+                </div>
+                <div class="oc-actions">
+                  <button class="oc-buy" type="button">Buy More</button>
+                  <button class="oc-sell" type="button">Sell</button>
+                </div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame ds-open-position-frame">
             <div class="panel-header"><h3>YES Losing</h3><span class="tag">Open</span></div>
             <article class="pos-card pos-card--a" style="--home-color:#007a33;--away-color:#f58426">
               <a class="pos-media" href="javascript:void(0)" aria-label="Open NYK at BOS">
@@ -1167,6 +1229,16 @@
           </article>
 
           <article class="panel ds-card-frame ds-order-row-frame">
+            <div class="panel-header"><h3>Pending No Logos</h3><span class="tag">Fallback</span></div>
+            <button class="order-row" type="button" style="--home-color:#7c3aed;--away-color:#ea580c">
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="LA" style="--team-color:#7c3aed"><span class="team-mark-abbr">LA</span></span><span class="team-mark or-logo is-fallback" aria-label="PHX" style="--team-color:#ea580c"><span class="team-mark-abbr">PHX</span></span></span>
+              <span class="or-main"><span class="or-type">Tie &middot; <span class="side-no">NO</span></span><span class="or-teams">LA &middot; PHX &middot; Jul 8</span></span>
+              <span class="or-value"><span class="or-amount tnum">$52.00</span><span class="or-status">Pending</span></span>
+              <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+          </article>
+
+          <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Current</h3><span class="tag">Open</span></div>
             <button class="order-row" type="button" style="--home-color:#00338d;--away-color:#008e97">
               <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-buf.png" alt=""><img src="../gtl-app/assets/logos/nfl-mia.png" alt=""></span>
@@ -1177,11 +1249,31 @@
           </article>
 
           <article class="panel ds-card-frame ds-order-row-frame">
+            <div class="panel-header"><h3>Current No Logos</h3><span class="tag">Fallback</span></div>
+            <button class="order-row" type="button" style="--home-color:#0f766e;--away-color:#be123c">
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="SEA" style="--team-color:#0f766e"><span class="team-mark-abbr">SEA</span></span><span class="team-mark or-logo is-fallback" aria-label="CHI" style="--team-color:#be123c"><span class="team-mark-abbr">CHI</span></span></span>
+              <span class="or-main"><span class="or-type">Get the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">SEA &middot; CHI &middot; Jul 8</span></span>
+              <span class="or-value"><span class="or-amount tnum">$84.00</span><span class="or-pnl up tnum">+$14.00</span></span>
+              <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+          </article>
+
+          <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Settled Won</h3><span class="tag">Result</span></div>
             <button class="order-row" type="button" style="--home-color:#007a33;--away-color:#f58426">
               <span class="or-logos"><img src="../gtl-app/assets/logos/nba-bos.png" alt=""><img src="../gtl-app/assets/logos/nba-ny.png" alt=""></span>
               <span class="or-main"><span class="or-type">Keep the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">BOS &middot; NYK &middot; Jul 5</span></span>
               <span class="or-value"><span class="or-pnl up tnum">+$54.10</span><span class="result-pill win">Won</span></span>
+              <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+          </article>
+
+          <article class="panel ds-card-frame ds-order-row-frame">
+            <div class="panel-header"><h3>Settled No Logos</h3><span class="tag">Fallback</span></div>
+            <button class="order-row" type="button" style="--home-color:#2563eb;--away-color:#c026d3">
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="DAL" style="--team-color:#2563eb"><span class="team-mark-abbr">DAL</span></span><span class="team-mark or-logo is-fallback" aria-label="ORL" style="--team-color:#c026d3"><span class="team-mark-abbr">ORL</span></span></span>
+              <span class="or-main"><span class="or-type">Keep the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">DAL &middot; ORL &middot; Jul 2</span></span>
+              <span class="or-value"><span class="or-pnl up tnum">+$41.60</span><span class="result-pill win">Won</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
           </article>
