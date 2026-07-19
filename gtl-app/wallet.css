@@ -1,6 +1,6 @@
 /* GTL v2 — orders page: tabs, compact order rows, order detail, floating balance dock */
 
-.wallet { padding-top: 96px; padding-bottom: 128px; max-width: 720px; }
+.wallet { padding-top: 96px; padding-bottom: var(--s16); max-width: 720px; }
 @media (min-width: 768px) { .wallet { padding-top: 144px; } } /* matches the authed home hero's desktop top clearance */
 
 .wallet-head { margin-bottom: var(--s6); }
@@ -41,9 +41,11 @@
   transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
 }
 .order-row:hover { background: var(--surface-2); border-color: var(--line-2); }
-.or-logos { display: inline-flex; flex: 0 0 auto; }
-.or-logos img { width: 26px; height: 26px; object-fit: contain; }
-.or-logos img:last-child { margin-left: -8px; }
+.or-logos { display: inline-flex; align-items: center; flex: 0 0 auto; }
+.or-logo { width: 26px; height: 26px; filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35)); }
+.or-logos > img { flex: 0 0 26px; width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35)); }
+.or-logo .team-mark-abbr { font-size: 0.56rem; }
+.or-logo + .or-logo, .or-logos > img + img { margin-left: -8px; }
 .or-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
 .or-type { font-weight: 700; font-size: var(--fs-label); color: var(--ink); }
 .or-teams { font-size: var(--fs-eyebrow); color: var(--ink-3); }
@@ -66,7 +68,9 @@
 /* Flat summary (no card) — resembles the bet drawer's order summary */
 .order-detail { display: flex; flex-direction: column; gap: var(--s5); }
 .od-game { display: flex; align-items: center; gap: var(--s3); }
-.od-game .or-logos img { width: 34px; height: 34px; }
+.od-game .or-logo { width: 34px; height: 34px; }
+.od-game .or-logos > img { flex-basis: 34px; width: 34px; height: 34px; }
+.od-game .or-logo .team-mark-abbr { font-size: 0.7rem; }
 .od-game-meta { display: flex; flex-direction: column; gap: 2px; }
 .od-teams { font-weight: 700; font-size: var(--fs-lead); }
 .od-league { font-size: var(--fs-eyebrow); color: var(--ink-3); }

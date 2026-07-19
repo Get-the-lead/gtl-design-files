@@ -1,0 +1,144 @@
+/* GTL profile page */
+
+.profile {
+  max-width: 720px;
+  padding-top: 96px;
+  padding-bottom: var(--s16);
+}
+
+@media (min-width: 768px) {
+  .profile {
+    padding-top: 144px;
+  }
+}
+
+.profile-title {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 var(--s5);
+}
+
+.account-profile-card {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  display: flex;
+  gap: var(--s3);
+  padding: var(--s4);
+}
+
+.account-avatar {
+  align-items: center;
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: flex;
+  flex: 0 0 48px;
+  font-size: var(--fs-label);
+  font-weight: 900;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: 0;
+  width: 48px;
+}
+
+.account-profile-copy {
+  min-width: 0;
+}
+
+.account-profile-copy h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  margin: 0;
+}
+
+.account-profile-copy p {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+  margin: var(--s1) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.account-settings-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  margin-top: var(--s5);
+  overflow: hidden;
+}
+
+.account-setting-row {
+  align-items: center;
+  display: flex;
+  gap: var(--s3);
+  justify-content: space-between;
+  min-height: 54px;
+  padding: 0 var(--s4);
+}
+
+.account-setting-row + .account-setting-row {
+  border-top: 1px solid var(--line);
+}
+
+.account-setting-row span {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+}
+
+.account-setting-row strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.account-provider {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--s2);
+  justify-content: flex-end;
+}
+
+.account-provider span {
+  align-items: center;
+  background: var(--surface-3);
+  border-radius: var(--r-pill);
+  color: var(--ink);
+  display: inline-flex;
+  font-size: var(--fs-eyebrow);
+  font-weight: 900;
+  height: 22px;
+  justify-content: center;
+  min-width: 22px;
+  padding: 0 var(--s2);
+}
+
+.account-password-action {
+  margin-top: var(--s5);
+  width: 100%;
+}
+
+.account-auth-note,
+.profile-guard p {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+  margin: var(--s4) 0 0;
+}
+
+.profile-guard {
+  padding-top: var(--s16);
+  text-align: center;
+}
+
+.profile-guard .btn {
+  margin-top: var(--s5);
+}

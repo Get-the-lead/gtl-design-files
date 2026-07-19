@@ -80,9 +80,12 @@ const flatDocs = {
         { label: "Sign in", type: "auth", mode: "signin" },
         { label: "Create account", type: "auth", mode: "register" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
+        { label: "Email verification", type: "auth", mode: "verify" },
+        { label: "Birthday", type: "auth", mode: "registerBirthday" },
+        { label: "Location", type: "auth", mode: "registerLocation" },
+        { label: "Username", type: "auth", mode: "registerUsername" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
-        { label: "Email verification", type: "auth", mode: "verify" },
       ] },
       { title: "Feedback states", frames: [
         { label: "Loading state", type: "auth", mode: "loading" },
@@ -299,20 +302,29 @@ function authFoot(copy, action) {
 
 function renderAuthFrame(mode) {
   if (mode === "register") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span></span><span></span></div>
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="auth-steps" data-step="1"><div class="auth-step" data-step="1">
-        ${authHead("Step 1 of 3", "Create your account", "Start trading the live games in under a minute.")}
+        ${authHead("Step 1 of 6", "Create your account", "Start trading the live games in under a minute.")}
         ${socialRow()}<div class="auth-divider">or</div>
         <div class="auth-form">${field("Email", "you@email.com", { type: "email" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
         <p class="auth-fineprint">By continuing you agree to GTL's <span>Terms</span> and <span>Privacy Policy</span>. 21+ only.</p>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "registerPassword") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span></span></div>
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span></span><span></span><span></span><span></span></div>
       <div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
         <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 2 of 3", "Create a password", "Keep your account secure with a strong password.")}
+        ${authHead("Step 2 of 6", "Create a password", "Keep your account secure with a strong password.")}
         <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "verify") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span></span><span></span><span></span></div>
+      <div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("Step 3 of 6", "Verify it's you", `We sent a 6-digit code to <span class="code-sent-to">alex@gtl.test</span>.`)}
+        <div class="auth-form"><div class="code-input"><input class="code-box is-filled" type="text" value="4" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="8" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="2" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+        <p class="code-resend">Didn't get a code? <span>Resend</span></p>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "reset") {
@@ -323,13 +335,28 @@ function renderAuthFrame(mode) {
         <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
-  if (mode === "verify") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span></div>
-      <div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
+  if (mode === "registerBirthday") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span></span><span></span></div>
+      <div class="auth-steps" data-step="4"><div class="auth-step" data-step="4">
         <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 3 of 3", "Verify it's you", `We sent a 6-digit code to <span class="code-sent-to">alex@gtl.test</span>.`)}
-        <div class="auth-form"><div class="code-input"><input class="code-box is-filled" type="text" value="4" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="8" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="2" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
-        <p class="code-resend">Didn't get a code? <span>Resend</span></p>
+        ${authHead("Step 4 of 6", "Enter your birthday", "GTL is only available to players who are 18 or older.")}
+        <div class="auth-form">${field("Date of birth", "", { type: "date", value: "2000-07-19" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "registerLocation") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span></span></div>
+      <div class="auth-steps" data-step="5"><div class="auth-step" data-step="5">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("Step 5 of 6", "Confirm your location", "Allow location access, then confirm your country and state.")}
+        <div class="auth-form"><button class="social-btn location-share" type="button" tabindex="-1">Share my location</button><p class="field-hint location-status">Required for regional eligibility checks.</p>${field("Country", "United States", { value: "United States" })}${field("State", "Florida", { value: "Florida" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
+  if (mode === "registerUsername") {
+    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span></div>
+      <div class="auth-steps" data-step="6"><div class="auth-step" data-step="6">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("Step 6 of 6", "Choose your username", "This is how your account will appear inside GTL.")}
+        <div class="auth-form">${field("Username", "alexmorgan", { value: "alexmorgan", hint: "Use 3-20 letters, numbers, or underscores." })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "forgot") {
@@ -637,6 +664,9 @@ const flatDocViews = {
         { label: "Create account", type: "auth", mode: "register" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Email verification", type: "auth", mode: "verify" },
+        { label: "Birthday", type: "auth", mode: "registerBirthday" },
+        { label: "Location", type: "auth", mode: "registerLocation" },
+        { label: "Username", type: "auth", mode: "registerUsername" },
         { label: "Loading state", type: "auth", mode: "loading" },
         { label: "Error state", type: "auth", mode: "error" },
       ] },

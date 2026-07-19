@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GTL — Create Account</title>
+  <title>GTL - Create Account</title>
   <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
   <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
 
@@ -26,18 +26,20 @@
           <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </a>
+
       <div class="auth-progress" aria-hidden="true">
         <span class="is-done" data-dot="1"></span>
         <span data-dot="2"></span>
         <span data-dot="3"></span>
+        <span data-dot="4"></span>
+        <span data-dot="5"></span>
+        <span data-dot="6"></span>
       </div>
 
       <div class="auth-steps" data-step="1" id="signupSteps">
-
-        <!-- Step 1 — social or email -->
         <div class="auth-step" data-step="1">
           <div class="auth-head">
-            <span class="eyebrow">Step 1 of 3</span>
+            <span class="eyebrow">Step 1 of 6</span>
             <h1>Create your account</h1>
             <p>Start trading the live games in under a minute.</p>
           </div>
@@ -66,14 +68,13 @@
           <p class="auth-fineprint">By continuing you agree to GTL's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. 21+ only.</p>
         </div>
 
-        <!-- Step 2 — create password -->
         <div class="auth-step" data-step="2">
           <button class="step-back" type="button" data-step-back="1">
             <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Back
           </button>
           <div class="auth-head">
-            <span class="eyebrow">Step 2 of 3</span>
+            <span class="eyebrow">Step 2 of 6</span>
             <h1>Create a password</h1>
             <p>Keep your account secure with a strong password.</p>
           </div>
@@ -98,14 +99,13 @@
           </form>
         </div>
 
-        <!-- Step 3 — verification code -->
         <div class="auth-step" data-step="3">
           <button class="step-back" type="button" data-step-back="2">
             <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Back
           </button>
           <div class="auth-head">
-            <span class="eyebrow">Step 3 of 3</span>
+            <span class="eyebrow">Step 3 of 6</span>
             <h1>Verify it's you</h1>
             <p>We sent a 6-digit code to <span class="code-sent-to" data-code-email>your email</span>.</p>
           </div>
@@ -120,12 +120,78 @@
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Create Account</button>
+            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
           </form>
 
           <p class="code-resend">Didn't get a code? <button type="button" data-resend>Resend</button></p>
         </div>
 
+        <div class="auth-step" data-step="4">
+          <button class="step-back" type="button" data-step-back="3">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="auth-head">
+            <span class="eyebrow">Step 4 of 6</span>
+            <h1>Enter your birthday</h1>
+            <p>GTL is only available to players who are 18 or older.</p>
+          </div>
+
+          <form data-step4-form novalidate>
+            <div class="field">
+              <label for="birthday">Date of birth</label>
+              <input class="field-input" id="birthday" type="date" autocomplete="bday" required />
+            </div>
+            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+          </form>
+        </div>
+
+        <div class="auth-step" data-step="5">
+          <button class="step-back" type="button" data-step-back="4">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="auth-head">
+            <span class="eyebrow">Step 5 of 6</span>
+            <h1>Confirm your location</h1>
+            <p>Allow location access, then confirm your country and state.</p>
+          </div>
+
+          <form data-step5-form novalidate>
+            <button class="social-btn location-share" type="button" data-location-share>Share my location</button>
+            <p class="field-hint location-status" data-location-status>Required for regional eligibility checks.</p>
+            <div class="field">
+              <label for="country">Country</label>
+              <input class="field-input" id="country" type="text" autocomplete="country-name" placeholder="United States" required />
+            </div>
+            <div class="field">
+              <label for="state">State</label>
+              <input class="field-input" id="state" type="text" autocomplete="address-level1" placeholder="Florida" required />
+            </div>
+            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+          </form>
+        </div>
+
+        <div class="auth-step" data-step="6">
+          <button class="step-back" type="button" data-step-back="5">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="auth-head">
+            <span class="eyebrow">Step 6 of 6</span>
+            <h1>Choose your username</h1>
+            <p>This is how your account will appear inside GTL.</p>
+          </div>
+
+          <form data-step6-form novalidate>
+            <div class="field">
+              <label for="username">Username</label>
+              <input class="field-input" id="username" type="text" autocomplete="username" placeholder="alexmorgan" required />
+              <span class="field-hint">Use 3-20 letters, numbers, or underscores.</span>
+            </div>
+            <button class="btn btn-primary auth-submit" type="submit">Create Account</button>
+          </form>
+        </div>
       </div>
 
       <p class="auth-foot">Already have an account? <a href="login.html">Login</a></p>

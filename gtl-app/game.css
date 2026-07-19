@@ -105,7 +105,8 @@
   gap: var(--s4);
 }
 .gb-team { display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
-.gb-logo { width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px); object-fit: contain; filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)); }
+.gb-logo { width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px); filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)); }
+.gb-logo .team-mark-abbr { font-size: clamp(1.05rem, 3.5vw, 1.65rem); }
 .gb-abbr { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lead); letter-spacing: 0.04em; color: #fff; }
 
 .gb-numbers { display: inline-flex; align-items: center; gap: var(--s3); }
@@ -525,7 +526,8 @@
 
 /* ===== Game stats — head-to-head (team logos + centre-anchored bars) ===== */
 .stats-teams { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--s3); margin-bottom: var(--s5); }
-.stats-logo { width: 30px; height: 30px; object-fit: contain; }
+.stats-logo { width: 30px; height: 30px; }
+.stats-logo .team-mark-abbr { font-size: 0.64rem; }
 .stats-title { text-align: center; color: var(--ink-2); font-size: var(--fs-label); font-weight: 700; }
 .stats-card .stat-list { display: flex; flex-direction: column; gap: var(--s5); }
 .stat-block { display: flex; flex-direction: column; gap: var(--s2); }

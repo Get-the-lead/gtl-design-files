@@ -123,8 +123,36 @@
 .auth-step { display: none; flex-direction: column; animation: step-in 0.3s var(--ease-out); }
 .auth-steps[data-step="1"] .auth-step[data-step="1"],
 .auth-steps[data-step="2"] .auth-step[data-step="2"],
-.auth-steps[data-step="3"] .auth-step[data-step="3"] { display: flex; }
+.auth-steps[data-step="3"] .auth-step[data-step="3"],
+.auth-steps[data-step="4"] .auth-step[data-step="4"],
+.auth-steps[data-step="5"] .auth-step[data-step="5"],
+.auth-steps[data-step="6"] .auth-step[data-step="6"] { display: flex; }
 @keyframes step-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+
+.field-input[type="date"] {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] .field-input[type="date"] {
+  color-scheme: light;
+}
+
+.location-share {
+  margin-bottom: var(--s2);
+}
+
+.location-status {
+  margin: 0 0 var(--s4);
+  text-align: center;
+}
+
+.location-status.is-success {
+  color: var(--green);
+}
+
+.location-status.is-error {
+  color: var(--no);
+}
 
 .step-back {
   align-self: flex-start;

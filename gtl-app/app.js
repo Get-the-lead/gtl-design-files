@@ -92,6 +92,14 @@ const GAMES = [
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 const leaderOf = (g) => (g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away");
+function teamMarkHTML(t, className, loading = "") {
+  const fallback = `<span class="team-mark-abbr">${t.abbr}</span>`;
+  if (!t.logo) return `<span class="team-mark ${className} is-fallback" aria-label="${t.name}" style="--team-color:${t.color}">${fallback}</span>`;
+  return `<span class="team-mark ${className}" aria-label="${t.name}" style="--team-color:${t.color}">
+      <img src="${t.logo}" alt=""${loading ? ` loading="${loading}"` : ""} onerror="this.closest('.team-mark').classList.add('is-fallback');this.remove();" />
+      ${fallback}
+    </span>`;
+}
 
 const CHEVRON = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -160,7 +168,7 @@ function renderTiles() {
       const t = g[side];
       const leading = lead === side ? " is-leading" : "";
       return `<div class="team team-${side}${leading}">
-          <img class="team-logo" src="${t.logo}" alt="${t.name}" loading="lazy" />
+          ${teamMarkHTML(t, "team-logo", "lazy")}
           <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
         </div>`;
     };
@@ -261,8 +269,10 @@ function navHTML(authed) {
   return `<nav class="header-nav" aria-label="Primary navigation">
     <a href="home.html" data-scroll-top>Home</a>
     <a href="home.html#live">Live Games</a>
+    <a href="ranking.html">Ranking</a>
     <a href="home.html#how">How it Works</a>
     ${authed ? `<a href="wallet.html">Portfolio</a>` : ""}
+    ${authed ? `<a href="profile.html">Profile</a>` : ""}
     ${authed ? `<span class="header-nav-sep" aria-hidden="true"></span><button type="button" class="header-nav-logout" data-logout>Logout</button>` : ""}
   </nav>`;
 }
@@ -300,8 +310,10 @@ function renderHeader() {
       <nav class="menu-nav">
         <a href="home.html" data-scroll-top>Home</a>
         <a href="home.html#live">Live Games</a>
+        <a href="ranking.html">Ranking</a>
         <a href="home.html#how">How it Works</a>
         <a href="wallet.html">Portfolio</a>
+        <a href="profile.html">Profile</a>
         <a href="#">Tutorial</a>
       </nav>
       <div class="menu-appearance">
@@ -801,7 +813,7 @@ function gameMomentumCardsPro(g) {
       </div>
     </div>
     <div class="momentum-card stats-card">
-      <div class="stats-teams"><img class="stats-logo" src="${g.home.logo}" alt="${g.home.name}"><span class="stats-title">Game Stats</span><img class="stats-logo" src="${g.away.logo}" alt="${g.away.name}"></div>
+      <div class="stats-teams">${teamMarkHTML(g.home, "stats-logo")}<span class="stats-title">Game Stats</span>${teamMarkHTML(g.away, "stats-logo")}</div>
       <div class="stat-list">${picks.map(statRow).join("")}</div>
     </div>`;
 }
@@ -849,7 +861,7 @@ function renderGamePage() {
   const teamCol = (side) => {
     const t = g[side];
     const leading = lead === side ? " is-leading" : "";
-    return `<div class="gb-team${leading}"><img class="gb-logo" src="${t.logo}" alt="${t.name}" /><span class="gb-abbr">${t.abbr}</span></div>`;
+    return `<div class="gb-team${leading}">${teamMarkHTML(t, "gb-logo")}<span class="gb-abbr">${t.abbr}</span></div>`;
   };
 
   const marketsHTML = `
@@ -928,8 +940,8 @@ function renderGamePage() {
   if (g.id === OPEN_POSITION_DEMO_GAME_ID) initGameOpenPosition(openPositionDemos);
 }
 
-// The Open Positions card set for the HEADER dropdown — variant A for each, B for the last.
-const openPositionCards = (list) => list.map((p, i) => (i === list.length - 1 ? positionCardB(p, i) : positionCardA(p, i))).join("");
+// The Open Positions card set for the header dropdown uses one consistent layout.
+const openPositionCards = (list) => list.map((p, i) => positionCardA(p, i)).join("");
 
 // The game pop-up's own card: the variant-B body (bet type centred, then Contracts / Value /
 // Return as three columns) but WITHOUT the scoreboard — redundant on the game's own page.
@@ -1086,7 +1098,7 @@ function fillScoreboard(sb, g) {
   const team = (side) => {
     const t = g[side];
     return `<div class="bs-team bs-${side}${lead === side ? " is-leading" : ""}">
-        <img class="bs-logo" src="${t.logo}" alt="${t.name}" />
+        ${teamMarkHTML(t, "bs-logo")}
         <div class="bs-meta"><span class="bs-abbr">${t.abbr}</span><span class="bs-score tnum">${t.score}</span></div>
       </div>`;
   };
@@ -1641,9 +1653,13 @@ function goToFees() {
 /* ---------------------------------------------- AUTH GATE (guests betting) */
 // Remember the bet a guest tried to place, so login/sign-up can resume it
 const INTENT_KEY = "gtl-bet-intent";
+const WELCOME_CREDIT = 1500;
 function setBetIntent(o) { try { localStorage.setItem(INTENT_KEY, JSON.stringify(o)); } catch (e) { /* ignore */ } }
 function clearBetIntent() { try { localStorage.removeItem(INTENT_KEY); } catch (e) { /* ignore */ } }
-function postAuthDest() {
+function hasBetIntent() {
+  try { return !!JSON.parse(localStorage.getItem(INTENT_KEY) || "null")?.id; } catch (e) { return false; }
+}
+function postAuthDest(fallback = "home.html") {
   let intent = null;
   try { intent = JSON.parse(localStorage.getItem(INTENT_KEY) || "null"); } catch (e) { /* ignore */ }
   clearBetIntent();
@@ -1651,7 +1667,10 @@ function postAuthDest() {
     const p = new URLSearchParams({ id: intent.id, bet: "1", market: intent.market || "gtl", side: intent.side || "yes", qty: "100" });
     return "game.html?" + p.toString();
   }
-  return "home.html";
+  return fallback;
+}
+function postSignupDest() {
+  return "welcome.html";
 }
 
 function ensureAuthGate() {
@@ -1888,15 +1907,201 @@ function getAuth() {
 function isAuthed() { return !!getAuth(); }
 function setAuth(user) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(user)); } catch (e) { /* ignore */ } }
 function clearAuth() { try { localStorage.removeItem(AUTH_KEY); } catch (e) { /* ignore */ } }
-function currentName() { const a = getAuth(); return (a && a.name) || USER.name; }
+function currentName() { const a = getAuth(); return (a && (a.username || a.name)) || USER.name; }
 function currentPositions() {
   return new URLSearchParams(location.search).get("ds-positions") === "empty" ? [] : USER.positions;
+}
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;",
+  }[ch]));
 }
 function nameFromEmail(email) {
   if (!email) return USER.name;
   const local = String(email).split("@")[0].replace(/[._+-]+/g, " ").trim();
   if (!local) return USER.name;
   return local.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+function initialsFromName(name) {
+  const parts = String(name || USER.name).trim().split(/\s+/).filter(Boolean);
+  return (parts.length > 1 ? parts[0][0] + parts[1][0] : (parts[0] || "U").slice(0, 2)).toUpperCase();
+}
+function profileProvider(auth) {
+  const provider = auth?.provider || "password";
+  if (provider === "google") return { label: "Google", className: "google", mark: "G", hasPassword: false };
+  if (provider === "apple") return { label: "Apple", className: "apple", mark: "Apple", hasPassword: false };
+  return { label: "Email and password", className: "password", mark: "••", hasPassword: true };
+}
+
+/* --------------------------------------------------------------- RANKING */
+const RANKING_RESET_WINDOW_MS = (((6 * 24 + 10) * 60 + 15) * 60 + 15) * 1000;
+const RANKING_RESET_KEY = "gtl-ranking-reset-at";
+const RANKING_USERS = [
+  { rank: 1, username: "leadstorm", wins: 128, prize: "$1,500" },
+  { rank: 2, username: "fourthquarter", wins: 119, prize: "$900" },
+  { rank: 3, username: "linehunter", wins: 112, prize: "$650" },
+  { rank: 4, username: "greenlight", wins: 107, prize: "$500" },
+  { rank: 5, username: "clockedge", wins: 101, prize: "$400" },
+  { rank: 6, username: "marketmaker", wins: 96, prize: "$300" },
+  { rank: 7, username: "snapcount", wins: 91, prize: "$250" },
+  { rank: 8, username: "fastbreak", wins: 88, prize: "$200" },
+  { rank: 9, username: "leadkeeper", wins: 84, prize: "$175" },
+  { rank: 10, username: "swingtrader", wins: 81, prize: "$125" },
+];
+const CURRENT_RANKING_FALLBACK = { rank: 47, username: "You", wins: 34, prize: "0" };
+const RANKING_TROPHY_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const RANKING_MEDAL_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+function rankingRowHTML(row, isCurrent = false) {
+  const prize = row.prize || "-";
+  const label = `${isCurrent ? "Your rank, " : ""}position ${row.rank}, ${row.username}, ${row.wins} wins, prize ${prize}`;
+  const isPodium = row.rank <= 3 && !isCurrent;
+  const rankMark = isPodium
+    ? `<span class="rank-medal" role="cell">${row.rank === 1 ? RANKING_TROPHY_ICON : RANKING_MEDAL_ICON}</span>`
+    : `<span class="rank-pos" role="cell">${row.rank}</span>`;
+  return `<div class="ranking-row${isPodium ? ` is-podium is-rank-${row.rank}` : ""}${isCurrent ? " is-current" : ""}" role="row" aria-label="${escapeHTML(label)}">
+    ${rankMark}
+    <span class="rank-user" role="cell">${escapeHTML(row.username)}</span>
+    <span class="rank-win tnum" role="cell">${row.wins}</span>
+    <span class="rank-prize tnum" role="cell">${escapeHTML(prize)}</span>
+  </div>`;
+}
+
+function renderRanking() {
+  const list = $("[data-ranking-list]");
+  const currentSlot = $("[data-ranking-current]");
+  if (!list) return;
+  const auth = getAuth();
+  const username = auth ? String(auth.username || auth.name || currentName()).trim() : "";
+  const currentInTopTen = username && RANKING_USERS.some((row) => row.username.toLowerCase() === username.toLowerCase());
+  list.innerHTML = RANKING_USERS.map((row) => {
+    const rowHTML = rankingRowHTML(row, username && row.username.toLowerCase() === username.toLowerCase());
+    return row.rank === 3 ? `${rowHTML}<div class="ranking-separator" aria-hidden="true"></div>` : rowHTML;
+  }).join("");
+  if (!currentSlot) return;
+  if (username && !currentInTopTen) {
+    currentSlot.hidden = false;
+    currentSlot.innerHTML = rankingRowHTML(CURRENT_RANKING_FALLBACK, true);
+  } else {
+    currentSlot.hidden = true;
+    currentSlot.innerHTML = "";
+  }
+}
+
+function currentRankingResult() {
+  const auth = getAuth();
+  if (!auth) return null;
+  const username = String(auth.username || auth.name || currentName()).trim();
+  const topRow = username && RANKING_USERS.find((row) => row.username.toLowerCase() === username.toLowerCase());
+  return topRow ? { ...topRow, username: "You" } : CURRENT_RANKING_FALLBACK;
+}
+
+function ensureRankingPrizeModal() {
+  let gate = $("#rankingPrizeGate");
+  if (gate) return gate;
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="gate-backdrop ranking-prize-backdrop" id="rankingPrizeBackdrop"></div>
+    <div class="auth-gate ranking-prize-gate" id="rankingPrizeGate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="rankingPrizeTitle">
+      <div class="gate-body">
+        <span class="ranking-prize-kicker">Ranking reward</span>
+        <h3 class="gate-title" id="rankingPrizeTitle">You won your ranking position.</h3>
+        <p class="gate-desc" data-ranking-prize-desc></p>
+        <div class="ranking-prize-card" data-ranking-prize-card>
+          <span><span>Position</span><strong class="tnum" data-ranking-prize-rank></strong></span>
+          <span><span>Prize</span><strong class="tnum" data-ranking-prize-value></strong></span>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-secondary gate-close" type="button" id="rankingPrizeClose">Close</button>`);
+  gate = $("#rankingPrizeGate");
+  $("#rankingPrizeBackdrop").addEventListener("click", closeRankingPrizeModal);
+  $("#rankingPrizeClose").addEventListener("click", closeRankingPrizeModal);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeRankingPrizeModal(); });
+  return gate;
+}
+
+function openRankingPrizeModal() {
+  if (!$("[data-ranking-list]") || !isAuthed()) return;
+  const result = currentRankingResult();
+  if (!result) return;
+  const gate = ensureRankingPrizeModal();
+  const rankLabel = `#${result.rank}`;
+  const prizeLabel = result.prize || "0";
+  const title = $("#rankingPrizeTitle", gate);
+  const desc = $("[data-ranking-prize-desc]", gate);
+  const rank = $("[data-ranking-prize-rank]", gate);
+  const prize = $("[data-ranking-prize-value]", gate);
+  const prizeCard = $("[data-ranking-prize-card]", gate);
+  const earnedPrize = prizeLabel !== "0" && prizeLabel !== "-";
+  if (title) title.textContent = earnedPrize ? "You won your ranking position." : "Keep climbing the ranking.";
+  if (desc) {
+    desc.textContent = earnedPrize
+      ? `You finished in position ${rankLabel} and received ${prizeLabel} in prize money.`
+      : `You finished in position ${rankLabel}. Try to reach the top 10 next time!`;
+  }
+  if (rank) rank.textContent = rankLabel;
+  if (prize) prize.textContent = prizeLabel;
+  if (prizeCard) prizeCard.hidden = !earnedPrize;
+  $("#rankingPrizeBackdrop").classList.add("is-open");
+  gate.classList.add("is-open");
+  $("#rankingPrizeClose").classList.add("is-open");
+  gate.setAttribute("aria-hidden", "false");
+  document.body.classList.add("sheet-open");
+}
+
+function closeRankingPrizeModal() {
+  const gate = $("#rankingPrizeGate");
+  const backdrop = $("#rankingPrizeBackdrop");
+  if (!gate || !backdrop) return;
+  backdrop.classList.remove("is-open");
+  gate.classList.remove("is-open");
+  $("#rankingPrizeClose")?.classList.remove("is-open");
+  gate.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("sheet-open");
+}
+
+function getRankingResetAt() {
+  let stored = 0;
+  try { stored = Number(localStorage.getItem(RANKING_RESET_KEY)); } catch (e) { stored = 0; }
+  if (stored && stored > Date.now()) return stored;
+  const next = Date.now() + RANKING_RESET_WINDOW_MS;
+  try { localStorage.setItem(RANKING_RESET_KEY, String(next)); } catch (e) { /* ignore */ }
+  return next;
+}
+
+function rankingCountdownHTML(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86400);
+  const h = Math.floor((total % 86400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const part = (num, unit) => `<span class="reset-num">${String(num).padStart(2, "0")}</span><span class="reset-unit">${unit}</span>`;
+  return `${part(d, "d")} ${part(h, "h")} ${part(m, "m")} ${part(s, "s")}`;
+}
+
+function initRanking() {
+  const countdown = $("[data-ranking-countdown]");
+  const list = $("[data-ranking-list]");
+  if (!countdown && !list) return;
+  renderRanking();
+  openRankingPrizeModal();
+  if (!countdown) return;
+  let resetAt = getRankingResetAt();
+  const tick = () => {
+    let remaining = resetAt - Date.now();
+    if (remaining <= 0) {
+      resetAt = Date.now() + RANKING_RESET_WINDOW_MS;
+      remaining = resetAt - Date.now();
+      try { localStorage.setItem(RANKING_RESET_KEY, String(resetAt)); } catch (e) { /* ignore */ }
+    }
+    countdown.innerHTML = rankingCountdownHTML(remaining);
+  };
+  tick();
+  setInterval(tick, 1000);
 }
 
 const signed = (v) => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toFixed(2);
@@ -1916,7 +2121,7 @@ function gameMedia(g, centerInner) {
   const team = (side) => {
     const t = g[side];
     return `<div class="team team-${side}${lead === side ? " is-leading" : ""}">
-        <img class="team-logo" src="${t.logo}" alt="${t.name}" />
+        ${teamMarkHTML(t, "team-logo")}
         <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
       </div>`;
   };
@@ -2273,7 +2478,7 @@ function orderRowHTML(o, type, i) {
     valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${signed(o.net)}</span><span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>`;
   }
   return `<button class="order-row" type="button" data-order-open="${type}:${i}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <span class="or-logos"><img src="${g.home.logo}" alt=""><img src="${g.away.logo}" alt=""></span>
+    <span class="or-logos">${teamMarkHTML(g.home, "or-logo")}${teamMarkHTML(g.away, "or-logo")}</span>
     <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${g.home.abbr} · ${g.away.abbr}${o.date ? ` · ${fmtDate(o.date)}` : ""}</span></span>
     <span class="or-value">${valueHTML}</span>
     <span class="or-chev" aria-hidden="true">${CHEVRON}</span>
@@ -2335,13 +2540,7 @@ function initWallet() {
       ${orderGroupHTML("Settled", USER.settled, "settled", "No settled orders yet.")}
       ${orderGroupHTML("Cancelled", USER.cancelled, "cancelled", "No cancelled orders.")}
     </div>
-    ${addFundsHTML()}
-    <div class="wallet-dock" id="walletDock">
-      <div class="wallet-dock-inner">
-        <span class="wd-balance"><span class="wd-label">Available balance</span><span class="wd-amount tnum" data-balance>${money(USER.balance)}</span></span>
-        <button class="btn btn-primary wd-topup" type="button" data-add-toggle>Top Up</button>
-      </div>
-    </div>`;
+    ${addFundsHTML()}`;
   initOrderTabs();
   $$("[data-order-open]", main).forEach((row) => row.addEventListener("click", () => {
     const [type, i] = row.dataset.orderOpen.split(":");
@@ -2413,7 +2612,7 @@ function orderDetailHTML(type, i) {
     <button class="order-back" type="button" data-order-back>${CHEVRON}<span>Orders</span></button>
     <div class="order-detail">
       <div class="od-game">
-        <span class="or-logos"><img src="${g.home.logo}" alt=""><img src="${g.away.logo}" alt=""></span>
+        <span class="or-logos">${teamMarkHTML(g.home, "or-logo")}${teamMarkHTML(g.away, "or-logo")}</span>
         <span class="od-game-meta">
           <span class="od-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span>
           <span class="od-league">${g.league.toUpperCase()} · ${type === "settled" ? "Final" : `${g.period} ${g.clock}`}</span>
@@ -2472,9 +2671,54 @@ function initAddFunds() {
   setAmt(50);
 }
 
+function profileGuardHTML() {
+  return `<div class="profile-guard">
+    <h1 class="profile-title">Profile</h1>
+    <p>Login to view your account profile.</p>
+    <a class="btn btn-primary" href="login.html">Login</a>
+  </div>`;
+}
+
+function initProfile() {
+  const main = $("#profileMain");
+  if (!main) return;
+  const auth = getAuth();
+  if (!auth) { main.innerHTML = profileGuardHTML(); return; }
+
+  const displayName = auth.username || auth.name || USER.name;
+  const email = auth.email || "alex@gtl.test";
+  const provider = profileProvider(auth);
+  main.innerHTML = `
+    <h1 class="profile-title">Account</h1>
+    <div class="account-profile-card">
+      <div class="account-avatar">${initialsFromName(displayName)}</div>
+      <div class="account-profile-copy">
+        <h3>${displayName}</h3>
+        <p>${email}</p>
+      </div>
+    </div>
+    <div class="account-settings-list">
+      <div class="account-setting-row"><span>Username</span><strong>${auth.username || displayName}</strong></div>
+      <div class="account-setting-row"><span>Email</span><strong>${email}</strong></div>
+      <div class="account-setting-row"><span>Connected with</span><strong><span class="account-provider ${provider.className}"><span>${provider.mark}</span>${provider.label}</span></strong></div>
+      <div class="account-setting-row"><span>Notifications</span><strong>On</strong></div>
+    </div>
+    ${provider.hasPassword ? `<button class="btn btn-primary account-password-action" type="button">Change password</button>` : `<p class="account-auth-note">Password changes are managed through your ${provider.label} account.</p>`}`;
+}
+
 /* ---------------------------------------------------------- AUTH SCREENS */
 // Inline validation errors (shown in-app, not via native browser bubbles)
 const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+function isAtLeastAge(dateValue, age) {
+  const birth = new Date(`${dateValue}T00:00:00`);
+  if (!dateValue || Number.isNaN(birth.getTime())) return false;
+  const today = new Date();
+  if (birth > today) return false;
+  let years = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) years -= 1;
+  return years >= age;
+}
 function showErr(input, msg) {
   input.classList.add("is-error");
   const field = input.closest(".field");
@@ -2586,6 +2830,9 @@ function initSignup() {
   const steps = $("#signupSteps");
   if (!steps) return;
   let email = "";
+  let socialSignup = false;
+  let locationAllowed = false;
+  let locationCoords = null;
   const go = (n) => {
     steps.dataset.step = n;
     $$(".auth-progress span").forEach((d) => d.classList.toggle("is-done", Number(d.dataset.dot) <= n));
@@ -2598,6 +2845,7 @@ function initSignup() {
     e.preventDefault();
     clearErr(emailEl);
     email = emailEl.value.trim();
+    socialSignup = false;
     if (!email) { showErr(emailEl, "Enter your email"); return; }
     if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); return; }
     const tgt = steps.querySelector("[data-code-email]");
@@ -2625,16 +2873,107 @@ function initSignup() {
     clearCodeErr(codeWrap);
     const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
     if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
-    setAuth({ name: nameFromEmail(email), email });
-    location.href = postAuthDest();
+    go(4);
+  });
+
+  const f4 = steps.querySelector("[data-step4-form]");
+  const birthdayEl = f4.querySelector("#birthday");
+  f4.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(birthdayEl);
+    if (!birthdayEl.value) { showErr(birthdayEl, "Enter your date of birth"); return; }
+    if (!isAtLeastAge(birthdayEl.value, 18)) { showErr(birthdayEl, "GTL is for players 18 or older."); return; }
+    go(5);
+  });
+
+  const f5 = steps.querySelector("[data-step5-form]");
+  const countryEl = f5.querySelector("#country");
+  const stateEl = f5.querySelector("#state");
+  const locationBtn = steps.querySelector("[data-location-share]");
+  const locationStatus = steps.querySelector("[data-location-status]");
+  if (locationBtn) {
+    locationBtn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        locationStatus.textContent = "Location sharing is not available in this browser.";
+        locationStatus.classList.add("is-error");
+        return;
+      }
+      locationStatus.textContent = "Waiting for browser permission...";
+      locationStatus.classList.remove("is-error", "is-success");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          locationAllowed = true;
+          locationCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          locationStatus.textContent = "Location shared. Confirm your country and state.";
+          locationStatus.classList.add("is-success");
+        },
+        () => {
+          locationAllowed = false;
+          locationStatus.textContent = "Allow location sharing to continue.";
+          locationStatus.classList.add("is-error");
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    });
+  }
+  f5.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(countryEl); clearErr(stateEl);
+    let ok = true;
+    if (!locationAllowed) {
+      locationStatus.textContent = "Allow location sharing to continue.";
+      locationStatus.classList.add("is-error");
+      ok = false;
+    }
+    if (!countryEl.value.trim()) { showErr(countryEl, "Enter your country"); ok = false; }
+    if (!stateEl.value.trim()) { showErr(stateEl, "Enter your state"); ok = false; }
+    if (!ok) return;
+    go(6);
+  });
+
+  const f6 = steps.querySelector("[data-step6-form]");
+  const usernameEl = f6.querySelector("#username");
+  f6.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(usernameEl);
+    const username = usernameEl.value.trim();
+    if (!username) { showErr(usernameEl, "Choose a username"); return; }
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3-20 letters, numbers, or underscores"); return; }
+    const user = socialSignup ? { name: USER.name } : { name: nameFromEmail(email), email };
+    setAuth({ ...user, username, birthday: birthdayEl.value, country: countryEl.value.trim(), state: stateEl.value.trim(), location: locationCoords });
+    location.href = postSignupDest();
   });
 
   $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
-  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => { setAuth({ name: USER.name }); location.href = postAuthDest(); }));
+  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => { socialSignup = true; email = ""; go(2); }));
   const resend = steps.querySelector("[data-resend]");
   if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
-  clearErrsOnInput(f1); clearErrsOnInput(f2);
+  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f4); clearErrsOnInput(f5); clearErrsOnInput(f6);
   initCodeInput(codeWrap);
+}
+
+function initWelcome() {
+  const main = $("#welcomeMain");
+  if (!main) return;
+  if (!isAuthed()) { location.replace("signup.html"); return; }
+
+  const firstName = currentName().split(" ")[0] || "player";
+  const credit = money(WELCOME_CREDIT);
+  const nameEl = $("[data-welcome-name]", main);
+  const bonusEl = $("[data-welcome-bonus]", main);
+  const balanceEl = $("[data-welcome-balance]", main);
+  const primary = $("[data-welcome-primary]", main);
+
+  if (nameEl) nameEl.textContent = firstName;
+  if (bonusEl) bonusEl.textContent = credit;
+  if (balanceEl) balanceEl.textContent = credit;
+  if (primary) {
+    primary.href = hasBetIntent() ? "#" : "home.html#live";
+    primary.addEventListener("click", (e) => {
+      e.preventDefault();
+      location.href = postAuthDest("home.html#live");
+    });
+  }
 }
 
 function initForgot() {
@@ -2676,12 +3015,15 @@ document.addEventListener("DOMContentLoaded", () => {
   initFeesPage();
   initBackButtons();
   initWallet();
+  initProfile();
+  initRanking();
   maybeReopenBet();
   // auth screens
   initPassToggles();
   initSocialButtons();
   initLogin();
   initSignup();
+  initWelcome();
   initForgot();
   startPriceTicker(); // after home tiles and the game page have rendered their rows
   startClockTicker(); // tick the live game clocks

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL - Ranking B</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="ranking-b.css" />
+</head>
+<body class="ranking-body ranking-b-body">
+
+  <header class="site-header" id="siteHeader"></header>
+
+  <main class="ranking-page" id="rankingMain">
+    <div class="ranking-b-layout">
+      <section class="ranking-info" aria-labelledby="rankingInfoTitle">
+        <div class="ranking-info-top">
+          <span class="ranking-info-kicker">How it works</span>
+          <h2 id="rankingInfoTitle">How to earn credits and enter</h2>
+        </div>
+
+        <div class="ranking-steps">
+          <article class="ranking-step">
+            <span class="ranking-step-num">01</span>
+            <div>
+              <h3>Trade live markets</h3>
+              <p>Use your credits to trade GTL / TIE / KTL during live NFL and NBA games.</p>
+            </div>
+          </article>
+          <article class="ranking-step">
+            <span class="ranking-step-num">02</span>
+            <div>
+              <h3>Climb the ranking</h3>
+              <p>Your standing is set purely by your credit-balance performance for the month.</p>
+            </div>
+          </article>
+          <article class="ranking-step">
+            <span class="ranking-step-num">03</span>
+            <div>
+              <h3>Get paid</h3>
+              <p>The month's top 10 finishers are verified and paid in real cash.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="ranking-cash">
+          <h3>From final ranking to cash - in short</h3>
+          <dl>
+            <div>
+              <dt>Notified within 7 days of month close</dt>
+              <dd>By app and/or account email.</dd>
+            </div>
+            <div>
+              <dt>Verified - identity, age, location + IRS Form W-9</dt>
+              <dd>Required before any payment is issued.</dd>
+            </div>
+            <div>
+              <dt>Paid within 30 days of verification, 60 days max</dt>
+              <dd>From the close of the monthly competition.</dd>
+            </div>
+            <div>
+              <dt>Taxed on the winner</dt>
+              <dd>1099-MISC issued for prizes of $600 or more.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="ranking-board" aria-label="Ranking board">
+        <header class="ranking-title">
+          <h1>RANKING</h1>
+          <p>GET THE LEAD</p>
+        </header>
+
+        <section class="ranking-countdown" aria-label="Ranking reset countdown">
+          <svg class="reset-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" />
+            <path d="M12 7.5v5l3.5 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="reset-label">Resets in</span>
+          <span class="reset-time tnum" data-ranking-countdown>
+            <span class="reset-num">06</span><span class="reset-unit">d</span>
+            <span class="reset-num">10</span><span class="reset-unit">h</span>
+            <span class="reset-num">15</span><span class="reset-unit">m</span>
+            <span class="reset-num">15</span><span class="reset-unit">s</span>
+          </span>
+        </section>
+
+        <section class="ranking-card" aria-label="User ranking" role="table">
+          <div class="ranking-table-head" role="row">
+            <span aria-hidden="true"></span>
+            <span role="columnheader">User</span>
+            <span class="ranking-win-head" id="rankingBWinHead" role="columnheader">Win</span>
+            <span role="columnheader">Prize</span>
+          </div>
+          <div class="ranking-list-wrap">
+            <div class="ranking-scroll" data-ranking-list role="rowgroup"></div>
+            <div class="ranking-fade" aria-hidden="true"></div>
+          </div>
+          <div class="ranking-current-slot" data-ranking-current role="rowgroup" hidden></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
