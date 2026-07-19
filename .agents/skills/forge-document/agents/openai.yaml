@@ -1,4 +1,0 @@
-interface:
-  display_name: "Forge Document"
-  short_description: "Maintain durable Blueprint documentation"
-  default_prompt: "Use $forge-document to save this durable project context in Blueprint."
