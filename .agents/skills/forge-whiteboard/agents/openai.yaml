@@ -1,4 +1,0 @@
-interface:
-  display_name: "Forge Whiteboard"
-  short_description: "Create and visually verify Forge whiteboards"
-  default_prompt: "Use $forge-whiteboard to create a documented visual flow in The Forge, then open it in the in-app browser and visually verify the rendered canvas."
