@@ -81,9 +81,6 @@ const flatDocs = {
         { label: "Create account", type: "auth", mode: "register" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Email verification", type: "auth", mode: "verify" },
-        { label: "Birthday", type: "auth", mode: "registerBirthday" },
-        { label: "Location", type: "auth", mode: "registerLocation" },
-        { label: "Username", type: "auth", mode: "registerUsername" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
       ] },
@@ -112,10 +109,13 @@ const flatDocs = {
   },
   welcome: {
     title: "Welcome Home",
-    description: "Post-registration welcome screen showing credited balance and the primary route into live betting.",
+    description: "Post-verification onboarding states for personal details, username selection, and the credited reward.",
     groups: [
       { title: "Post-signup states", frames: [
-        { label: "Welcome credits", type: "welcome", mode: "credits" },
+        { label: "Welcome", type: "welcome", mode: "intro" },
+        { label: "Name and birthday", type: "welcome", mode: "details" },
+        { label: "Choose username", type: "welcome", mode: "username" },
+        { label: "Welcome credits", type: "welcome", mode: "reward" },
       ] },
     ],
   },
@@ -261,6 +261,7 @@ const googleMark = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#428
 const appleMark = `<svg class="apple-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.66c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.13.94-3.94.94-.81 0-2.07-.92-3.4-.9-1.75.03-3.36 1.02-4.26 2.58-1.82 3.15-.47 7.82 1.3 10.38.86 1.25 1.89 2.66 3.24 2.61 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.28 3.13-2.54.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.46-4.6zM14.6 5.1c.72-.87 1.2-2.08 1.07-3.28-1.03.04-2.28.69-3.02 1.56-.66.76-1.24 1.99-1.09 3.16 1.15.09 2.32-.58 3.04-1.44z"/></svg>`;
 const closeIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 const backIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const chevronDownIcon = `<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const showIcon = `<svg class="icon-show" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>`;
 const sentIcon = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
@@ -276,7 +277,7 @@ function authShell(inner, cardClass = "") {
 }
 
 function authHead(eyebrow, title, copy) {
-  return `<div class="auth-head"><span class="eyebrow">${eyebrow}</span><h1>${title}</h1><p>${copy}</p></div>`;
+  return `<div class="auth-head">${eyebrow ? `<span class="eyebrow">${eyebrow}</span>` : ""}<h1>${title}</h1><p>${copy}</p></div>`;
 }
 
 function socialRow() {
@@ -302,28 +303,24 @@ function authFoot(copy, action) {
 
 function renderAuthFrame(mode) {
   if (mode === "register") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="auth-steps" data-step="1"><div class="auth-step" data-step="1">
-        ${authHead("Step 1 of 6", "Create your account", "Start trading the live games in under a minute.")}
+    return authShell(`<div class="auth-steps" data-step="1"><div class="auth-step" data-step="1">
+        ${authHead("", "Create your account", "Start trading the live games in under a minute.")}
         ${socialRow()}<div class="auth-divider">or</div>
         <div class="auth-form">${field("Email", "you@email.com", { type: "email" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
-        <p class="auth-fineprint">By continuing you agree to GTL's <span>Terms</span> and <span>Privacy Policy</span>. 21+ only.</p>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "registerPassword") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span></span><span></span><span></span><span></span></div>
-      <div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
+    return authShell(`<div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
         <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 2 of 6", "Create a password", "Keep your account secure with a strong password.")}
-        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+        ${authHead("", "Create a password", "Keep your account secure with a strong password.")}
+        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true })}${field("Confirm password", "Re-enter your password", { type: "password" })}<label class="terms-check"><input type="checkbox" checked tabindex="-1"><span>I agree to GTL's <span class="link-green">Terms and Conditions</span> and <span class="link-green">Privacy Policy</span>.</span></label><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "verify") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span></span><span></span><span></span></div>
-      <div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
+    return authShell(`<div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
         <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 3 of 6", "Verify it's you", `We sent a 6-digit code to <span class="code-sent-to">alex@gtl.test</span>.`)}
-        <div class="auth-form"><div class="code-input"><input class="code-box is-filled" type="text" value="4" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="8" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="2" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+        ${authHead("", "Verify your account", `We sent a 6-digit code to <span class="code-sent-to">alex@gtl.test</span>.`)}
+        <div class="auth-form"><div class="code-input"><input class="code-box is-filled" type="text" value="4" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="8" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="2" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Verify Account</button></div>
         <p class="code-resend">Didn't get a code? <span>Resend</span></p>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
@@ -333,30 +330,6 @@ function renderAuthFrame(mode) {
         <span class="step-back">${backIcon}Back</span>
         ${authHead("Step 2 of 3", "Create a password", "Keep your account secure with a strong password.")}
         <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
-      </div></div>${authFoot("Already have an account?", "Login")}`);
-  }
-  if (mode === "registerBirthday") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span></span><span></span></div>
-      <div class="auth-steps" data-step="4"><div class="auth-step" data-step="4">
-        <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 4 of 6", "Enter your birthday", "GTL is only available to players who are 18 or older.")}
-        <div class="auth-form">${field("Date of birth", "", { type: "date", value: "2000-07-19" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
-      </div></div>${authFoot("Already have an account?", "Login")}`);
-  }
-  if (mode === "registerLocation") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span></span></div>
-      <div class="auth-steps" data-step="5"><div class="auth-step" data-step="5">
-        <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 5 of 6", "Confirm your location", "Allow location access, then confirm your country and state.")}
-        <div class="auth-form"><button class="social-btn location-share" type="button" tabindex="-1">Share my location</button><p class="field-hint location-status">Required for regional eligibility checks.</p>${field("Country", "United States", { value: "United States" })}${field("State", "Florida", { value: "Florida" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
-      </div></div>${authFoot("Already have an account?", "Login")}`);
-  }
-  if (mode === "registerUsername") {
-    return authShell(`<div class="auth-progress" aria-hidden="true"><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span><span class="is-done"></span></div>
-      <div class="auth-steps" data-step="6"><div class="auth-step" data-step="6">
-        <span class="step-back">${backIcon}Back</span>
-        ${authHead("Step 6 of 6", "Choose your username", "This is how your account will appear inside GTL.")}
-        <div class="auth-form">${field("Username", "alexmorgan", { value: "alexmorgan", hint: "Use 3-20 letters, numbers, or underscores." })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "forgot") {
@@ -375,6 +348,7 @@ function renderAuthFrame(mode) {
 }
 
 const logoSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 5 20 18H4Z"/></svg>`;
+const headerLogoSvg = `<img src="../gtl-app/assets/gtl-header-logo.svg" alt="Get the Lead">`;
 const chevronDown = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 const homeGames = [
@@ -414,9 +388,9 @@ function homeHeader(authed = false, positions = false) {
     <div class="header-row">
       <div class="header-left">
         <span class="brand-pill">
-          <span class="brand floating-logo floating-btn brand-link"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL Markets</span></span>
-          <span class="brand floating-logo floating-btn brand-menu"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span>
-          <span class="header-nav-slot"><nav class="header-nav" aria-label="Primary navigation"><span>Home</span><span>Live Games</span><span>How it Works</span>${authed ? "<span>Portfolio</span><span class=\"header-nav-sep\"></span><button class=\"header-nav-logout\" type=\"button\">Logout</button>" : ""}</nav></span>
+          <span class="brand floating-logo floating-btn brand-link"><span class="header-brand-logo">${headerLogoSvg}</span></span>
+          <span class="brand floating-logo floating-btn brand-menu"><span class="header-brand-logo">${headerLogoSvg}</span></span>
+          <span class="header-nav-slot"><nav class="header-nav" aria-label="Primary navigation"><span>Home</span><span>Live Games</span><span>Ranking</span>${authed ? "<span>Portfolio</span><span>Profile</span><span class=\"header-nav-sep\"></span><button class=\"header-nav-logout\" type=\"button\">Logout</button>" : ""}</nav></span>
         </span>
         <span class="theme-switch floating-btn"><span class="theme-switch-track"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">☼</span><span class="theme-option theme-moon">☾</span></span></span>
       </div>
@@ -552,7 +526,7 @@ function homeHowSection() {
 }
 
 function homeFooter() {
-  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><span class="brand"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Company</h4><span>About</span><span>Careers</span><span>Contact</span></div><div class="footer-col"><h4>Legal</h4><span>Terms</span><span>Privacy</span><span>Responsible play</span></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>21+. Please play responsibly.</span></div></div></footer>`;
+  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><span class="brand"><span class="brand-mark">${logoSvg}</span><span class="brand-word">GTL</span></span><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Product</h4><a href="#">Live games</a></div><div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Contact</a></div><div class="footer-col"><h4>Legal</h4><a href="#">Official rules</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Responsible play</a></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>21+. Please play responsibly.</span></div></div></footer>`;
 }
 
 function renderHomeFrame(mode) {
@@ -560,26 +534,39 @@ function renderHomeFrame(mode) {
   return `<div class="flat-screen is-home is-home-${mode}">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter()}</div>`;
 }
 
-function renderWelcomeFrame() {
-  return `<div class="flat-screen is-welcome">${homeHeader(true)}
-    <main class="welcome-main container">
-      <section class="welcome-panel" aria-labelledby="dsWelcomeTitle">
-        <div class="welcome-copy">
-          <p class="welcome-kicker">Welcome, <span>Alex</span></p>
-          <h1 id="dsWelcomeTitle">You got <span>$1,500.00</span> in betting credits.</h1>
-          <p>Use them on live GTL markets. Pick a game, back the lead, and trade the swing as it happens.</p>
-        </div>
-        <div class="credit-ticket" aria-label="Welcome credit balance">
-          <span class="ticket-label">Available credits</span>
-          <span class="ticket-value tnum">$1,500.00</span>
-          <span class="ticket-note">Ready to use on your first bet</span>
-        </div>
-        <div class="welcome-actions">
-          <span class="btn btn-primary btn-lg">Start betting</span>
-        </div>
-      </section>
-    </main>
-  </div>`;
+function renderWelcomeFrame(mode) {
+  let content = "";
+  if (mode === "intro") {
+    content = `<div class="welcome-copy"><p class="welcome-kicker">Account verified</p><h1>Welcome to <span>GTL.</span></h1><p>Your account is ready. Let’s finish setting up your profile.</p></div>`;
+  } else if (mode === "details") {
+    content = `<div class="welcome-copy"><p class="welcome-kicker">Account verified</p><h1>Welcome to <span>GTL.</span></h1><p>Your account is ready. Let’s finish setting up your profile.</p></div><div class="welcome-form"><div class="welcome-name-row">${field("First name", "Alex", { value: "Alex" })}${field("Last name", "Morgan", { value: "Morgan" })}</div><fieldset class="field welcome-birthday-field"><legend>Date of birth</legend><div class="date-fields"><div class="date-part"><div class="field-combobox"><input class="field-input" value="January" aria-label="Month" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span><div class="combobox-menu"><button class="combobox-option" aria-selected="true" tabindex="-1">January</button><button class="combobox-option" tabindex="-1">February</button><button class="combobox-option" tabindex="-1">March</button><button class="combobox-option" tabindex="-1">April</button><button class="combobox-option" tabindex="-1">May</button><button class="combobox-option" tabindex="-1">June</button></div></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" value="19" aria-label="Day" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" value="2000" aria-label="Year" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div></div><span class="field-hint">Used to confirm your eligibility.</span></fieldset><span class="btn btn-primary btn-lg">Continue</span></div>`;
+  } else if (mode === "username") {
+    content = `<div class="welcome-copy"><p class="welcome-kicker">Your GTL identity</p><h1>Choose a username.</h1><p>This is how you’ll appear in rankings and across GTL.</p></div><div class="welcome-form">${field("Username", "alexmorgan", { value: "alexmorgan", hint: "Use 3–20 letters, numbers, or underscores." })}<span class="btn btn-primary btn-lg">Complete Setup</span></div>`;
+  } else {
+    content = `<div class="welcome-copy"><h1>Thanks for joining. Here’s <span>$1,500.00</span> in credits to get you started.</h1><p>Use them on live GTL markets. Pick a game, back the lead, and trade the swing as it happens.</p></div><div class="welcome-actions"><span class="btn btn-primary btn-lg">Accept &amp; Start Betting</span></div>`;
+  }
+  return `<div class="flat-screen is-welcome"><main class="welcome-main container"><section class="welcome-panel">${content}</section></main></div>`;
+}
+
+function renderLocationFrame() {
+  return `<div class="flat-screen is-location"><main class="location-main"><section class="location-panel"><span class="location-brand"><img src="../gtl-app/assets/gtl-header-logo.svg" alt="Get The Lead"></span><div class="location-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M26 13.3C26 20 16 28 16 28S6 20 6 13.3a10 10 0 1 1 20 0Z" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="13" r="3.25" stroke="currentColor" stroke-width="2"/><path d="m7 27 18-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="location-copy"><p class="location-kicker">Location unavailable</p><h1>GTL isn’t available in this location.</h1><p>We’re working to bring GTL to more locations. Please check back again soon.</p></div><p class="location-footnote">Availability is based on your current location.</p></section></main></div>`;
+}
+
+function renderRankingFrame(mode) {
+  const rows = [
+    [1, "leadstorm", 128, "$1,500"], [2, "fourthquarter", 119, "$900"], [3, "linehunter", 112, "$650"],
+    [4, "greenlight", 107, "$500"], [5, "clockedge", 101, "$400"], [6, "marketmaker", 96, "$300"],
+    [7, "snapcount", 91, "$250"], [8, "fastbreak", 88, "$200"], [9, "leadkeeper", 84, "$175"], [10, "swingtrader", 81, "$125"],
+  ];
+  const trophy = `<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const medal = `<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  const rowHTML = rows.map(([rank, user, wins, prize]) => `<div class="ranking-row${rank <= 3 ? ` is-podium is-rank-${rank}` : ""}">${rank <= 3 ? `<span class="rank-medal">${rank === 1 ? trophy : medal}</span>` : `<span class="rank-pos">${rank}</span>`}<span class="rank-user">${user}</span><span class="rank-win tnum">${wins}</span><span class="rank-prize tnum">${prize}</span></div>`).join("");
+  const currentRow = `<div class="ranking-current-slot"><div class="ranking-row is-current"><span class="rank-pos">47</span><span class="rank-user">You</span><span class="rank-win tnum">34</span><span class="rank-prize tnum">0</span></div></div>`;
+  const months = [["July", 47], ["June", 14], ["May", 31], ["April", 19], ["March", 24], ["February", 38], ["January", 62]];
+  const monthSelect = `<div class="ranking-month-select${mode === "months" ? " is-open" : ""}"><button class="ranking-month-trigger" type="button"><span>July 2026</span><svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="ranking-month-menu"${mode === "months" ? "" : " hidden"}>${months.map(([month, rank]) => `<button class="ranking-month-option${month === "July" ? " is-selected" : ""}" type="button"><span>${month}</span><strong>#${rank}</strong></button>`).join("")}</div></div>`;
+  const rules = `<section class="ranking-rules"><div class="container ranking-rules-inner"><div class="section-head center"><span class="eyebrow">Competition summary</span><h2>Monthly Competition rules</h2></div><ol class="flow"><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="flow-num">01</span><h3 class="flow-title">Free to enter</h3><p class="flow-text">No purchase is necessary. Free Credits have no cash value and expire at competition end.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="flow-num">02</span><h3 class="flow-title">Be eligible</h3><p class="flow-text">You must be 18+, hold one account, and be located in an eligible state.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="11" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="7" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg></div><span class="flow-num">03</span><h3 class="flow-title">Climb the ranking</h3><p class="flow-text">The top 10 eligible players share $5,000 in monthly prizes.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="flow-num">04</span><h3 class="flow-title">Verify and receive</h3><p class="flow-text">Winners verify their identity, eligibility, location, and tax details before payment.</p></li></ol><span class="ranking-rules-link">Read the full Official Rules <span>→</span></span></div></section>`;
+  const resultModal = mode === "result" ? `<div class="gate-backdrop ranking-prize-backdrop is-open"></div><div class="auth-gate ranking-prize-gate is-open"><div class="gate-body"><span class="ranking-prize-kicker">Ranking reward</span><h3 class="gate-title">Keep climbing the ranking.</h3><p class="gate-desc">You finished in position #47. Try to reach the top 10 next time!</p><div class="gate-actions"><span class="btn btn-secondary">Close</span></div></div></div>` : "";
+  return `<div class="flat-screen is-ranking ranking-body">${homeHeader(false)}<main><header class="ranking-hero"><div class="ranking-hero-glow"></div><div class="ranking-hero-inner container"><h1>Ranking</h1><div class="ranking-countdown"><span class="reset-label">Resets in</span><span class="reset-time tnum"><span class="reset-num">06</span><span class="reset-unit">d</span><span class="reset-num">10</span><span class="reset-unit">h</span><span class="reset-num">15</span><span class="reset-unit">m</span></span></div></div></header><section class="ranking-page container"><section class="ranking-card"><header class="ranking-card-head"><div>${monthSelect}<h2>Leaderboard</h2></div><p>Top 10 win cash prizes</p></header><div class="ranking-table-head"><span>Rank</span><span>Player</span><span>Wins</span><span>Prize</span></div><div class="ranking-scroll">${rowHTML}</div>${currentRow}</section></section>${rules}</main>${homeFooter()}${resultModal}</div>`;
 }
 
 const gameFrameData = {
@@ -664,25 +651,34 @@ const flatDocViews = {
         { label: "Create account", type: "auth", mode: "register" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Email verification", type: "auth", mode: "verify" },
-        { label: "Birthday", type: "auth", mode: "registerBirthday" },
-        { label: "Location", type: "auth", mode: "registerLocation" },
-        { label: "Username", type: "auth", mode: "registerUsername" },
         { label: "Loading state", type: "auth", mode: "loading" },
         { label: "Error state", type: "auth", mode: "error" },
       ] },
     ],
   },
+  location: {
+    title: "Location Unavailable Page",
+    description: "The signed-out location eligibility state linked from the mobile navigation menu.",
+    groups: [{ title: "Location state", frames: [{ label: "Location unavailable", type: "location", mode: "default" }] }],
+  },
+  ranking: {
+    title: "Ranking Page",
+    description: "Monthly competition header, reset timer, standalone leaderboard rows, current position, and result modal.",
+    groups: [{ title: "Leaderboard", frames: [{ label: "Monthly ranking", type: "ranking", mode: "default" }, { label: "Month selector", type: "ranking", mode: "months" }, { label: "Ranking result", type: "ranking", mode: "result" }] }],
+  },
   drawer: flatDocs.drawer,
   account: flatDocs.account,
 };
-const flatDocOrder = ["home", "welcome", "game", "portfolio", "login", "registration", "drawer", "account"];
+const flatDocOrder = ["home", "welcome", "game", "ranking", "portfolio", "login", "registration", "location", "drawer", "account"];
 const flatDocTabLabels = {
   home: "Home",
   welcome: "Welcome",
   game: "Game",
+  ranking: "Ranking",
   portfolio: "Portfolio",
   login: "Login",
   registration: "Registration",
+  location: "Location",
   drawer: "Buy / Sell",
   account: "Account",
 };
@@ -1122,6 +1118,8 @@ function renderFlatFrame(frame) {
     auth: renderAuthFrame,
     home: renderHomeFrame,
     welcome: renderWelcomeFrame,
+    location: renderLocationFrame,
+    ranking: renderRankingFrame,
     game: renderGameFrame,
     drawer: renderDrawerFrame,
     tracker: renderTrackerFrame,

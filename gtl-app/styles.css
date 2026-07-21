@@ -86,6 +86,33 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .section-head .eyebrow + h2 { margin-top: var(--s3); }
 .section-head.center { text-align: center; display: flex; flex-direction: column; align-items: center; }
 
+/* Connected four-step flow — shared by How it works and competition summaries */
+.flow { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: 1fr; gap: var(--s8); }
+.flow::before {
+  content: ""; position: absolute; left: 23px; top: 24px; bottom: 24px; width: 2px;
+  background: linear-gradient(180deg, var(--green-line), rgba(74, 222, 128, 0.05));
+}
+.flow-step { position: relative; padding-left: 68px; }
+.flow-marker {
+  position: absolute; left: 0; top: 0;
+  width: 48px; height: 48px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--bg); border: 1.5px solid var(--green-line); color: var(--green);
+  z-index: 1;
+}
+.flow-marker svg { width: 24px; height: 24px; }
+.flow-num { font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.14em; color: var(--ink-3); }
+.flow-title { font-size: var(--fs-h3); margin: 4px 0 6px; }
+.flow-text { margin: 0; color: var(--ink-2); font-size: var(--fs-label); line-height: 1.6; }
+
+@media (min-width: 768px) {
+  .flow { grid-template-columns: repeat(4, 1fr); gap: var(--s6); text-align: center; }
+  .flow::before { left: 12.5%; right: 12.5%; top: 24px; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent); }
+  .flow-step { padding-left: 0; padding-top: 68px; }
+  .flow-marker { left: 50%; transform: translateX(-50%); }
+}
+:root[data-theme="light"] .flow-marker { background: var(--surface); border-color: rgba(22, 163, 74, 0.4); color: #16a34a; }
+
 /* Live price glow (shared by home tiles + game page) */
 .price.yes.flash { animation: glow-yes 1s var(--ease); }
 .price.no.flash { animation: glow-no 1s var(--ease); }
@@ -251,8 +278,17 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   color: #06210f;
 }
 .brand-mark svg { width: 20px; height: 20px; }
-/* Header logo — glass pill with icon + "GTL Markets" wordmark */
-.site-header .floating-logo { height: 48px; padding: 0 var(--s5) 0 7px; border-radius: var(--r-pill); gap: var(--s2); }
+/* Header logo — full Get the Lead wordmark supplied for the product header */
+.site-header .floating-logo { height: 48px; padding: 2px 7px; border-radius: 13px; gap: 0; }
+.header-brand-logo {
+  width: 86px;
+  height: 44px;
+  display: block;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.header-brand-logo :is(img, svg) { display: block; width: 100%; height: 100%; object-fit: cover; }
 .site-header .brand-mark { width: 34px; height: 34px; }
 .site-header .brand-mark svg { width: 20px; height: 20px; }
 .site-header .brand-word { font-size: 1.02rem; white-space: nowrap; }
@@ -306,6 +342,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 }
 .menu-panel[hidden] { display: none; }
 .menu-nav { display: flex; flex-direction: column; gap: var(--s1); }
+.menu-nav [hidden] { display: none !important; }
 .menu-nav a {
   display: flex; align-items: center;
   padding: var(--s4);
@@ -318,6 +355,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
    and lingers until the menu is closed, which reads as a stuck selection. */
 @media (hover: hover) { .menu-nav a:hover { background: rgba(255, 255, 255, 0.06); } }
 .menu-appearance { margin-top: var(--s5); padding-top: var(--s5); border-top: 1px solid var(--line); }
+.menu-location {
+  display: flex; align-items: center; gap: var(--s3);
+  width: 100%; padding: var(--s3) var(--s4);
+  border-radius: var(--r-sm);
+  color: var(--ink-2); font-size: var(--fs-body); font-weight: 600;
+  transition: background 0.18s var(--ease), color 0.18s var(--ease);
+}
+.menu-location svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--green); }
+.menu-location[hidden] { display: none !important; }
+@media (hover: hover) { .menu-location:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); } }
 .menu-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: auto; padding-top: var(--s5); border-top: 1px solid var(--line); }
 body.menu-open { overflow: hidden; }
 /* while the takeover is open, hide the right-hand auth chip (it's inside the menu) */

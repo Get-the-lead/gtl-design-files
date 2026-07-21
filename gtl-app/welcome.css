@@ -1,8 +1,9 @@
-/* GTL welcome bonus screen */
+/* GTL welcome and profile-details onboarding */
 
 .welcome-body {
   min-height: 100vh;
   min-height: 100dvh;
+  background: var(--bg);
 }
 
 .welcome-main {
@@ -10,7 +11,7 @@
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding-top: calc(var(--header-h) + var(--s12));
+  padding-top: var(--s12);
   padding-bottom: var(--s12);
 }
 
@@ -25,6 +26,11 @@
   gap: var(--s8);
   padding: clamp(var(--s8), 8vw, var(--s16)) var(--s5);
 }
+
+.welcome-intro[hidden],
+.welcome-details[hidden],
+.welcome-username[hidden],
+.welcome-reward[hidden] { display: none; }
 
 .welcome-panel::before {
   content: "";
@@ -116,6 +122,43 @@
   width: 100%;
 }
 
+.welcome-form {
+  width: min(100%, 520px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  text-align: left;
+}
+
+.welcome-name-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s4);
+}
+
+.welcome-name-row .field + .field { margin-top: 0; }
+.welcome-birthday-field { min-width: 0; margin: var(--s1) 0 0; padding: 0; border: 0; }
+.welcome-birthday-field legend { margin-bottom: var(--s2); }
+.date-fields {
+  display: grid;
+  grid-template-columns: 1.25fr 0.8fr 1fr;
+  gap: var(--s2);
+}
+.date-part { min-width: 0; }
+.date-part .field-input { min-width: 0; padding-left: var(--s4); }
+.birthday-error { margin-top: 0; }
+.welcome-form .btn { width: 100%; margin-top: var(--s3); }
+
+.welcome-main.is-transitioning .welcome-intro {
+  animation: welcome-out 0.28s var(--ease) both;
+}
+
+.welcome-main[data-welcome-state="details"] .welcome-details,
+.welcome-main[data-welcome-state="username"] .welcome-username,
+.welcome-main[data-welcome-state="reward"] .welcome-reward {
+  animation: details-in 0.42s var(--ease-out) both;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .welcome-panel {
     animation: welcome-in 0.48s var(--ease-out) both;
@@ -134,4 +177,24 @@
 @keyframes ticket-in {
   from { opacity: 0; transform: translateY(18px) scale(0.98); }
   to { opacity: 1; transform: none; }
+}
+
+@keyframes welcome-out {
+  to { opacity: 0; transform: translateY(-12px); }
+}
+
+@keyframes details-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 560px) {
+  .welcome-name-row { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-main.is-transitioning .welcome-intro,
+  .welcome-main[data-welcome-state="details"] .welcome-details,
+  .welcome-main[data-welcome-state="username"] .welcome-username,
+  .welcome-main[data-welcome-state="reward"] .welcome-reward { animation: none; }
 }

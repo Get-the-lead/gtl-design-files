@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Location Unavailable</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="location.css" />
+</head>
+<body class="location-body">
+  <main class="location-main">
+    <section class="location-panel" aria-labelledby="locationTitle">
+      <a class="location-brand" href="home.html" aria-label="GTL home">
+        <img src="assets/gtl-header-logo.svg" alt="Get The Lead" />
+      </a>
+
+      <div class="location-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M26 13.3C26 20 16 28 16 28S6 20 6 13.3a10 10 0 1 1 20 0Z" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="13" r="3.25" stroke="currentColor" stroke-width="2"/><path d="m7 27 18-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+
+      <div class="location-copy">
+        <p class="location-kicker">Location unavailable</p>
+        <h1 id="locationTitle">GTL isn’t available in this location.</h1>
+        <p>We’re working to bring GTL to more locations. Please check back again soon.</p>
+      </div>
+
+      <p class="location-footnote">Availability is based on your current location.</p>
+    </section>
+  </main>
+</body>
+</html>

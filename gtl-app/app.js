@@ -262,15 +262,14 @@ function initLeagueFilter() {
 /* ----------------------------------------------- HEADER (shared, rendered) */
 const ICON_MOON = '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-const LOGO_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>';
+const HEADER_LOGO = '<img src="assets/gtl-header-logo.svg" alt="" />';
 const THEME_SWITCH = `<span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">${ICON_SUN}</span><span class="theme-option theme-moon">${ICON_MOON}</span></span>`;
-// Header nav shown inside the GTL pill on desktop. Home / Live Games / How it works always; Portfolio + Logout only when signed in.
+// Header nav shown inside the GTL pill on desktop. Account destinations only appear when signed in.
 function navHTML(authed) {
   return `<nav class="header-nav" aria-label="Primary navigation">
     <a href="home.html" data-scroll-top>Home</a>
     <a href="home.html#live">Live Games</a>
     <a href="ranking.html">Ranking</a>
-    <a href="home.html#how">How it Works</a>
     ${authed ? `<a href="wallet.html">Portfolio</a>` : ""}
     ${authed ? `<a href="profile.html">Profile</a>` : ""}
     ${authed ? `<span class="header-nav-sep" aria-hidden="true"></span><button type="button" class="header-nav-logout" data-logout>Logout</button>` : ""}
@@ -289,12 +288,10 @@ function renderHeader() {
       <div class="header-left">
         <span class="brand-pill">
           <a class="brand floating-logo floating-btn brand-link" href="home.html" data-scroll-top aria-label="GTL Markets home">
-            <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
-            <span class="brand-word">GTL Markets</span>
+            <span class="header-brand-logo">${HEADER_LOGO}</span>
           </a>
           <button class="brand floating-logo floating-btn brand-menu" data-menu-toggle aria-controls="menuPanel" aria-expanded="false" aria-label="Open menu">
-            <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
-            <span class="brand-word">GTL</span>
+            <span class="header-brand-logo">${HEADER_LOGO}</span>
           </button>
           <span class="header-nav-slot" id="headerNav"></span>
         </span>
@@ -311,10 +308,8 @@ function renderHeader() {
         <a href="home.html" data-scroll-top>Home</a>
         <a href="home.html#live">Live Games</a>
         <a href="ranking.html">Ranking</a>
-        <a href="home.html#how">How it Works</a>
         <a href="wallet.html">Portfolio</a>
-        <a href="profile.html">Profile</a>
-        <a href="#">Tutorial</a>
+        <a href="profile.html" data-auth-only>Profile</a>
       </nav>
       <div class="menu-appearance">
         <button class="menu-theme" id="themeBtn" data-theme-toggle aria-label="Switch colour theme">
@@ -322,6 +317,10 @@ function renderHeader() {
           ${THEME_SWITCH}
         </button>
       </div>
+      <a class="menu-location" href="location-unavailable.html" data-guest-only>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span>Change Location</span>
+      </a>
       <div class="menu-actions" id="menuActions"></div>
     </div>`;
 }
@@ -1953,6 +1952,20 @@ const RANKING_USERS = [
   { rank: 10, username: "swingtrader", wins: 81, prize: "$125" },
 ];
 const CURRENT_RANKING_FALLBACK = { rank: 47, username: "You", wins: 34, prize: "0" };
+const RANKING_MONTH_RESULTS = [
+  { month: 0, rank: 62, wins: 21, prize: "0" },
+  { month: 1, rank: 38, wins: 29, prize: "0" },
+  { month: 2, rank: 24, wins: 46, prize: "0" },
+  { month: 3, rank: 19, wins: 53, prize: "0" },
+  { month: 4, rank: 31, wins: 40, prize: "0" },
+  { month: 5, rank: 14, wins: 67, prize: "0" },
+  { month: 6, rank: 47, wins: 34, prize: "0" },
+  { month: 7, rank: 27, wins: 51, prize: "0" },
+  { month: 8, rank: 17, wins: 71, prize: "0" },
+  { month: 9, rank: 22, wins: 58, prize: "0" },
+  { month: 10, rank: 12, wins: 79, prize: "0" },
+  { month: 11, rank: 9, wins: 88, prize: "$175" },
+];
 const RANKING_TROPHY_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const RANKING_MEDAL_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
@@ -1971,7 +1984,7 @@ function rankingRowHTML(row, isCurrent = false) {
   </div>`;
 }
 
-function renderRanking() {
+function renderRanking(currentResult = CURRENT_RANKING_FALLBACK) {
   const list = $("[data-ranking-list]");
   const currentSlot = $("[data-ranking-current]");
   if (!list) return;
@@ -1979,17 +1992,78 @@ function renderRanking() {
   const username = auth ? String(auth.username || auth.name || currentName()).trim() : "";
   const currentInTopTen = username && RANKING_USERS.some((row) => row.username.toLowerCase() === username.toLowerCase());
   list.innerHTML = RANKING_USERS.map((row) => {
-    const rowHTML = rankingRowHTML(row, username && row.username.toLowerCase() === username.toLowerCase());
-    return row.rank === 3 ? `${rowHTML}<div class="ranking-separator" aria-hidden="true"></div>` : rowHTML;
+    return rankingRowHTML(row, username && row.username.toLowerCase() === username.toLowerCase());
   }).join("");
   if (!currentSlot) return;
   if (username && !currentInTopTen) {
     currentSlot.hidden = false;
-    currentSlot.innerHTML = rankingRowHTML(CURRENT_RANKING_FALLBACK, true);
+    currentSlot.innerHTML = rankingRowHTML(currentResult, true);
   } else {
     currentSlot.hidden = true;
     currentSlot.innerHTML = "";
   }
+}
+
+function initRankingMonthSelect() {
+  const root = $("[data-ranking-month-select]");
+  if (!root) return;
+  const trigger = $("[data-ranking-month-trigger]", root);
+  const label = $("[data-ranking-month-label]", root);
+  const menu = $("[data-ranking-month-menu]", root);
+  if (!trigger || !label || !menu) return;
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const year = now.getFullYear();
+  const monthName = new Intl.DateTimeFormat("en", { month: "long" });
+  const available = RANKING_MONTH_RESULTS
+    .filter((item) => item.month <= currentMonth)
+    .sort((a, b) => b.month - a.month);
+  const authed = isAuthed();
+  let selectedMonth = currentMonth;
+
+  const close = () => {
+    menu.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+    root.classList.remove("is-open");
+  };
+  const open = () => {
+    menu.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    root.classList.add("is-open");
+    menu.querySelector('[aria-selected="true"]')?.focus();
+  };
+  const selectMonth = (month) => {
+    const result = available.find((item) => item.month === month);
+    if (!result) return;
+    selectedMonth = month;
+    label.textContent = `${monthName.format(new Date(year, month, 1))} ${year}`;
+    $$('[data-ranking-month]', menu).forEach((option) => {
+      const selected = Number(option.dataset.rankingMonth) === month;
+      option.setAttribute("aria-selected", String(selected));
+      option.classList.toggle("is-selected", selected);
+    });
+    if (authed) renderRanking({ ...result, username: "You" });
+    close();
+  };
+
+  menu.innerHTML = available.map((item) => {
+    const name = monthName.format(new Date(year, item.month, 1));
+    const selected = item.month === selectedMonth;
+    return `<button class="ranking-month-option${selected ? " is-selected" : ""}" type="button" role="option" data-ranking-month="${item.month}" aria-selected="${String(selected)}"><span>${name}</span><strong>${authed ? `#${item.rank}` : "Sign in to view"}</strong></button>`;
+  }).join("");
+  label.textContent = `${monthName.format(new Date(year, selectedMonth, 1))} ${year}`;
+
+  trigger.addEventListener("click", (event) => {
+    event.stopPropagation();
+    menu.hidden ? open() : close();
+  });
+  menu.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-ranking-month]");
+    if (option) selectMonth(Number(option.dataset.rankingMonth));
+  });
+  document.addEventListener("click", (event) => { if (!root.contains(event.target)) close(); });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape") close(); });
 }
 
 function currentRankingResult() {
@@ -2010,13 +2084,15 @@ function ensureRankingPrizeModal() {
         <span class="ranking-prize-kicker">Ranking reward</span>
         <h3 class="gate-title" id="rankingPrizeTitle">You won your ranking position.</h3>
         <p class="gate-desc" data-ranking-prize-desc></p>
-        <div class="ranking-prize-card" data-ranking-prize-card>
+        <div class="ranking-prize-card" data-ranking-prize-card hidden>
           <span><span>Position</span><strong class="tnum" data-ranking-prize-rank></strong></span>
           <span><span>Prize</span><strong class="tnum" data-ranking-prize-value></strong></span>
         </div>
+        <div class="gate-actions">
+          <button class="btn btn-secondary" type="button" id="rankingPrizeClose">Close</button>
+        </div>
       </div>
-    </div>
-    <button class="btn btn-secondary gate-close" type="button" id="rankingPrizeClose">Close</button>`);
+    </div>`);
   gate = $("#rankingPrizeGate");
   $("#rankingPrizeBackdrop").addEventListener("click", closeRankingPrizeModal);
   $("#rankingPrizeClose").addEventListener("click", closeRankingPrizeModal);
@@ -2048,7 +2124,6 @@ function openRankingPrizeModal() {
   if (prizeCard) prizeCard.hidden = !earnedPrize;
   $("#rankingPrizeBackdrop").classList.add("is-open");
   gate.classList.add("is-open");
-  $("#rankingPrizeClose").classList.add("is-open");
   gate.setAttribute("aria-hidden", "false");
   document.body.classList.add("sheet-open");
 }
@@ -2059,7 +2134,6 @@ function closeRankingPrizeModal() {
   if (!gate || !backdrop) return;
   backdrop.classList.remove("is-open");
   gate.classList.remove("is-open");
-  $("#rankingPrizeClose")?.classList.remove("is-open");
   gate.setAttribute("aria-hidden", "true");
   document.body.classList.remove("sheet-open");
 }
@@ -2078,9 +2152,8 @@ function rankingCountdownHTML(ms) {
   const d = Math.floor(total / 86400);
   const h = Math.floor((total % 86400) / 3600);
   const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
   const part = (num, unit) => `<span class="reset-num">${String(num).padStart(2, "0")}</span><span class="reset-unit">${unit}</span>`;
-  return `${part(d, "d")} ${part(h, "h")} ${part(m, "m")} ${part(s, "s")}`;
+  return `${part(d, "d")} ${part(h, "h")} ${part(m, "m")}`;
 }
 
 function initRanking() {
@@ -2088,6 +2161,7 @@ function initRanking() {
   const list = $("[data-ranking-list]");
   if (!countdown && !list) return;
   renderRanking();
+  initRankingMonthSelect();
   openRankingPrizeModal();
   if (!countdown) return;
   let resetAt = getRankingResetAt();
@@ -2223,6 +2297,8 @@ function applyAuthChrome() {
   const actions = $("#menuActions");
   const authed = isAuthed();
   document.body.classList.toggle("is-authed", authed);
+  $$('[data-auth-only]').forEach((el) => { el.hidden = !authed; });
+  $$('[data-guest-only]').forEach((el) => { el.hidden = authed; });
   if (right) {
     // Signed out shows Login; signed in the header carries the Wallet + Open Positions chips (right) for cross-page access.
     right.innerHTML = authed ? "" : `<a class="btn header-login floating-btn" href="login.html">Login</a>`;
@@ -2826,16 +2902,145 @@ function initCodeInput(wrap) {
   });
 }
 
+const DOB_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function initDateComboboxes(root) {
+  const combos = $$("[data-date-combobox]", root);
+  const controllers = [];
+  combos.forEach((combo) => {
+    const part = combo.dataset.dateCombobox;
+    const input = $("input", combo);
+    const toggle = $("[data-date-toggle]", combo);
+    const menu = $(".combobox-menu", combo);
+    const currentYear = new Date().getFullYear();
+    const options = part === "month"
+      ? DOB_MONTHS.map((label, i) => ({ value: String(i + 1), label }))
+      : part === "day"
+        ? Array.from({ length: 31 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }))
+        : Array.from({ length: currentYear - 1899 }, (_, i) => ({ value: String(currentYear - i), label: String(currentYear - i) }));
+    let visible = options;
+    let activeIndex = -1;
+
+    const close = () => {
+      menu.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+      activeIndex = -1;
+    };
+    controllers.push({ combo, close });
+
+    const render = (query = "") => {
+      const q = query.trim().toLowerCase();
+      visible = q
+        ? options.filter((option) => option.label.toLowerCase().startsWith(q) || option.value.startsWith(q))
+        : options;
+      activeIndex = -1;
+      menu.innerHTML = visible.length
+        ? visible.map((option, i) => `<button class="combobox-option" id="${menu.id}-option-${i}" type="button" role="option" data-date-value="${option.value}" aria-selected="${input.dataset.value === option.value}">${option.label}</button>`).join("")
+        : `<div class="combobox-empty">No matching options</div>`;
+    };
+
+    const positionMenu = () => {
+      const edgeGap = 16;
+      const menuGap = 8;
+      const rect = combo.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom - edgeGap - menuGap;
+      const spaceAbove = rect.top - edgeGap - menuGap;
+      const openUp = spaceBelow < 160 && spaceAbove > spaceBelow;
+      combo.classList.toggle("is-up", openUp);
+      const available = openUp ? spaceAbove : spaceBelow;
+      menu.style.maxHeight = `${Math.max(72, Math.min(224, available))}px`;
+    };
+
+    const open = (query = "") => {
+      controllers.forEach((controller) => { if (controller.combo !== combo) controller.close(); });
+      render(query);
+      menu.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      positionMenu();
+      const selected = menu.querySelector('[aria-selected="true"]');
+      if (selected) setTimeout(() => selected.scrollIntoView({ block: "nearest" }), 0);
+    };
+
+    const selectOption = (option) => {
+      input.value = option.textContent.trim();
+      input.dataset.value = option.dataset.dateValue;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      close();
+      input.focus();
+    };
+
+    const setActive = (next) => {
+      const items = $$(".combobox-option", menu);
+      if (!items.length) return;
+      activeIndex = (next + items.length) % items.length;
+      items.forEach((item, i) => item.classList.toggle("is-active", i === activeIndex));
+      const active = items[activeIndex];
+      input.setAttribute("aria-activedescendant", active.id);
+      active.scrollIntoView({ block: "nearest" });
+    };
+
+    input.addEventListener("focus", () => { if (menu.hidden) open(); });
+    input.addEventListener("input", () => {
+      delete input.dataset.value;
+      if (part !== "month") input.value = input.value.replace(/\D/g, "").slice(0, part === "day" ? 2 : 4);
+      open(input.value);
+    });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (menu.hidden) open();
+        setActive(activeIndex + (e.key === "ArrowDown" ? 1 : -1));
+      } else if (e.key === "Enter" && !menu.hidden && activeIndex >= 0) {
+        e.preventDefault();
+        selectOption($$(".combobox-option", menu)[activeIndex]);
+      } else if (e.key === "Escape") {
+        close();
+      }
+    });
+    combo.addEventListener("focusout", () => {
+      setTimeout(() => { if (!combo.contains(document.activeElement)) close(); }, 0);
+    });
+    toggle.addEventListener("click", () => {
+      if (menu.hidden) { input.focus(); open(); }
+      else close();
+    });
+    menu.addEventListener("click", (e) => {
+      const option = e.target.closest("[data-date-value]");
+      if (option) selectOption(option);
+    });
+    window.addEventListener("resize", () => { if (!menu.hidden) positionMenu(); });
+    render();
+  });
+  document.addEventListener("pointerdown", (e) => {
+    controllers.forEach((controller) => { if (!controller.combo.contains(e.target)) controller.close(); });
+  });
+}
+
+function birthdayISOFromFields(form) {
+  const monthText = $("#dobMonth", form).value.trim();
+  const dayText = $("#dobDay", form).value.trim();
+  const yearText = $("#dobYear", form).value.trim();
+  let month = /^\d{1,2}$/.test(monthText) ? Number(monthText) : 0;
+  if (!month) {
+    const matches = DOB_MONTHS.map((label, i) => ({ label, value: i + 1 })).filter((item) => item.label.toLowerCase().startsWith(monthText.toLowerCase()));
+    if (matches.length === 1) month = matches[0].value;
+  }
+  const day = /^\d{1,2}$/.test(dayText) ? Number(dayText) : 0;
+  const year = /^\d{4}$/.test(yearText) ? Number(yearText) : 0;
+  if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900) return "";
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return "";
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
 function initSignup() {
   const steps = $("#signupSteps");
   if (!steps) return;
   let email = "";
-  let socialSignup = false;
-  let locationAllowed = false;
-  let locationCoords = null;
+  let provider = "password";
   const go = (n) => {
     steps.dataset.step = n;
-    $$(".auth-progress span").forEach((d) => d.classList.toggle("is-done", Number(d.dataset.dot) <= n));
     const focusEl = steps.querySelector(`.auth-step[data-step="${n}"] input`);
     if (focusEl) setTimeout(() => focusEl.focus(), 80);
   };
@@ -2845,7 +3050,7 @@ function initSignup() {
     e.preventDefault();
     clearErr(emailEl);
     email = emailEl.value.trim();
-    socialSignup = false;
+    provider = "password";
     if (!email) { showErr(emailEl, "Enter your email"); return; }
     if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); return; }
     const tgt = steps.querySelector("[data-code-email]");
@@ -2856,15 +3061,20 @@ function initSignup() {
   const f2 = steps.querySelector("[data-step2-form]");
   const p1 = f2.querySelector("#newpass");
   const p2 = f2.querySelector("#confirmpass");
+  const terms = f2.querySelector("#acceptTerms");
+  const termsError = f2.querySelector("[data-terms-error]");
   f2.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(p1); clearErr(p2);
+    termsError.hidden = true;
     if (!p1.value) { showErr(p1, "Create a password"); return; }
     if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
     if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
     if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
+    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
     go(3);
   });
+  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
 
   const f3 = steps.querySelector("[data-step3-form]");
   const codeWrap = f3.querySelector("[data-code-input]");
@@ -2873,82 +3083,21 @@ function initSignup() {
     clearCodeErr(codeWrap);
     const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
     if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
-    go(4);
-  });
-
-  const f4 = steps.querySelector("[data-step4-form]");
-  const birthdayEl = f4.querySelector("#birthday");
-  f4.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearErr(birthdayEl);
-    if (!birthdayEl.value) { showErr(birthdayEl, "Enter your date of birth"); return; }
-    if (!isAtLeastAge(birthdayEl.value, 18)) { showErr(birthdayEl, "GTL is for players 18 or older."); return; }
-    go(5);
-  });
-
-  const f5 = steps.querySelector("[data-step5-form]");
-  const countryEl = f5.querySelector("#country");
-  const stateEl = f5.querySelector("#state");
-  const locationBtn = steps.querySelector("[data-location-share]");
-  const locationStatus = steps.querySelector("[data-location-status]");
-  if (locationBtn) {
-    locationBtn.addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        locationStatus.textContent = "Location sharing is not available in this browser.";
-        locationStatus.classList.add("is-error");
-        return;
-      }
-      locationStatus.textContent = "Waiting for browser permission...";
-      locationStatus.classList.remove("is-error", "is-success");
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          locationAllowed = true;
-          locationCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          locationStatus.textContent = "Location shared. Confirm your country and state.";
-          locationStatus.classList.add("is-success");
-        },
-        () => {
-          locationAllowed = false;
-          locationStatus.textContent = "Allow location sharing to continue.";
-          locationStatus.classList.add("is-error");
-        },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
-      );
-    });
-  }
-  f5.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearErr(countryEl); clearErr(stateEl);
-    let ok = true;
-    if (!locationAllowed) {
-      locationStatus.textContent = "Allow location sharing to continue.";
-      locationStatus.classList.add("is-error");
-      ok = false;
-    }
-    if (!countryEl.value.trim()) { showErr(countryEl, "Enter your country"); ok = false; }
-    if (!stateEl.value.trim()) { showErr(stateEl, "Enter your state"); ok = false; }
-    if (!ok) return;
-    go(6);
-  });
-
-  const f6 = steps.querySelector("[data-step6-form]");
-  const usernameEl = f6.querySelector("#username");
-  f6.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearErr(usernameEl);
-    const username = usernameEl.value.trim();
-    if (!username) { showErr(usernameEl, "Choose a username"); return; }
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3-20 letters, numbers, or underscores"); return; }
-    const user = socialSignup ? { name: USER.name } : { name: nameFromEmail(email), email };
-    setAuth({ ...user, username, birthday: birthdayEl.value, country: countryEl.value.trim(), state: stateEl.value.trim(), location: locationCoords });
+    setAuth({ name: nameFromEmail(email), email, provider, onboarding: true });
     location.href = postSignupDest();
   });
 
   $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
-  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => { socialSignup = true; email = ""; go(2); }));
+  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => {
+    provider = b.dataset.social;
+    email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
+    const tgt = steps.querySelector("[data-code-email]");
+    if (tgt) tgt.textContent = email;
+    go(2);
+  }));
   const resend = steps.querySelector("[data-resend]");
   if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
-  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f4); clearErrsOnInput(f5); clearErrsOnInput(f6);
+  clearErrsOnInput(f1); clearErrsOnInput(f2);
   initCodeInput(codeWrap);
 }
 
@@ -2957,16 +3106,82 @@ function initWelcome() {
   if (!main) return;
   if (!isAuthed()) { location.replace("signup.html"); return; }
 
-  const firstName = currentName().split(" ")[0] || "player";
   const credit = money(WELCOME_CREDIT);
-  const nameEl = $("[data-welcome-name]", main);
   const bonusEl = $("[data-welcome-bonus]", main);
-  const balanceEl = $("[data-welcome-balance]", main);
+  const intro = $("[data-welcome-intro]", main);
+  const details = $("[data-welcome-details]", main);
+  const usernamePanel = $("[data-welcome-username]", main);
+  const reward = $("[data-welcome-reward]", main);
+  const detailsForm = $("[data-welcome-form]", main);
+  const usernameForm = $("[data-username-form]", main);
   const primary = $("[data-welcome-primary]", main);
-
-  if (nameEl) nameEl.textContent = firstName;
   if (bonusEl) bonusEl.textContent = credit;
-  if (balanceEl) balanceEl.textContent = credit;
+  initDateComboboxes(detailsForm);
+
+  const showPanel = (current, next, state, focusSelector) => {
+    current.hidden = true;
+    next.hidden = false;
+    main.dataset.welcomeState = state;
+    if (focusSelector) setTimeout(() => $(focusSelector, next)?.focus(), 80);
+  };
+
+  const showDetails = () => {
+    main.classList.add("is-transitioning");
+    setTimeout(() => {
+      showPanel(intro, details, "details", "#firstName");
+      main.classList.remove("is-transitioning");
+    }, 280);
+  };
+  setTimeout(showDetails, 1600);
+
+  const firstNameEl = $("#firstName", detailsForm);
+  const lastNameEl = $("#lastName", detailsForm);
+  const birthdayInputs = [$("#dobMonth", detailsForm), $("#dobDay", detailsForm), $("#dobYear", detailsForm)];
+  const birthdayError = $("[data-birthday-error]", detailsForm);
+  const clearBirthdayError = () => {
+    birthdayInputs.forEach((input) => input.classList.remove("is-error"));
+    birthdayError.hidden = true;
+    birthdayError.textContent = "";
+  };
+  const showBirthdayError = (message) => {
+    birthdayInputs.forEach((input) => input.classList.add("is-error"));
+    birthdayError.textContent = message;
+    birthdayError.hidden = false;
+  };
+  birthdayInputs.forEach((input) => {
+    input.addEventListener("input", clearBirthdayError);
+    input.addEventListener("change", clearBirthdayError);
+  });
+  detailsForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(firstNameEl); clearErr(lastNameEl); clearBirthdayError();
+    let ok = true;
+    if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); ok = false; }
+    if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); ok = false; }
+    const birthday = birthdayISOFromFields(detailsForm);
+    if (!birthday) { showBirthdayError("Enter a valid month, day, and year"); ok = false; }
+    else if (!isAtLeastAge(birthday, 18)) { showBirthdayError("GTL is for users 18 or older."); ok = false; }
+    if (!ok) return;
+    const firstName = firstNameEl.value.trim();
+    const lastName = lastNameEl.value.trim();
+    setAuth({ ...getAuth(), firstName, lastName, name: `${firstName} ${lastName}`, birthday });
+    showPanel(details, usernamePanel, "username", "#username");
+  });
+  [firstNameEl, lastNameEl].forEach((input) => input.addEventListener("input", () => clearErr(input)));
+
+  const usernameEl = $("#username", usernameForm);
+  usernameForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(usernameEl);
+    const username = usernameEl.value.trim();
+    if (!username) { showErr(usernameEl, "Choose a username"); return; }
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3–20 letters, numbers, or underscores"); return; }
+    const auth = getAuth();
+    setAuth({ ...auth, username, onboarding: false });
+    showPanel(usernamePanel, reward, "reward");
+  });
+  clearErrsOnInput(usernameForm);
+
   if (primary) {
     primary.href = hasBetIntent() ? "#" : "home.html#live";
     primary.addEventListener("click", (e) => {

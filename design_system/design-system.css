@@ -1105,7 +1105,9 @@
 }
 
 .design-system-page .flat-frame--home .flat-phone,
-.design-system-page .flat-frame--welcome .flat-phone {
+.design-system-page .flat-frame--welcome .flat-phone,
+.design-system-page .flat-frame--location .flat-phone,
+.design-system-page .flat-frame--ranking .flat-phone {
   height: auto;
   min-height: var(--flat-frame-h, 760px);
 }
@@ -1181,8 +1183,8 @@
   padding: var(--s8);
 }
 
-.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-wallet),
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-wallet) {
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet) {
   display: grid;
   grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
   grid-auto-rows: max-content;
@@ -1246,6 +1248,56 @@
   padding: 0;
   position: relative;
   width: 100%;
+}
+
+.design-system-page .flat-screen.is-location {
+  background: var(--bg);
+  display: block;
+  gap: 0;
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-ranking {
+  display: block;
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+.design-system-page .flat-screen.is-ranking .site-header { inset: 0 0 auto; position: absolute; }
+.design-system-page .flat-screen.is-ranking .brand-pill { background: transparent; border: 0; box-shadow: none; padding-right: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.design-system-page .flat-screen.is-ranking .brand-link,
+.design-system-page .flat-screen.is-ranking .header-nav,
+.design-system-page .flat-screen.is-ranking .header-left > .theme-switch { display: none; }
+.design-system-page .flat-screen.is-ranking .brand-menu { display: inline-flex; }
+.design-system-page .flat-screen.is-ranking :is(a, button, .brand) { pointer-events: none; }
+.design-system-page .flat-screen.is-ranking .ranking-hero { padding-top: 96px; }
+.design-system-page .flat-screen.is-ranking .ranking-page { padding-inline: var(--s4); }
+.design-system-page .flat-screen.is-ranking .ranking-prize-backdrop { position: absolute; }
+.design-system-page .flat-screen.is-ranking .ranking-prize-gate { position: absolute; top: 380px; }
+
+.design-system-page .flat-screen.is-location .location-main {
+  min-height: var(--flat-frame-h, 760px);
+  padding: var(--s8) var(--s5);
+}
+
+.design-system-page .flat-screen.is-location .location-brand { margin-bottom: var(--s8); }
+.design-system-page .flat-screen.is-location .location-brand img { width: 124px; }
+.design-system-page .flat-screen.is-location .location-copy h1 { font-size: 2.35rem; }
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location .location-main {
+  min-height: var(--flat-frame-h, 900px);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location .location-copy h1,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-location .location-copy h1 {
+  font-size: 4rem;
 }
 
 .design-system-page .flat-screen.is-welcome .site-header {

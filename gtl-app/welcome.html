@@ -13,28 +13,96 @@
 
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
   <link rel="stylesheet" href="welcome.css" />
 </head>
 <body class="welcome-body">
 
-  <header class="site-header" id="siteHeader"></header>
-
-  <main class="welcome-main container" id="welcomeMain">
-    <section class="welcome-panel" aria-labelledby="welcomeTitle">
+  <main class="welcome-main container" id="welcomeMain" data-welcome-state="intro">
+    <section class="welcome-panel welcome-intro" aria-labelledby="welcomeTitle" data-welcome-intro>
       <div class="welcome-copy">
-        <p class="welcome-kicker">Welcome, <span data-welcome-name>player</span></p>
-        <h1 id="welcomeTitle">You got <span data-welcome-bonus>$1,500.00</span> in betting credits.</h1>
+        <p class="welcome-kicker">Account verified</p>
+        <h1 id="welcomeTitle">Welcome to <span>GTL.</span></h1>
+        <p>Your account is ready. Let’s finish setting up your profile.</p>
+      </div>
+
+    </section>
+
+    <section class="welcome-panel welcome-details" aria-labelledby="detailsTitle" data-welcome-details hidden>
+      <div class="welcome-copy">
+        <p class="welcome-kicker">Account verified</p>
+        <h1 id="detailsTitle">Welcome to <span>GTL.</span></h1>
+        <p>Your account is ready. Let’s finish setting up your profile.</p>
+      </div>
+
+      <form class="welcome-form" data-welcome-form novalidate>
+        <div class="welcome-name-row">
+          <div class="field">
+            <label for="firstName">First name</label>
+            <input class="field-input" id="firstName" type="text" autocomplete="given-name" placeholder="Alex" required />
+          </div>
+          <div class="field">
+            <label for="lastName">Last name</label>
+            <input class="field-input" id="lastName" type="text" autocomplete="family-name" placeholder="Morgan" required />
+          </div>
+        </div>
+        <fieldset class="field welcome-birthday-field" data-birthday-field>
+          <legend>Date of birth</legend>
+          <div class="date-fields">
+            <div class="date-part">
+              <div class="field-combobox" data-date-combobox="month">
+                <input class="field-input" id="dobMonth" type="text" inputmode="text" autocomplete="bday-month" placeholder="Month" role="combobox" aria-label="Month" aria-autocomplete="list" aria-controls="dobMonthOptions" aria-expanded="false" required />
+                <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show month options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <div class="combobox-menu" id="dobMonthOptions" role="listbox" hidden></div>
+              </div>
+            </div>
+            <div class="date-part">
+              <div class="field-combobox" data-date-combobox="day">
+                <input class="field-input" id="dobDay" type="text" inputmode="numeric" autocomplete="bday-day" placeholder="Day" role="combobox" aria-label="Day" aria-autocomplete="list" aria-controls="dobDayOptions" aria-expanded="false" maxlength="2" required />
+                <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show day options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <div class="combobox-menu" id="dobDayOptions" role="listbox" hidden></div>
+              </div>
+            </div>
+            <div class="date-part">
+              <div class="field-combobox" data-date-combobox="year">
+                <input class="field-input" id="dobYear" type="text" inputmode="numeric" autocomplete="bday-year" placeholder="Year" role="combobox" aria-label="Year" aria-autocomplete="list" aria-controls="dobYearOptions" aria-expanded="false" maxlength="4" required />
+                <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show year options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <div class="combobox-menu" id="dobYearOptions" role="listbox" hidden></div>
+              </div>
+            </div>
+          </div>
+          <span class="field-hint">Used to confirm your eligibility.</span>
+          <p class="field-error birthday-error" data-birthday-error role="alert" hidden></p>
+        </fieldset>
+        <button class="btn btn-primary btn-lg" type="submit">Continue</button>
+      </form>
+    </section>
+
+    <section class="welcome-panel welcome-username" aria-labelledby="usernameTitle" data-welcome-username hidden>
+      <div class="welcome-copy">
+        <p class="welcome-kicker">Your GTL identity</p>
+        <h1 id="usernameTitle">Choose a username.</h1>
+        <p>This is how you’ll appear in rankings and across GTL.</p>
+      </div>
+
+      <form class="welcome-form" data-username-form novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input class="field-input" id="username" type="text" autocomplete="username" placeholder="alexmorgan" required />
+          <span class="field-hint">Use 3–20 letters, numbers, or underscores.</span>
+        </div>
+        <button class="btn btn-primary btn-lg" type="submit">Complete Setup</button>
+      </form>
+    </section>
+
+    <section class="welcome-panel welcome-reward" aria-labelledby="rewardTitle" data-welcome-reward hidden>
+      <div class="welcome-copy">
+        <h1 id="rewardTitle">Thanks for joining. Here’s <span data-welcome-bonus>$1,500.00</span> in credits to get you started.</h1>
         <p>Use them on live GTL markets. Pick a game, back the lead, and trade the swing as it happens.</p>
       </div>
 
-      <div class="credit-ticket" aria-label="Welcome credit balance">
-        <span class="ticket-label">Available credits</span>
-        <span class="ticket-value tnum" data-welcome-balance>$1,500.00</span>
-        <span class="ticket-note">Ready to use on your first bet</span>
-      </div>
-
       <div class="welcome-actions">
-        <a class="btn btn-primary btn-lg" href="home.html#live" data-welcome-primary>Start betting</a>
+        <a class="btn btn-primary btn-lg" href="home.html#live" data-welcome-primary>Accept &amp; Start Betting</a>
       </div>
     </section>
   </main>
