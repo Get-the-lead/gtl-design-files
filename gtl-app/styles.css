@@ -147,7 +147,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .btn:active { transform: scale(0.97); }
 
 /* Semantic action buttons carry the bolder text size (matches the auth screens) */
-.btn-primary, .btn-secondary, .btn-ghost { font-size: var(--fs-body); }
+.btn-primary, .btn-secondary, .btn-ghost, .btn-danger { font-size: var(--fs-body); }
 
 .btn-primary { background: var(--green); color: #06210f; }
 .btn-primary:hover { background: var(--green-strong); }
@@ -579,7 +579,8 @@ body.menu-open #headerAuth { display: none; }
   gap: var(--s10);
 }
 .footer-brand { max-width: 320px; }
-.footer-brand .brand { justify-self: start; margin-bottom: var(--s4); }
+.footer-logo-link { display: inline-flex; margin-bottom: var(--s4); background: transparent; }
+.footer-logo { display: block; width: 132px; height: auto; background: transparent; }
 .footer-blurb { color: var(--ink-2); font-size: var(--fs-label); line-height: 1.7; }
 .footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4); }
 .footer-col h4 {
@@ -607,24 +608,20 @@ body.menu-open #headerAuth { display: none; }
   padding-top: var(--s6);
   border-top: 1px solid var(--line);
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  gap: var(--s2);
-  align-items: flex-start;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--s4);
+  align-items: center;
+  justify-content: space-between;
   color: var(--ink-3);
   font-size: var(--fs-eyebrow);
 }
+.footer-base span:last-child { text-align: right; }
 
 @media (min-width: 768px) {
   .footer-grid { grid-template-columns: 1.2fr 2fr; gap: var(--s16); }
   .footer-cols { grid-template-columns: repeat(3, 1fr); gap: var(--s6); }
   .footer-col h4 { margin-bottom: var(--s4); }
-  .footer-base {
-    align-items: center;
-    flex-direction: row;
-    gap: var(--s4);
-    justify-content: space-between;
-  }
 }
 
 /* Live pulse dot (shared) -------------------------------------------- */

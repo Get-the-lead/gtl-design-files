@@ -79,6 +79,7 @@ const flatDocs = {
       { title: "Default states", frames: [
         { label: "Sign in", type: "auth", mode: "signin" },
         { label: "Create account", type: "auth", mode: "register" },
+        { label: "Name and birthday", type: "auth", mode: "registerDetails" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Email verification", type: "auth", mode: "verify" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
@@ -109,13 +110,11 @@ const flatDocs = {
   },
   welcome: {
     title: "Welcome Home",
-    description: "Post-verification onboarding states for personal details, username selection, and the credited reward.",
+    description: "Post-verification username selection followed by a polished account celebration and welcome credit.",
     groups: [
       { title: "Post-signup states", frames: [
-        { label: "Welcome", type: "welcome", mode: "intro" },
-        { label: "Name and birthday", type: "welcome", mode: "details" },
         { label: "Choose username", type: "welcome", mode: "username" },
-        { label: "Welcome credits", type: "welcome", mode: "reward" },
+        { label: "Welcome celebration", type: "welcome", mode: "reward" },
       ] },
     ],
   },
@@ -310,14 +309,21 @@ function renderAuthFrame(mode) {
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "registerPassword") {
-    return authShell(`<div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
+    return authShell(`<div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
         <span class="step-back">${backIcon}Back</span>
         ${authHead("", "Create a password", "Keep your account secure with a strong password.")}
         <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true })}${field("Confirm password", "Re-enter your password", { type: "password" })}<label class="terms-check"><input type="checkbox" checked tabindex="-1"><span>I agree to GTL's <span class="link-green">Terms and Conditions</span> and <span class="link-green">Privacy Policy</span>.</span></label><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
+  if (mode === "registerDetails") {
+    return authShell(`<div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("", "Tell us about you", "Add your name and date of birth to confirm your eligibility.")}
+        <div class="auth-form"><div class="signup-name-row">${field("First name", "Alex", { value: "Alex" })}${field("Last name", "Morgan", { value: "Morgan" })}</div><fieldset class="field signup-birthday-field"><legend>Date of birth</legend><div class="date-fields"><div class="date-part"><div class="field-combobox"><input class="field-input" value="January" aria-label="Month" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" value="19" aria-label="Day" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" value="2000" aria-label="Year" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div></div><span class="field-hint">You must be 18 or older to use GTL.</span></fieldset><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+      </div></div>${authFoot("Already have an account?", "Login")}`);
+  }
   if (mode === "verify") {
-    return authShell(`<div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
+    return authShell(`<div class="auth-steps" data-step="4"><div class="auth-step" data-step="4">
         <span class="step-back">${backIcon}Back</span>
         ${authHead("", "Verify your account", `We sent a 6-digit code to <span class="code-sent-to">alex@gtl.test</span>.`)}
         <div class="auth-form"><div class="code-input"><input class="code-box is-filled" type="text" value="4" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="8" tabindex="-1" readonly><input class="code-box is-filled" type="text" value="2" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly><input class="code-box" type="text" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Verify Account</button></div>
@@ -445,7 +451,7 @@ function homeLeagueStrip(active = "nfl") {
 
 function homeHero(mode) {
   if (mode === "logged" || mode === "positions") {
-    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey alexmorgan</h1></div><div class="authed-stack">${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
+    return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey Alex</h1></div><div class="authed-stack">${mode === "positions" ? homePositionsBlock() : homeEmptyPositions()}<span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
   }
   return `<section class="hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner"><div class="hero-trading"><span class="live-dot"></span><span class="tnum">3,247</span> trading right now</div><h1 class="hero-title">Trade the moments that move the game.</h1><p class="hero-sub">Back the lead on live NFL &amp; NBA. Buy and sell in seconds, as the game turns.</p><div class="hero-cta"><span class="btn btn-primary btn-lg">Live Games</span><span class="btn btn-glass btn-lg">Create Account</span></div></div></section>`;
 }
@@ -490,7 +496,7 @@ function homePositionCardA(variant) {
   const up = !p.pnl.startsWith("-");
   const style = `--home-color:${g.home.color};--away-color:${g.away.color}`;
   const actions = `<div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>`;
-  return `<article class="pos-card pos-card--a" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">${p.market}</span><span class="oc-vr-head">Value &amp; Return</span></div><div class="oc-row"><span class="oc-sub"><span class="side-${p.side}">${p.side.toUpperCase()}</span> · ${p.qty} contracts</span><span class="oc-figures"><span class="tnum">${p.value}</span> · <span class="oc-pnl ${up ? "up" : "down"} tnum">${p.pnl}</span></span></div></div>${actions}</div></article>`;
+  return `<article class="pos-card pos-card--a" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">${p.market}</span><span class="oc-vr-head">Value: <span class="tnum">${p.value}</span></span></div><div class="oc-row"><span class="oc-sub"><span class="side-${p.side}">${p.side.toUpperCase()}</span> · ${p.qty} contracts</span><span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${p.pnl}</span></span></div></div>${actions}</div></article>`;
 }
 
 function homePositionCard(variant) {
@@ -503,7 +509,7 @@ function homePositionCard(variant) {
   if (variant === "b") {
     return `<article class="pos-card pos-card--b" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="ocb-type">Keep the Lead · <span class="side-no">NO</span></div><div class="ocb-stats"><div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">80</span></div><div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">$44.00</span></div><div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl down">-$4.80</span></div></div>${actions}</div></article>`;
   }
-  return `<article class="pos-card pos-card--a" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">Get the Lead</span><span class="oc-vr-head">Value &amp; Return</span></div><div class="oc-row"><span class="oc-sub"><span class="side-yes">YES</span> · 120 contracts</span><span class="oc-figures"><span class="tnum">$76.80</span> · <span class="oc-pnl up tnum">+$19.20</span></span></div></div>${actions}</div></article>`;
+  return `<article class="pos-card pos-card--a" style="${style}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">Get the Lead</span><span class="oc-vr-head">Value: <span class="tnum">$76.80</span></span></div><div class="oc-row"><span class="oc-sub"><span class="side-yes">YES</span> · 120 contracts</span><span class="oc-figures"><span class="oc-pnl up tnum">+$19.20</span></span></div></div>${actions}</div></article>`;
 }
 
 function homeLiveSection(mode) {
@@ -535,17 +541,13 @@ function renderHomeFrame(mode) {
 }
 
 function renderWelcomeFrame(mode) {
-  let content = "";
-  if (mode === "intro") {
-    content = `<div class="welcome-copy"><p class="welcome-kicker">Account verified</p><h1>Welcome to <span>GTL.</span></h1><p>Your account is ready. Let’s finish setting up your profile.</p></div>`;
-  } else if (mode === "details") {
-    content = `<div class="welcome-copy"><p class="welcome-kicker">Account verified</p><h1>Welcome to <span>GTL.</span></h1><p>Your account is ready. Let’s finish setting up your profile.</p></div><div class="welcome-form"><div class="welcome-name-row">${field("First name", "Alex", { value: "Alex" })}${field("Last name", "Morgan", { value: "Morgan" })}</div><fieldset class="field welcome-birthday-field"><legend>Date of birth</legend><div class="date-fields"><div class="date-part"><div class="field-combobox"><input class="field-input" value="January" aria-label="Month" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span><div class="combobox-menu"><button class="combobox-option" aria-selected="true" tabindex="-1">January</button><button class="combobox-option" tabindex="-1">February</button><button class="combobox-option" tabindex="-1">March</button><button class="combobox-option" tabindex="-1">April</button><button class="combobox-option" tabindex="-1">May</button><button class="combobox-option" tabindex="-1">June</button></div></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" value="19" aria-label="Day" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" value="2000" aria-label="Year" tabindex="-1" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div></div><span class="field-hint">Used to confirm your eligibility.</span></fieldset><span class="btn btn-primary btn-lg">Continue</span></div>`;
-  } else if (mode === "username") {
-    content = `<div class="welcome-copy"><p class="welcome-kicker">Your GTL identity</p><h1>Choose a username.</h1><p>This is how you’ll appear in rankings and across GTL.</p></div><div class="welcome-form">${field("Username", "alexmorgan", { value: "alexmorgan", hint: "Use 3–20 letters, numbers, or underscores." })}<span class="btn btn-primary btn-lg">Complete Setup</span></div>`;
-  } else {
-    content = `<div class="welcome-copy"><h1>Thanks for joining. Here’s <span>$1,500.00</span> in credits to get you started.</h1><p>Use them on live GTL markets. Pick a game, back the lead, and trade the swing as it happens.</p></div><div class="welcome-actions"><span class="btn btn-primary btn-lg">Accept &amp; Start Betting</span></div>`;
+  if (mode === "username") {
+    const content = `<div class="welcome-copy"><p class="welcome-kicker">Your GTL identity</p><h1>Choose a username.</h1><p>This is how you’ll appear in rankings and across GTL.</p></div><div class="welcome-form">${field("Username", "alexmorgan", { value: "alexmorgan", hint: "Use 3–20 letters, numbers, or underscores." })}<span class="btn btn-primary btn-lg">Complete Setup</span></div>`;
+    return `<div class="flat-screen is-welcome"><main class="welcome-main container" data-welcome-state="username"><section class="welcome-panel welcome-username">${content}</section></main></div>`;
   }
-  return `<div class="flat-screen is-welcome"><main class="welcome-main container"><section class="welcome-panel">${content}</section></main></div>`;
+  const decor = `<div class="welcome-celebration-bg" aria-hidden="true"><span class="ambient-orbit orbit-one"></span><span class="ambient-orbit orbit-two"></span><span class="light-sweep"></span><i class="ribbon one"></i><i class="ribbon two"></i><i class="ribbon three"></i><i class="ribbon four"></i><i class="particle p1"></i><i class="particle pale p2"></i><i class="particle dim p3"></i><i class="particle p4"></i><i class="particle pale p5"></i><i class="particle dim p6"></i><i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i><i class="spark s4"></i></div>`;
+  const content = `${decor}<div class="welcome-copy"><p class="welcome-kicker">You’re officially in</p><h1>Welcome to GTL, <span>Alex</span>.</h1><p>Your account is live and the next lead is yours to call. Use your credits to bet the moments that matter to you.</p></div><div class="credit-ticket"><span class="ticket-label">Welcome credits</span><strong class="ticket-value tnum">1,500</strong></div><div class="welcome-actions"><span class="btn btn-primary btn-lg">Explore Live Games</span></div>`;
+  return `<div class="flat-screen is-welcome"><main class="welcome-main container" data-welcome-state="reward"><section class="welcome-panel welcome-reward">${content}</section></main></div>`;
 }
 
 function renderLocationFrame() {
@@ -649,6 +651,7 @@ const flatDocViews = {
     groups: [
       { title: "Registration states", frames: [
         { label: "Create account", type: "auth", mode: "register" },
+        { label: "Name and birthday", type: "auth", mode: "registerDetails" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
         { label: "Email verification", type: "auth", mode: "verify" },
         { label: "Loading state", type: "auth", mode: "loading" },
@@ -1087,9 +1090,9 @@ function accountProfileHTML({ email, provider, hasPassword }) {
   const providerMark = provider === "google" ? "G" : provider === "apple" ? "Apple" : "••";
   return `<h2 class="flat-hero-title">Account</h2>
     <div class="flat-card account-profile-card">
-      <div class="account-avatar">AM</div>
+      <div class="account-avatar">A</div>
       <div class="account-profile-copy">
-        <h3>Alex Morgan</h3>
+        <h3>Alex</h3>
         <p>${email}</p>
       </div>
     </div>

@@ -83,12 +83,12 @@
 
 /* Typable select menu — shared by segmented date fields and future form comboboxes */
 .field-combobox { position: relative; }
-.field-combobox .field-input { padding-right: 44px; }
+.field-combobox .field-input { padding-right: 40px; }
 .combobox-toggle {
   position: absolute;
   top: 50%;
   right: 7px;
-  width: 36px;
+  width: 28px;
   height: 36px;
   display: grid;
   place-items: center;
@@ -98,7 +98,7 @@
   background: transparent;
   color: var(--ink-3);
 }
-.combobox-toggle:hover { background: var(--surface-2); color: var(--ink); }
+.combobox-toggle:hover { background: transparent; color: var(--ink); }
 .combobox-toggle svg { width: 18px; height: 18px; transition: transform 0.18s var(--ease); }
 .field-combobox:has(.combobox-menu:not([hidden])) .combobox-toggle svg { transform: rotate(180deg); }
 .combobox-menu {
@@ -179,8 +179,26 @@
 .auth-step { display: none; flex-direction: column; animation: step-in 0.3s var(--ease-out); }
 .auth-steps[data-step="1"] .auth-step[data-step="1"],
 .auth-steps[data-step="2"] .auth-step[data-step="2"],
-.auth-steps[data-step="3"] .auth-step[data-step="3"] { display: flex; }
+.auth-steps[data-step="3"] .auth-step[data-step="3"],
+.auth-steps[data-step="4"] .auth-step[data-step="4"] { display: flex; }
 @keyframes step-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+
+.signup-name-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s4);
+}
+.signup-name-row .field + .field { margin-top: 0; }
+.signup-birthday-field { min-width: 0; margin: var(--s5) 0 0; padding: 0; border: 0; }
+.signup-birthday-field legend { margin-bottom: var(--s2); }
+.date-fields { display: grid; grid-template-columns: 1.25fr 0.8fr 1fr; gap: var(--s2); }
+.date-part { min-width: 0; }
+.date-part .field-input { min-width: 0; padding-left: var(--s4); }
+.birthday-error { margin-top: 0; }
+
+@media (max-width: 440px) {
+  .signup-name-row { grid-template-columns: 1fr; }
+}
 
 .terms-check {
   display: grid;

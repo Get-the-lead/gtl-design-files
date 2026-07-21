@@ -63,11 +63,64 @@
             Back
           </button>
           <div class="auth-head">
+            <h1>Tell us about you</h1>
+            <p>Add your name and date of birth to confirm your eligibility.</p>
+          </div>
+
+          <form data-step2-form novalidate>
+            <div class="signup-name-row">
+              <div class="field">
+                <label for="firstName">First name</label>
+                <input class="field-input" id="firstName" type="text" autocomplete="given-name" placeholder="Alex" required />
+              </div>
+              <div class="field">
+                <label for="lastName">Last name</label>
+                <input class="field-input" id="lastName" type="text" autocomplete="family-name" placeholder="Morgan" required />
+              </div>
+            </div>
+            <fieldset class="field signup-birthday-field" data-birthday-field>
+              <legend>Date of birth</legend>
+              <div class="date-fields">
+                <div class="date-part">
+                  <div class="field-combobox" data-date-combobox="month">
+                    <input class="field-input" id="dobMonth" type="text" inputmode="text" autocomplete="bday-month" placeholder="Month" role="combobox" aria-label="Month" aria-autocomplete="list" aria-controls="dobMonthOptions" aria-expanded="false" required />
+                    <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show month options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <div class="combobox-menu" id="dobMonthOptions" role="listbox" hidden></div>
+                  </div>
+                </div>
+                <div class="date-part">
+                  <div class="field-combobox" data-date-combobox="day">
+                    <input class="field-input" id="dobDay" type="text" inputmode="numeric" autocomplete="bday-day" placeholder="Day" role="combobox" aria-label="Day" aria-autocomplete="list" aria-controls="dobDayOptions" aria-expanded="false" maxlength="2" required />
+                    <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show day options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <div class="combobox-menu" id="dobDayOptions" role="listbox" hidden></div>
+                  </div>
+                </div>
+                <div class="date-part">
+                  <div class="field-combobox" data-date-combobox="year">
+                    <input class="field-input" id="dobYear" type="text" inputmode="numeric" autocomplete="bday-year" placeholder="Year" role="combobox" aria-label="Year" aria-autocomplete="list" aria-controls="dobYearOptions" aria-expanded="false" maxlength="4" required />
+                    <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show year options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <div class="combobox-menu" id="dobYearOptions" role="listbox" hidden></div>
+                  </div>
+                </div>
+              </div>
+              <span class="field-hint">You must be 18 or older to use GTL.</span>
+              <p class="field-error birthday-error" data-birthday-error role="alert" hidden></p>
+            </fieldset>
+            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+          </form>
+        </div>
+
+        <div class="auth-step" data-step="3">
+          <button class="step-back" type="button" data-step-back="2">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="auth-head">
             <h1>Create a password</h1>
             <p>Keep your account secure with a strong password.</p>
           </div>
 
-          <form data-step2-form novalidate>
+          <form data-step3-form novalidate>
             <div class="field">
               <label for="newpass">Password</label>
               <div class="field-pass">
@@ -91,8 +144,8 @@
           </form>
         </div>
 
-        <div class="auth-step" data-step="3">
-          <button class="step-back" type="button" data-step-back="2">
+        <div class="auth-step" data-step="4">
+          <button class="step-back" type="button" data-step-back="3">
             <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Back
           </button>
@@ -101,7 +154,7 @@
             <p>We sent a 6-digit code to <span class="code-sent-to" data-code-email>your email</span>.</p>
           </div>
 
-          <form data-step3-form novalidate>
+          <form data-step4-form novalidate>
             <div class="code-input" data-code-input>
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2" />

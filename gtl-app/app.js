@@ -271,7 +271,7 @@ function navHTML(authed) {
     <a href="home.html#live">Live Games</a>
     <a href="ranking.html">Ranking</a>
     ${authed ? `<a href="wallet.html">Portfolio</a>` : ""}
-    ${authed ? `<a href="profile.html">Profile</a>` : ""}
+    ${authed ? `<a href="profile.html">Profile &amp; Settings</a>` : ""}
     ${authed ? `<span class="header-nav-sep" aria-hidden="true"></span><button type="button" class="header-nav-logout" data-logout>Logout</button>` : ""}
   </nav>`;
 }
@@ -309,7 +309,7 @@ function renderHeader() {
         <a href="home.html#live">Live Games</a>
         <a href="ranking.html">Ranking</a>
         <a href="wallet.html">Portfolio</a>
-        <a href="profile.html" data-auth-only>Profile</a>
+        <a href="profile.html" data-auth-only>Profile &amp; Settings</a>
       </nav>
       <div class="menu-appearance">
         <button class="menu-theme" id="themeBtn" data-theme-toggle aria-label="Switch colour theme">
@@ -1906,7 +1906,11 @@ function getAuth() {
 function isAuthed() { return !!getAuth(); }
 function setAuth(user) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(user)); } catch (e) { /* ignore */ } }
 function clearAuth() { try { localStorage.removeItem(AUTH_KEY); } catch (e) { /* ignore */ } }
-function currentName() { const a = getAuth(); return (a && (a.username || a.name)) || USER.name; }
+function firstNameFor(auth = getAuth()) {
+  const value = auth?.firstName || auth?.name || USER.name;
+  return String(value).trim().split(/\s+/)[0] || "Player";
+}
+function currentName() { return firstNameFor(); }
 function currentPositions() {
   return new URLSearchParams(location.search).get("ds-positions") === "empty" ? [] : USER.positions;
 }
@@ -1989,7 +1993,7 @@ function renderRanking(currentResult = CURRENT_RANKING_FALLBACK) {
   const currentSlot = $("[data-ranking-current]");
   if (!list) return;
   const auth = getAuth();
-  const username = auth ? String(auth.username || auth.name || currentName()).trim() : "";
+  const username = auth ? String(auth.username || "You").trim() : "";
   const currentInTopTen = username && RANKING_USERS.some((row) => row.username.toLowerCase() === username.toLowerCase());
   list.innerHTML = RANKING_USERS.map((row) => {
     return rankingRowHTML(row, username && row.username.toLowerCase() === username.toLowerCase());
@@ -1997,7 +2001,7 @@ function renderRanking(currentResult = CURRENT_RANKING_FALLBACK) {
   if (!currentSlot) return;
   if (username && !currentInTopTen) {
     currentSlot.hidden = false;
-    currentSlot.innerHTML = rankingRowHTML(currentResult, true);
+    currentSlot.innerHTML = rankingRowHTML({ ...currentResult, username }, true);
   } else {
     currentSlot.hidden = true;
     currentSlot.innerHTML = "";
@@ -2069,9 +2073,9 @@ function initRankingMonthSelect() {
 function currentRankingResult() {
   const auth = getAuth();
   if (!auth) return null;
-  const username = String(auth.username || auth.name || currentName()).trim();
+  const username = String(auth.username || "You").trim();
   const topRow = username && RANKING_USERS.find((row) => row.username.toLowerCase() === username.toLowerCase());
-  return topRow ? { ...topRow, username: "You" } : CURRENT_RANKING_FALLBACK;
+  return topRow ? { ...topRow, username } : { ...CURRENT_RANKING_FALLBACK, username };
 }
 
 function ensureRankingPrizeModal() {
@@ -2208,8 +2212,8 @@ const posActions = (i) => `<div class="oc-actions">
         <button class="oc-sell" data-sell="${i}">Sell</button>
       </div>`;
 
-// Variant A — the shared position-card design: a [bet type] / "Value & Return" label row
-// above a [side · contracts] / [value · return] data row.
+// Variant A — the shared position-card design: a [bet type] / [Value: value] row
+// above a [side · contracts] / [return] row.
 function positionCardA(p, i) {
   const { g, value, pnl } = posFigures(p);
   const up = pnl >= 0;
@@ -2220,11 +2224,11 @@ function positionCardA(p, i) {
       <div class="oc-summary">
         <div class="oc-row">
           <span class="oc-tag">${MARKET_LABELS[p.market]}</span>
-          <span class="oc-vr-head">Value &amp; Return</span>
+          <span class="oc-vr-head">Value: <span class="tnum">${money(value)}</span></span>
         </div>
         <div class="oc-row">
           <span class="oc-sub">${sideTag} · ${p.qty} contracts</span>
-          <span class="oc-figures"><span class="tnum">${money(value)}</span> · <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
+          <span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
         </div>
       </div>
       ${posActions(i)}
@@ -2749,10 +2753,18 @@ function initAddFunds() {
 
 function profileGuardHTML() {
   return `<div class="profile-guard">
-    <h1 class="profile-title">Profile</h1>
-    <p>Login to view your account profile.</p>
+    <h1 class="profile-title">Profile &amp; Settings</h1>
+    <p>Login to view and manage your account.</p>
     <a class="btn btn-primary" href="login.html">Login</a>
   </div>`;
+}
+
+function formatProfileDate(value, fallback) {
+  if (!value) return fallback;
+  const source = String(value);
+  const date = new Date(source.length === 10 ? `${source}T00:00:00` : source);
+  if (Number.isNaN(date.getTime())) return fallback;
+  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(date);
 }
 
 function initProfile() {
@@ -2761,25 +2773,136 @@ function initProfile() {
   const auth = getAuth();
   if (!auth) { main.innerHTML = profileGuardHTML(); return; }
 
-  const displayName = auth.username || auth.name || USER.name;
   const email = auth.email || "alex@gtl.test";
+  const fullName = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ") || "Not provided";
+  const username = auth.username || email.split("@")[0].replace(/[^a-z0-9_]/gi, "") || "player";
+  const birthday = formatProfileDate(auth.birthday, "Not provided");
+  const memberSince = formatProfileDate(auth.memberSince, "July 2026");
   const provider = profileProvider(auth);
   main.innerHTML = `
-    <h1 class="profile-title">Account</h1>
-    <div class="account-profile-card">
-      <div class="account-avatar">${initialsFromName(displayName)}</div>
-      <div class="account-profile-copy">
-        <h3>${displayName}</h3>
-        <p>${email}</p>
+    <header class="profile-head">
+      <h1 class="profile-title">Profile &amp; Settings</h1>
+      <p class="profile-intro">Manage your GTL profile, account and preferences.</p>
+    </header>
+
+    <section class="profile-section" aria-labelledby="profileSectionTitle">
+      <h2 class="profile-section-title" id="profileSectionTitle">Profile</h2>
+      <div class="profile-edit-card">
+        <div class="profile-username-view" data-username-view>
+          <div class="profile-username-copy">
+            <span>Username</span>
+            <strong data-username-value>@${escapeHTML(username)}</strong>
+          </div>
+          <button class="btn btn-secondary btn-sm" type="button" data-username-edit>Edit</button>
+        </div>
+        <form class="profile-username-form" data-username-form hidden novalidate>
+          <div class="profile-username-field">
+            <input class="profile-username-input" name="username" type="text" value="${escapeHTML(username)}" autocomplete="username" aria-label="Username" maxlength="20" />
+            <p class="profile-username-error" data-username-error role="alert" hidden></p>
+          </div>
+          <div class="profile-username-actions">
+            <button class="btn btn-primary btn-sm" type="submit">Save</button>
+            <button class="btn btn-secondary btn-sm" type="button" data-username-cancel>Cancel</button>
+          </div>
+        </form>
       </div>
-    </div>
-    <div class="account-settings-list">
-      <div class="account-setting-row"><span>Username</span><strong>${auth.username || displayName}</strong></div>
-      <div class="account-setting-row"><span>Email</span><strong>${email}</strong></div>
-      <div class="account-setting-row"><span>Connected with</span><strong><span class="account-provider ${provider.className}"><span>${provider.mark}</span>${provider.label}</span></strong></div>
-      <div class="account-setting-row"><span>Notifications</span><strong>On</strong></div>
-    </div>
-    ${provider.hasPassword ? `<button class="btn btn-primary account-password-action" type="button">Change password</button>` : `<p class="account-auth-note">Password changes are managed through your ${provider.label} account.</p>`}`;
+    </section>
+
+    <section class="profile-section" aria-labelledby="accountSectionTitle">
+      <h2 class="profile-section-title" id="accountSectionTitle">Account</h2>
+      <div class="account-settings-list">
+        <div class="account-setting-row"><span>Full name</span><strong>${escapeHTML(fullName)}</strong></div>
+        <div class="account-setting-row"><span>Email</span><strong>${escapeHTML(email)}</strong></div>
+        <div class="account-setting-row"><span>Date of birth</span><strong>${birthday}</strong></div>
+        <div class="account-setting-row"><span>Member since</span><strong>${memberSince}</strong></div>
+        <div class="account-setting-row"><span>Credits</span><a class="account-inline-link" href="wallet.html">${USER.balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} credits</a></div>
+        <div class="account-setting-row"><span>Connected with</span><strong><span class="account-provider ${provider.className}"><span class="account-provider-mark">${provider.mark}</span>${provider.label}</span></strong></div>
+        ${provider.hasPassword ? `<div class="account-setting-row"><span>Password</span><a class="account-inline-link" href="forgot.html">Change password</a></div>` : ""}
+      </div>
+      ${provider.hasPassword ? "" : `<p class="account-auth-note">Password changes are managed through your ${provider.label} account.</p>`}
+    </section>
+
+    <section class="profile-section" aria-labelledby="preferencesSectionTitle">
+      <h2 class="profile-section-title" id="preferencesSectionTitle">Preferences</h2>
+      <div class="profile-preference-card">
+        <div class="profile-preference-copy">
+          <strong>Appearance</strong>
+          <span>Switch between light and dark mode.</span>
+        </div>
+        <button class="profile-theme-control" type="button" data-theme-toggle aria-label="Switch colour theme">${THEME_SWITCH}</button>
+      </div>
+      <div class="profile-preference-card">
+        <div class="profile-preference-copy">
+          <strong>Notifications</strong>
+          <span>Email notification preferences will live here.</span>
+        </div>
+        <span class="status-pill">Coming soon</span>
+      </div>
+    </section>
+
+    <section class="profile-section" aria-labelledby="managementSectionTitle">
+      <h2 class="profile-section-title" id="managementSectionTitle">Account management</h2>
+      <div class="account-actions">
+        <a class="btn btn-secondary btn-block account-link-button" href="betting-controls.html">Betting Controls</a>
+        <a class="btn btn-danger btn-block account-link-button" href="delete-account.html">Delete Account</a>
+      </div>
+    </section>`;
+
+  const usernameView = $("[data-username-view]", main);
+  const usernameForm = $("[data-username-form]", main);
+  const usernameInput = $(".profile-username-input", usernameForm);
+  const usernameError = $("[data-username-error]", usernameForm);
+  const closeUsernameEdit = () => {
+    usernameInput.value = getAuth()?.username || username;
+    usernameInput.classList.remove("is-error");
+    usernameError.hidden = true;
+    usernameForm.hidden = true;
+    usernameView.hidden = false;
+  };
+  $("[data-username-edit]", usernameView).addEventListener("click", () => {
+    usernameView.hidden = true;
+    usernameForm.hidden = false;
+    usernameInput.focus();
+    usernameInput.select();
+  });
+  $("[data-username-cancel]", usernameForm).addEventListener("click", closeUsernameEdit);
+  usernameInput.addEventListener("input", () => {
+    usernameInput.classList.remove("is-error");
+    usernameError.hidden = true;
+  });
+  usernameForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nextUsername = usernameInput.value.trim();
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(nextUsername)) {
+      usernameInput.classList.add("is-error");
+      usernameError.textContent = "Use 3–20 letters, numbers, or underscores.";
+      usernameError.hidden = false;
+      usernameInput.focus();
+      return;
+    }
+    setAuth({ ...getAuth(), username: nextUsername });
+    $("[data-username-value]", usernameView).textContent = `@${nextUsername}`;
+    usernameForm.hidden = true;
+    usernameView.hidden = false;
+    showToast("Username updated", "success");
+  });
+
+}
+
+function initAccountSubpages() {
+  const root = $("#deleteAccountMain") || $("#bettingControlsMain");
+  if (!root) return;
+  if (!isAuthed()) {
+    root.innerHTML = profileGuardHTML();
+    return;
+  }
+  const deleteButton = $("[data-delete-account]", root);
+  if (deleteButton) {
+    deleteButton.addEventListener("click", () => {
+      clearAuth();
+      location.href = "home.html";
+    });
+  }
 }
 
 /* ---------------------------------------------------------- AUTH SCREENS */
@@ -3039,6 +3162,9 @@ function initSignup() {
   if (!steps) return;
   let email = "";
   let provider = "password";
+  let firstName = "";
+  let lastName = "";
+  let birthday = "";
   const go = (n) => {
     steps.dataset.step = n;
     const focusEl = steps.querySelector(`.auth-step[data-step="${n}"] input`);
@@ -3059,85 +3185,10 @@ function initSignup() {
   });
 
   const f2 = steps.querySelector("[data-step2-form]");
-  const p1 = f2.querySelector("#newpass");
-  const p2 = f2.querySelector("#confirmpass");
-  const terms = f2.querySelector("#acceptTerms");
-  const termsError = f2.querySelector("[data-terms-error]");
-  f2.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearErr(p1); clearErr(p2);
-    termsError.hidden = true;
-    if (!p1.value) { showErr(p1, "Create a password"); return; }
-    if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
-    if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
-    if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
-    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
-    go(3);
-  });
-  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
-
-  const f3 = steps.querySelector("[data-step3-form]");
-  const codeWrap = f3.querySelector("[data-code-input]");
-  f3.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearCodeErr(codeWrap);
-    const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
-    if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
-    setAuth({ name: nameFromEmail(email), email, provider, onboarding: true });
-    location.href = postSignupDest();
-  });
-
-  $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
-  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => {
-    provider = b.dataset.social;
-    email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
-    const tgt = steps.querySelector("[data-code-email]");
-    if (tgt) tgt.textContent = email;
-    go(2);
-  }));
-  const resend = steps.querySelector("[data-resend]");
-  if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
-  clearErrsOnInput(f1); clearErrsOnInput(f2);
-  initCodeInput(codeWrap);
-}
-
-function initWelcome() {
-  const main = $("#welcomeMain");
-  if (!main) return;
-  if (!isAuthed()) { location.replace("signup.html"); return; }
-
-  const credit = money(WELCOME_CREDIT);
-  const bonusEl = $("[data-welcome-bonus]", main);
-  const intro = $("[data-welcome-intro]", main);
-  const details = $("[data-welcome-details]", main);
-  const usernamePanel = $("[data-welcome-username]", main);
-  const reward = $("[data-welcome-reward]", main);
-  const detailsForm = $("[data-welcome-form]", main);
-  const usernameForm = $("[data-username-form]", main);
-  const primary = $("[data-welcome-primary]", main);
-  if (bonusEl) bonusEl.textContent = credit;
-  initDateComboboxes(detailsForm);
-
-  const showPanel = (current, next, state, focusSelector) => {
-    current.hidden = true;
-    next.hidden = false;
-    main.dataset.welcomeState = state;
-    if (focusSelector) setTimeout(() => $(focusSelector, next)?.focus(), 80);
-  };
-
-  const showDetails = () => {
-    main.classList.add("is-transitioning");
-    setTimeout(() => {
-      showPanel(intro, details, "details", "#firstName");
-      main.classList.remove("is-transitioning");
-    }, 280);
-  };
-  setTimeout(showDetails, 1600);
-
-  const firstNameEl = $("#firstName", detailsForm);
-  const lastNameEl = $("#lastName", detailsForm);
-  const birthdayInputs = [$("#dobMonth", detailsForm), $("#dobDay", detailsForm), $("#dobYear", detailsForm)];
-  const birthdayError = $("[data-birthday-error]", detailsForm);
+  const firstNameEl = f2.querySelector("#firstName");
+  const lastNameEl = f2.querySelector("#lastName");
+  const birthdayInputs = [$("#dobMonth", f2), $("#dobDay", f2), $("#dobYear", f2)];
+  const birthdayError = $("[data-birthday-error]", f2);
   const clearBirthdayError = () => {
     birthdayInputs.forEach((input) => input.classList.remove("is-error"));
     birthdayError.hidden = true;
@@ -3152,24 +3203,94 @@ function initWelcome() {
     input.addEventListener("input", clearBirthdayError);
     input.addEventListener("change", clearBirthdayError);
   });
-  detailsForm.addEventListener("submit", (e) => {
+  f2.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(firstNameEl); clearErr(lastNameEl); clearBirthdayError();
     let ok = true;
     if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); ok = false; }
     if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); ok = false; }
-    const birthday = birthdayISOFromFields(detailsForm);
+    birthday = birthdayISOFromFields(f2);
     if (!birthday) { showBirthdayError("Enter a valid month, day, and year"); ok = false; }
     else if (!isAtLeastAge(birthday, 18)) { showBirthdayError("GTL is for users 18 or older."); ok = false; }
     if (!ok) return;
-    const firstName = firstNameEl.value.trim();
-    const lastName = lastNameEl.value.trim();
-    setAuth({ ...getAuth(), firstName, lastName, name: `${firstName} ${lastName}`, birthday });
-    showPanel(details, usernamePanel, "username", "#username");
+    firstName = firstNameEl.value.trim();
+    lastName = lastNameEl.value.trim();
+    go(3);
   });
   [firstNameEl, lastNameEl].forEach((input) => input.addEventListener("input", () => clearErr(input)));
+  initDateComboboxes(f2);
+
+  const f3 = steps.querySelector("[data-step3-form]");
+  const p1 = f3.querySelector("#newpass");
+  const p2 = f3.querySelector("#confirmpass");
+  const terms = f3.querySelector("#acceptTerms");
+  const termsError = f3.querySelector("[data-terms-error]");
+  f3.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(p1); clearErr(p2);
+    termsError.hidden = true;
+    if (!p1.value) { showErr(p1, "Create a password"); return; }
+    if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
+    if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
+    if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
+    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
+    go(4);
+  });
+  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
+
+  const f4 = steps.querySelector("[data-step4-form]");
+  const codeWrap = f4.querySelector("[data-code-input]");
+  f4.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearCodeErr(codeWrap);
+    const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
+    if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
+    setAuth({ firstName, lastName, name: `${firstName} ${lastName}`, birthday, email, provider, memberSince: new Date().toISOString(), onboarding: true });
+    location.href = postSignupDest();
+  });
+
+  $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
+  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => {
+    provider = b.dataset.social;
+    email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
+    const tgt = steps.querySelector("[data-code-email]");
+    if (tgt) tgt.textContent = email;
+    go(2);
+  }));
+  const resend = steps.querySelector("[data-resend]");
+  if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
+  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f3);
+  initCodeInput(codeWrap);
+}
+
+function initWelcome() {
+  const main = $("#welcomeMain");
+  if (!main) return;
+  if (!isAuthed()) { location.replace("signup.html"); return; }
+
+  const credit = WELCOME_CREDIT.toLocaleString("en-US");
+  const bonusEl = $("[data-welcome-bonus]", main);
+  const usernamePanel = $("[data-welcome-username]", main);
+  const reward = $("[data-welcome-reward]", main);
+  const usernameForm = $("[data-username-form]", main);
+  const primary = $("[data-welcome-primary]", main);
+  if (bonusEl) bonusEl.textContent = credit;
+
+  const showPanel = (current, next, state, focusSelector) => {
+    current.hidden = true;
+    next.hidden = false;
+    main.dataset.welcomeState = state;
+    if (focusSelector) setTimeout(() => $(focusSelector, next)?.focus(), 80);
+  };
 
   const usernameEl = $("#username", usernameForm);
+  const authAtStart = getAuth();
+  const suggestedUsername = `${authAtStart?.firstName || ""}${authAtStart?.lastName || ""}`
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "")
+    .slice(0, 20);
+  if (!usernameEl.value && authAtStart?.username) usernameEl.value = authAtStart.username;
+  else if (!usernameEl.value && suggestedUsername.length >= 3) usernameEl.value = suggestedUsername;
   usernameForm.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(usernameEl);
@@ -3178,6 +3299,7 @@ function initWelcome() {
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3–20 letters, numbers, or underscores"); return; }
     const auth = getAuth();
     setAuth({ ...auth, username, onboarding: false });
+    $$('[data-welcome-name]', reward).forEach((el) => { el.textContent = firstNameFor(auth); });
     showPanel(usernamePanel, reward, "reward");
   });
   clearErrsOnInput(usernameForm);
@@ -3367,6 +3489,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPausedDemo();
   initLeagueFilter();
   initHeader();
+  initProfile();
   initTheme();
   initScrollTop();
   initTradingCounter();
@@ -3375,7 +3498,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initFeesPage();
   initBackButtons();
   initWallet();
-  initProfile();
+  initAccountSubpages();
   initRanking();
   maybeReopenBet();
   // auth screens

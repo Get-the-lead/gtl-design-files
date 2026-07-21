@@ -1,4 +1,4 @@
-/* GTL welcome and profile-details onboarding */
+/* GTL post-signup username and welcome celebration */
 
 .welcome-body {
   min-height: 100vh;
@@ -45,6 +45,122 @@
   filter: blur(10px);
 }
 
+.welcome-reward { gap: var(--s6); }
+.welcome-reward::before { content: none; }
+
+.welcome-celebration-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(74, 222, 128, 0.085), transparent 31%),
+    radial-gradient(circle at 50% 110%, rgba(74, 222, 128, 0.055), transparent 42%),
+    linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+    var(--bg);
+  background-size: auto, auto, 96px 96px, 96px 96px, auto;
+}
+.welcome-celebration-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 28%, rgba(7, 8, 9, 0.42) 76%, rgba(7, 8, 9, 0.86));
+}
+.ambient-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(940px, 82vw);
+  height: min(620px, 62vw);
+  border: 1px solid rgba(74, 222, 128, 0.09);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  box-shadow: 0 0 80px rgba(74, 222, 128, 0.025);
+}
+.ambient-orbit.orbit-two {
+  width: min(1180px, 96vw);
+  height: min(760px, 72vw);
+  border-color: rgba(255, 255, 255, 0.045);
+  transform: translate(-50%, -50%) rotate(14deg);
+}
+.light-sweep {
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  width: 280px;
+  height: 160%;
+  opacity: 0.22;
+  background: linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.12), transparent);
+  filter: blur(28px);
+  transform: translateX(-50%) rotate(18deg);
+}
+.welcome-celebration-bg .ribbon {
+  --rotate: 0deg;
+  --scale: 1;
+  position: absolute;
+  width: clamp(180px, 18vw, 300px);
+  height: clamp(62px, 7vw, 100px);
+  border: 2px solid rgba(74, 222, 128, 0.78);
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  opacity: 0.58;
+  filter: drop-shadow(0 0 14px rgba(74, 222, 128, 0.12));
+  transform: rotate(var(--rotate)) scale(var(--scale));
+}
+.welcome-celebration-bg .ribbon::after {
+  content: "";
+  position: absolute;
+  width: 44%;
+  height: 54%;
+  right: -28%;
+  bottom: -31%;
+  border: 2px solid rgba(255,255,255,.38);
+  border-left-color: transparent;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+.ribbon.one { --rotate: -25deg; left: 4%; top: 18%; }
+.ribbon.two { --rotate: 205deg; --scale: .82; right: 4%; top: 23%; }
+.ribbon.three { --rotate: 28deg; --scale: .68; left: 10%; bottom: 10%; opacity: .28; }
+.ribbon.four { --rotate: 157deg; --scale: .62; right: 9%; bottom: 8%; opacity: .25; }
+.welcome-celebration-bg .particle {
+  --rotate: 0deg;
+  position: absolute;
+  width: 6px;
+  height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--green);
+  opacity: .56;
+  transform: rotate(var(--rotate));
+}
+.welcome-celebration-bg .particle.pale { background: rgba(255,255,255,.66); }
+.welcome-celebration-bg .particle.dim { background: #5f6863; opacity: .38; }
+.welcome-celebration-bg .p1 { --rotate: -36deg; left: 18%; top: 20%; }
+.welcome-celebration-bg .p2 { left: 27%; top: 31%; width: 6px; height: 6px; }
+.welcome-celebration-bg .p3 { --rotate: 62deg; left: 9%; top: 56%; }
+.welcome-celebration-bg .p4 { --rotate: 38deg; right: 17%; top: 18%; }
+.welcome-celebration-bg .p5 { right: 26%; top: 32%; width: 6px; height: 6px; }
+.welcome-celebration-bg .p6 { --rotate: -62deg; right: 9%; top: 58%; }
+.welcome-celebration-bg .spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 18px 5px rgba(74,222,128,.16);
+}
+.welcome-celebration-bg .s1 { left: 31%; top: 24%; }
+.welcome-celebration-bg .s2 { right: 30%; top: 21%; }
+.welcome-celebration-bg .s3 { left: 29%; bottom: 22%; }
+.welcome-celebration-bg .s4 { right: 29%; bottom: 25%; }
+.welcome-reward .welcome-copy h1 { max-width: 15ch; font-size: clamp(3rem, 8vw, 4.9rem); }
+.welcome-reward .welcome-copy p:last-child { max-width: 590px; }
+.welcome-reward .welcome-actions { width: auto; }
+.welcome-reward .welcome-actions .btn { min-width: 220px; border-radius: var(--r-pill); }
+
 .welcome-copy {
   display: flex;
   flex-direction: column;
@@ -87,8 +203,10 @@
   border: 1px solid var(--green-line);
   border-radius: var(--r-lg);
   background:
-    linear-gradient(180deg, rgba(74, 222, 128, 0.13), rgba(74, 222, 128, 0.04)),
+    radial-gradient(80% 130% at 50% -30%, rgba(74, 222, 128, 0.24), transparent 62%),
+    linear-gradient(180deg, rgba(74, 222, 128, 0.1), rgba(74, 222, 128, 0.03)),
     var(--surface);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.24), inset 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .ticket-label,
@@ -100,7 +218,7 @@
 
 .ticket-label {
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
 }
 
 .ticket-value {
@@ -109,6 +227,13 @@
   line-height: 1;
   font-weight: 700;
   color: var(--ink);
+}
+
+.ticket-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
 }
 
 .welcome-actions {
@@ -167,6 +292,17 @@
   .credit-ticket {
     animation: ticket-in 0.58s var(--ease-out) 0.08s both;
   }
+
+  .ambient-orbit { --orbit-start: -8deg; animation: orbit-turn 32s linear infinite; }
+  .ambient-orbit.orbit-two { --orbit-start: 14deg; animation-direction: reverse; animation-duration: 42s; }
+  .light-sweep { animation: light-sweep 15s ease-in-out infinite; }
+  .welcome-celebration-bg .ribbon { animation: ribbon-float 9s ease-in-out infinite; }
+  .welcome-celebration-bg .ribbon.two { animation-delay: -4.2s; animation-duration: 11s; }
+  .welcome-celebration-bg .ribbon.three { animation-delay: -6s; animation-duration: 12s; }
+  .welcome-celebration-bg .ribbon.four { animation-delay: -2.6s; animation-duration: 10s; }
+  .welcome-celebration-bg .particle { animation: particle-drift 7s ease-in-out infinite; }
+  .welcome-celebration-bg .particle:nth-of-type(2n) { animation-delay: -3.4s; animation-duration: 8.5s; }
+  .welcome-celebration-bg .spark { animation: spark-pulse 3.6s ease-in-out infinite; }
 }
 
 @keyframes welcome-in {
@@ -177,6 +313,32 @@
 @keyframes ticket-in {
   from { opacity: 0; transform: translateY(18px) scale(0.98); }
   to { opacity: 1; transform: none; }
+}
+
+@keyframes orbit-turn {
+  from { transform: translate(-50%, -50%) rotate(var(--orbit-start)); }
+  to { transform: translate(-50%, -50%) rotate(calc(var(--orbit-start) + 360deg)); }
+}
+
+@keyframes ribbon-float {
+  0%, 100% { transform: translate3d(-4px, -6px, 0) rotate(var(--rotate)) scale(var(--scale)); filter: drop-shadow(0 0 10px rgba(74,222,128,.09)); }
+  50% { transform: translate3d(6px, 9px, 0) rotate(var(--rotate)) scale(var(--scale)); filter: drop-shadow(0 0 18px rgba(74,222,128,.18)); }
+}
+
+@keyframes particle-drift {
+  0%, 100% { opacity: 0.22; transform: translate3d(0, -8px, 0) rotate(var(--rotate)); }
+  50% { opacity: 0.68; transform: translate3d(4px, 10px, 0) rotate(var(--rotate)); }
+}
+
+@keyframes light-sweep {
+  0%, 18% { opacity: 0; transform: translateX(-120vw) rotate(18deg); }
+  46% { opacity: 0.24; }
+  72%, 100% { opacity: 0; transform: translateX(120vw) rotate(18deg); }
+}
+
+@keyframes spark-pulse {
+  0%, 100% { opacity: .32; transform: scale(.7); }
+  50% { opacity: 1; transform: scale(1.25); }
 }
 
 @keyframes welcome-out {
@@ -190,6 +352,9 @@
 
 @media (max-width: 560px) {
   .welcome-name-row { grid-template-columns: 1fr; }
+  .welcome-celebration-bg .ribbon { opacity: 0.24; }
+  .welcome-celebration-bg .particle { opacity: 0.32; }
+  .ambient-orbit { width: 150vw; height: 96vw; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL - Betting Controls</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="profile.css" />
+</head>
+<body class="profile-body">
+  <header class="site-header" id="siteHeader"></header>
+
+  <main class="account-subpage container" id="bettingControlsMain">
+    <a class="account-back" href="profile.html">
+      <span aria-hidden="true">←</span>
+      Profile &amp; Settings
+    </a>
+    <section class="account-coming-soon" aria-labelledby="bettingControlsTitle">
+      <span class="status-pill">Coming soon</span>
+      <h1 class="profile-title" id="bettingControlsTitle">Betting Controls</h1>
+      <p>Tools to help you manage how you play are being developed. You’ll be able to find them here when they’re ready.</p>
+      <a class="btn btn-primary" href="profile.html">Back to Profile &amp; Settings</a>
+    </section>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

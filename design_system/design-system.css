@@ -1353,6 +1353,10 @@
   width: 100%;
 }
 
+.design-system-page .flat-screen.is-welcome .welcome-celebration-bg {
+  position: absolute;
+}
+
 .design-system-page .flat-screen.is-welcome .welcome-panel {
   gap: var(--s6);
   max-width: 100%;
@@ -1408,6 +1412,14 @@
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-copy h1 {
   font-size: var(--fs-hero);
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-reward .credit-ticket {
+  width: min(100%, 430px);
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-reward .welcome-actions {
+  width: auto;
 }
 
 .design-system-page .flat-screen.is-home .site-header {
@@ -3479,6 +3491,11 @@
 
 .design-system-page .ds-card-frame .team-abbr {
   font-size: var(--fs-label);
+}
+
+.design-system-page .ds-card-frame .team-abbr.team-name {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.04em;
 }
 
 .design-system-page .ds-card-frame .team-score {
