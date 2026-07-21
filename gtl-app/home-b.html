@@ -55,11 +55,11 @@
         <!-- League filter strip -->
         <div class="league-strip" id="leagueStrip" role="tablist" aria-label="Filter by league">
           <button class="league-pill is-active" role="tab" aria-selected="true" data-league="nfl">
-            <span class="league-icon"><img src="assets/logos/league-nfl.png" alt="" /></span>
+            <span class="league-icon"><span class="league-ball" aria-hidden="true">🏈</span></span>
             <span class="league-label">NFL</span>
           </button>
           <button class="league-pill" role="tab" aria-selected="false" data-league="nba">
-            <span class="league-icon"><img src="assets/logos/league-nba.png" alt="" /></span>
+            <span class="league-icon"><span class="league-ball" aria-hidden="true">🏀</span></span>
             <span class="league-label">NBA</span>
           </button>
         </div>
@@ -69,7 +69,7 @@
 
         <!-- NBA coming-soon state (shown when NBA is selected) -->
         <div class="coming-soon" id="nbaSoon" hidden>
-          <img class="cs-logo" src="assets/logos/league-nba.png" alt="" />
+          <span class="cs-logo league-ball" aria-hidden="true">🏀</span>
           <h3 class="cs-title">NBA Betting Coming Soon</h3>
           <p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p>
           <div class="cs-actions">
@@ -131,38 +131,35 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a class="brand" href="home-b.html" data-scroll-top>
-            <span class="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>
-            </span>
-            <span class="brand-word">GTL</span>
+          <a class="footer-logo-link" href="home.html" aria-label="GTL home">
+            <img class="footer-logo" src="assets/gtl-footer-logo.png" alt="Get the Lead" />
           </a>
           <p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p>
         </div>
         <div class="footer-cols">
           <div class="footer-col">
             <h4>Product</h4>
-            <a href="#live">Live games</a>
-            <a href="#how">How it works</a>
-            <a href="#">Tutorial</a>
+            <a href="home.html">Home</a>
+            <a href="profile.html">Profile</a>
+            <a href="ranking.html">Ranking</a>
+            <a href="wallet.html">Portfolio</a>
           </div>
           <div class="footer-col">
             <h4>Company</h4>
             <a href="#">About</a>
-            <a href="#">Careers</a>
-            <a href="#">Contact</a>
+            <a href="contact.html">Contact</a>
           </div>
           <div class="footer-col">
             <h4>Legal</h4>
+            <a href="rules.html">Official Rules</a>
             <a href="#">Terms</a>
             <a href="#">Privacy</a>
-            <a href="#">Responsible play</a>
           </div>
         </div>
       </div>
       <div class="footer-base">
         <span>© 2026 GTL Markets</span>
-        <span>21+. Please play responsibly.</span>
+        <span>18+. Please play responsibly.</span>
       </div>
     </div>
   </footer>

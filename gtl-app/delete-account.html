@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL - Delete Account</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="profile.css" />
+</head>
+<body class="profile-body">
+  <header class="site-header" id="siteHeader"></header>
+
+  <main class="account-subpage container" id="deleteAccountMain">
+    <a class="account-back" href="profile.html">
+      <span aria-hidden="true">←</span>
+      Profile &amp; Settings
+    </a>
+    <section class="account-confirm-card" aria-labelledby="deleteAccountTitle">
+      <span class="profile-kicker">Account management</span>
+      <h1 id="deleteAccountTitle">Delete your account?</h1>
+      <p>This permanently removes your GTL profile and signs you out. Your username, account details, positions and competition history will no longer be available.</p>
+      <p class="account-confirm-note">This action can’t be undone.</p>
+      <div class="account-confirm-actions">
+        <button class="btn account-delete-confirm" type="button" data-delete-account>Delete Account</button>
+        <a class="btn btn-secondary" href="profile.html">Cancel</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

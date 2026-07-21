@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTL — Welcome</title>
+  <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+  <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth.css" />
+  <link rel="stylesheet" href="welcome.css" />
+</head>
+<body class="welcome-body">
+
+  <main class="welcome-main container" id="welcomeMain" data-welcome-state="username">
+    <section class="welcome-panel welcome-username" aria-labelledby="usernameTitle" data-welcome-username>
+      <div class="welcome-copy">
+        <p class="welcome-kicker">Your GTL identity</p>
+        <h1 id="usernameTitle">Choose a username.</h1>
+        <p>This is how you’ll appear in rankings and across GTL.</p>
+      </div>
+
+      <form class="welcome-form" data-username-form novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input class="field-input" id="username" type="text" autocomplete="username" placeholder="alexmorgan" required />
+          <span class="field-hint">Use 3–20 letters, numbers, or underscores.</span>
+        </div>
+        <button class="btn btn-primary btn-lg" type="submit">Complete Setup</button>
+      </form>
+    </section>
+
+    <div class="welcome-celebration-bg" aria-hidden="true">
+        <span class="celebration-glow"></span>
+        <span class="celebration-ring ring-one"></span><span class="celebration-ring ring-two"></span>
+        <div class="confetti-burst burst-left">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="confetti-burst burst-right">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="celebration-stars">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+    </div>
+
+    <section class="welcome-panel welcome-reward" aria-labelledby="rewardTitle" data-welcome-reward hidden>
+      <div class="welcome-copy">
+        <p class="welcome-kicker">You’re officially in</p>
+        <h1 id="rewardTitle">Welcome to GTL, <span data-welcome-name>Alex</span>.</h1>
+        <p>Your account is live and the next lead is yours to call. Use your credits to bet the moments that matter to you.</p>
+      </div>
+
+      <div class="credit-ticket">
+        <span class="ticket-label">Welcome credits</span>
+        <strong class="ticket-value tnum" data-welcome-bonus>1,500</strong>
+      </div>
+
+      <div class="welcome-actions">
+        <a class="btn btn-primary btn-lg" href="home.html" data-welcome-primary>Start Betting</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

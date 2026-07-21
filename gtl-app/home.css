@@ -204,12 +204,11 @@
   border: 2px solid var(--line);
   transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.league-icon img { width: 44px; height: 44px; object-fit: contain; transition: filter 0.2s var(--ease); filter: grayscale(0.4) opacity(0.7); }
+.league-ball { display: inline-grid; place-items: center; font-size: 2.35rem; line-height: 1; }
 .league-label { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.04em; }
 .league-pill:hover .league-icon { transform: translateY(-2px); }
 .league-pill.is-active { color: var(--ink); }
 .league-pill.is-active .league-icon { border-color: var(--green); background: var(--green-soft); }
-.league-pill.is-active .league-icon img { filter: none; }
 
 /* NBA coming-soon state ---------------------------------------------- */
 .coming-soon {
@@ -221,7 +220,7 @@
   background: var(--bg-2);
 }
 .coming-soon[hidden] { display: none; }
-.cs-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: var(--s2); }
+.cs-logo { width: 64px; height: 64px; margin-bottom: var(--s2); font-size: 3.5rem; }
 .cs-title { font-size: var(--fs-h2); }
 .cs-desc { margin: 0; max-width: 44ch; color: var(--ink-2); font-size: var(--fs-lead); }
 .cs-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); margin-top: var(--s5); width: 100%; max-width: 440px; }
@@ -368,33 +367,6 @@
 .view-game:hover { background: rgba(255, 255, 255, 0.16); }
 /* price glow keyframes are shared — see styles.css */
 
-/* How it works — connected flow, no boxes ---------------------------- */
-.flow { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: 1fr; gap: var(--s8); }
-.flow::before {
-  content: ""; position: absolute; left: 23px; top: 24px; bottom: 24px; width: 2px;
-  background: linear-gradient(180deg, var(--green-line), rgba(74, 222, 128, 0.05));
-}
-.flow-step { position: relative; padding-left: 68px; }
-.flow-marker {
-  position: absolute; left: 0; top: 0;
-  width: 48px; height: 48px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: var(--bg); border: 1.5px solid var(--green-line); color: var(--green);
-  z-index: 1;
-}
-.flow-marker svg { width: 24px; height: 24px; }
-.flow-num { font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.14em; color: var(--ink-3); }
-.flow-title { font-size: var(--fs-h3); margin: 4px 0 6px; }
-.flow-text { margin: 0; color: var(--ink-2); font-size: var(--fs-label); line-height: 1.6; }
-
-@media (min-width: 768px) {
-  .flow { grid-template-columns: repeat(4, 1fr); gap: var(--s6); text-align: center; }
-  .flow::before { left: 12.5%; right: 12.5%; top: 24px; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent); }
-  .flow-step { padding-left: 0; padding-top: 68px; }
-  .flow-marker { left: 50%; transform: translateX(-50%); }
-}
-
 /* Light-theme tweaks */
 :root[data-theme="light"] .hero-trading { background: rgba(10, 20, 25, 0.05); }
 :root[data-theme="light"] .hero-trading .tnum { color: #15803d; }
-:root[data-theme="light"] .flow-marker { background: var(--surface); border-color: rgba(22, 163, 74, 0.4); color: #16a34a; }

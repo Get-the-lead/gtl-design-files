@@ -92,6 +92,18 @@ const GAMES = [
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 const leaderOf = (g) => (g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away");
+function teamMarkHTML(t, className, loading = "") {
+  const fallback = `<span class="team-mark-abbr">${t.abbr}</span>`;
+  if (!t.logo) return `<span class="team-mark ${className} is-fallback" aria-label="${t.name}" style="--team-color:${t.color}">${fallback}</span>`;
+  return `<span class="team-mark ${className}" aria-label="${t.name}" style="--team-color:${t.color}">
+      <img src="${t.logo}" alt=""${loading ? ` loading="${loading}"` : ""} onerror="this.closest('.team-mark').classList.add('is-fallback');this.remove();" />
+      ${fallback}
+    </span>`;
+}
+
+function teamAbbrMarkHTML(t, className) {
+  return `<span class="team-mark ${className} is-fallback" aria-label="${t.abbr}" style="--team-color:${t.color}"><span class="team-mark-abbr">${t.abbr}</span></span>`;
+}
 
 const CHEVRON = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -160,8 +172,8 @@ function renderTiles() {
       const t = g[side];
       const leading = lead === side ? " is-leading" : "";
       return `<div class="team team-${side}${leading}">
-          <img class="team-logo" src="${t.logo}" alt="${t.name}" loading="lazy" />
-          <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
+          ${teamAbbrMarkHTML(t, "team-logo")}
+          <div class="team-meta"><span class="team-abbr team-name">${t.name}</span><span class="team-score tnum">${t.score}</span></div>
         </div>`;
     };
     const pausedCls = g.paused ? " is-paused" : "";
@@ -254,15 +266,16 @@ function initLeagueFilter() {
 /* ----------------------------------------------- HEADER (shared, rendered) */
 const ICON_MOON = '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-const LOGO_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5 20 18H4Z"/></svg>';
+const HEADER_LOGO = '<img src="assets/gtl-footer-logo.png" alt="" />';
 const THEME_SWITCH = `<span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">${ICON_SUN}</span><span class="theme-option theme-moon">${ICON_MOON}</span></span>`;
-// Header nav shown inside the GTL pill on desktop. Home / Live Games / How it works always; Portfolio + Logout only when signed in.
+// Header nav shown inside the GTL pill on desktop. Account destinations only appear when signed in.
 function navHTML(authed) {
   return `<nav class="header-nav" aria-label="Primary navigation">
     <a href="home.html" data-scroll-top>Home</a>
     <a href="home.html#live">Live Games</a>
-    <a href="home.html#how">How it Works</a>
+    <a href="ranking.html">Ranking</a>
     ${authed ? `<a href="wallet.html">Portfolio</a>` : ""}
+    ${authed ? `<a href="profile.html">Profile &amp; Settings</a>` : ""}
     ${authed ? `<span class="header-nav-sep" aria-hidden="true"></span><button type="button" class="header-nav-logout" data-logout>Logout</button>` : ""}
   </nav>`;
 }
@@ -279,12 +292,10 @@ function renderHeader() {
       <div class="header-left">
         <span class="brand-pill">
           <a class="brand floating-logo floating-btn brand-link" href="home.html" data-scroll-top aria-label="GTL Markets home">
-            <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
-            <span class="brand-word">GTL Markets</span>
+            <span class="header-brand-logo">${HEADER_LOGO}</span>
           </a>
           <button class="brand floating-logo floating-btn brand-menu" data-menu-toggle aria-controls="menuPanel" aria-expanded="false" aria-label="Open menu">
-            <span class="brand-mark" aria-hidden="true">${LOGO_SVG}</span>
-            <span class="brand-word">GTL</span>
+            <span class="header-brand-logo">${HEADER_LOGO}</span>
           </button>
           <span class="header-nav-slot" id="headerNav"></span>
         </span>
@@ -300,9 +311,9 @@ function renderHeader() {
       <nav class="menu-nav">
         <a href="home.html" data-scroll-top>Home</a>
         <a href="home.html#live">Live Games</a>
-        <a href="home.html#how">How it Works</a>
+        <a href="ranking.html">Ranking</a>
         <a href="wallet.html">Portfolio</a>
-        <a href="#">Tutorial</a>
+        <a href="profile.html" data-auth-only>Profile &amp; Settings</a>
       </nav>
       <div class="menu-appearance">
         <button class="menu-theme" id="themeBtn" data-theme-toggle aria-label="Switch colour theme">
@@ -310,6 +321,10 @@ function renderHeader() {
           ${THEME_SWITCH}
         </button>
       </div>
+      <a class="menu-location" href="location-unavailable.html" data-guest-only>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span>Change Location</span>
+      </a>
       <div class="menu-actions" id="menuActions"></div>
     </div>`;
 }
@@ -801,7 +816,7 @@ function gameMomentumCardsPro(g) {
       </div>
     </div>
     <div class="momentum-card stats-card">
-      <div class="stats-teams"><img class="stats-logo" src="${g.home.logo}" alt="${g.home.name}"><span class="stats-title">Game Stats</span><img class="stats-logo" src="${g.away.logo}" alt="${g.away.name}"></div>
+      <div class="stats-teams">${teamMarkHTML(g.home, "stats-logo")}<span class="stats-title">Game Stats</span>${teamMarkHTML(g.away, "stats-logo")}</div>
       <div class="stat-list">${picks.map(statRow).join("")}</div>
     </div>`;
 }
@@ -849,7 +864,7 @@ function renderGamePage() {
   const teamCol = (side) => {
     const t = g[side];
     const leading = lead === side ? " is-leading" : "";
-    return `<div class="gb-team${leading}"><img class="gb-logo" src="${t.logo}" alt="${t.name}" /><span class="gb-abbr">${t.abbr}</span></div>`;
+    return `<div class="gb-team${leading}">${teamMarkHTML(t, "gb-logo")}<span class="gb-abbr">${t.abbr}</span></div>`;
   };
 
   const marketsHTML = `
@@ -928,8 +943,8 @@ function renderGamePage() {
   if (g.id === OPEN_POSITION_DEMO_GAME_ID) initGameOpenPosition(openPositionDemos);
 }
 
-// The Open Positions card set for the HEADER dropdown — variant A for each, B for the last.
-const openPositionCards = (list) => list.map((p, i) => (i === list.length - 1 ? positionCardB(p, i) : positionCardA(p, i))).join("");
+// The Open Positions card set for the header dropdown uses one consistent layout.
+const openPositionCards = (list) => list.map((p, i) => positionCardA(p, i)).join("");
 
 // The game pop-up's own card: the variant-B body (bet type centred, then Contracts / Value /
 // Return as three columns) but WITHOUT the scoreboard — redundant on the game's own page.
@@ -1086,7 +1101,7 @@ function fillScoreboard(sb, g) {
   const team = (side) => {
     const t = g[side];
     return `<div class="bs-team bs-${side}${lead === side ? " is-leading" : ""}">
-        <img class="bs-logo" src="${t.logo}" alt="${t.name}" />
+        ${teamMarkHTML(t, "bs-logo")}
         <div class="bs-meta"><span class="bs-abbr">${t.abbr}</span><span class="bs-score tnum">${t.score}</span></div>
       </div>`;
   };
@@ -1641,9 +1656,13 @@ function goToFees() {
 /* ---------------------------------------------- AUTH GATE (guests betting) */
 // Remember the bet a guest tried to place, so login/sign-up can resume it
 const INTENT_KEY = "gtl-bet-intent";
+const WELCOME_CREDIT = 1500;
 function setBetIntent(o) { try { localStorage.setItem(INTENT_KEY, JSON.stringify(o)); } catch (e) { /* ignore */ } }
 function clearBetIntent() { try { localStorage.removeItem(INTENT_KEY); } catch (e) { /* ignore */ } }
-function postAuthDest() {
+function hasBetIntent() {
+  try { return !!JSON.parse(localStorage.getItem(INTENT_KEY) || "null")?.id; } catch (e) { return false; }
+}
+function postAuthDest(fallback = "home.html") {
   let intent = null;
   try { intent = JSON.parse(localStorage.getItem(INTENT_KEY) || "null"); } catch (e) { /* ignore */ }
   clearBetIntent();
@@ -1651,7 +1670,10 @@ function postAuthDest() {
     const p = new URLSearchParams({ id: intent.id, bet: "1", market: intent.market || "gtl", side: intent.side || "yes", qty: "100" });
     return "game.html?" + p.toString();
   }
-  return "home.html";
+  return fallback;
+}
+function postSignupDest() {
+  return "welcome.html";
 }
 
 function ensureAuthGate() {
@@ -1879,16 +1901,343 @@ const USER = {
 };
 
 const AUTH_KEY = "gtl-auth";
-function getAuth() { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (e) { return null; } }
+function getAuth() {
+  const previewAuth = new URLSearchParams(location.search).get("ds-auth");
+  if (previewAuth === "logged") return { name: "Alex Morgan", email: "alex@gtl.test" };
+  if (previewAuth === "guest") return null;
+  try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (e) { return null; }
+}
 function isAuthed() { return !!getAuth(); }
 function setAuth(user) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(user)); } catch (e) { /* ignore */ } }
 function clearAuth() { try { localStorage.removeItem(AUTH_KEY); } catch (e) { /* ignore */ } }
-function currentName() { const a = getAuth(); return (a && a.name) || USER.name; }
+function firstNameFor(auth = getAuth()) {
+  const value = auth?.firstName || auth?.name || USER.name;
+  return String(value).trim().split(/\s+/)[0] || "Player";
+}
+function currentName() { return firstNameFor(); }
+function currentPositions() {
+  return new URLSearchParams(location.search).get("ds-positions") === "empty" ? [] : USER.positions;
+}
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;",
+  }[ch]));
+}
 function nameFromEmail(email) {
   if (!email) return USER.name;
   const local = String(email).split("@")[0].replace(/[._+-]+/g, " ").trim();
   if (!local) return USER.name;
   return local.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+function initialsFromName(name) {
+  const parts = String(name || USER.name).trim().split(/\s+/).filter(Boolean);
+  return (parts.length > 1 ? parts[0][0] + parts[1][0] : (parts[0] || "U").slice(0, 2)).toUpperCase();
+}
+function profileProvider(auth) {
+  const provider = auth?.provider || "password";
+  if (provider === "google") return { label: "Google", className: "google", mark: "G", hasPassword: false };
+  if (provider === "apple") return { label: "Apple", className: "apple", mark: "Apple", hasPassword: false };
+  return { label: "Email and password", className: "password", mark: "••", hasPassword: true };
+}
+
+/* --------------------------------------------------------------- RANKING */
+const RANKING_RESET_WINDOW_MS = (((6 * 24 + 10) * 60 + 15) * 60 + 15) * 1000;
+const RANKING_RESET_KEY = "gtl-ranking-reset-at";
+const RANKING_USERS = [
+  { rank: 1, username: "leadstorm", balance: 6840, prize: "$1,500" },
+  { rank: 2, username: "fourthquarter", balance: 6210, prize: "$900" },
+  { rank: 3, username: "linehunter", balance: 5980, prize: "$650" },
+  { rank: 4, username: "greenlight", balance: 5625, prize: "$500" },
+  { rank: 5, username: "clockedge", balance: 5240, prize: "$400" },
+  { rank: 6, username: "marketmaker", balance: 4880, prize: "$300" },
+  { rank: 7, username: "snapcount", balance: 4510, prize: "$250" },
+  { rank: 8, username: "fastbreak", balance: 4230, prize: "$200" },
+  { rank: 9, username: "leadkeeper", balance: 3980, prize: "$175" },
+  { rank: 10, username: "swingtrader", balance: 3740, prize: "$125" },
+];
+const CURRENT_RANKING_FALLBACK = { month: 6, rank: 47, username: "You", balance: 1710, prize: "0" };
+const RANKING_MONTH_RESULTS = [
+  { month: 0, rank: 62, balance: 1420, prize: "0" },
+  { month: 1, rank: 8, balance: 4230, prize: "$200" },
+  { month: 2, rank: 24, balance: 2580, prize: "0" },
+  { month: 3, rank: 3, balance: 5980, prize: "$650" },
+  { month: 4, rank: 31, balance: 2210, prize: "0" },
+  { month: 5, rank: 6, balance: 4880, prize: "$300" },
+  { month: 6, rank: 47, balance: 1710, prize: "0" },
+  { month: 7, rank: 27, balance: 2460, prize: "0" },
+  { month: 8, rank: 17, balance: 3050, prize: "0" },
+  { month: 9, rank: 22, balance: 2760, prize: "0" },
+  { month: 10, rank: 12, balance: 3440, prize: "0" },
+  { month: 11, rank: 9, balance: 3980, prize: "$175" },
+];
+const RANKING_TROPHY_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const RANKING_MEDAL_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const RANKING_PRIZES = ["$1,500", "$900", "$650", "$500", "$400", "$300", "$250", "$200", "$175", "$125"];
+
+function monthlyRankingRows(result, username) {
+  const month = Number.isInteger(result?.month) ? result.month : new Date().getMonth();
+  const currentIsTopTen = Boolean(username && result?.rank >= 1 && result.rank <= 10);
+  const playerPool = RANKING_USERS
+    .map((row) => row.username)
+    .filter((player) => !currentIsTopTen || player.toLowerCase() !== username.toLowerCase());
+  const rotation = (month * 2) % playerPool.length;
+  const rotated = [...playerPool.slice(rotation), ...playerPool.slice(0, rotation)];
+  let poolIndex = 0;
+  return Array.from({ length: 10 }, (_, index) => {
+    const rank = index + 1;
+    if (currentIsTopTen && rank === result.rank) {
+      return { ...result, username, prize: RANKING_PRIZES[index] };
+    }
+    const balance = currentIsTopTen
+      ? Math.max(1, result.balance + ((result.rank - rank) * 350))
+      : Math.max(1, 6800 + ((month % 4) * 90) - (index * 350));
+    return { rank, username: rotated[poolIndex++], balance, prize: RANKING_PRIZES[index] };
+  });
+}
+
+function rankingRowHTML(row, isCurrent = false) {
+  const prize = row.prize || "-";
+  const formattedBalance = Number(row.balance).toLocaleString("en-US");
+  const label = `${isCurrent ? "Your rank, " : ""}position ${row.rank}, ${row.username}, balance ${formattedBalance} credits, prize ${prize}`;
+  const isPodium = row.rank <= 3 && !isCurrent;
+  const rankMark = isPodium
+    ? `<span class="rank-medal" role="cell">${row.rank === 1 ? RANKING_TROPHY_ICON : RANKING_MEDAL_ICON}</span>`
+    : `<span class="rank-pos" role="cell">${row.rank}</span>`;
+  return `<div class="ranking-row${isPodium ? ` is-podium is-rank-${row.rank}` : ""}${isCurrent ? " is-current" : ""}" data-ranking-key="${escapeHTML(String(row.username).toLowerCase())}" role="row" aria-label="${escapeHTML(label)}">
+    ${rankMark}
+    <span class="rank-user" role="cell">${escapeHTML(row.username)}</span>
+    <span class="rank-balance tnum" role="cell">${formattedBalance}</span>
+    <span class="rank-prize tnum" role="cell">${escapeHTML(prize)}</span>
+  </div>`;
+}
+
+function renderRanking(currentResult = CURRENT_RANKING_FALLBACK, { animate = false } = {}) {
+  const list = $("[data-ranking-list]");
+  const currentSlot = $("[data-ranking-current]");
+  if (!list) return;
+  const auth = getAuth();
+  const username = auth ? String(auth.username || "You").trim() : "";
+  const previousPositions = new Map();
+  if (animate) {
+    $$(".ranking-row[data-ranking-key]").forEach((row) => {
+      previousPositions.set(row.dataset.rankingKey, row.getBoundingClientRect());
+    });
+  }
+  const rows = monthlyRankingRows(currentResult, username);
+  const currentInTopTen = Boolean(username && currentResult.rank >= 1 && currentResult.rank <= 10);
+  list.innerHTML = rows.map((row) => {
+    return rankingRowHTML(row, username && row.username.toLowerCase() === username.toLowerCase());
+  }).join("");
+  if (currentSlot) {
+    if (username && !currentInTopTen) {
+      currentSlot.hidden = false;
+      currentSlot.innerHTML = rankingRowHTML({ ...currentResult, username }, true);
+    } else {
+      currentSlot.hidden = true;
+      currentSlot.innerHTML = "";
+    }
+  }
+  if (animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    requestAnimationFrame(() => {
+      $$(".ranking-row[data-ranking-key]").forEach((row, index) => {
+        const previous = previousPositions.get(row.dataset.rankingKey);
+        const next = row.getBoundingClientRect();
+        const fromY = previous ? previous.top - next.top : 18;
+        const fromX = previous ? previous.left - next.left : 0;
+        row.animate([
+          { transform: `translate(${fromX}px, ${fromY}px)`, opacity: previous ? 0.72 : 0 },
+          { transform: "translate(0, 0)", opacity: 1 },
+        ], {
+          duration: row.classList.contains("is-current") ? 620 : 460,
+          delay: Math.min(index * 18, 120),
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "both",
+        });
+        if (row.classList.contains("is-current")) {
+          row.classList.add("is-month-arrival");
+          row.addEventListener("animationend", () => row.classList.remove("is-month-arrival"), { once: true });
+        }
+      });
+    });
+  }
+}
+
+function initRankingMonthSelect() {
+  const root = $("[data-ranking-month-select]");
+  if (!root) return;
+  const trigger = $("[data-ranking-month-trigger]", root);
+  const label = $("[data-ranking-month-label]", root);
+  const menu = $("[data-ranking-month-menu]", root);
+  if (!trigger || !label || !menu) return;
+
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const year = now.getFullYear();
+  const monthName = new Intl.DateTimeFormat("en", { month: "long" });
+  const available = RANKING_MONTH_RESULTS
+    .filter((item) => item.month <= currentMonth)
+    .sort((a, b) => b.month - a.month);
+  const authed = isAuthed();
+  let selectedMonth = currentMonth;
+
+  const close = () => {
+    menu.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+    root.classList.remove("is-open");
+  };
+  const open = () => {
+    menu.hidden = false;
+    trigger.setAttribute("aria-expanded", "true");
+    root.classList.add("is-open");
+    menu.querySelector('[aria-selected="true"]')?.focus();
+  };
+  const selectMonth = (month) => {
+    const result = available.find((item) => item.month === month);
+    if (!result) return;
+    selectedMonth = month;
+    label.textContent = `${monthName.format(new Date(year, month, 1))} ${year}`;
+    $$('[data-ranking-month]', menu).forEach((option) => {
+      const selected = Number(option.dataset.rankingMonth) === month;
+      option.setAttribute("aria-selected", String(selected));
+      option.classList.toggle("is-selected", selected);
+    });
+    renderRanking(result, { animate: true });
+    close();
+  };
+
+  menu.innerHTML = available.map((item) => {
+    const name = monthName.format(new Date(year, item.month, 1));
+    const selected = item.month === selectedMonth;
+    return `<button class="ranking-month-option${selected ? " is-selected" : ""}" type="button" role="option" data-ranking-month="${item.month}" aria-selected="${String(selected)}"><span>${name}</span><strong>${authed ? `#${item.rank}` : "Sign in to view"}</strong></button>`;
+  }).join("");
+  label.textContent = `${monthName.format(new Date(year, selectedMonth, 1))} ${year}`;
+
+  trigger.addEventListener("click", (event) => {
+    event.stopPropagation();
+    menu.hidden ? open() : close();
+  });
+  menu.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-ranking-month]");
+    if (option) selectMonth(Number(option.dataset.rankingMonth));
+  });
+  document.addEventListener("click", (event) => { if (!root.contains(event.target)) close(); });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape") close(); });
+}
+
+function currentRankingResult() {
+  const auth = getAuth();
+  if (!auth) return null;
+  const username = String(auth.username || "You").trim();
+  const topRow = username && RANKING_USERS.find((row) => row.username.toLowerCase() === username.toLowerCase());
+  return topRow ? { ...topRow, username } : { ...CURRENT_RANKING_FALLBACK, username };
+}
+
+function ensureRankingPrizeModal() {
+  let gate = $("#rankingPrizeGate");
+  if (gate) return gate;
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="gate-backdrop ranking-prize-backdrop" id="rankingPrizeBackdrop"></div>
+    <div class="auth-gate ranking-prize-gate" id="rankingPrizeGate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="rankingPrizeTitle">
+      <div class="gate-body">
+        <span class="ranking-prize-kicker">Ranking reward</span>
+        <h3 class="gate-title" id="rankingPrizeTitle">You won your ranking position.</h3>
+        <p class="gate-desc" data-ranking-prize-desc></p>
+        <div class="ranking-prize-card" data-ranking-prize-card hidden>
+          <span><span>Position</span><strong class="tnum" data-ranking-prize-rank></strong></span>
+          <span><span>Prize</span><strong class="tnum" data-ranking-prize-value></strong></span>
+        </div>
+        <div class="gate-actions">
+          <button class="btn btn-secondary" type="button" id="rankingPrizeClose">Close</button>
+        </div>
+      </div>
+    </div>`);
+  gate = $("#rankingPrizeGate");
+  $("#rankingPrizeBackdrop").addEventListener("click", closeRankingPrizeModal);
+  $("#rankingPrizeClose").addEventListener("click", closeRankingPrizeModal);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeRankingPrizeModal(); });
+  return gate;
+}
+
+function openRankingPrizeModal() {
+  if (!$("[data-ranking-list]") || !isAuthed()) return;
+  const result = currentRankingResult();
+  if (!result) return;
+  const gate = ensureRankingPrizeModal();
+  const rankLabel = `#${result.rank}`;
+  const prizeLabel = result.prize || "0";
+  const title = $("#rankingPrizeTitle", gate);
+  const desc = $("[data-ranking-prize-desc]", gate);
+  const rank = $("[data-ranking-prize-rank]", gate);
+  const prize = $("[data-ranking-prize-value]", gate);
+  const prizeCard = $("[data-ranking-prize-card]", gate);
+  const earnedPrize = prizeLabel !== "0" && prizeLabel !== "-";
+  if (title) title.textContent = earnedPrize ? "You won your ranking position." : "Keep climbing the ranking.";
+  if (desc) {
+    desc.textContent = earnedPrize
+      ? `You finished in position ${rankLabel} and received ${prizeLabel} in prize money.`
+      : `You finished in position ${rankLabel}. Try to reach the top 10 next time!`;
+  }
+  if (rank) rank.textContent = rankLabel;
+  if (prize) prize.textContent = prizeLabel;
+  if (prizeCard) prizeCard.hidden = !earnedPrize;
+  $("#rankingPrizeBackdrop").classList.add("is-open");
+  gate.classList.add("is-open");
+  gate.setAttribute("aria-hidden", "false");
+  document.body.classList.add("sheet-open");
+}
+
+function closeRankingPrizeModal() {
+  const gate = $("#rankingPrizeGate");
+  const backdrop = $("#rankingPrizeBackdrop");
+  if (!gate || !backdrop) return;
+  backdrop.classList.remove("is-open");
+  gate.classList.remove("is-open");
+  gate.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("sheet-open");
+}
+
+function getRankingResetAt() {
+  let stored = 0;
+  try { stored = Number(localStorage.getItem(RANKING_RESET_KEY)); } catch (e) { stored = 0; }
+  if (stored && stored > Date.now()) return stored;
+  const next = Date.now() + RANKING_RESET_WINDOW_MS;
+  try { localStorage.setItem(RANKING_RESET_KEY, String(next)); } catch (e) { /* ignore */ }
+  return next;
+}
+
+function rankingCountdownHTML(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86400);
+  const h = Math.floor((total % 86400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const part = (num, unit) => `<span class="reset-num">${String(num).padStart(2, "0")}</span><span class="reset-unit">${unit}</span>`;
+  return `${part(d, "d")} ${part(h, "h")} ${part(m, "m")}`;
+}
+
+function initRanking() {
+  const countdown = $("[data-ranking-countdown]");
+  const list = $("[data-ranking-list]");
+  if (!countdown && !list) return;
+  renderRanking();
+  initRankingMonthSelect();
+  openRankingPrizeModal();
+  if (!countdown) return;
+  let resetAt = getRankingResetAt();
+  const tick = () => {
+    let remaining = resetAt - Date.now();
+    if (remaining <= 0) {
+      resetAt = Date.now() + RANKING_RESET_WINDOW_MS;
+      remaining = resetAt - Date.now();
+      try { localStorage.setItem(RANKING_RESET_KEY, String(resetAt)); } catch (e) { /* ignore */ }
+    }
+    countdown.innerHTML = rankingCountdownHTML(remaining);
+  };
+  tick();
+  setInterval(tick, 1000);
 }
 
 const signed = (v) => (v >= 0 ? "+" : "−") + "$" + Math.abs(v).toFixed(2);
@@ -1908,8 +2257,8 @@ function gameMedia(g, centerInner) {
   const team = (side) => {
     const t = g[side];
     return `<div class="team team-${side}${lead === side ? " is-leading" : ""}">
-        <img class="team-logo" src="${t.logo}" alt="${t.name}" />
-        <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
+        ${teamAbbrMarkHTML(t, "team-logo")}
+        <div class="team-meta"><span class="team-abbr team-name">${t.name}</span><span class="team-score tnum">${t.score}</span></div>
       </div>`;
   };
   return `<div class="game-row">${team("home")}<div class="game-center">${centerInner || ""}</div>${team("away")}</div>`;
@@ -1921,8 +2270,8 @@ const posActions = (i) => `<div class="oc-actions">
         <button class="oc-sell" data-sell="${i}">Sell</button>
       </div>`;
 
-// Variant A — the shared position-card design: a [bet type] / "Value & Return" label row
-// above a [side · contracts] / [value · return] data row.
+// Variant A — the shared position-card design: a [bet type] / [Value: value] row
+// above a [side · contracts] / [return] row.
 function positionCardA(p, i) {
   const { g, value, pnl } = posFigures(p);
   const up = pnl >= 0;
@@ -1933,11 +2282,11 @@ function positionCardA(p, i) {
       <div class="oc-summary">
         <div class="oc-row">
           <span class="oc-tag">${MARKET_LABELS[p.market]}</span>
-          <span class="oc-vr-head">Value &amp; Return</span>
+          <span class="oc-vr-head">Value: <span class="tnum">${money(value)}</span></span>
         </div>
         <div class="oc-row">
           <span class="oc-sub">${sideTag} · ${p.qty} contracts</span>
-          <span class="oc-figures"><span class="tnum">${money(value)}</span> · <span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
+          <span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
         </div>
       </div>
       ${posActions(i)}
@@ -2010,6 +2359,8 @@ function applyAuthChrome() {
   const actions = $("#menuActions");
   const authed = isAuthed();
   document.body.classList.toggle("is-authed", authed);
+  $$('[data-auth-only]').forEach((el) => { el.hidden = !authed; });
+  $$('[data-guest-only]').forEach((el) => { el.hidden = authed; });
   if (right) {
     // Signed out shows Login; signed in the header carries the Wallet + Open Positions chips (right) for cross-page access.
     right.innerHTML = authed ? "" : `<a class="btn header-login floating-btn" href="login.html">Login</a>`;
@@ -2027,7 +2378,8 @@ function applyAuthChrome() {
   }
   const positions = $("#headerPositions");
   if (positions) {
-    const n = authed ? USER.positions.length : 0;
+    const openPositions = currentPositions();
+    const n = authed ? openPositions.length : 0;
     if (n) {
       positions.innerHTML = `
         <button class="hpos-trigger" data-hpos-toggle aria-expanded="false" aria-haspopup="true" aria-controls="hposPanel" aria-label="${n} open positions">
@@ -2036,7 +2388,7 @@ function applyAuthChrome() {
           <span class="hpos-close" aria-hidden="true">${ICON_CLOSE}</span>
         </button>
         <div class="hpos-panel" id="hposPanel" role="menu" hidden>
-          <div class="hpos-list">${openPositionCards(USER.positions)}</div>
+          <div class="hpos-list">${openPositionCards(openPositions)}</div>
         </div>`;
       bindPositionActions(positions.querySelector(".hpos-list"));
     } else {
@@ -2061,13 +2413,10 @@ function renderAuthedHome() {
 
   heroInner.classList.add("authed");
   // Render each position card, then swap the display order of the 2nd and 3rd cards.
-  const posCards = USER.positions.map((p, i) => positionCardA(p, i));
+  const openPositions = currentPositions();
+  const posCards = openPositions.map((p, i) => positionCardA(p, i));
   if (posCards.length >= 3) [posCards[1], posCards[2]] = [posCards[2], posCards[1]];
-  heroInner.innerHTML = `
-    <div class="hero-greeting">
-      <h1>Hey ${currentName()}</h1>
-    </div>
-    <div class="authed-stack">
+  const positionsContent = posCards.length ? `
       <div class="positions-block">
         <div class="positions-head"><span class="eyebrow">Open Positions</span></div>
         <div class="pos-carousel" id="positionList">${posCards.join("")}</div>
@@ -2076,10 +2425,24 @@ function renderAuthedHome() {
           <div class="pos-dots" id="posDots"></div>
           <a href="wallet.html#settled">View Settled</a>
         </div>
-      </div>
+      </div>` : `
+      <div class="coming-soon authed-empty-positions">
+        <h3 class="cs-title">No open positions yet</h3>
+        <p class="cs-desc">Live markets you enter will appear here, along with quick access to buy more, sell, or review settled results.</p>
+        <div class="pos-footer no-scroll">
+          <a href="wallet.html">View All</a>
+          <a href="wallet.html#settled">View Settled</a>
+        </div>
+      </div>`;
+  heroInner.innerHTML = `
+    <div class="hero-greeting">
+      <h1>Hey ${currentName()}</h1>
+    </div>
+    <div class="authed-stack">
+      ${positionsContent}
       <a class="btn btn-primary authed-cta" href="#live">Live Games</a>
     </div>`;
-  bindPositionActions($("#positionList"));
+  if (posCards.length) bindPositionActions($("#positionList"));
   initPositionsCarousel();
 }
 
@@ -2253,7 +2616,7 @@ function orderRowHTML(o, type, i) {
     valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${signed(o.net)}</span><span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>`;
   }
   return `<button class="order-row" type="button" data-order-open="${type}:${i}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <span class="or-logos"><img src="${g.home.logo}" alt=""><img src="${g.away.logo}" alt=""></span>
+    <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}${teamAbbrMarkHTML(g.away, "or-logo")}</span>
     <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${g.home.abbr} · ${g.away.abbr}${o.date ? ` · ${fmtDate(o.date)}` : ""}</span></span>
     <span class="or-value">${valueHTML}</span>
     <span class="or-chev" aria-hidden="true">${CHEVRON}</span>
@@ -2315,13 +2678,7 @@ function initWallet() {
       ${orderGroupHTML("Settled", USER.settled, "settled", "No settled orders yet.")}
       ${orderGroupHTML("Cancelled", USER.cancelled, "cancelled", "No cancelled orders.")}
     </div>
-    ${addFundsHTML()}
-    <div class="wallet-dock" id="walletDock">
-      <div class="wallet-dock-inner">
-        <span class="wd-balance"><span class="wd-label">Available balance</span><span class="wd-amount tnum" data-balance>${money(USER.balance)}</span></span>
-        <button class="btn btn-primary wd-topup" type="button" data-add-toggle>Top Up</button>
-      </div>
-    </div>`;
+    ${addFundsHTML()}`;
   initOrderTabs();
   $$("[data-order-open]", main).forEach((row) => row.addEventListener("click", () => {
     const [type, i] = row.dataset.orderOpen.split(":");
@@ -2393,7 +2750,7 @@ function orderDetailHTML(type, i) {
     <button class="order-back" type="button" data-order-back>${CHEVRON}<span>Orders</span></button>
     <div class="order-detail">
       <div class="od-game">
-        <span class="or-logos"><img src="${g.home.logo}" alt=""><img src="${g.away.logo}" alt=""></span>
+        <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}${teamAbbrMarkHTML(g.away, "or-logo")}</span>
         <span class="od-game-meta">
           <span class="od-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span>
           <span class="od-league">${g.league.toUpperCase()} · ${type === "settled" ? "Final" : `${g.period} ${g.clock}`}</span>
@@ -2452,9 +2809,173 @@ function initAddFunds() {
   setAmt(50);
 }
 
+function profileGuardHTML() {
+  return `<div class="profile-guard">
+    <h1 class="profile-title">Profile &amp; Settings</h1>
+    <p>Login to view and manage your account.</p>
+    <a class="btn btn-primary" href="login.html">Login</a>
+  </div>`;
+}
+
+function formatProfileDate(value, fallback) {
+  if (!value) return fallback;
+  const source = String(value);
+  const date = new Date(source.length === 10 ? `${source}T00:00:00` : source);
+  if (Number.isNaN(date.getTime())) return fallback;
+  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" }).format(date);
+}
+
+function initProfile() {
+  const main = $("#profileMain");
+  if (!main) return;
+  const auth = getAuth();
+  if (!auth) { main.innerHTML = profileGuardHTML(); return; }
+
+  const email = auth.email || "alex@gtl.test";
+  const fullName = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ") || "Not provided";
+  const username = auth.username || email.split("@")[0].replace(/[^a-z0-9_]/gi, "") || "player";
+  const birthday = formatProfileDate(auth.birthday, "Not provided");
+  const memberSince = formatProfileDate(auth.memberSince, "July 2026");
+  const provider = profileProvider(auth);
+  main.innerHTML = `
+    <header class="profile-head">
+      <h1 class="profile-title">Profile &amp; Settings</h1>
+      <p class="profile-intro">Manage your GTL profile, account and preferences.</p>
+    </header>
+
+    <section class="profile-section" aria-labelledby="profileSectionTitle">
+      <h2 class="profile-section-title" id="profileSectionTitle">Profile</h2>
+      <div class="profile-edit-card">
+        <div class="profile-username-view" data-username-view>
+          <div class="profile-username-copy">
+            <span>Username</span>
+            <strong data-username-value>@${escapeHTML(username)}</strong>
+          </div>
+          <button class="btn btn-secondary btn-sm" type="button" data-username-edit>Edit</button>
+        </div>
+        <form class="profile-username-form" data-username-form hidden novalidate>
+          <div class="profile-username-field">
+            <input class="profile-username-input" name="username" type="text" value="${escapeHTML(username)}" autocomplete="username" aria-label="Username" maxlength="20" />
+            <p class="profile-username-error" data-username-error role="alert" hidden></p>
+          </div>
+          <div class="profile-username-actions">
+            <button class="btn btn-primary btn-sm" type="submit">Save</button>
+            <button class="btn btn-secondary btn-sm" type="button" data-username-cancel>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="profile-section" aria-labelledby="accountSectionTitle">
+      <h2 class="profile-section-title" id="accountSectionTitle">Account</h2>
+      <div class="account-settings-list">
+        <div class="account-setting-row"><span>Full name</span><strong>${escapeHTML(fullName)}</strong></div>
+        <div class="account-setting-row"><span>Email</span><strong>${escapeHTML(email)}</strong></div>
+        <div class="account-setting-row"><span>Date of birth</span><strong>${birthday}</strong></div>
+        <div class="account-setting-row"><span>Member since</span><strong>${memberSince}</strong></div>
+        <div class="account-setting-row"><span>Credits</span><a class="account-inline-link" href="wallet.html">${USER.balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} credits</a></div>
+        <div class="account-setting-row"><span>Connected with</span><strong><span class="account-provider ${provider.className}"><span class="account-provider-mark">${provider.mark}</span>${provider.label}</span></strong></div>
+        ${provider.hasPassword ? `<div class="account-setting-row"><span>Password</span><a class="account-inline-link" href="forgot.html">Change password</a></div>` : ""}
+      </div>
+      ${provider.hasPassword ? "" : `<p class="account-auth-note">Password changes are managed through your ${provider.label} account.</p>`}
+    </section>
+
+    <section class="profile-section" aria-labelledby="preferencesSectionTitle">
+      <h2 class="profile-section-title" id="preferencesSectionTitle">Preferences</h2>
+      <div class="profile-preference-card">
+        <div class="profile-preference-copy">
+          <strong>Appearance</strong>
+          <span>Switch between light and dark mode.</span>
+        </div>
+        <button class="profile-theme-control" type="button" data-theme-toggle aria-label="Switch colour theme">${THEME_SWITCH}</button>
+      </div>
+      <div class="profile-preference-card">
+        <div class="profile-preference-copy">
+          <strong>Notifications</strong>
+          <span>Email notification preferences will live here.</span>
+        </div>
+        <span class="status-pill">Coming soon</span>
+      </div>
+    </section>
+
+    <section class="profile-section" aria-labelledby="managementSectionTitle">
+      <h2 class="profile-section-title" id="managementSectionTitle">Account management</h2>
+      <div class="account-actions">
+        <a class="btn btn-secondary btn-block account-link-button" href="betting-controls.html">Betting Controls</a>
+        <a class="btn btn-danger btn-block account-link-button" href="delete-account.html">Delete Account</a>
+      </div>
+    </section>`;
+
+  const usernameView = $("[data-username-view]", main);
+  const usernameForm = $("[data-username-form]", main);
+  const usernameInput = $(".profile-username-input", usernameForm);
+  const usernameError = $("[data-username-error]", usernameForm);
+  const closeUsernameEdit = () => {
+    usernameInput.value = getAuth()?.username || username;
+    usernameInput.classList.remove("is-error");
+    usernameError.hidden = true;
+    usernameForm.hidden = true;
+    usernameView.hidden = false;
+  };
+  $("[data-username-edit]", usernameView).addEventListener("click", () => {
+    usernameView.hidden = true;
+    usernameForm.hidden = false;
+    usernameInput.focus();
+    usernameInput.select();
+  });
+  $("[data-username-cancel]", usernameForm).addEventListener("click", closeUsernameEdit);
+  usernameInput.addEventListener("input", () => {
+    usernameInput.classList.remove("is-error");
+    usernameError.hidden = true;
+  });
+  usernameForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nextUsername = usernameInput.value.trim();
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(nextUsername)) {
+      usernameInput.classList.add("is-error");
+      usernameError.textContent = "Use 3–20 letters, numbers, or underscores.";
+      usernameError.hidden = false;
+      usernameInput.focus();
+      return;
+    }
+    setAuth({ ...getAuth(), username: nextUsername });
+    $("[data-username-value]", usernameView).textContent = `@${nextUsername}`;
+    usernameForm.hidden = true;
+    usernameView.hidden = false;
+    showToast("Username updated", "success");
+  });
+
+}
+
+function initAccountSubpages() {
+  const root = $("#deleteAccountMain") || $("#bettingControlsMain");
+  if (!root) return;
+  if (!isAuthed()) {
+    root.innerHTML = profileGuardHTML();
+    return;
+  }
+  const deleteButton = $("[data-delete-account]", root);
+  if (deleteButton) {
+    deleteButton.addEventListener("click", () => {
+      clearAuth();
+      location.href = "home.html";
+    });
+  }
+}
+
 /* ---------------------------------------------------------- AUTH SCREENS */
 // Inline validation errors (shown in-app, not via native browser bubbles)
 const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+function isAtLeastAge(dateValue, age) {
+  const birth = new Date(`${dateValue}T00:00:00`);
+  if (!dateValue || Number.isNaN(birth.getTime())) return false;
+  const today = new Date();
+  if (birth > today) return false;
+  let years = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) years -= 1;
+  return years >= age;
+}
 function showErr(input, msg) {
   input.classList.add("is-error");
   const field = input.closest(".field");
@@ -2562,13 +3083,148 @@ function initCodeInput(wrap) {
   });
 }
 
+const DOB_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function initDateComboboxes(root) {
+  const combos = $$("[data-date-combobox]", root);
+  const controllers = [];
+  combos.forEach((combo) => {
+    const part = combo.dataset.dateCombobox;
+    const input = $("input", combo);
+    const toggle = $("[data-date-toggle]", combo);
+    const menu = $(".combobox-menu", combo);
+    const currentYear = new Date().getFullYear();
+    const options = part === "month"
+      ? DOB_MONTHS.map((label, i) => ({ value: String(i + 1), label }))
+      : part === "day"
+        ? Array.from({ length: 31 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }))
+        : Array.from({ length: currentYear - 1899 }, (_, i) => ({ value: String(currentYear - i), label: String(currentYear - i) }));
+    let visible = options;
+    let activeIndex = -1;
+
+    const close = () => {
+      menu.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+      activeIndex = -1;
+    };
+    controllers.push({ combo, close });
+
+    const render = (query = "") => {
+      const q = query.trim().toLowerCase();
+      visible = q
+        ? options.filter((option) => option.label.toLowerCase().startsWith(q) || option.value.startsWith(q))
+        : options;
+      activeIndex = -1;
+      menu.innerHTML = visible.length
+        ? visible.map((option, i) => `<button class="combobox-option" id="${menu.id}-option-${i}" type="button" role="option" data-date-value="${option.value}" aria-selected="${input.dataset.value === option.value}">${option.label}</button>`).join("")
+        : `<div class="combobox-empty">No matching options</div>`;
+    };
+
+    const positionMenu = () => {
+      const edgeGap = 16;
+      const menuGap = 8;
+      const rect = combo.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom - edgeGap - menuGap;
+      const spaceAbove = rect.top - edgeGap - menuGap;
+      const openUp = spaceBelow < 160 && spaceAbove > spaceBelow;
+      combo.classList.toggle("is-up", openUp);
+      const available = openUp ? spaceAbove : spaceBelow;
+      menu.style.maxHeight = `${Math.max(72, Math.min(224, available))}px`;
+    };
+
+    const open = (query = "") => {
+      controllers.forEach((controller) => { if (controller.combo !== combo) controller.close(); });
+      render(query);
+      menu.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+      positionMenu();
+      const selected = menu.querySelector('[aria-selected="true"]');
+      if (selected) setTimeout(() => selected.scrollIntoView({ block: "nearest" }), 0);
+    };
+
+    const selectOption = (option) => {
+      input.value = option.textContent.trim();
+      input.dataset.value = option.dataset.dateValue;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      close();
+      input.focus();
+    };
+
+    const setActive = (next) => {
+      const items = $$(".combobox-option", menu);
+      if (!items.length) return;
+      activeIndex = (next + items.length) % items.length;
+      items.forEach((item, i) => item.classList.toggle("is-active", i === activeIndex));
+      const active = items[activeIndex];
+      input.setAttribute("aria-activedescendant", active.id);
+      active.scrollIntoView({ block: "nearest" });
+    };
+
+    input.addEventListener("focus", () => { if (menu.hidden) open(); });
+    input.addEventListener("input", () => {
+      delete input.dataset.value;
+      if (part !== "month") input.value = input.value.replace(/\D/g, "").slice(0, part === "day" ? 2 : 4);
+      open(input.value);
+    });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (menu.hidden) open();
+        setActive(activeIndex + (e.key === "ArrowDown" ? 1 : -1));
+      } else if (e.key === "Enter" && !menu.hidden && activeIndex >= 0) {
+        e.preventDefault();
+        selectOption($$(".combobox-option", menu)[activeIndex]);
+      } else if (e.key === "Escape") {
+        close();
+      }
+    });
+    combo.addEventListener("focusout", () => {
+      setTimeout(() => { if (!combo.contains(document.activeElement)) close(); }, 0);
+    });
+    toggle.addEventListener("click", () => {
+      if (menu.hidden) { input.focus(); open(); }
+      else close();
+    });
+    menu.addEventListener("click", (e) => {
+      const option = e.target.closest("[data-date-value]");
+      if (option) selectOption(option);
+    });
+    window.addEventListener("resize", () => { if (!menu.hidden) positionMenu(); });
+    render();
+  });
+  document.addEventListener("pointerdown", (e) => {
+    controllers.forEach((controller) => { if (!controller.combo.contains(e.target)) controller.close(); });
+  });
+}
+
+function birthdayISOFromFields(form) {
+  const monthText = $("#dobMonth", form).value.trim();
+  const dayText = $("#dobDay", form).value.trim();
+  const yearText = $("#dobYear", form).value.trim();
+  let month = /^\d{1,2}$/.test(monthText) ? Number(monthText) : 0;
+  if (!month) {
+    const matches = DOB_MONTHS.map((label, i) => ({ label, value: i + 1 })).filter((item) => item.label.toLowerCase().startsWith(monthText.toLowerCase()));
+    if (matches.length === 1) month = matches[0].value;
+  }
+  const day = /^\d{1,2}$/.test(dayText) ? Number(dayText) : 0;
+  const year = /^\d{4}$/.test(yearText) ? Number(yearText) : 0;
+  if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900) return "";
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return "";
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
 function initSignup() {
   const steps = $("#signupSteps");
   if (!steps) return;
   let email = "";
+  let provider = "password";
+  let firstName = "";
+  let lastName = "";
+  let birthday = "";
   const go = (n) => {
     steps.dataset.step = n;
-    $$(".auth-progress span").forEach((d) => d.classList.toggle("is-done", Number(d.dataset.dot) <= n));
     const focusEl = steps.querySelector(`.auth-step[data-step="${n}"] input`);
     if (focusEl) setTimeout(() => focusEl.focus(), 80);
   };
@@ -2578,6 +3234,7 @@ function initSignup() {
     e.preventDefault();
     clearErr(emailEl);
     email = emailEl.value.trim();
+    provider = "password";
     if (!email) { showErr(emailEl, "Enter your email"); return; }
     if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); return; }
     const tgt = steps.querySelector("[data-code-email]");
@@ -2586,35 +3243,133 @@ function initSignup() {
   });
 
   const f2 = steps.querySelector("[data-step2-form]");
-  const p1 = f2.querySelector("#newpass");
-  const p2 = f2.querySelector("#confirmpass");
+  const firstNameEl = f2.querySelector("#firstName");
+  const lastNameEl = f2.querySelector("#lastName");
+  const birthdayInputs = [$("#dobMonth", f2), $("#dobDay", f2), $("#dobYear", f2)];
+  const birthdayError = $("[data-birthday-error]", f2);
+  const clearBirthdayError = () => {
+    birthdayInputs.forEach((input) => input.classList.remove("is-error"));
+    birthdayError.hidden = true;
+    birthdayError.textContent = "";
+  };
+  const showBirthdayError = (message) => {
+    birthdayInputs.forEach((input) => input.classList.add("is-error"));
+    birthdayError.textContent = message;
+    birthdayError.hidden = false;
+  };
+  birthdayInputs.forEach((input) => {
+    input.addEventListener("input", clearBirthdayError);
+    input.addEventListener("change", clearBirthdayError);
+  });
   f2.addEventListener("submit", (e) => {
     e.preventDefault();
+    clearErr(firstNameEl); clearErr(lastNameEl); clearBirthdayError();
+    let ok = true;
+    if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); ok = false; }
+    if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); ok = false; }
+    birthday = birthdayISOFromFields(f2);
+    if (!birthday) { showBirthdayError("Enter a valid month, day, and year"); ok = false; }
+    else if (!isAtLeastAge(birthday, 18)) { showBirthdayError("GTL is for users 18 or older."); ok = false; }
+    if (!ok) return;
+    firstName = firstNameEl.value.trim();
+    lastName = lastNameEl.value.trim();
+    go(3);
+  });
+  [firstNameEl, lastNameEl].forEach((input) => input.addEventListener("input", () => clearErr(input)));
+  initDateComboboxes(f2);
+
+  const f3 = steps.querySelector("[data-step3-form]");
+  const p1 = f3.querySelector("#newpass");
+  const p2 = f3.querySelector("#confirmpass");
+  const terms = f3.querySelector("#acceptTerms");
+  const termsError = f3.querySelector("[data-terms-error]");
+  f3.addEventListener("submit", (e) => {
+    e.preventDefault();
     clearErr(p1); clearErr(p2);
+    termsError.hidden = true;
     if (!p1.value) { showErr(p1, "Create a password"); return; }
     if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
     if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
     if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
-    go(3);
+    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
+    go(4);
   });
+  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
 
-  const f3 = steps.querySelector("[data-step3-form]");
-  const codeWrap = f3.querySelector("[data-code-input]");
-  f3.addEventListener("submit", (e) => {
+  const f4 = steps.querySelector("[data-step4-form]");
+  const codeWrap = f4.querySelector("[data-code-input]");
+  f4.addEventListener("submit", (e) => {
     e.preventDefault();
     clearCodeErr(codeWrap);
     const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
     if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
-    setAuth({ name: nameFromEmail(email), email });
-    location.href = postAuthDest();
+    setAuth({ firstName, lastName, name: `${firstName} ${lastName}`, birthday, email, provider, memberSince: new Date().toISOString(), onboarding: true });
+    location.href = postSignupDest();
   });
 
   $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
-  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => { setAuth({ name: USER.name }); location.href = postAuthDest(); }));
+  $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => {
+    provider = b.dataset.social;
+    email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
+    const tgt = steps.querySelector("[data-code-email]");
+    if (tgt) tgt.textContent = email;
+    go(2);
+  }));
   const resend = steps.querySelector("[data-resend]");
   if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
-  clearErrsOnInput(f1); clearErrsOnInput(f2);
+  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f3);
   initCodeInput(codeWrap);
+}
+
+function initWelcome() {
+  const main = $("#welcomeMain");
+  if (!main) return;
+  if (!isAuthed()) { location.replace("signup.html"); return; }
+
+  const credit = WELCOME_CREDIT.toLocaleString("en-US");
+  const bonusEl = $("[data-welcome-bonus]", main);
+  const usernamePanel = $("[data-welcome-username]", main);
+  const reward = $("[data-welcome-reward]", main);
+  const usernameForm = $("[data-username-form]", main);
+  const primary = $("[data-welcome-primary]", main);
+  if (bonusEl) bonusEl.textContent = credit;
+
+  const showPanel = (current, next, state, focusSelector) => {
+    current.hidden = true;
+    next.hidden = false;
+    main.dataset.welcomeState = state;
+    if (focusSelector) setTimeout(() => $(focusSelector, next)?.focus(), 80);
+  };
+
+  const usernameEl = $("#username", usernameForm);
+  const authAtStart = getAuth();
+  const suggestedUsername = `${authAtStart?.firstName || ""}${authAtStart?.lastName || ""}`
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "")
+    .slice(0, 20);
+  if (!usernameEl.value && authAtStart?.username) usernameEl.value = authAtStart.username;
+  else if (!usernameEl.value && suggestedUsername.length >= 3) usernameEl.value = suggestedUsername;
+  usernameForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(usernameEl);
+    const username = usernameEl.value.trim();
+    if (!username) { showErr(usernameEl, "Choose a username"); return; }
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3–20 letters, numbers, or underscores"); return; }
+    const auth = getAuth();
+    setAuth({ ...auth, username, onboarding: false });
+    $$('[data-welcome-name]', reward).forEach((el) => { el.textContent = firstNameFor(auth); });
+    showPanel(usernamePanel, reward, "reward");
+  });
+  clearErrsOnInput(usernameForm);
+
+  if (primary) {
+    primary.href = "home.html";
+    primary.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearBetIntent();
+      location.href = "home.html";
+    });
+  }
 }
 
 function initForgot() {
@@ -2637,6 +3392,151 @@ function initForgot() {
   clearErrsOnInput(form);
 }
 
+function initContact() {
+  const form = $("[data-contact-form]");
+  if (!form) return;
+
+  const nameEl = $("#contactName", form);
+  const emailEl = $("#contactEmail", form);
+  const topicEl = $("#contactTopic", form);
+  const topicCombo = $("[data-contact-topic]", form);
+  const topicToggle = $("[data-contact-topic-toggle]", topicCombo);
+  const topicMenu = $("#contactTopicOptions", topicCombo);
+  const topicOptions = $$("[data-contact-topic-value]", topicMenu);
+  const messageEl = $("#contactMessage", form);
+  const countEl = $("[data-message-count]", form);
+  const success = $("[data-contact-success]");
+  const another = $("[data-contact-another]", success);
+
+  const auth = getAuth();
+  if (auth) {
+    nameEl.value = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ");
+    emailEl.value = auth.email || "";
+  }
+
+  const updateCount = () => { countEl.textContent = String(messageEl.value.length); };
+  messageEl.addEventListener("input", updateCount);
+  updateCount();
+
+  let activeTopicIndex = -1;
+  const closeTopicMenu = () => {
+    topicMenu.hidden = true;
+    topicEl.setAttribute("aria-expanded", "false");
+    topicEl.removeAttribute("aria-activedescendant");
+    topicOptions.forEach((option) => option.classList.remove("is-active"));
+    activeTopicIndex = -1;
+  };
+  const positionTopicMenu = () => {
+    const roomBelow = window.innerHeight - topicCombo.getBoundingClientRect().bottom;
+    topicCombo.classList.toggle("is-up", roomBelow < 260);
+  };
+  const openTopicMenu = () => {
+    positionTopicMenu();
+    topicMenu.hidden = false;
+    topicEl.setAttribute("aria-expanded", "true");
+    const selectedIndex = topicOptions.findIndex((option) => option.dataset.contactTopicValue === topicEl.dataset.value);
+    activeTopicIndex = selectedIndex >= 0 ? selectedIndex : 0;
+    topicOptions.forEach((option, index) => option.classList.toggle("is-active", index === activeTopicIndex));
+    topicEl.setAttribute("aria-activedescendant", topicOptions[activeTopicIndex].id);
+  };
+  const selectTopic = (option) => {
+    topicEl.value = option.textContent.trim();
+    topicEl.dataset.value = option.dataset.contactTopicValue;
+    topicOptions.forEach((item) => item.setAttribute("aria-selected", String(item === option)));
+    clearErr(topicEl);
+    closeTopicMenu();
+    topicEl.focus();
+  };
+  const setActiveTopic = (index) => {
+    activeTopicIndex = (index + topicOptions.length) % topicOptions.length;
+    topicOptions.forEach((option, optionIndex) => option.classList.toggle("is-active", optionIndex === activeTopicIndex));
+    topicEl.setAttribute("aria-activedescendant", topicOptions[activeTopicIndex].id);
+    topicOptions[activeTopicIndex].scrollIntoView({ block: "nearest" });
+  };
+  topicOptions.forEach((option, index) => { option.id = `contactTopicOption${index}`; });
+  topicEl.addEventListener("click", () => { if (topicMenu.hidden) openTopicMenu(); else closeTopicMenu(); });
+  topicToggle.addEventListener("click", () => { topicEl.focus(); if (topicMenu.hidden) openTopicMenu(); else closeTopicMenu(); });
+  topicMenu.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-contact-topic-value]");
+    if (option) selectTopic(option);
+  });
+  topicEl.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (topicMenu.hidden) openTopicMenu();
+      else setActiveTopic(activeTopicIndex + (event.key === "ArrowDown" ? 1 : -1));
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      if (topicMenu.hidden) openTopicMenu();
+      else selectTopic(topicOptions[activeTopicIndex]);
+    } else if (event.key === "Escape") {
+      closeTopicMenu();
+    }
+  });
+  document.addEventListener("pointerdown", (event) => { if (!topicCombo.contains(event.target)) closeTopicMenu(); });
+  window.addEventListener("resize", () => { if (!topicMenu.hidden) positionTopicMenu(); });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    [nameEl, emailEl, topicEl, messageEl].forEach(clearErr);
+
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim();
+    const topic = topicEl.dataset.value || "";
+    const message = messageEl.value.trim();
+    let firstInvalid = null;
+    const requireField = (input, error) => {
+      showErr(input, error);
+      if (!firstInvalid) firstInvalid = input;
+    };
+
+    if (!name) requireField(nameEl, "Enter your name");
+    if (!email) requireField(emailEl, "Enter your email");
+    else if (!validEmail(email)) requireField(emailEl, "Enter a valid email address");
+    if (!topic) requireField(topicEl, "Choose a topic");
+    if (!message) requireField(messageEl, "Enter a message");
+    else if (message.length < 10) requireField(messageEl, "Add a little more detail so we can help");
+
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    const reference = `GTL-${Date.now().toString(36).slice(-6).toUpperCase()}`;
+    const request = { reference, name, email, topic, message, submittedAt: new Date().toISOString() };
+    try {
+      const requests = JSON.parse(localStorage.getItem("gtl-contact-requests") || "[]");
+      localStorage.setItem("gtl-contact-requests", JSON.stringify([...requests, request].slice(-20)));
+    } catch (error) {
+      // The confirmation still works if storage is unavailable in private browsing.
+    }
+
+    $("[data-contact-email]", success).textContent = email;
+    $("[data-contact-reference]", success).textContent = reference;
+    form.hidden = true;
+    success.hidden = false;
+    success.focus();
+  });
+
+  another.addEventListener("click", () => {
+    form.reset();
+    delete topicEl.dataset.value;
+    topicOptions.forEach((option) => option.setAttribute("aria-selected", "false"));
+    closeTopicMenu();
+    if (auth) {
+      nameEl.value = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ");
+      emailEl.value = auth.email || "";
+    }
+    updateCount();
+    success.hidden = true;
+    form.hidden = false;
+    messageEl.focus();
+  });
+
+  clearErrsOnInput(form);
+  topicEl.addEventListener("change", () => clearErr(topicEl));
+}
+
 /* ------------------------------------------------------------- INIT */
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();
@@ -2648,6 +3548,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPausedDemo();
   initLeagueFilter();
   initHeader();
+  initProfile();
   initTheme();
   initScrollTop();
   initTradingCounter();
@@ -2656,13 +3557,17 @@ document.addEventListener("DOMContentLoaded", () => {
   initFeesPage();
   initBackButtons();
   initWallet();
+  initAccountSubpages();
+  initRanking();
   maybeReopenBet();
   // auth screens
   initPassToggles();
   initSocialButtons();
   initLogin();
   initSignup();
+  initWelcome();
   initForgot();
+  initContact();
   startPriceTicker(); // after home tiles and the game page have rendered their rows
   startClockTicker(); // tick the live game clocks
 });

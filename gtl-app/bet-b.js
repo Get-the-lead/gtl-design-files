@@ -73,7 +73,7 @@
     const team = (side) => {
       const t = g[side];
       return `<div class="bs-team bs-${side}${lead === side ? " is-leading" : ""}">
-          <img class="bs-logo" src="${t.logo}" alt="${t.name}" />
+          ${teamMarkHTML(t, "bs-logo")}
           <div class="bs-meta"><span class="bs-abbr">${t.abbr}</span><span class="bs-score tnum">${t.score}</span></div>
         </div>`;
     };
