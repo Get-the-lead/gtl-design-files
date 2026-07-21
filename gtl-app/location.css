@@ -39,6 +39,7 @@
 
 .location-brand { display: inline-flex; margin-bottom: clamp(48px, 9vh, 88px); }
 .location-brand img { width: 144px; height: auto; }
+:root[data-theme="light"] .location-brand img { filter: invert(1) hue-rotate(180deg); }
 
 .location-icon {
   display: grid;
