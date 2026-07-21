@@ -444,8 +444,8 @@ function homeGameTile(g, open = false) {
 
 function homeLeagueStrip(active = "nfl") {
   return `<div class="league-strip" role="tablist" aria-label="Filter by league">
-    <button class="league-pill${active === "nfl" ? " is-active" : ""}" type="button" tabindex="-1"><span class="league-icon"><img src="../gtl-app/assets/logos/league-nfl.png" alt=""></span><span class="league-label">NFL</span></button>
-    <button class="league-pill${active === "nba" ? " is-active" : ""}" type="button" tabindex="-1"><span class="league-icon"><img src="../gtl-app/assets/logos/league-nba.png" alt=""></span><span class="league-label">NBA</span></button>
+    <button class="league-pill${active === "nfl" ? " is-active" : ""}" type="button" tabindex="-1"><span class="league-icon"><span class="league-ball" aria-hidden="true">🏈</span></span><span class="league-label">NFL</span></button>
+    <button class="league-pill${active === "nba" ? " is-active" : ""}" type="button" tabindex="-1"><span class="league-icon"><span class="league-ball" aria-hidden="true">🏀</span></span><span class="league-label">NBA</span></button>
   </div>`;
 }
 
@@ -514,8 +514,8 @@ function homePositionCard(variant) {
 
 function homeLiveSection(mode) {
   let content = `<div class="game-grid">${homeGames.map((g, i) => homeGameTile(g, i === 1)).join("")}</div>`;
-  if (mode === "noLive") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nfl.png" alt=""><h3 class="cs-title">No live games right now</h3><p class="cs-desc">Upcoming markets will appear here before kickoff.</p></div>`;
-  if (mode === "nba") content = `<div class="coming-soon"><img class="cs-logo" src="../gtl-app/assets/logos/league-nba.png" alt=""><h3 class="cs-title">NBA Betting Coming Soon</h3><p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p><div class="cs-actions"><span class="btn btn-secondary">I'd bet on NBA</span><span class="btn btn-secondary">Not for me</span></div></div>`;
+  if (mode === "noLive") content = `<div class="coming-soon"><span class="cs-logo league-ball" aria-hidden="true">🏈</span><h3 class="cs-title">No live games right now</h3><p class="cs-desc">Upcoming markets will appear here before kickoff.</p></div>`;
+  if (mode === "nba") content = `<div class="coming-soon"><span class="cs-logo league-ball" aria-hidden="true">🏀</span><h3 class="cs-title">NBA Betting Coming Soon</h3><p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p><div class="cs-actions"><span class="btn btn-secondary">I'd bet on NBA</span><span class="btn btn-secondary">Not for me</span></div></div>`;
   if (mode === "loading") content = `<div class="game-grid"><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article><article class="game-tile ds-home-skeleton"></article></div>`;
   if (mode === "error") content = `<div class="coming-soon"><h3 class="cs-title">Unable to load markets</h3><p class="cs-desc">Refresh the page or try again later.</p><div class="cs-actions cs-actions-single"><span class="btn btn-secondary">Try again</span></div></div>`;
   return `<section class="section live"><div class="container"><div class="section-head center"><span class="eyebrow">On now</span><h2>Live games</h2></div>${homeLeagueStrip(mode === "nba" ? "nba" : "nfl")}${content}</div></section>`;
@@ -545,9 +545,10 @@ function renderWelcomeFrame(mode) {
     const content = `<div class="welcome-copy"><p class="welcome-kicker">Your GTL identity</p><h1>Choose a username.</h1><p>This is how you’ll appear in rankings and across GTL.</p></div><div class="welcome-form">${field("Username", "alexmorgan", { value: "alexmorgan", hint: "Use 3–20 letters, numbers, or underscores." })}<span class="btn btn-primary btn-lg">Complete Setup</span></div>`;
     return `<div class="flat-screen is-welcome"><main class="welcome-main container" data-welcome-state="username"><section class="welcome-panel welcome-username">${content}</section></main></div>`;
   }
-  const decor = `<div class="welcome-celebration-bg" aria-hidden="true"><span class="ambient-orbit orbit-one"></span><span class="ambient-orbit orbit-two"></span><span class="light-sweep"></span><i class="ribbon one"></i><i class="ribbon two"></i><i class="ribbon three"></i><i class="ribbon four"></i><i class="particle p1"></i><i class="particle pale p2"></i><i class="particle dim p3"></i><i class="particle p4"></i><i class="particle pale p5"></i><i class="particle dim p6"></i><i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i><i class="spark s4"></i></div>`;
-  const content = `${decor}<div class="welcome-copy"><p class="welcome-kicker">You’re officially in</p><h1>Welcome to GTL, <span>Alex</span>.</h1><p>Your account is live and the next lead is yours to call. Use your credits to bet the moments that matter to you.</p></div><div class="credit-ticket"><span class="ticket-label">Welcome credits</span><strong class="ticket-value tnum">1,500</strong></div><div class="welcome-actions"><span class="btn btn-primary btn-lg">Explore Live Games</span></div>`;
-  return `<div class="flat-screen is-welcome"><main class="welcome-main container" data-welcome-state="reward"><section class="welcome-panel welcome-reward">${content}</section></main></div>`;
+  const burst = `<div class="confetti-burst burst-left"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="confetti-burst burst-right"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>`;
+  const decor = `<div class="welcome-celebration-bg" aria-hidden="true"><span class="celebration-glow"></span><span class="celebration-ring ring-one"></span><span class="celebration-ring ring-two"></span>${burst}<div class="celebration-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`;
+  const content = `<div class="welcome-copy"><p class="welcome-kicker">You’re officially in</p><h1>Welcome to GTL, <span>Alex</span>.</h1><p>Your account is live and the next lead is yours to call. Use your credits to bet the moments that matter to you.</p></div><div class="credit-ticket"><span class="ticket-label">Welcome credits</span><strong class="ticket-value tnum">1,500</strong></div><div class="welcome-actions"><span class="btn btn-primary btn-lg">Start Betting</span></div>`;
+  return `<div class="flat-screen is-welcome"><main class="welcome-main container" data-welcome-state="reward">${decor}<section class="welcome-panel welcome-reward">${content}</section></main></div>`;
 }
 
 function renderLocationFrame() {

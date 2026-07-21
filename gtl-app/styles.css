@@ -1063,10 +1063,12 @@ body.sheet-open { overflow: hidden; }
 .team { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
 .team-away { flex-direction: row-reverse; }
 .team-logo { width: 48px; height: 48px; flex: 0 0 auto; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); }
+.team-logo.is-fallback { width: 40px; height: 40px; }
 .team-logo .team-mark-abbr { font-size: 0.86rem; }
 .team-meta { display: flex; flex-direction: column; min-width: 0; }
 .team-away .team-meta { align-items: flex-end; }
 .team-abbr { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.82); }
+.team-abbr.team-name { font-size: var(--fs-eyebrow); letter-spacing: 0.04em; }
 .team-score { font-family: var(--font-display); font-size: var(--fs-score); font-weight: 700; line-height: 0.95; font-variant-numeric: tabular-nums; }
 .team.is-leading .team-score { color: #fff; }
 .team:not(.is-leading) .team-score { color: rgba(255, 255, 255, 0.66); }

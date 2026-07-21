@@ -101,6 +101,10 @@ function teamMarkHTML(t, className, loading = "") {
     </span>`;
 }
 
+function teamAbbrMarkHTML(t, className) {
+  return `<span class="team-mark ${className} is-fallback" aria-label="${t.abbr}" style="--team-color:${t.color}"><span class="team-mark-abbr">${t.abbr}</span></span>`;
+}
+
 const CHEVRON = '<svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const MARKET_LABELS = { gtl: "Get the Lead", tie: "Tie", ktl: "Keep the Lead" };
@@ -168,8 +172,8 @@ function renderTiles() {
       const t = g[side];
       const leading = lead === side ? " is-leading" : "";
       return `<div class="team team-${side}${leading}">
-          ${teamMarkHTML(t, "team-logo", "lazy")}
-          <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
+          ${teamAbbrMarkHTML(t, "team-logo")}
+          <div class="team-meta"><span class="team-abbr team-name">${t.name}</span><span class="team-score tnum">${t.score}</span></div>
         </div>`;
     };
     const pausedCls = g.paused ? " is-paused" : "";
@@ -1944,67 +1948,121 @@ function profileProvider(auth) {
 const RANKING_RESET_WINDOW_MS = (((6 * 24 + 10) * 60 + 15) * 60 + 15) * 1000;
 const RANKING_RESET_KEY = "gtl-ranking-reset-at";
 const RANKING_USERS = [
-  { rank: 1, username: "leadstorm", wins: 128, prize: "$1,500" },
-  { rank: 2, username: "fourthquarter", wins: 119, prize: "$900" },
-  { rank: 3, username: "linehunter", wins: 112, prize: "$650" },
-  { rank: 4, username: "greenlight", wins: 107, prize: "$500" },
-  { rank: 5, username: "clockedge", wins: 101, prize: "$400" },
-  { rank: 6, username: "marketmaker", wins: 96, prize: "$300" },
-  { rank: 7, username: "snapcount", wins: 91, prize: "$250" },
-  { rank: 8, username: "fastbreak", wins: 88, prize: "$200" },
-  { rank: 9, username: "leadkeeper", wins: 84, prize: "$175" },
-  { rank: 10, username: "swingtrader", wins: 81, prize: "$125" },
+  { rank: 1, username: "leadstorm", balance: 6840, prize: "$1,500" },
+  { rank: 2, username: "fourthquarter", balance: 6210, prize: "$900" },
+  { rank: 3, username: "linehunter", balance: 5980, prize: "$650" },
+  { rank: 4, username: "greenlight", balance: 5625, prize: "$500" },
+  { rank: 5, username: "clockedge", balance: 5240, prize: "$400" },
+  { rank: 6, username: "marketmaker", balance: 4880, prize: "$300" },
+  { rank: 7, username: "snapcount", balance: 4510, prize: "$250" },
+  { rank: 8, username: "fastbreak", balance: 4230, prize: "$200" },
+  { rank: 9, username: "leadkeeper", balance: 3980, prize: "$175" },
+  { rank: 10, username: "swingtrader", balance: 3740, prize: "$125" },
 ];
-const CURRENT_RANKING_FALLBACK = { rank: 47, username: "You", wins: 34, prize: "0" };
+const CURRENT_RANKING_FALLBACK = { month: 6, rank: 47, username: "You", balance: 1710, prize: "0" };
 const RANKING_MONTH_RESULTS = [
-  { month: 0, rank: 62, wins: 21, prize: "0" },
-  { month: 1, rank: 38, wins: 29, prize: "0" },
-  { month: 2, rank: 24, wins: 46, prize: "0" },
-  { month: 3, rank: 19, wins: 53, prize: "0" },
-  { month: 4, rank: 31, wins: 40, prize: "0" },
-  { month: 5, rank: 14, wins: 67, prize: "0" },
-  { month: 6, rank: 47, wins: 34, prize: "0" },
-  { month: 7, rank: 27, wins: 51, prize: "0" },
-  { month: 8, rank: 17, wins: 71, prize: "0" },
-  { month: 9, rank: 22, wins: 58, prize: "0" },
-  { month: 10, rank: 12, wins: 79, prize: "0" },
-  { month: 11, rank: 9, wins: 88, prize: "$175" },
+  { month: 0, rank: 62, balance: 1420, prize: "0" },
+  { month: 1, rank: 8, balance: 4230, prize: "$200" },
+  { month: 2, rank: 24, balance: 2580, prize: "0" },
+  { month: 3, rank: 3, balance: 5980, prize: "$650" },
+  { month: 4, rank: 31, balance: 2210, prize: "0" },
+  { month: 5, rank: 6, balance: 4880, prize: "$300" },
+  { month: 6, rank: 47, balance: 1710, prize: "0" },
+  { month: 7, rank: 27, balance: 2460, prize: "0" },
+  { month: 8, rank: 17, balance: 3050, prize: "0" },
+  { month: 9, rank: 22, balance: 2760, prize: "0" },
+  { month: 10, rank: 12, balance: 3440, prize: "0" },
+  { month: 11, rank: 9, balance: 3980, prize: "$175" },
 ];
 const RANKING_TROPHY_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const RANKING_MEDAL_ICON = '<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const RANKING_PRIZES = ["$1,500", "$900", "$650", "$500", "$400", "$300", "$250", "$200", "$175", "$125"];
+
+function monthlyRankingRows(result, username) {
+  const month = Number.isInteger(result?.month) ? result.month : new Date().getMonth();
+  const currentIsTopTen = Boolean(username && result?.rank >= 1 && result.rank <= 10);
+  const playerPool = RANKING_USERS
+    .map((row) => row.username)
+    .filter((player) => !currentIsTopTen || player.toLowerCase() !== username.toLowerCase());
+  const rotation = (month * 2) % playerPool.length;
+  const rotated = [...playerPool.slice(rotation), ...playerPool.slice(0, rotation)];
+  let poolIndex = 0;
+  return Array.from({ length: 10 }, (_, index) => {
+    const rank = index + 1;
+    if (currentIsTopTen && rank === result.rank) {
+      return { ...result, username, prize: RANKING_PRIZES[index] };
+    }
+    const balance = currentIsTopTen
+      ? Math.max(1, result.balance + ((result.rank - rank) * 350))
+      : Math.max(1, 6800 + ((month % 4) * 90) - (index * 350));
+    return { rank, username: rotated[poolIndex++], balance, prize: RANKING_PRIZES[index] };
+  });
+}
 
 function rankingRowHTML(row, isCurrent = false) {
   const prize = row.prize || "-";
-  const label = `${isCurrent ? "Your rank, " : ""}position ${row.rank}, ${row.username}, ${row.wins} wins, prize ${prize}`;
+  const formattedBalance = Number(row.balance).toLocaleString("en-US");
+  const label = `${isCurrent ? "Your rank, " : ""}position ${row.rank}, ${row.username}, balance ${formattedBalance} credits, prize ${prize}`;
   const isPodium = row.rank <= 3 && !isCurrent;
   const rankMark = isPodium
     ? `<span class="rank-medal" role="cell">${row.rank === 1 ? RANKING_TROPHY_ICON : RANKING_MEDAL_ICON}</span>`
     : `<span class="rank-pos" role="cell">${row.rank}</span>`;
-  return `<div class="ranking-row${isPodium ? ` is-podium is-rank-${row.rank}` : ""}${isCurrent ? " is-current" : ""}" role="row" aria-label="${escapeHTML(label)}">
+  return `<div class="ranking-row${isPodium ? ` is-podium is-rank-${row.rank}` : ""}${isCurrent ? " is-current" : ""}" data-ranking-key="${escapeHTML(String(row.username).toLowerCase())}" role="row" aria-label="${escapeHTML(label)}">
     ${rankMark}
     <span class="rank-user" role="cell">${escapeHTML(row.username)}</span>
-    <span class="rank-win tnum" role="cell">${row.wins}</span>
+    <span class="rank-balance tnum" role="cell">${formattedBalance}</span>
     <span class="rank-prize tnum" role="cell">${escapeHTML(prize)}</span>
   </div>`;
 }
 
-function renderRanking(currentResult = CURRENT_RANKING_FALLBACK) {
+function renderRanking(currentResult = CURRENT_RANKING_FALLBACK, { animate = false } = {}) {
   const list = $("[data-ranking-list]");
   const currentSlot = $("[data-ranking-current]");
   if (!list) return;
   const auth = getAuth();
   const username = auth ? String(auth.username || "You").trim() : "";
-  const currentInTopTen = username && RANKING_USERS.some((row) => row.username.toLowerCase() === username.toLowerCase());
-  list.innerHTML = RANKING_USERS.map((row) => {
+  const previousPositions = new Map();
+  if (animate) {
+    $$(".ranking-row[data-ranking-key]").forEach((row) => {
+      previousPositions.set(row.dataset.rankingKey, row.getBoundingClientRect());
+    });
+  }
+  const rows = monthlyRankingRows(currentResult, username);
+  const currentInTopTen = Boolean(username && currentResult.rank >= 1 && currentResult.rank <= 10);
+  list.innerHTML = rows.map((row) => {
     return rankingRowHTML(row, username && row.username.toLowerCase() === username.toLowerCase());
   }).join("");
-  if (!currentSlot) return;
-  if (username && !currentInTopTen) {
-    currentSlot.hidden = false;
-    currentSlot.innerHTML = rankingRowHTML({ ...currentResult, username }, true);
-  } else {
-    currentSlot.hidden = true;
-    currentSlot.innerHTML = "";
+  if (currentSlot) {
+    if (username && !currentInTopTen) {
+      currentSlot.hidden = false;
+      currentSlot.innerHTML = rankingRowHTML({ ...currentResult, username }, true);
+    } else {
+      currentSlot.hidden = true;
+      currentSlot.innerHTML = "";
+    }
+  }
+  if (animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    requestAnimationFrame(() => {
+      $$(".ranking-row[data-ranking-key]").forEach((row, index) => {
+        const previous = previousPositions.get(row.dataset.rankingKey);
+        const next = row.getBoundingClientRect();
+        const fromY = previous ? previous.top - next.top : 18;
+        const fromX = previous ? previous.left - next.left : 0;
+        row.animate([
+          { transform: `translate(${fromX}px, ${fromY}px)`, opacity: previous ? 0.72 : 0 },
+          { transform: "translate(0, 0)", opacity: 1 },
+        ], {
+          duration: row.classList.contains("is-current") ? 620 : 460,
+          delay: Math.min(index * 18, 120),
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "both",
+        });
+        if (row.classList.contains("is-current")) {
+          row.classList.add("is-month-arrival");
+          row.addEventListener("animationend", () => row.classList.remove("is-month-arrival"), { once: true });
+        }
+      });
+    });
   }
 }
 
@@ -2047,7 +2105,7 @@ function initRankingMonthSelect() {
       option.setAttribute("aria-selected", String(selected));
       option.classList.toggle("is-selected", selected);
     });
-    if (authed) renderRanking({ ...result, username: "You" });
+    renderRanking(result, { animate: true });
     close();
   };
 
@@ -2199,8 +2257,8 @@ function gameMedia(g, centerInner) {
   const team = (side) => {
     const t = g[side];
     return `<div class="team team-${side}${lead === side ? " is-leading" : ""}">
-        ${teamMarkHTML(t, "team-logo")}
-        <div class="team-meta"><span class="team-abbr">${t.abbr}</span><span class="team-score tnum">${t.score}</span></div>
+        ${teamAbbrMarkHTML(t, "team-logo")}
+        <div class="team-meta"><span class="team-abbr team-name">${t.name}</span><span class="team-score tnum">${t.score}</span></div>
       </div>`;
   };
   return `<div class="game-row">${team("home")}<div class="game-center">${centerInner || ""}</div>${team("away")}</div>`;
@@ -2558,7 +2616,7 @@ function orderRowHTML(o, type, i) {
     valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${signed(o.net)}</span><span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>`;
   }
   return `<button class="order-row" type="button" data-order-open="${type}:${i}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <span class="or-logos">${teamMarkHTML(g.home, "or-logo")}${teamMarkHTML(g.away, "or-logo")}</span>
+    <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}${teamAbbrMarkHTML(g.away, "or-logo")}</span>
     <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${g.home.abbr} · ${g.away.abbr}${o.date ? ` · ${fmtDate(o.date)}` : ""}</span></span>
     <span class="or-value">${valueHTML}</span>
     <span class="or-chev" aria-hidden="true">${CHEVRON}</span>
@@ -2692,7 +2750,7 @@ function orderDetailHTML(type, i) {
     <button class="order-back" type="button" data-order-back>${CHEVRON}<span>Orders</span></button>
     <div class="order-detail">
       <div class="od-game">
-        <span class="or-logos">${teamMarkHTML(g.home, "or-logo")}${teamMarkHTML(g.away, "or-logo")}</span>
+        <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}${teamAbbrMarkHTML(g.away, "or-logo")}</span>
         <span class="od-game-meta">
           <span class="od-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span>
           <span class="od-league">${g.league.toUpperCase()} · ${type === "settled" ? "Final" : `${g.period} ${g.clock}`}</span>
@@ -3305,10 +3363,11 @@ function initWelcome() {
   clearErrsOnInput(usernameForm);
 
   if (primary) {
-    primary.href = hasBetIntent() ? "#" : "home.html#live";
+    primary.href = "home.html";
     primary.addEventListener("click", (e) => {
       e.preventDefault();
-      location.href = postAuthDest("home.html#live");
+      clearBetIntent();
+      location.href = "home.html";
     });
   }
 }

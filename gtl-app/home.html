@@ -53,11 +53,11 @@
         <!-- League filter strip -->
         <div class="league-strip" id="leagueStrip" role="tablist" aria-label="Filter by league">
           <button class="league-pill is-active" role="tab" aria-selected="true" data-league="nfl">
-            <span class="league-icon"><img src="assets/logos/league-nfl.png" alt="" /></span>
+            <span class="league-icon"><span class="league-ball" aria-hidden="true">🏈</span></span>
             <span class="league-label">NFL</span>
           </button>
           <button class="league-pill" role="tab" aria-selected="false" data-league="nba">
-            <span class="league-icon"><img src="assets/logos/league-nba.png" alt="" /></span>
+            <span class="league-icon"><span class="league-ball" aria-hidden="true">🏀</span></span>
             <span class="league-label">NBA</span>
           </button>
         </div>
@@ -67,7 +67,7 @@
 
         <!-- NBA coming-soon state (shown when NBA is selected) -->
         <div class="coming-soon" id="nbaSoon" hidden>
-          <img class="cs-logo" src="assets/logos/league-nba.png" alt="" />
+          <span class="cs-logo league-ball" aria-hidden="true">🏀</span>
           <h3 class="cs-title">NBA Betting Coming Soon</h3>
           <p class="cs-desc">We're launching with live NFL. Get the Lead on NBA games is next — tell us whether you'd trade it and we'll prioritise accordingly.</p>
           <div class="cs-actions">

@@ -177,7 +177,7 @@
 .ranking-table-head,
 .ranking-row {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) 48px 68px;
+  grid-template-columns: 34px minmax(0, 1fr) 76px 68px;
   align-items: center;
   gap: var(--s3);
 }
@@ -253,16 +253,16 @@
 }
 .is-podium .rank-user { font-family: var(--font-display); font-size: var(--fs-lead); font-weight: 700; }
 
-.rank-win,
+.rank-balance,
 .rank-prize {
   font-size: var(--fs-body);
   font-weight: 600;
   text-align: right;
   white-space: nowrap;
 }
-.rank-win { color: var(--ink-2); }
+.rank-balance { color: var(--ink-2); }
 .rank-prize { color: var(--green); }
-.is-podium .rank-win { color: var(--ink); }
+.is-podium .rank-balance { color: var(--ink); }
 .is-podium .rank-prize { font-family: var(--font-display); font-weight: 700; }
 
 .ranking-current-slot {
@@ -280,7 +280,16 @@
 }
 .ranking-row.is-current:hover { background: rgba(74, 222, 128, 0.2); }
 .ranking-row.is-current .rank-pos { background: rgba(74, 222, 128, 0.16); color: var(--green); }
-.ranking-row.is-current :is(.rank-user, .rank-win, .rank-prize) { color: var(--green); font-weight: 700; }
+.ranking-row.is-current :is(.rank-user, .rank-balance, .rank-prize) { color: var(--green); font-weight: 700; }
+.ranking-row.is-current.is-month-arrival { animation: ranking-current-arrival 0.8s 0.3s var(--ease-out); }
+@keyframes ranking-current-arrival {
+  0%, 100% { box-shadow: none; }
+  45% { box-shadow: 0 0 0 4px var(--green-soft), 0 10px 36px rgba(74, 222, 128, 0.16); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ranking-row.is-current.is-month-arrival { animation: none; }
+}
 
 .ranking-prize-backdrop { background: rgba(0, 0, 0, 0.7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .ranking-prize-gate {
@@ -313,24 +322,29 @@
 }
 .ranking-rules-inner { max-width: var(--maxw); }
 .ranking-rules-link {
-  display: flex;
-  width: fit-content;
   align-items: center;
-  gap: var(--s2);
-  margin: var(--s10) auto 0;
   color: var(--green);
-  font-size: var(--fs-body);
-  font-weight: 700;
+  display: flex;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  gap: var(--s2);
+  width: fit-content;
+  margin: var(--s10) 0 0 68px;
 }
-.ranking-rules-link > span { font-size: 1.15em; transition: transform 0.18s var(--ease); }
-.ranking-rules-link:hover > span { transform: translateX(3px); }
+.ranking-rules-label {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ranking-rules-link > span:last-child { transition: transform 0.18s var(--ease); }
+.ranking-rules-link:hover > span:last-child { transform: translateX(3px); }
+:root[data-theme="light"] .ranking-rules-link { color: #16a34a; }
 
 @media (max-width: 520px) {
-  .ranking-table-head, .ranking-row { grid-template-columns: 30px minmax(0, 1fr) 42px 60px; gap: var(--s2); }
+  .ranking-table-head, .ranking-row { grid-template-columns: 30px minmax(0, 1fr) 68px 56px; gap: var(--s2); }
   .ranking-table-head { padding-inline: var(--s4); }
   .ranking-row { min-height: 58px; padding-inline: var(--s4); }
   .rank-pos, .rank-medal { width: 28px; height: 28px; }
-  .rank-user, .rank-win, .rank-prize { font-size: var(--fs-label); }
+  .rank-user, .rank-balance, .rank-prize { font-size: var(--fs-label); }
   .is-podium .rank-user { font-size: var(--fs-body); }
 }
 
@@ -339,13 +353,14 @@
   .ranking-page { padding-top: var(--s6); }
   .ranking-card-head { padding-bottom: var(--s10); }
   .ranking-table-head { padding-inline: var(--s4); }
-  .ranking-table-head, .ranking-row { grid-template-columns: 42px minmax(0, 1fr) 72px 96px; }
+  .ranking-table-head, .ranking-row { grid-template-columns: 42px minmax(0, 1fr) 110px 96px; }
   .ranking-row { min-height: 68px; padding-inline: var(--s4); }
   .ranking-current-slot { margin-top: var(--s8); padding-top: var(--s8); }
   .ranking-rules { padding-block: var(--s16); }
+  .ranking-rules-link { margin-inline: auto; }
 }
 
 :root[data-theme="light"] .ranking-prize-gate { background: rgba(255, 255, 255, 0.98); }
 :root[data-theme="light"] .ranking-month-menu { background: rgba(255, 255, 255, 0.98); }
 :root[data-theme="light"] .rank-prize,
-:root[data-theme="light"] .ranking-row.is-current :is(.rank-user, .rank-win, .rank-prize) { color: #15803d; }
+:root[data-theme="light"] .ranking-row.is-current :is(.rank-user, .rank-balance, .rank-prize) { color: #15803d; }

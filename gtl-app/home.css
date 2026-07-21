@@ -204,12 +204,11 @@
   border: 2px solid var(--line);
   transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.league-icon img { width: 44px; height: 44px; object-fit: contain; transition: filter 0.2s var(--ease); filter: grayscale(0.4) opacity(0.7); }
+.league-ball { display: inline-grid; place-items: center; font-size: 2.35rem; line-height: 1; }
 .league-label { font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.04em; }
 .league-pill:hover .league-icon { transform: translateY(-2px); }
 .league-pill.is-active { color: var(--ink); }
 .league-pill.is-active .league-icon { border-color: var(--green); background: var(--green-soft); }
-.league-pill.is-active .league-icon img { filter: none; }
 
 /* NBA coming-soon state ---------------------------------------------- */
 .coming-soon {
@@ -221,7 +220,7 @@
   background: var(--bg-2);
 }
 .coming-soon[hidden] { display: none; }
-.cs-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: var(--s2); }
+.cs-logo { width: 64px; height: 64px; margin-bottom: var(--s2); font-size: 3.5rem; }
 .cs-title { font-size: var(--fs-h2); }
 .cs-desc { margin: 0; max-width: 44ch; color: var(--ink-2); font-size: var(--fs-lead); }
 .cs-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); margin-top: var(--s5); width: 100%; max-width: 440px; }

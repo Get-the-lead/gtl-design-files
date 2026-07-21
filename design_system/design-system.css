@@ -3485,6 +3485,11 @@
   width: 48px;
 }
 
+.design-system-page .ds-card-frame .team-logo.is-fallback {
+  height: 40px;
+  width: 40px;
+}
+
 .design-system-page .ds-card-frame .team-logo .team-mark-abbr {
   font-size: 0.86rem;
 }
