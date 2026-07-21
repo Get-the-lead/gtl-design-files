@@ -3211,6 +3211,151 @@ function initForgot() {
   clearErrsOnInput(form);
 }
 
+function initContact() {
+  const form = $("[data-contact-form]");
+  if (!form) return;
+
+  const nameEl = $("#contactName", form);
+  const emailEl = $("#contactEmail", form);
+  const topicEl = $("#contactTopic", form);
+  const topicCombo = $("[data-contact-topic]", form);
+  const topicToggle = $("[data-contact-topic-toggle]", topicCombo);
+  const topicMenu = $("#contactTopicOptions", topicCombo);
+  const topicOptions = $$("[data-contact-topic-value]", topicMenu);
+  const messageEl = $("#contactMessage", form);
+  const countEl = $("[data-message-count]", form);
+  const success = $("[data-contact-success]");
+  const another = $("[data-contact-another]", success);
+
+  const auth = getAuth();
+  if (auth) {
+    nameEl.value = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ");
+    emailEl.value = auth.email || "";
+  }
+
+  const updateCount = () => { countEl.textContent = String(messageEl.value.length); };
+  messageEl.addEventListener("input", updateCount);
+  updateCount();
+
+  let activeTopicIndex = -1;
+  const closeTopicMenu = () => {
+    topicMenu.hidden = true;
+    topicEl.setAttribute("aria-expanded", "false");
+    topicEl.removeAttribute("aria-activedescendant");
+    topicOptions.forEach((option) => option.classList.remove("is-active"));
+    activeTopicIndex = -1;
+  };
+  const positionTopicMenu = () => {
+    const roomBelow = window.innerHeight - topicCombo.getBoundingClientRect().bottom;
+    topicCombo.classList.toggle("is-up", roomBelow < 260);
+  };
+  const openTopicMenu = () => {
+    positionTopicMenu();
+    topicMenu.hidden = false;
+    topicEl.setAttribute("aria-expanded", "true");
+    const selectedIndex = topicOptions.findIndex((option) => option.dataset.contactTopicValue === topicEl.dataset.value);
+    activeTopicIndex = selectedIndex >= 0 ? selectedIndex : 0;
+    topicOptions.forEach((option, index) => option.classList.toggle("is-active", index === activeTopicIndex));
+    topicEl.setAttribute("aria-activedescendant", topicOptions[activeTopicIndex].id);
+  };
+  const selectTopic = (option) => {
+    topicEl.value = option.textContent.trim();
+    topicEl.dataset.value = option.dataset.contactTopicValue;
+    topicOptions.forEach((item) => item.setAttribute("aria-selected", String(item === option)));
+    clearErr(topicEl);
+    closeTopicMenu();
+    topicEl.focus();
+  };
+  const setActiveTopic = (index) => {
+    activeTopicIndex = (index + topicOptions.length) % topicOptions.length;
+    topicOptions.forEach((option, optionIndex) => option.classList.toggle("is-active", optionIndex === activeTopicIndex));
+    topicEl.setAttribute("aria-activedescendant", topicOptions[activeTopicIndex].id);
+    topicOptions[activeTopicIndex].scrollIntoView({ block: "nearest" });
+  };
+  topicOptions.forEach((option, index) => { option.id = `contactTopicOption${index}`; });
+  topicEl.addEventListener("click", () => { if (topicMenu.hidden) openTopicMenu(); else closeTopicMenu(); });
+  topicToggle.addEventListener("click", () => { topicEl.focus(); if (topicMenu.hidden) openTopicMenu(); else closeTopicMenu(); });
+  topicMenu.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-contact-topic-value]");
+    if (option) selectTopic(option);
+  });
+  topicEl.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (topicMenu.hidden) openTopicMenu();
+      else setActiveTopic(activeTopicIndex + (event.key === "ArrowDown" ? 1 : -1));
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      if (topicMenu.hidden) openTopicMenu();
+      else selectTopic(topicOptions[activeTopicIndex]);
+    } else if (event.key === "Escape") {
+      closeTopicMenu();
+    }
+  });
+  document.addEventListener("pointerdown", (event) => { if (!topicCombo.contains(event.target)) closeTopicMenu(); });
+  window.addEventListener("resize", () => { if (!topicMenu.hidden) positionTopicMenu(); });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    [nameEl, emailEl, topicEl, messageEl].forEach(clearErr);
+
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim();
+    const topic = topicEl.dataset.value || "";
+    const message = messageEl.value.trim();
+    let firstInvalid = null;
+    const requireField = (input, error) => {
+      showErr(input, error);
+      if (!firstInvalid) firstInvalid = input;
+    };
+
+    if (!name) requireField(nameEl, "Enter your name");
+    if (!email) requireField(emailEl, "Enter your email");
+    else if (!validEmail(email)) requireField(emailEl, "Enter a valid email address");
+    if (!topic) requireField(topicEl, "Choose a topic");
+    if (!message) requireField(messageEl, "Enter a message");
+    else if (message.length < 10) requireField(messageEl, "Add a little more detail so we can help");
+
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    const reference = `GTL-${Date.now().toString(36).slice(-6).toUpperCase()}`;
+    const request = { reference, name, email, topic, message, submittedAt: new Date().toISOString() };
+    try {
+      const requests = JSON.parse(localStorage.getItem("gtl-contact-requests") || "[]");
+      localStorage.setItem("gtl-contact-requests", JSON.stringify([...requests, request].slice(-20)));
+    } catch (error) {
+      // The confirmation still works if storage is unavailable in private browsing.
+    }
+
+    $("[data-contact-email]", success).textContent = email;
+    $("[data-contact-reference]", success).textContent = reference;
+    form.hidden = true;
+    success.hidden = false;
+    success.focus();
+  });
+
+  another.addEventListener("click", () => {
+    form.reset();
+    delete topicEl.dataset.value;
+    topicOptions.forEach((option) => option.setAttribute("aria-selected", "false"));
+    closeTopicMenu();
+    if (auth) {
+      nameEl.value = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ");
+      emailEl.value = auth.email || "";
+    }
+    updateCount();
+    success.hidden = true;
+    form.hidden = false;
+    messageEl.focus();
+  });
+
+  clearErrsOnInput(form);
+  topicEl.addEventListener("change", () => clearErr(topicEl));
+}
+
 /* ------------------------------------------------------------- INIT */
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();
@@ -3240,6 +3385,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSignup();
   initWelcome();
   initForgot();
+  initContact();
   startPriceTicker(); // after home tiles and the game page have rendered their rows
   startClockTicker(); // tick the live game clocks
 });
