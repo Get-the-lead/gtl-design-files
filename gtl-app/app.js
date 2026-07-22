@@ -1224,7 +1224,7 @@ function ensureBetSheet() {
       <footer class="bet-sheet-footer">
         <button class="bet-secondary" data-breakdown>See Details</button>
         <button class="bet-secondary" data-bet-back>Back</button>
-        <button class="btn btn-primary bet-primary" data-bet-primary>Quick Bet</button>
+        <button class="btn btn-primary bet-primary" data-bet-primary>Buy</button>
       </footer>
 
       <div class="bet-success">
@@ -1401,7 +1401,7 @@ function updateBetSheet() {
   const primary = sheet.querySelector("[data-bet-primary]");
   if (primary) {
     primary.disabled = !!betState.priceUpdating;
-    primary.textContent = betState.priceUpdating ? "Updating..." : betState.editPending != null ? "Update Bet" : (betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Quick Bet"));
+    primary.textContent = betState.priceUpdating ? "Updating..." : betState.editPending != null ? "Update Bet" : (betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Buy"));
   }
   $$("[data-contract]", sheet).forEach((b) => { b.disabled = !!betState.priceUpdating; });
   syncLimitSize();
@@ -1497,7 +1497,7 @@ function openBuy(pos) {
   openBetSheet(pos.gameId, pos.market, pos.side, marketsFromGame(g), { quantity: 100, mode: "buy", position: pos, existingQty: pos.qty });
 }
 
-// Edit a pending limit order — opens the buy drawer prefilled, with "Update Bet" instead of "Quick Bet"
+// Edit a pending limit order — opens the buy drawer prefilled, with "Update Bet" instead of "Buy"
 function openEditPending(i) {
   const p = USER.pending[i];
   const g = p && GAMES.find((x) => x.id === p.gameId);
