@@ -312,7 +312,7 @@ function renderAuthFrame(mode) {
     return authShell(`<div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
         <span class="step-back">${backIcon}Back</span>
         ${authHead("", "Create a password", "Keep your account secure with a strong password.")}
-        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true })}${field("Confirm password", "Re-enter your password", { type: "password" })}<label class="terms-check"><input type="checkbox" checked tabindex="-1"><span>I agree to GTL's <span class="link-green">Terms and Conditions</span> and <span class="link-green">Privacy Policy</span>.</span></label><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
+        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true })}${field("Confirm password", "Re-enter your password", { type: "password", passwordToggle: true })}<label class="terms-check"><input type="checkbox" checked tabindex="-1"><span>I agree to GTL's <span class="link-green">Terms and Conditions</span> and <span class="link-green">Privacy Policy</span>.</span></label><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "registerDetails") {
@@ -335,7 +335,7 @@ function renderAuthFrame(mode) {
       <div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
         <span class="step-back">${backIcon}Back</span>
         ${authHead("Step 2 of 3", "Create a password", "Keep your account secure with a strong password.")}
-        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+        <div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, hint: "Use 8+ characters with a mix of letters and numbers." })}${field("Confirm password", "Re-enter your password", { type: "password", passwordToggle: true })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
   if (mode === "forgot") {
@@ -871,7 +871,7 @@ function renderDrawerFrame(mode) {
   const invalid = mode === "invalid";
   const balance = mode === "balance";
   const error = mode === "error";
-  const primary = sell ? "Sell" : limit ? "Place Limit" : "Quick Bet";
+  const primary = sell ? "Sell" : limit ? "Place Limit" : "Buy";
   const total = sell ? "$37.63" : limit ? "$52.00" : "$64.00";
   const profit = sell ? "$15.12" : limit ? "$46.96" : "$34.72";
   const conflict = balance

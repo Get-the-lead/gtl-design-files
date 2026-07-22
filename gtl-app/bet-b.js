@@ -204,7 +204,7 @@
         <footer class="bet-sheet-footer">
           <button class="bet-secondary" data-breakdown>See Details</button>
           <button class="bet-secondary" data-bet-back>Back</button>
-          <button class="btn btn-primary bet-primary" data-bet-primary>Quick Bet</button>
+          <button class="btn btn-primary bet-primary" data-bet-primary>Buy</button>
         </footer>
 
         <div class="bet-success">
@@ -404,7 +404,7 @@
       const belowMarketMinimum = !betStateB.limitOpen && amount < (marketPrice / 100);
       const invalidBuy = betStateB.mode !== "sell" && (qty < 1 || belowMarketMinimum);
       primary.disabled = !!betStateB.priceUpdating || invalidBuy;
-      primary.textContent = betStateB.priceUpdating ? "Updating..." : (betStateB.mode === "sell" ? "Sell" : (betStateB.step === 2 ? "Place Bet" : "Quick Bet"));
+      primary.textContent = betStateB.priceUpdating ? "Updating..." : (betStateB.mode === "sell" ? "Sell" : (betStateB.step === 2 ? "Place Bet" : "Buy"));
     }
     $$("[data-contract]", sheet).forEach((b) => { b.disabled = !!betStateB.priceUpdating; });
     syncLimitSizeB();
