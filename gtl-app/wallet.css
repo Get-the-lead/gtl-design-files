@@ -1,7 +1,6 @@
 /* GTL v2 — orders page: tabs, compact order rows, order detail, floating balance dock */
 
-.wallet { padding-top: 96px; padding-bottom: var(--s16); max-width: 720px; }
-@media (min-width: 768px) { .wallet { padding-top: 144px; } } /* matches the authed home hero's desktop top clearance */
+.wallet { padding-top: var(--page-top); padding-bottom: var(--s16); max-width: 720px; }
 
 .wallet-head { margin-bottom: var(--s6); }
 .wallet-head h1 { font-size: var(--fs-h2); line-height: 1.05; }
@@ -22,7 +21,7 @@
 /* Desktop: drop the Orders/Settled toggle and list all four groups (Current · Pending · Settled · Cancelled) */
 @media (min-width: 1024px) {
   #orderTabs { display: none; }
-  .order-panel[hidden] { display: block; }
+  .order-panel[hidden] { display: block !important; }
   .order-panel + .order-panel { margin-top: var(--s20); } /* 80px between the two panels' sections */
 }
 .order-group-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--s4); }

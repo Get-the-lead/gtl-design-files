@@ -70,6 +70,8 @@
 .hero-greeting { text-align: center; margin-top: 24px; margin-bottom: var(--s2); }
 .hero-greeting .eyebrow { display: block; margin-bottom: var(--s2); }
 .hero-greeting h1 { font-size: var(--fs-hero); line-height: 1.0; }
+.hero:has(.hero-inner.no-open-positions) { padding-bottom: 0; }
+.hero:has(.hero-inner.no-open-positions) + .live { padding-top: var(--s8); }
 
 .authed-stack { display: flex; flex-direction: column; gap: var(--s6); margin-top: var(--s8); }
 
