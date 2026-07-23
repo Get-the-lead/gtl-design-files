@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="../gtl-app/welcome.css">
     <link rel="stylesheet" href="../gtl-app/location.css">
     <link rel="stylesheet" href="../gtl-app/ranking.css">
+    <link rel="stylesheet" href="../gtl-app/profile.css">
+    <link rel="stylesheet" href="../gtl-app/contact.css">
     <link rel="stylesheet" href="design-system.css">
   </head>
   <body class="design-system-page">
@@ -699,6 +701,8 @@
           </div>
         </div>
 
+        <div data-drawer-state-mount="paused"></div>
+
         <div class="ds-drawer-state">
           <div class="section-header ds-subsection-header">
             <h2>Existing Position Warning</h2>
@@ -1014,6 +1018,41 @@
                 <div class="trade-pause" role="status"><span class="pause-dot"></span><span>Markets open when a team takes the lead.</span></div>
               </div>
             </article>
+          </article>
+        </div>
+
+        <div class="section-header ds-subsection-header">
+          <h2>Game Stats Cards</h2>
+          <p>Head-to-head game statistics use team initials in coloured square tiles. Sport-specific variants keep the comparison relevant.</p>
+        </div>
+
+        <div class="card-grid ds-game-stats-card-grid">
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>NFL</h3><span class="tag">Team yards</span></div>
+            <div class="momentum-card stats-card" style="--home-color:#e31837;--away-color:#b3995d">
+              <div class="stats-teams"><span class="team-mark stats-logo is-fallback" aria-label="Chiefs" style="--team-color:#e31837"><span class="team-mark-abbr">KC</span></span><span class="stats-title">Game Stats</span><span class="team-mark stats-logo is-fallback" aria-label="49ers" style="--team-color:#b3995d"><span class="team-mark-abbr">SF</span></span></div>
+              <div class="stat-list">
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">214</span><span class="stat-label">Total Team Yards</span><span class="stat-val tnum">186</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:43.5%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">151</span><span class="stat-label">Pass Yards</span><span class="stat-val tnum">129</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:42.7%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">63</span><span class="stat-label">Rush Yards</span><span class="stat-val tnum">57</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:45.2%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">11:46</span><span class="stat-label">Possession Time</span><span class="stat-val tnum">09:32</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:40.5%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">0</span><span class="stat-label">Turnovers</span><span class="stat-val tnum">1</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:0%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>NBA</h3><span class="tag">Team performance</span></div>
+            <div class="momentum-card stats-card" style="--home-color:#f58426;--away-color:#007a33">
+              <div class="stats-teams"><span class="team-mark stats-logo is-fallback" aria-label="Knicks" style="--team-color:#f58426"><span class="team-mark-abbr">NYK</span></span><span class="stats-title">Game Stats</span><span class="team-mark stats-logo is-fallback" aria-label="Celtics" style="--team-color:#007a33"><span class="team-mark-abbr">BOS</span></span></div>
+              <div class="stat-list">
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">46</span><span class="stat-label">Field Goal %</span><span class="stat-val tnum">51</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:45.1%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">38</span><span class="stat-label">Rebounds</span><span class="stat-val tnum">35</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:46.1%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">19</span><span class="stat-label">Assists</span><span class="stat-val tnum">24</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:39.6%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">34</span><span class="stat-label">3PT %</span><span class="stat-val tnum">41</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:41.5%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">11</span><span class="stat-label">Turnovers</span><span class="stat-val tnum">8</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:36.4%"></span></div></div>
+              </div>
+            </div>
           </article>
         </div>
 
