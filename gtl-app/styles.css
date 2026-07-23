@@ -58,7 +58,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
    ------------------------------------------------------------------- */
 .support-page {
   width: 100%; max-width: 640px; margin-inline: auto;
-  padding: 96px var(--s5) var(--s16);
+  padding: var(--page-top) var(--s5) var(--s16);
   text-align: left;
 }
 .support-back {
@@ -798,6 +798,76 @@ body.sheet-open { overflow: hidden; }
 
 .bet-field.contracts-field { gap: var(--s6); } /* extra breathing room around the big number */
 
+/* Compact Buy / Buy More drawer */
+.bet-sheet[data-mode="buy"] .bet-step-1 { gap: var(--s5); }
+.drawer-trade-pause {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  padding-block: 0;
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.drawer-trade-pause .pause-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36);
+  animation: pause-pulse 1.2s var(--ease) infinite;
+}
+.drawer-trade-pause[hidden],
+.bet-sheet [data-buy-main][hidden] { display: none; }
+.drawer-bet-heading { display: flex; flex-direction: column; align-items: center; gap: var(--s1); text-align: center; }
+.drawer-bet-heading strong { color: var(--ink); font-family: var(--font-display); font-size: var(--fs-h3); }
+.drawer-bet-heading .limit-toggle { margin-top: 0; padding-block: 0; }
+.drawer-bet-editor { display: flex; flex-direction: column; gap: var(--s6); }
+.drawer-bet-editor[hidden] { display: none; }
+.bet-sheet[data-mode="buy"] .contracts-field { gap: var(--s3); }
+.bet-sheet[data-mode="buy"] .contracts-field .num-input {
+  height: 1em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 2.8rem;
+  line-height: 1;
+}
+.drawer-price-mode,
+.drawer-purchase { padding-top: var(--s2); }
+.drawer-price-toggle button { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); }
+.drawer-price-toggle strong { color: inherit; font-family: var(--font-display); font-size: var(--fs-body); }
+.drawer-price-option {
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  border-radius: var(--r-pill);
+  color: var(--ink-2);
+  cursor: pointer;
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+.drawer-price-option.is-active { background: var(--green-soft); color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
+.drawer-price-option.is-error {
+  background: var(--no-soft);
+  color: var(--no);
+  box-shadow: inset 0 0 0 1px var(--no);
+}
+.drawer-limit-entry { display: inline-flex; align-items: center; justify-content: center; gap: 2px; }
+.drawer-limit-entry[hidden] { display: none; }
+.drawer-limit-entry input { width: 2.5ch; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; text-align: right; }
+.limit-minmax.is-error { color: var(--no); }
+.bet-sheet[data-mode="buy"].is-updating-price :is(.drawer-price-mode, .drawer-purchase) { opacity: 0.5; }
+.bet-sheet[data-mode="buy"].is-updating-price :is(.bt-opt, .bet-primary)::before { display: none; }
+.bet-sheet .bet-primary:disabled { cursor: not-allowed; opacity: 0.45; }
+
 /* Big number input — replaces the swipe picker (no bg/border) */
 .num-input {
   width: 100%; text-align: center; border: none; background: none;
@@ -835,8 +905,8 @@ body.sheet-open { overflow: hidden; }
 .bet-highlight { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding-top: var(--s2); }
 .bet-highlight .bet-label { margin-bottom: var(--s2); }
 .bet-total-big { font-family: var(--font-display); font-weight: 700; font-size: 2.8rem; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
-/* "Potential profit of … after fees" outcome line — shared by BOTH bet drawers
-   (bet-a in app.js + bet-b): muted copy with a green amount, red amount on loss. */
+/* "Potential profit of … after fees" outcome line in the canonical Buy/Sell
+   drawer: muted copy with a green amount, red amount on loss. */
 .potential-win { margin: var(--s2) 0 0; text-align: center; color: var(--ink-2); font-size: 12px; font-weight: 500; }
 .potential-win strong { color: var(--green); font-family: inherit; font-size: 12px; font-weight: 500; }
 .potential-win span { color: inherit; font-size: 12px; font-weight: 500; }
@@ -929,6 +999,11 @@ body.sheet-open { overflow: hidden; }
 .bet-sheet[data-step="1"] [data-bet-back] { display: none; }
 .bet-sheet[data-step="2"] [data-breakdown] { display: none; }
 .bet-primary { --btn-h: 52px; flex: 1; }
+.bet-sheet[data-mode="buy"] .bet-sheet-footer > :is(.bet-secondary, .bet-primary) {
+  width: auto;
+  min-width: 0;
+  flex: 1 1 0;
+}
 
 /* Place-bet success screen — order summary + cancel (timed) / close */
 .bet-success { display: none; position: absolute; inset: 0; z-index: 2; flex-direction: column; gap: var(--s5); padding: var(--s5); overflow-y: auto; background: var(--bg); border-radius: inherit; min-height: 100%; }
@@ -938,12 +1013,15 @@ body.sheet-open { overflow: hidden; }
 .bet-success-check { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green); }
 .bet-sheet.is-success .bet-success-check { animation: success-pop 0.55s var(--ease-out) both, success-ring 1.4s var(--ease) 0.2s; }
 .bet-success-check svg { width: 38px; height: 38px; }
+.bet-countdown-clock { position: relative; width: 72px; height: 72px; display: grid; place-items: center; border: 1px solid rgba(255, 206, 77, 0.42); border-radius: 50%; background: rgba(255, 206, 77, 0.12); color: var(--gold); }
+.bet-countdown-clock strong { position: relative; z-index: 1; font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
 .bet-success-title { font-size: var(--fs-h2); }
 .bet-success-sub { margin: 0; color: var(--ink-2); font-size: var(--fs-body); }
 .cancel-bet { position: relative; overflow: hidden; width: 100%; }
 .bet-success .bet-secondary { --btn-h: 54px; flex: 0 0 auto; width: 100%; height: var(--btn-h); font-size: var(--fs-body); }
-.bet-success .success-close { --btn-h: 46px; flex: 0 0 auto; width: 100%; height: var(--btn-h); font-size: var(--fs-label); }
-.cancel-bet.draining::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--green); transform-origin: left; animation: cancel-fill 10s linear forwards; }
+.success-actions { flex: 0 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3); }
+.success-actions > :is(.bet-secondary, .btn) { width: 100%; min-width: 0; }
+.bet-success .success-actions :is(.bet-secondary, .success-close) { --btn-h: 54px; min-width: 0; width: 100%; height: var(--btn-h); font-size: var(--fs-body); font-weight: 600; }
 @keyframes cancel-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .success-close { width: 100%; --btn-h: 46px; display: flex; align-items: center; justify-content: center; }
 @keyframes success-pop { 0% { transform: scale(0.2); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
