@@ -1751,11 +1751,15 @@ function startCancelTimer() {
   const renderCountdown = () => {
     count.textContent = remaining;
     clock.setAttribute("aria-label", `${remaining} second${remaining === 1 ? "" : "s"} remaining`);
+    clock.style.setProperty("--bet-confirm-progress", String(remaining / 5));
   };
+  clock.classList.add("is-timer-resetting");
   renderCountdown();
+  void clock.offsetWidth;
+  clock.classList.remove("is-timer-resetting");
   confirmCountdownTimer = setInterval(() => {
     remaining -= 1;
-    if (remaining > 0) renderCountdown();
+    if (remaining >= 0) renderCountdown();
   }, 1000);
   cancelTimer = setTimeout(commitConfirmedOrder, 5000);
 }

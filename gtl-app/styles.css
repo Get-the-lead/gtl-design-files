@@ -1013,7 +1013,38 @@ body.sheet-open { overflow: hidden; }
 .bet-success-check { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green); }
 .bet-sheet.is-success .bet-success-check { animation: success-pop 0.55s var(--ease-out) both, success-ring 1.4s var(--ease) 0.2s; }
 .bet-success-check svg { width: 38px; height: 38px; }
-.bet-countdown-clock { position: relative; width: 72px; height: 72px; display: grid; place-items: center; border: 1px solid rgba(255, 206, 77, 0.42); border-radius: 50%; background: rgba(255, 206, 77, 0.12); color: var(--gold); }
+@property --bet-confirm-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+.bet-countdown-clock {
+  --bet-confirm-progress: 1;
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  margin-top: var(--s6);
+  border: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--green-soft) 0 calc((1 - var(--bet-confirm-progress)) * 1turn),
+    var(--green) 0 1turn
+  );
+  color: var(--green);
+  isolation: isolate;
+  transition: --bet-confirm-progress 1s linear;
+}
+.bet-countdown-clock::before {
+  position: absolute;
+  inset: 4px;
+  z-index: -1;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bg) 92%, var(--green));
+  content: "";
+}
+.bet-countdown-clock.is-timer-resetting { transition: none; }
 .bet-countdown-clock strong { position: relative; z-index: 1; font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
 .bet-success-title { font-size: var(--fs-h2); }
 .bet-success-sub { margin: 0; color: var(--ink-2); font-size: var(--fs-body); }
