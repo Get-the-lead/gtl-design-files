@@ -319,12 +319,63 @@ function renderHeader() {
           ${THEME_SWITCH}
         </button>
       </div>
-      <a class="menu-location" href="location-unavailable.html" data-guest-only>
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
-        <span>Change Location</span>
-      </a>
+      <div class="menu-prototype-links" data-guest-only>
+        <div class="menu-prototype-row">
+          <a class="menu-location" href="location-unavailable.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
+            <span>Change Location</span>
+          </a>
+          <button class="menu-prototype-info" type="button" data-prototype-menu-info aria-label="About Change Location">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 10.5v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <div class="menu-prototype-row">
+          <a class="menu-location" href="waitlist.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16v11H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Waitlist</span>
+          </a>
+          <button class="menu-prototype-info" type="button" data-prototype-menu-info aria-label="About Waitlist">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 10.5v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
       <div class="menu-actions" id="menuActions"></div>
     </div>`;
+}
+
+function ensurePrototypeMenuInfo() {
+  let gate = $("#prototypeMenuInfo");
+  if (gate) return gate;
+  document.body.insertAdjacentHTML("beforeend", `
+    <div class="gate-backdrop" id="prototypeMenuInfoBackdrop"></div>
+    <div class="auth-gate prototype-menu-info-gate" id="prototypeMenuInfo" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="prototypeMenuInfoTitle">
+      <div class="gate-body">
+        <h3 class="gate-title" id="prototypeMenuInfoTitle">Prototype navigation</h3>
+        <p class="gate-desc">This is not part of the actual application menu. It is included for prototype purposes only.</p>
+      </div>
+    </div>
+    <button class="btn btn-secondary gate-close" id="prototypeMenuInfoClose" type="button">Close</button>`);
+  gate = $("#prototypeMenuInfo");
+  const close = () => {
+    $("#prototypeMenuInfoBackdrop")?.classList.remove("is-open");
+    gate.classList.remove("is-open");
+    $("#prototypeMenuInfoClose")?.classList.remove("is-open");
+    gate.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("sheet-open");
+  };
+  $("#prototypeMenuInfoBackdrop")?.addEventListener("click", close);
+  $("#prototypeMenuInfoClose")?.addEventListener("click", close);
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape") close(); });
+  return gate;
+}
+
+function openPrototypeMenuInfo() {
+  const gate = ensurePrototypeMenuInfo();
+  $("#prototypeMenuInfoBackdrop")?.classList.add("is-open");
+  gate.classList.add("is-open");
+  $("#prototypeMenuInfoClose")?.classList.add("is-open");
+  gate.setAttribute("aria-hidden", "false");
+  document.body.classList.add("sheet-open");
 }
 
 function initHeader() {
@@ -336,6 +387,12 @@ function initHeader() {
 
   const triggers = $$("[data-menu-toggle]");
   const panel = $("#menuPanel");
+  $$("[data-prototype-menu-info]", header).forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openPrototypeMenuInfo();
+    });
+  });
   let closeMenu = () => {};
   let closePos = () => {};
   if (triggers.length && panel) {

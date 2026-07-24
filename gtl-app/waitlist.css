@@ -15,6 +15,7 @@
 }
 .waitlist-brand { display: inline-flex; width: 128px; }
 .waitlist-brand img { width: 100%; }
+.waitlist-header-actions { display: flex; align-items: center; gap: var(--s2); }
 .header-cta {
   --btn-h: 44px;
   padding-inline: var(--s5);
@@ -22,6 +23,13 @@
   font-weight: 600;
 }
 .header-cta:hover { transform: translateY(-1px); }
+.header-cta-label-mobile { display: none; }
+.header-home {
+  --btn-h: 44px;
+  padding-inline: var(--s5);
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
 
 .waitlist-hero {
   position: relative; min-height: min(880px, 100svh); overflow: hidden; isolation: isolate;
@@ -373,7 +381,11 @@ body.confirmation-open { overflow: hidden; }
   .waitlist-shell { width: min(100% - 32px, 600px); }
   .waitlist-header { padding: 18px 16px; }
   .waitlist-brand { width: 104px; }
-  .header-cta { --btn-h: 40px; padding-inline: 14px; font-size: var(--fs-label); }
+  .waitlist-header-actions { gap: var(--s2); }
+  .header-cta,
+  .header-home { --btn-h: 40px; padding-inline: 14px; font-size: var(--fs-label); }
+  .header-cta-label-desktop { display: none; }
+  .header-cta-label-mobile { display: inline; }
   .waitlist-hero { padding: 120px 0 72px; }
   .hero-copy h1 { font-size: clamp(2.75rem, 12.5vw, 3.7rem); line-height: .96; }
   .form-row { grid-template-columns: 1fr; padding: 7px; border-radius: 17px; }
