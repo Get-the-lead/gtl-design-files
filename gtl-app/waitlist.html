@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#070809" />
+  <title>Get the Lead — Be first in the game</title>
+  <meta name="description" content="Join the Get the Lead waitlist and be first to trade the moments that move live NFL games." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="home.css" />
+  <link rel="stylesheet" href="waitlist.css" />
+</head>
+<body class="waitlist-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="waitlist-header">
+    <a class="waitlist-brand" href="#main" aria-label="Get the Lead home">
+      <img src="assets/gtl-footer-logo.png" alt="Get the Lead" />
+    </a>
+    <div class="waitlist-header-actions">
+      <a class="btn btn-glass header-cta" href="#join">
+        <span class="header-cta-label-desktop">Join the Waitlist</span>
+        <span class="header-cta-label-mobile">Join Waitlist</span>
+      </a>
+      <a class="btn btn-glass header-home" href="home.html?ds-auth=guest">Home</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="waitlist-hero" aria-labelledby="hero-title">
+      <div class="hero-atmosphere" aria-hidden="true">
+        <div class="hero-grid"><div class="hero-grid-plane"></div></div>
+        <div class="hero-orb hero-orb--green"></div>
+        <div class="hero-orb hero-orb--blue"></div>
+      </div>
+
+      <div class="waitlist-shell hero-layout">
+        <div class="hero-copy">
+          <div class="kickoff-pill">
+            <span class="live-pulse" aria-hidden="true"></span>
+            Launching for NFL Season
+          </div>
+
+          <h1 id="hero-title">Don’t just watch the game. <span>Get the lead.</span></h1>
+          <p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p>
+
+          <form class="waitlist-form" id="join" novalidate>
+            <label class="sr-only" for="waitlist-email">Email Address</label>
+            <div class="form-row">
+              <div class="email-field">
+                <input class="field-input" id="waitlist-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="Enter Your Email" required />
+              </div>
+              <button class="btn btn-primary join-button" type="submit">
+                <span>Get Early Access</span>
+                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <p class="form-message" id="form-message" aria-live="polite"></p>
+          </form>
+
+          <div class="trust-row" aria-label="Waitlist benefits">
+            <span><svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>First Access</span>
+            <span><svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>Launch Rewards</span>
+            <span><svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>Free to Join</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="scroll-cue" aria-hidden="true"><span></span>See what’s coming</div>
+    </section>
+
+    <section class="promise-section" aria-labelledby="promise-title">
+      <div class="waitlist-shell">
+        <div class="section-intro">
+          <span class="eyebrow">Every drive matters</span>
+          <h2 id="promise-title">Built for the moments between the moments.</h2>
+          <p>Fast, focused markets that keep you in the action from kickoff to the final play.</p>
+        </div>
+
+        <div class="promise-grid">
+          <article class="promise-card">
+            <span class="promise-icon">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="promise-number">01</span>
+            <h3>Live by the play</h3>
+            <p>Prices shift as the game turns. Read the moment and make your move in seconds.</p>
+          </article>
+          <article class="promise-card promise-card--feature">
+            <span class="promise-icon">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="promise-number">02</span>
+            <h3>Made for momentum</h3>
+            <p>Back the lead, the tie, or the comeback—without leaving the game you’re watching.</p>
+          </article>
+          <article class="promise-card">
+            <span class="promise-icon">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="promise-number">03</span>
+            <h3>Simple by design</h3>
+            <p>Clear Yes or No positions. No clutter, no complicated bet slips, no missed plays.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="markets-section" aria-labelledby="markets-title">
+      <div class="market-field-lines" aria-hidden="true"></div>
+      <div class="waitlist-shell markets-layout">
+        <div class="markets-copy">
+          <span class="eyebrow">One Game. Three Ways In.</span>
+          <h2 id="markets-title">The game tells the story.<br><span>The market moves with it.</span></h2>
+          <p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p>
+        </div>
+
+        <div class="game-card-fan">
+          <article class="game-tile launch-game-card fan-card fan-card--left" aria-hidden="true" style="--home-color:#00338D;--away-color:#008E97">
+            <div class="tile-main">
+              <div class="game-row">
+                <div class="team team-home is-leading">
+                  <span class="team-mark team-logo is-fallback" style="--team-color:#00338D"><span class="team-mark-abbr">BUF</span></span>
+                  <div class="team-meta"><span class="team-abbr team-name">Bills</span><span class="team-score tnum">24</span></div>
+                </div>
+                <div class="game-center"><span class="period">Q3</span><span class="clock tnum">11:05</span></div>
+                <div class="team team-away">
+                  <span class="team-mark team-logo is-fallback" style="--team-color:#008E97"><span class="team-mark-abbr">MIA</span></span>
+                  <div class="team-meta"><span class="team-abbr team-name">Dolphins</span><span class="team-score tnum">20</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="tile-foot fan-card-markets">
+              <div class="foot-toggle"><span class="toggle-label">Bets</span></div>
+              <div class="mkt-grid">
+                <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
+                <div class="mkt-row"><span class="price yes tnum">44¢</span><span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span><span class="price no tnum">56¢</span></div>
+                <div class="mkt-row"><span class="price yes tnum">19¢</span><span class="mkt-name">TIE</span><span class="price no tnum">81¢</span></div>
+                <div class="mkt-row"><span class="price yes tnum">58¢</span><span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span><span class="price no tnum">42¢</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="game-tile launch-game-card fan-card fan-card--right" aria-hidden="true" style="--home-color:#003594;--away-color:#004C54">
+            <div class="tile-main">
+              <div class="game-row">
+                <div class="team team-home">
+                  <span class="team-mark team-logo is-fallback" style="--team-color:#003594"><span class="team-mark-abbr">DAL</span></span>
+                  <div class="team-meta"><span class="team-abbr team-name">Cowboys</span><span class="team-score tnum">10</span></div>
+                </div>
+                <div class="game-center"><span class="period">Q4</span><span class="clock tnum">02:14</span></div>
+                <div class="team team-away is-leading">
+                  <span class="team-mark team-logo is-fallback" style="--team-color:#004C54"><span class="team-mark-abbr">PHI</span></span>
+                  <div class="team-meta"><span class="team-abbr team-name">Eagles</span><span class="team-score tnum">13</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="tile-foot fan-card-markets">
+              <div class="foot-toggle"><span class="toggle-label">Bets</span></div>
+              <div class="mkt-grid">
+                <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
+                <div class="mkt-row"><span class="price yes tnum">46¢</span><span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span><span class="price no tnum">54¢</span></div>
+                <div class="mkt-row"><span class="price yes tnum">28¢</span><span class="mkt-name">TIE</span><span class="price no tnum">72¢</span></div>
+                <div class="mkt-row"><span class="price yes tnum">61¢</span><span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span><span class="price no tnum">39¢</span></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="game-tile launch-game-card fan-card--center is-open" aria-label="Live Kansas City Chiefs versus San Francisco 49ers game card" style="--home-color:#E31837;--away-color:#B3995D">
+          <div class="tile-main">
+            <div class="game-row">
+              <div class="team team-home is-leading">
+                <span class="team-mark team-logo is-fallback" aria-label="Kansas City Chiefs" style="--team-color:#E31837">
+                  <span class="team-mark-abbr">KC</span>
+                </span>
+                <div class="team-meta">
+                  <span class="team-abbr team-name">Chiefs</span>
+                  <span class="team-score tnum">17</span>
+                </div>
+              </div>
+              <div class="game-center">
+                <span class="period">Q2</span>
+                <span class="clock tnum">08:42</span>
+              </div>
+              <div class="team team-away">
+                <span class="team-mark team-logo is-fallback" aria-label="San Francisco 49ers" style="--team-color:#B3995D">
+                  <span class="team-mark-abbr">SF</span>
+                </span>
+                <div class="team-meta">
+                  <span class="team-abbr team-name">49ers</span>
+                  <span class="team-score tnum">14</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tile-foot">
+            <button class="foot-toggle" type="button" data-launch-expand aria-expanded="true">
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="toggle-label">Hide Bets</span>
+              <span class="chev"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+            <div class="foot-panel">
+              <div class="foot-panel-inner">
+                <div class="foot-panel-pad">
+                  <div class="mkt-grid">
+                    <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
+                    <div class="mkt-row">
+                      <button class="price yes tnum" type="button" data-yes-price>38¢</button>
+                      <span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span>
+                      <button class="price no tnum" type="button" data-no-price>62¢</button>
+                    </div>
+                    <div class="mkt-row">
+                      <button class="price yes tnum" type="button">22¢</button>
+                      <span class="mkt-name">TIE</span>
+                      <button class="price no tnum" type="button">78¢</button>
+                    </div>
+                    <div class="mkt-row">
+                      <button class="price yes tnum" type="button">64¢</button>
+                      <span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span>
+                      <button class="price no tnum" type="button">36¢</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="ranking-section" aria-labelledby="ranking-title">
+      <div class="ranking-glow" aria-hidden="true"></div>
+      <div class="waitlist-shell ranking-layout">
+        <div class="ranking-copy">
+          <span class="eyebrow">Monthly Competition</span>
+          <h2 id="ranking-title">Build your balance.<br><span>Climb the ranking.</span></h2>
+          <p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p>
+          <div class="competition-facts">
+            <div><strong class="tnum">$5,000</strong><span>Prize Pool</span></div>
+            <div><strong class="tnum">Top 10</strong><span>Win Prizes</span></div>
+            <div><strong>Monthly</strong><span>Competition Reset</span></div>
+          </div>
+        </div>
+
+        <div class="competition-preview" aria-label="Preview of the GTL monthly competition ranking">
+          <div class="competition-table-head">
+            <span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span>
+          </div>
+          <div class="competition-rows">
+            <div class="competition-row is-first">
+              <span class="competition-rank">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+              <strong>leadstorm</strong><span class="tnum">6,840</span><span class="tnum">$1,500</span>
+            </div>
+            <div class="competition-row is-podium">
+              <span class="competition-rank">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2"/></svg>
+              </span>
+              <strong>fourthquarter</strong><span class="tnum">6,210</span><span class="tnum">$900</span>
+            </div>
+            <div class="competition-row is-podium">
+              <span class="competition-rank">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2"/></svg>
+              </span>
+              <strong>linehunter</strong><span class="tnum">5,980</span><span class="tnum">$650</span>
+            </div>
+          </div>
+
+          <div class="competition-current">
+            <div class="competition-row is-current">
+              <span class="competition-rank">6</span>
+              <strong>You</strong><span class="tnum">4,880</span><span class="tnum">$300</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="final-title">
+      <div class="final-lines" aria-hidden="true"></div>
+      <div class="waitlist-shell final-inner">
+        <span class="football-mark" aria-hidden="true">🏈</span>
+        <h2 id="final-title">Be there before kickoff.</h2>
+        <p>Early access is limited. Join the list and we’ll save your spot.</p>
+        <a class="btn btn-primary join-button" href="#join">
+          <span>Join the Waitlist</span>
+          <svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div class="waitlist-confirmation" id="waitlist-confirmation" hidden>
+    <div class="confirmation-backdrop"></div>
+    <section class="confirmation-card" role="dialog" aria-modal="true" aria-labelledby="confirmation-title" aria-describedby="confirmation-copy">
+      <div class="confirmation-visual" aria-hidden="true">
+        <span class="confirmation-ring confirmation-ring--outer"></span>
+        <span class="confirmation-ring confirmation-ring--inner"></span>
+        <span class="confirmation-route"></span>
+        <span class="confirmation-mark">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path class="confirmation-check" d="m8 16.5 5 5L24 10.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
+      <span class="eyebrow confirmation-eyebrow" data-confirmation-eyebrow>Joining the Waitlist</span>
+      <h2 id="confirmation-title" data-confirmation-title>Securing your place.</h2>
+      <p id="confirmation-copy" data-confirmation-copy>Hold tight—we’re reserving your early-access spot.</p>
+      <div class="confirmation-progress" aria-hidden="true"><span></span></div>
+      <button class="btn btn-primary confirmation-action" type="button" data-confirmation-close hidden>Continue Exploring</button>
+    </section>
+  </div>
+
+  <footer class="waitlist-footer">
+    <a href="#main" aria-label="Get the Lead home"><img src="assets/gtl-footer-logo.png" alt="Get the Lead" /></a>
+    <p>© 2026 GTL Markets. 18+. Please play responsibly.</p>
+  </footer>
+
+  <script src="waitlist.js" defer></script>
+</body>
+</html>
