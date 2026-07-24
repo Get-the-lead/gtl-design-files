@@ -285,6 +285,13 @@
   padding-top: var(--s16);
 }
 
+.design-system-page
+  .section:where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs) {
+  margin-inline: 0;
+  max-width: none;
+  width: 100%;
+}
+
 .design-system-page #overview {
   margin-inline: 40px;
   max-width: none;
@@ -2993,8 +3000,8 @@
 
 .design-system-page .flat-code-row {
   display: grid;
-  gap: var(--s2);
-  grid-template-columns: repeat(6, 1fr);
+  gap: var(--s1);
+  grid-template-columns: repeat(8, 1fr);
 }
 
 .design-system-page .flat-code-row span {
@@ -4625,25 +4632,129 @@
   position: static;
 }
 
-.design-system-page .ds-dialog-preview {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.08), transparent 44%),
-    var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  height: 600px;
-  overflow: hidden;
-  position: relative;
+.design-system-page .ds-dialog-catalog {
+  align-items: start;
+  column-gap: 100px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 390px));
+  row-gap: 100px;
 }
 
-.design-system-page .ds-dialog-preview .gate-backdrop {
+.design-system-page .ds-dialog-group {
+  background: transparent;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  min-width: 0;
+  padding: 0;
+}
+
+.design-system-page .ds-dialog-group-head {
+  min-height: 132px;
+}
+
+.design-system-page .ds-dialog-title-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s2);
+}
+
+.design-system-page .ds-dialog-group-head h3 {
+  font-size: var(--fs-h3);
+  margin: 0;
+}
+
+.design-system-page .ds-dialog-scope-tag {
+  border-color: rgba(255, 206, 77, 0.42);
+  color: var(--gold);
+}
+
+.design-system-page .ds-dialog-group-head p {
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin: var(--s2) 0 0;
+  max-width: 48ch;
+}
+
+.design-system-page .ds-dialog-ranking-group {
+  grid-column: 1 / -1;
+}
+
+.design-system-page .ds-dialog-ranking-group .ds-dialog-group-head {
+  min-height: 0;
+}
+
+.design-system-page .ds-dialog-ranking-group .ds-dialog-group-head h3 {
+  margin-top: var(--s2);
+}
+
+.design-system-page .ds-dialog-ranking-pair {
+  display: flex;
+  gap: 100px;
+  overflow-x: auto;
+  padding-bottom: var(--s2);
+  width: 100%;
+}
+
+.design-system-page .ds-dialog-phone-state {
+  display: grid;
+  flex: 0 0 390px;
+  gap: var(--s3);
+  min-width: 0;
+}
+
+.design-system-page .ds-dialog-phone-state .ds-dialog-phone {
+  justify-self: start;
+}
+
+.design-system-page .ds-dialog-phone {
+  --flat-frame-h: 760px;
+  --flat-frame-w: 390px;
+  justify-self: center;
+  max-width: 100%;
+  width: 390px;
+}
+
+.design-system-page .ds-dialog-phone .flat-frame-wrap {
+  max-width: 100%;
+}
+
+.design-system-page .ds-dialog-phone .flat-phone {
+  height: var(--flat-frame-h);
+  min-height: 0;
+}
+
+.design-system-page .ds-dialog-phone .flat-phone::before {
+  z-index: 501;
+}
+
+.design-system-page .ds-dialog-phone .flat-screen {
+  height: 100%;
+}
+
+.design-system-page .ds-dialog-stage {
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  z-index: 500;
+}
+
+.design-system-page .ds-dialog-stage .ranking-celebration {
+  position: absolute;
+}
+
+.design-system-page .ds-dialog-stage :is(.gate-backdrop, .addfunds-backdrop, .confirmation-backdrop) {
   inset: 0;
   opacity: 1;
   pointer-events: none;
   position: absolute;
 }
 
-.design-system-page .ds-dialog-preview .auth-gate {
+.design-system-page .ds-dialog-stage .auth-gate {
   left: 50%;
   max-width: calc(100% - var(--s6));
   opacity: 1;
@@ -4654,15 +4765,11 @@
   width: min(420px, calc(100% - var(--s6)));
 }
 
-.design-system-page .ds-dialog-preview .pos-gate {
-  width: min(560px, calc(100% - var(--s6)));
-}
-
-.design-system-page .ds-dialog-preview .gate-title {
+.design-system-page .ds-dialog-stage .gate-title {
   font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
 }
 
-.design-system-page .ds-dialog-preview .gate-close {
+.design-system-page .ds-dialog-stage .gate-close {
   bottom: var(--s4);
   left: 50%;
   margin: 0;
@@ -4671,7 +4778,174 @@
   position: absolute;
   transform: translateX(-50%);
   visibility: visible;
-  width: min(420px, calc(100% - var(--s6)));
+  min-width: 180px;
+  padding-inline: var(--s6);
+  width: auto;
+}
+
+.design-system-page .ds-dialog-stage .ranking-prize-gate {
+  width: min(460px, calc(100% - var(--s8)));
+}
+
+.design-system-page .ds-dialog-stage .addfunds-sheet {
+  border-bottom: 0;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  bottom: 0;
+  left: 0;
+  max-height: calc(100% - 40px);
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: auto;
+  transform: none;
+  visibility: visible;
+  width: 100%;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-backdrop {
+  background: rgba(3, 5, 7, 0.88);
+  backdrop-filter: blur(16px);
+}
+
+.design-system-page .ds-dialog-stage .confirmation-card {
+  align-items: center;
+  background:
+    radial-gradient(circle at 50% 0, rgba(74, 222, 128, 0.13), transparent 42%),
+    linear-gradient(150deg, rgba(19, 22, 25, 0.98), rgba(8, 10, 12, 0.99));
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-xl);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.72);
+  display: flex;
+  flex-direction: column;
+  left: 50%;
+  max-width: calc(100% - var(--s6));
+  overflow: hidden;
+  padding: clamp(38px, 5vw, 62px);
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100% - var(--s8)));
+}
+
+.design-system-page .ds-dialog-stage .confirmation-card {
+  padding: var(--s8) var(--s5);
+  width: calc(100% - var(--s6));
+}
+
+.design-system-page .ds-dialog-stage .confirmation-visual {
+  display: grid;
+  height: 126px;
+  margin-bottom: var(--s5);
+  place-items: center;
+  position: relative;
+  width: 126px;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-ring {
+  border: 1px solid rgba(74, 222, 128, 0.28);
+  border-radius: 50%;
+  position: absolute;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-ring--outer { inset: 0; }
+.design-system-page .ds-dialog-stage .confirmation-ring--inner { inset: 18px; }
+
+.design-system-page .ds-dialog-stage .confirmation-route {
+  background: rgba(74, 222, 128, 0.16);
+  height: 1px;
+  left: 9px;
+  position: absolute;
+  right: 9px;
+  top: 50%;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-mark {
+  background: #101b15;
+  border: 1px solid var(--green-line);
+  border-radius: 50%;
+  color: var(--green);
+  display: grid;
+  height: 58px;
+  place-items: center;
+  position: relative;
+  width: 58px;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-mark svg {
+  width: 30px;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-eyebrow {
+  color: var(--green);
+}
+
+.design-system-page .ds-dialog-stage .confirmation-card h2 {
+  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  line-height: 0.98;
+  margin-top: var(--s3);
+  max-width: 11ch;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-card > p {
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin: var(--s4) 0 0;
+  max-width: 42ch;
+}
+
+.design-system-page .ds-dialog-stage .confirmation-progress {
+  background: var(--line);
+  border-radius: var(--r-pill);
+  height: 3px;
+  margin-top: var(--s6);
+  overflow: hidden;
+  width: min(100%, 310px);
+}
+
+.design-system-page .ds-dialog-stage .confirmation-progress span {
+  background: var(--green);
+  border-radius: inherit;
+  box-shadow: 0 0 14px var(--green-glow);
+  display: block;
+  height: 100%;
+  width: 42%;
+}
+
+.design-system-page .ds-waitlist-screen {
+  background:
+    radial-gradient(circle at 50% 25%, rgba(74, 222, 128, 0.14), transparent 42%),
+    #080a0b;
+  justify-content: space-between;
+  padding: var(--s8) var(--s5);
+}
+
+.design-system-page .ds-waitlist-screen header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.design-system-page .ds-waitlist-screen header img {
+  height: auto;
+  width: 112px;
+}
+
+.design-system-page .ds-waitlist-screen main {
+  padding-bottom: var(--s10);
+}
+
+.design-system-page .ds-waitlist-screen h2 {
+  font-size: 2.65rem;
+  line-height: 0.98;
+  margin-top: var(--s3);
+}
+
+.design-system-page .ds-waitlist-screen p {
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: var(--s4) 0 var(--s6);
 }
 
 @media (max-width: 1100px) {
@@ -4715,10 +4989,6 @@
     grid-template-columns: 1fr;
   }
 
-  .design-system-page .ds-dialog-preview {
-    height: 560px;
-  }
-
   .design-system-page .ds-game-card-grid .game-tile {
     max-width: none;
   }
@@ -4731,6 +5001,30 @@
 
   .design-system-page .ds-card-group-head p {
     text-align: left;
+  }
+
+}
+
+@media (max-width: 760px) {
+  .design-system-page .ds-dialog-catalog {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .design-system-page .ds-dialog-group {
+    align-items: center;
+  }
+
+  .design-system-page .ds-dialog-group-head {
+    min-height: 0;
+    width: min(100%, 390px);
+  }
+
+  .design-system-page .ds-dialog-phone {
+    width: min(100%, 390px);
+  }
+
+  .design-system-page .ds-dialog-ranking-pair {
+    width: min(100%, 390px);
   }
 
 }
