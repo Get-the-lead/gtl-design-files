@@ -27,6 +27,26 @@ There is no package manager, build step, or automated test suite in this repo.
 - `supabase/` — tracked review database configuration and migrations
 - `archive/` — superseded explorations; do not extend these
 
+## Branch and deployment workflow
+
+- `app-designs` is the working source branch. It contains the application,
+  design system, review layer, Supabase configuration, and repository tooling.
+- `main` is an app-only deployment branch. Promote only files under `gtl-app/`
+  to it; design-system, review, Supabase, agent, and repository-tooling files do
+  not belong there.
+- Never merge `app-designs` into `main`. Their histories intentionally diverge
+  because app releases are represented on `main` by focused deployment commits.
+- Do not use `git log main..app-designs` alone to decide what is missing from
+  production. Compare the actual app trees or paths instead, for example with
+  `git diff origin/main:gtl-app app-designs:gtl-app`.
+- Start every deployment from the latest `origin/main`, restore only the required
+  `gtl-app/` paths from `app-designs`, verify that the resulting commit contains
+  no paths outside `gtl-app/`, then push that focused commit to `origin/main`.
+- Keep design-system updates committed and pushed on `app-designs`, even when
+  the corresponding app-only changes are deployed separately to `main`.
+
+See `DEPLOYMENT.md` for the safe promotion checklist.
+
 ## Design rules
 
 - Treat `gtl-app/tokens.css` as the source of truth for design tokens. Reuse

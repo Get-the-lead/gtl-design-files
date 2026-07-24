@@ -72,6 +72,107 @@
   background: var(--page-glow), var(--ds-bg);
 }
 
+/* Design-system chrome scrollbars mirror the app's floating overlay treatment. */
+.design-system-root,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  ) {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  scrollbar-width: thin;
+}
+
+.design-system-root::-webkit-scrollbar,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.design-system-root::-webkit-scrollbar-track,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.design-system-root::-webkit-scrollbar-thumb,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: var(--r-pill);
+}
+
+.design-system-root::-webkit-scrollbar-thumb:hover,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.34);
+  background-clip: padding-box;
+}
+
+.design-system-root[data-theme="light"],
+.design-system-root[data-theme="light"]
+  .design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  ) {
+  scrollbar-color: rgba(10, 20, 25, 0.28) transparent;
+}
+
+.design-system-root[data-theme="light"]::-webkit-scrollbar-thumb,
+.design-system-root[data-theme="light"]
+  .design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-thumb {
+  background: rgba(10, 20, 25, 0.28);
+  background-clip: padding-box;
+}
+
 .design-system-page .colorway-preview[data-theme-preview="light"] {
   --bg: #f4f6f8;
   --bg-2: #eceff3;
@@ -133,6 +234,10 @@
   text-transform: uppercase;
 }
 
+.design-system-page .side-nav-label:not(:first-of-type) {
+  margin-top: var(--s6);
+}
+
 .design-system-page .side-nav a {
   border: 1px solid transparent;
   border-radius: var(--r-md);
@@ -140,13 +245,6 @@
   font-size: var(--fs-label);
   font-weight: 700;
   padding: var(--s3) var(--s4);
-}
-
-.design-system-page .side-nav a[data-flat-device] {
-  color: color-mix(in srgb, var(--ink-2) 82%, transparent);
-  font-size: 0.78rem;
-  margin-left: var(--s3);
-  padding-block: var(--s2);
 }
 
 .design-system-page .side-nav a:hover,
@@ -967,21 +1065,17 @@
 }
 
 .design-system-page .flat-doc-tabs {
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(21, 25, 23, 0.12);
-  border-radius: var(--r-pill);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--s1);
-  margin: 0 0 var(--s8);
-  padding: 5px;
+  gap: var(--s2);
+  margin: 0 0 calc(var(--s8) + 32px);
 }
 
 .design-system-page .flat-doc-tabs button {
   background: transparent;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: var(--r-pill);
-  color: #4d5751;
+  color: rgba(255, 255, 255, 0.64);
   cursor: pointer;
   font: 800 var(--fs-label) / 1 var(--font-ui);
   min-height: 40px;
@@ -989,12 +1083,15 @@
 }
 
 .design-system-page .flat-doc-tabs button:hover {
-  color: #151917;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #f7fff9;
 }
 
 .design-system-page .flat-doc-tabs button.is-active {
-  background: #151917;
-  color: #f7fff9;
+  background: #f7fff9;
+  border-color: #f7fff9;
+  color: #151917;
 }
 
 .design-system-page .flat-lay-canvas {
@@ -1010,23 +1107,20 @@
 }
 
 .design-system-page .flat-doc-head {
-  background: rgba(255, 255, 255, 0.66);
-  border: 1px solid rgba(21, 25, 23, 0.12);
-  border-radius: var(--r-md);
-  padding: var(--s5);
+  padding: 0;
 }
 
 .design-system-page .flat-doc-head h2 {
-  color: #070b09;
+  color: #f7fff9;
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 1.35rem + 0.7vw, 2.2rem);
+  font-size: clamp(2rem, 1.6rem + 1.5vw, 3rem);
   letter-spacing: 0;
   line-height: 1.05;
   margin: 0;
 }
 
 .design-system-page .flat-doc-head p {
-  color: #26302b;
+  color: #f7fff9;
   font-size: var(--fs-body);
   line-height: 1.55;
   margin: var(--s3) 0 0;
@@ -1183,8 +1277,8 @@
   padding: var(--s8);
 }
 
-.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet),
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet) {
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game) {
   display: grid;
   grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
   grid-auto-rows: max-content;
@@ -1528,6 +1622,7 @@
 }
 
 .design-system-page .flat-screen.is-home .hero {
+  display: block;
   min-height: 640px;
   padding-block: 120px var(--s16);
 }
@@ -1537,10 +1632,64 @@
   padding-block-start: 96px;
 }
 
+.design-system-page .flat-screen.is-home.is-home-logged .hero:has(.hero-inner.no-open-positions) {
+  min-height: 0;
+  padding-block: 96px 0;
+}
+
+.design-system-page .flat-screen.is-home.is-home-logged .hero:has(.hero-inner.no-open-positions) + .live {
+  padding-top: var(--s8);
+}
+
 .design-system-page .flat-screen.is-home .hero-title,
 .design-system-page .flat-screen.is-home .hero-greeting h1 {
   font-size: var(--fs-hero);
   max-width: 16ch;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score {
+  gap: var(--s3);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-logo {
+  height: 60px;
+  width: 60px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-logo.is-fallback {
+  height: 48px;
+  width: 48px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-num {
+  font-size: 3.6rem;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-dash {
+  font-size: 3rem;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score.is-compact-score {
+  gap: var(--s2);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score.is-compact-score .gb-logo {
+  height: 48px;
+  width: 48px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score.is-compact-score .gb-logo.is-fallback {
+  height: 44px;
+  width: 44px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score.is-compact-score .gb-numbers {
+  gap: var(--s2);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score.is-compact-score :is(.gb-num, .gb-dash) {
+  font-size: 2.6rem;
 }
 
 .design-system-page .flat-screen.is-home .game-grid,
@@ -1698,44 +1847,58 @@
   transform: none;
 }
 
-.design-system-page .flat-screen.is-home .footer-grid {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen .footer-grid {
   grid-template-columns: 1fr;
-  gap: var(--s8);
+  gap: var(--s10);
 }
 
-.design-system-page .flat-screen.is-home .footer-brand .brand-mark {
-  aspect-ratio: 1;
-  border-radius: 50%;
-  flex: 0 0 auto;
-}
-
-.design-system-page .flat-screen.is-home .footer-cols {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen .footer-cols {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--s4);
 }
 
-.design-system-page .flat-screen.is-home .footer-col {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen .footer-col {
   min-width: 0;
 }
 
-.design-system-page .flat-screen.is-home .footer-col h4 {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen .footer-col h4 {
   margin-bottom: var(--s2);
 }
 
-.design-system-page .flat-screen.is-home .footer-col span {
-  color: var(--ink-2);
-  display: block;
-  font-size: var(--fs-label);
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-  padding-block: 6px;
-  white-space: normal;
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen .footer-base {
+  align-items: center;
+  flex-direction: row;
+  gap: var(--s4);
 }
 
-.design-system-page .flat-screen.is-home .footer-base {
-  align-items: flex-start;
-  flex-direction: column;
-  gap: var(--s2);
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-ranking .flow {
+  gap: var(--s8);
+  grid-template-columns: 1fr;
+  text-align: left;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-ranking .flow::before {
+  background: linear-gradient(180deg, var(--green-line), rgba(74, 222, 128, 0.05));
+  bottom: 24px;
+  height: auto;
+  left: 23px;
+  right: auto;
+  top: 24px;
+  width: 2px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-ranking .flow-step {
+  padding-left: 68px;
+  padding-top: 0;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-ranking .flow-marker {
+  left: 0;
+  transform: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-ranking .ranking-rules-link {
+  margin: var(--s10) 0 0 68px;
 }
 
 .design-system-page .flat-screen.is-game-countdown .game-period.is-countdown,
@@ -1832,13 +1995,157 @@
   padding-bottom: var(--s16);
 }
 
-.design-system-page .flat-screen.is-wallet .portfolio-stats {
+.design-system-page .flat-screen.is-account {
+  background: var(--bg);
+  display: block;
+  gap: 0;
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+  overflow: visible;
+  padding: 0;
+  position: relative;
+  scrollbar-width: none;
+}
+
+.design-system-page .flat-frame--account .flat-phone {
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+}
+
+.design-system-page .flat-screen.is-account::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-account .site-header {
+  inset: 0 0 auto;
+  position: absolute;
+}
+
+.design-system-page .flat-screen.is-account :is(a, button, .btn, .brand, .wallet-chip, .account-inline-link, .account-link-button) {
+  pointer-events: none;
+}
+
+.design-system-page .flat-screen.is-account .profile {
+  max-width: 760px;
+}
+
+.design-system-page .flat-screen.is-account .account-subpage {
+  min-height: calc(var(--flat-frame-h, 760px) - var(--header-h));
+}
+
+.design-system-page .flat-screen.is-account .account-confirm-actions .btn {
+  --btn-h: 54px;
+  font-size: var(--fs-body);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-account .brand-pill {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-right: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-account .brand-link,
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-account .header-nav,
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-account .header-left > .theme-switch {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-account .brand-menu {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet {
+  --page-top: 108px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account {
+  --page-top: 108px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-wallet {
+  --page-top: 108px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account {
+  --page-top: 108px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-wallet {
+  --page-top: 128px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-account {
+  --page-top: 128px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .account-setting-row {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account :is(.account-setting-row strong, .account-setting-value) {
+  text-align: left;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .profile-preference-card {
+  align-items: flex-start;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .profile-username-form {
+  grid-template-columns: 1fr;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .profile-username-actions {
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .profile-username-actions .btn {
+  flex: 1;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .account-confirm-actions {
+  flex-direction: column;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-account .account-confirm-actions .btn {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .portfolio-stats {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-bottom: var(--s10);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-wallet .portfolio-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.design-system-page .flat-screen.is-wallet .portfolio-stats {
+  margin-bottom: 56px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-wallet #orderTabs {
+  display: grid;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-wallet .order-panel[hidden] {
+  display: none !important;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-wallet #orderTabs {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-wallet .order-panel[hidden] {
+  display: block !important;
 }
 
 .design-system-page .flat-screen.is-wallet .order-group + .order-group {
-  margin-top: var(--s12);
+  margin-top: var(--s20);
 }
 
 .design-system-page .flat-screen.is-wallet .wallet-dock,
@@ -2048,6 +2355,11 @@
   width: 72px;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-logo.is-fallback {
+  height: 56px;
+  width: 56px;
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-num,
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-dash {
   font-size: 4.2rem;
@@ -2201,6 +2513,11 @@
   width: 86px;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-logo.is-fallback {
+  height: 60px;
+  width: 60px;
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .markets {
   padding-top: var(--s9);
 }
@@ -2246,7 +2563,7 @@
   top: var(--s4);
 }
 
-.design-system-page .flat-screen.is-auth :is(.auth-close, .step-back, .link-green, .auth-foot span, .auth-fineprint span, .code-resend span, .social-btn, .auth-submit, .pass-toggle, .field-input, .code-box) {
+.design-system-page .flat-screen.is-auth :is(.auth-close, .step-back, .link-green, .auth-foot span, .auth-fineprint span, .code-resend span, .code-resend button, .terms-check a, .social-btn, .auth-submit, .pass-toggle, .field-input, .code-box) {
   pointer-events: none;
 }
 
@@ -2362,11 +2679,147 @@
   margin-bottom: 0;
 }
 
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-trade-pause {
+  flex: 0 0 auto;
+  padding-block: 0;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .bet-sheet[data-trading="paused"] .bet-step-1 {
+  gap: 20px;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-block: 0;
+  text-align: center;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-heading strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-heading .limit-toggle {
+  margin-top: 0;
+  padding-block: 0;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s6);
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-editor[hidden] {
+  display: none;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .contracts-field .drawer-contract-input {
+  width: 100%;
+  height: 1em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 2.3rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .contracts-field .drawer-contract-input::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .contracts-input-box.is-borderless {
+  height: auto;
+  padding: 0;
+  border: 0;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-price-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-price-toggle strong {
+  color: inherit;
+  font-family: var(--font-display);
+  font-size: var(--fs-body);
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-price-option {
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  border-radius: var(--r-pill);
+  color: var(--ink-2);
+  cursor: pointer;
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-price-option.is-active {
+  background: var(--green-soft);
+  color: var(--green);
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) :is(.drawer-price-mode, .drawer-purchase) {
+  padding-top: var(--s2);
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-limit-entry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-limit-entry[hidden] {
+  display: none;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-limit-entry input {
+  width: 2.5ch;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) :is(.drawer-pick-side, .drawer-purchase).is-paused {
+  opacity: 0.5;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-pick-side.is-paused :is(button, .bet-toggle) {
+  cursor: not-allowed;
+}
+
+.design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .bet-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .design-system-page .flat-screen.is-drawer .contracts-input-box {
   width: 100%;
 }
 
-.design-system-page .flat-screen.is-drawer .contracts-input-box .num-input {
+.design-system-page .flat-screen.is-drawer .contracts-input-box .num-input:not(.drawer-contract-input) {
   border: 0;
   border-radius: 0;
   font-size: 2.3rem;
@@ -2519,118 +2972,6 @@
   font-size: var(--fs-label);
   line-height: 1.5;
   margin: var(--s1) 0 0;
-}
-
-.design-system-page .account-profile-card {
-  align-items: center;
-  display: flex;
-  gap: var(--s3);
-}
-
-.design-system-page .account-avatar {
-  align-items: center;
-  background: var(--green);
-  border-radius: 50%;
-  color: #06210f;
-  display: flex;
-  flex: 0 0 48px;
-  font-size: var(--fs-label);
-  font-weight: 900;
-  height: 48px;
-  justify-content: center;
-  letter-spacing: 0;
-  width: 48px;
-}
-
-.design-system-page .account-profile-copy {
-  min-width: 0;
-}
-
-.design-system-page .account-profile-copy p {
-  overflow-wrap: anywhere;
-}
-
-.design-system-page .account-settings-list {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
-
-.design-system-page .account-setting-row {
-  align-items: center;
-  display: flex;
-  gap: var(--s3);
-  justify-content: space-between;
-  min-height: 54px;
-  padding: 0 var(--s4);
-}
-
-.design-system-page .account-setting-row + .account-setting-row {
-  border-top: 1px solid var(--line);
-}
-
-.design-system-page .account-setting-row span {
-  color: var(--ink-3);
-  font-size: var(--fs-label);
-}
-
-.design-system-page .account-setting-row strong {
-  color: var(--ink);
-  font-size: var(--fs-label);
-  font-weight: 800;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  text-align: right;
-}
-
-.design-system-page .account-provider {
-  align-items: center;
-  display: inline-flex;
-  gap: var(--s2);
-  justify-content: flex-end;
-}
-
-.design-system-page .account-provider span {
-  align-items: center;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  color: var(--ink);
-  display: flex;
-  font-size: 0.68rem;
-  font-weight: 900;
-  height: 24px;
-  justify-content: center;
-  width: 24px;
-}
-
-.design-system-page .account-provider.password span {
-  background: var(--green-soft);
-  border-color: color-mix(in srgb, var(--green) 40%, transparent);
-  color: #0b3a1b;
-}
-
-.design-system-page .account-provider.google span {
-  background: #fff;
-  color: #1f1f1f;
-}
-
-.design-system-page .account-provider.apple span {
-  background: #111;
-  color: #fff;
-  font-size: 0.5rem;
-}
-
-.design-system-page .account-password-action {
-  width: 100%;
-}
-
-.design-system-page .account-auth-note {
-  color: var(--ink-3);
-  font-size: var(--fs-label);
-  line-height: 1.45;
-  margin: 0;
 }
 
 .design-system-page .flat-field {
@@ -3326,6 +3667,12 @@
   grid-template-columns: 1fr;
 }
 
+.design-system-page .ds-game-stats-card-grid {
+  align-items: start;
+  gap: var(--s5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .design-system-page .ds-card-frame {
   display: flex;
   flex-direction: column;
@@ -3616,6 +3963,10 @@
     grid-template-columns: 1fr;
   }
 
+  .design-system-page .ds-game-stats-card-grid {
+    grid-template-columns: 1fr;
+  }
+
   .design-system-page .ds-open-position-grid,
   .design-system-page .ds-order-row-grid {
     grid-template-columns: 1fr;
@@ -3819,4 +4170,1147 @@
   .design-system-page .ds-page-zoom {
     justify-content: space-between;
   }
+}
+
+/* Current app component reference sections -------------------------- */
+.design-system-page .ds-app-component-grid,
+.design-system-page .ds-current-card-grid {
+  align-items: start;
+}
+
+.design-system-page .ds-app-component-panel,
+.design-system-page .ds-nav-card,
+.design-system-page .ds-card-frame,
+.design-system-page .ds-dialog-card,
+.design-system-page .ds-current-drawer-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.design-system-page .ds-app-component-panel :is(button, input, textarea, select, a),
+.design-system-page .ds-nav-card :is(button, a),
+.design-system-page .ds-card-frame :is(button, a),
+.design-system-page .ds-dialog-card :is(button, input, a),
+.design-system-page .ds-current-drawer-card :is(button, input, a) {
+  pointer-events: none;
+}
+
+.design-system-page .ds-app-button-grid {
+  align-items: center;
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: minmax(72px, 0.55fr) repeat(4, minmax(120px, 1fr));
+}
+
+.design-system-page .ds-app-button-grid .btn {
+  width: 100%;
+}
+
+.design-system-page .ds-app-button-grid .btn:disabled,
+.design-system-page .ds-app-button-sizes .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.design-system-page .ds-app-button-sizes {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-top: var(--s6);
+  padding-top: var(--s6);
+}
+
+.design-system-page .ds-app-button-sizes .btn-block {
+  flex-basis: 100%;
+}
+
+.design-system-page .ds-chip-row,
+.design-system-page .ds-status-stack,
+.design-system-page .ds-toast-stack {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s4);
+}
+
+.design-system-page .ds-status-stack,
+.design-system-page .ds-toast-stack {
+  flex-direction: column;
+}
+
+.design-system-page .ds-app-component-panel .trade-pause {
+  margin: 0;
+}
+
+.design-system-page .ds-app-component-panel .result-pill {
+  margin-left: 0;
+}
+
+.design-system-page .ds-app-component-panel .status-chip,
+.design-system-page .ds-app-component-panel .status-pill {
+  white-space: nowrap;
+}
+
+.design-system-page .ds-form-card .field + .field {
+  margin-top: 0;
+}
+
+.design-system-page .ds-form-card .terms-check {
+  margin-top: var(--s2);
+}
+
+.design-system-page .ds-contact-form {
+  grid-column: 1 / -1;
+}
+
+.design-system-page .ds-contact-form .contact-name-row {
+  margin-bottom: 0;
+}
+
+.design-system-page .ds-trading-form {
+  background: var(--bg);
+}
+
+.design-system-page .ds-trading-form .contracts-field {
+  gap: var(--s5);
+}
+
+.design-system-page .ds-trading-form .drawer-contract-input {
+  border: 0;
+  border-radius: 0;
+  font-size: 2.3rem;
+  height: 44px;
+  padding: 0;
+  text-align: center;
+}
+
+.design-system-page .ds-trading-form .drawer-price-mode {
+  margin-top: 0;
+  padding-top: var(--s2);
+}
+
+.design-system-page .ds-current-drawer-grid {
+  display: grid;
+  gap: var(--s6);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .ds-current-drawer-card {
+  display: grid;
+  gap: var(--s4);
+}
+
+.design-system-page .ds-current-drawer-card .ds-drawer-mobile {
+  height: 940px;
+  min-height: 940px;
+}
+
+.design-system-page .ds-timer-comparison {
+  display: grid;
+  gap: var(--s5);
+  margin-top: var(--s12);
+}
+
+.design-system-page .ds-timer-comparison-head {
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: var(--s8);
+  justify-content: space-between;
+  padding-bottom: var(--s4);
+}
+
+.design-system-page .ds-timer-comparison-head h3 {
+  background: #151917;
+  border-radius: var(--r-pill);
+  color: #f7fff9;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+  padding: 10px var(--s4);
+  white-space: nowrap;
+}
+
+.design-system-page .ds-timer-comparison-head p {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 54ch;
+  text-align: right;
+}
+
+.design-system-page .ds-timer-comparison-grid {
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.design-system-page .ds-timer-option {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.design-system-page .ds-timer-option .bet-success {
+  overflow-y: hidden;
+  padding-inline: var(--s4);
+  scrollbar-width: none;
+}
+
+.design-system-page .ds-timer-option .bet-success::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .ds-timer-option .ds-drawer-mobile {
+  height: 780px;
+  min-height: 780px;
+}
+
+.design-system-page .ds-timer-option .bet-sheet.is-success {
+  height: 720px;
+}
+
+.design-system-page .ds-timer-option .success-content {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+}
+
+.design-system-page .ds-timer-option .success-actions {
+  margin-top: auto;
+}
+
+.design-system-page .ds-timer-option .summary-row {
+  gap: var(--s3);
+}
+
+@property --ds-timer-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+.design-system-page .ds-timer-option .bet-sheet {
+  --ds-timer-progress: 1;
+}
+
+.design-system-page .ds-timer-option .bet-countdown-clock {
+  background: var(--green-soft);
+  border-color: var(--green-line);
+  color: var(--green);
+  margin-top: var(--s6);
+}
+
+.design-system-page .ds-timer-variant--ring .bet-countdown-clock {
+  background: conic-gradient(
+    var(--green-soft) 0 calc((1 - var(--ds-timer-progress)) * 1turn),
+    var(--green) 0 1turn
+  );
+  border: 0;
+  isolation: isolate;
+  transition: --ds-timer-progress 1s linear;
+}
+
+.design-system-page .ds-timer-variant--ring .bet-countdown-clock::before {
+  background: color-mix(in srgb, var(--bg) 92%, var(--green));
+  border-radius: 50%;
+  content: "";
+  inset: 4px;
+  position: absolute;
+  z-index: -1;
+}
+
+.design-system-page .ds-timer-variant--number .bet-countdown-clock {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  height: auto;
+  width: auto;
+}
+
+.design-system-page .ds-timer-variant--number .bet-countdown-clock strong {
+  font-size: 3.5rem;
+}
+
+.design-system-page .ds-timer-variant--bar .bet-countdown-progress {
+  background: var(--green-soft);
+  border-radius: var(--r-pill);
+  display: block;
+  height: 4px;
+  margin: 4px 0 var(--s1);
+  overflow: hidden;
+  width: 136px;
+}
+
+.design-system-page .ds-timer-variant--bar .bet-countdown-clock {
+  height: 56px;
+  width: 56px;
+}
+
+.design-system-page .ds-timer-variant--bar .bet-countdown-clock strong {
+  font-size: 1.5rem;
+}
+
+.design-system-page .ds-timer-variant--bar .bet-countdown-progress span {
+  background: var(--green);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transform: scaleX(calc(1 - var(--ds-timer-progress)));
+  transform-origin: left;
+  transition: transform 1s linear;
+  width: 100%;
+}
+
+.design-system-page .ds-timer-option .bet-sheet.is-timer-resetting .bet-countdown-clock,
+.design-system-page .ds-timer-option .bet-sheet.is-timer-resetting .bet-countdown-progress span {
+  transition: none;
+}
+
+.design-system-page .ds-nav-header-preview {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  height: 96px;
+  overflow: hidden;
+  position: relative;
+}
+
+.design-system-page .ds-nav-header-preview .site-header {
+  inset: 0;
+  position: absolute;
+}
+
+.design-system-page .ds-nav-header-preview .brand-pill {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-right: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .ds-nav-header-preview .brand-link,
+.design-system-page .ds-nav-header-preview .header-nav,
+.design-system-page .ds-nav-header-preview .header-left > .theme-switch {
+  display: none;
+}
+
+.design-system-page .ds-nav-header-preview .brand-menu {
+  display: inline-flex;
+}
+
+.design-system-page .ds-nav-desktop-card {
+  margin-top: var(--s6);
+  overflow-x: auto;
+}
+
+.design-system-page .ds-nav-header-preview.is-desktop {
+  min-width: 880px;
+}
+
+.design-system-page .ds-nav-header-preview.is-desktop .brand-pill {
+  background: rgba(13, 15, 17, 0.66);
+  border: 1px solid var(--line-2);
+  box-shadow: var(--shadow-sm);
+  padding-right: var(--s2);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.design-system-page .ds-nav-header-preview.is-desktop .brand-link,
+.design-system-page .ds-nav-header-preview.is-desktop .header-nav,
+.design-system-page .ds-nav-header-preview.is-desktop .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+.design-system-page .ds-nav-header-preview.is-desktop .brand-menu {
+  display: none;
+}
+
+.design-system-page .ds-footer-reference {
+  margin-top: var(--s6);
+  overflow: hidden;
+  padding: 0;
+}
+
+.design-system-page .ds-footer-reference > .panel-header {
+  padding: var(--s5);
+}
+
+.design-system-page .ds-footer-reference .site-footer {
+  margin-top: 0;
+}
+
+.design-system-page .ds-footer-reference .footer-grid {
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.2fr);
+}
+
+.design-system-page .ds-current-card-grid {
+  align-items: start;
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .ds-card-group {
+  margin-top: var(--s10);
+}
+
+.design-system-page .ds-card-group:first-of-type {
+  margin-top: var(--s8);
+}
+
+.design-system-page .ds-card-group-head {
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: var(--s8);
+  justify-content: space-between;
+  margin-bottom: var(--s5);
+  padding-bottom: var(--s4);
+}
+
+.design-system-page .ds-card-group-head .eyebrow {
+  display: block;
+  margin-bottom: var(--s2);
+}
+
+.design-system-page .ds-card-group-head h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  margin: 0;
+}
+
+.design-system-page .ds-card-group-head p {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 52ch;
+  text-align: right;
+}
+
+/* Component documentation uses the same hierarchy as Mobile Pages. */
+.design-system-page
+  :where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs)
+  > .section-header {
+  margin-bottom: var(--s8);
+  max-width: none;
+}
+
+.design-system-page
+  :where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs)
+  > .section-header
+  h2 {
+  color: #f7fff9;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.6rem + 1.5vw, 3rem);
+  letter-spacing: 0;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.design-system-page
+  :where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs)
+  > .section-header
+  p {
+  color: #f7fff9;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  margin: var(--s3) 0 0;
+  max-width: 78ch;
+}
+
+.design-system-page
+  :where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs)
+  .panel-header {
+  flex-wrap: wrap;
+  gap: var(--s3);
+}
+
+.design-system-page
+  :where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs)
+  .panel-header
+  h3,
+.design-system-page
+  :where(#buttons, #pills, #forms, #drawers, #navigation, #cards, #tables, #feedback, #dialogs)
+  .panel-header
+  > .tag {
+  background: #151917;
+  border: 0;
+  border-radius: var(--r-pill);
+  color: #f7fff9;
+  font-family: var(--font-ui);
+  font-size: var(--fs-label);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 9px var(--s4);
+  text-transform: none;
+}
+
+.design-system-page #cards .ds-card-group-head .eyebrow {
+  display: none;
+}
+
+.design-system-page #cards .ds-card-group-head h3 {
+  background: #151917;
+  border-radius: var(--r-pill);
+  color: #f7fff9;
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 900;
+  line-height: 1;
+  margin: 0;
+  padding: 10px var(--s4);
+}
+
+.design-system-page .ds-game-card-grid .game-tile {
+  margin-inline: auto;
+  max-width: 367px;
+  width: 100%;
+}
+
+.design-system-page .ds-position-card-grid .pos-card {
+  flex-basis: auto;
+  margin-inline: auto;
+  max-width: 376px;
+  width: 100%;
+}
+
+.design-system-page .ds-current-card-grid .game-tile:not(.is-open) .foot-panel {
+  display: none;
+}
+
+.design-system-page .ds-current-card-grid .game-tile.is-open .foot-panel {
+  display: grid;
+}
+
+.design-system-page .ds-current-card-grid .team-mark {
+  flex: 0 0 auto;
+}
+
+.design-system-page .ds-card-reference {
+  border-color: color-mix(in srgb, var(--gold) 30%, var(--line));
+}
+
+.design-system-page .ds-card-note {
+  color: var(--ink-3);
+  font-size: var(--fs-eyebrow);
+  line-height: 1.5;
+  margin: var(--s3) 0 0;
+}
+
+.design-system-page .ds-card-frame .settled-card {
+  margin-inline: auto;
+  max-width: 380px;
+  width: 100%;
+}
+
+.design-system-page .ds-card-frame .settled-progress {
+  transform: scaleX(0.62);
+}
+
+.design-system-page .ds-data-card-grid .momentum-card,
+.design-system-page .ds-data-card-grid .chart-card {
+  width: 100%;
+}
+
+.design-system-page .ds-data-card-grid > .ds-card-frame {
+  grid-column: 1 / -1;
+  max-width: 760px;
+  width: 100%;
+}
+
+.design-system-page .ds-order-row-frame {
+  grid-column: 1 / -1;
+}
+
+.design-system-page .ds-order-row-frame .order-row {
+  margin-inline: auto;
+  max-width: 720px;
+}
+
+.design-system-page .ds-settled-card-frame {
+  justify-self: start;
+  max-width: 428px;
+  width: 100%;
+}
+
+.design-system-page .ds-order-flow-frame {
+  grid-column: 1 / -1;
+}
+
+.design-system-page .ds-settings-card-frame {
+  max-width: 760px;
+  width: 100%;
+}
+
+.design-system-page .ds-settings-card-stack {
+  display: grid;
+  gap: var(--s3);
+}
+
+.design-system-page .ds-settings-card-stack .profile-preference-card + .profile-preference-card {
+  margin-top: 0;
+}
+
+.design-system-page .ds-settings-card-stack .profile-theme-control {
+  flex: 0 0 auto;
+}
+
+.design-system-page #tables .bets-table {
+  margin-top: 0;
+  min-width: 500px;
+}
+
+.design-system-page #tables .table-wrap {
+  overflow-x: auto;
+}
+
+.design-system-page #tables .ranking-table-head,
+.design-system-page #tables .ranking-row {
+  grid-template-columns: 42px minmax(0, 1fr) 86px 72px;
+}
+
+.design-system-page #tables .rank-balance,
+.design-system-page #tables .rank-prize {
+  text-align: right;
+}
+
+.design-system-page .ds-toast-stack .toast {
+  animation: none;
+  position: static;
+}
+
+.design-system-page .ds-dialog-preview {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.08), transparent 44%),
+    var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  height: 600px;
+  overflow: hidden;
+  position: relative;
+}
+
+.design-system-page .ds-dialog-preview .gate-backdrop {
+  inset: 0;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+}
+
+.design-system-page .ds-dialog-preview .auth-gate {
+  left: 50%;
+  max-width: calc(100% - var(--s6));
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: min(420px, calc(100% - var(--s6)));
+}
+
+.design-system-page .ds-dialog-preview .pos-gate {
+  width: min(560px, calc(100% - var(--s6)));
+}
+
+.design-system-page .ds-dialog-preview .gate-title {
+  font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+}
+
+.design-system-page .ds-dialog-preview .gate-close {
+  bottom: var(--s4);
+  left: 50%;
+  margin: 0;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  visibility: visible;
+  width: min(420px, calc(100% - var(--s6)));
+}
+
+@media (max-width: 1100px) {
+  .design-system-page .ds-app-button-grid {
+    grid-template-columns: minmax(72px, 0.55fr) repeat(2, minmax(130px, 1fr));
+  }
+
+  .design-system-page .ds-app-button-grid > :nth-child(5n + 4),
+  .design-system-page .ds-app-button-grid > :nth-child(5n + 5) {
+    grid-column: auto;
+  }
+
+  .design-system-page .ds-current-drawer-grid,
+  .design-system-page .ds-current-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .design-system-page .ds-app-button-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .ds-app-button-grid > .type-label {
+    margin-top: var(--s3);
+  }
+
+  .design-system-page .ds-current-drawer-card {
+    padding-inline: var(--s2);
+  }
+
+  .design-system-page .ds-current-drawer-card > .panel-header {
+    padding-inline: var(--s2);
+  }
+
+  .design-system-page .ds-footer-reference .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .ds-footer-reference .footer-cols {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .ds-dialog-preview {
+    height: 560px;
+  }
+
+  .design-system-page .ds-game-card-grid .game-tile {
+    max-width: none;
+  }
+
+  .design-system-page .ds-card-group-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--s3);
+  }
+
+  .design-system-page .ds-card-group-head p {
+    text-align: left;
+  }
+
+}
+
+/* -------------------------------------------------------------------
+   Device flat-lay parity
+
+   Flat lays render the real app page markup inside the design-system
+   document, so host-viewport media queries cannot be allowed to choose
+   the simulated device layout. These rules make the selected device the
+   single responsive source of truth.
+   ------------------------------------------------------------------- */
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] {
+  --flat-frame-w: 768px;
+  --flat-frame-h: 1024px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] {
+  --flat-frame-w: 1280px;
+  --flat-frame-h: 800px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-phone {
+  border: 8px solid #151917;
+  box-shadow: 0 24px 60px rgba(21, 25, 23, 0.18);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-phone {
+  border-radius: 28px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-phone {
+  border-radius: 20px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen {
+  padding: 0;
+}
+
+/* Tablet uses the product's intermediate header: menu + theme switch. */
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .site-header {
+  padding-inline: var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .brand-pill {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-right: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .header-nav {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .brand-menu,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .header-nav {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .brand-menu,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+/* Desktop uses the current full navigation pill and never shows both logos. */
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .site-header {
+  padding-inline: var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-pill {
+  background: rgba(13, 15, 17, 0.66);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-sm);
+  padding-right: var(--s2);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-nav,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-menu {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-nav span:not(.header-nav-sep),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-nav button {
+  align-items: center;
+  color: var(--ink-2);
+  display: inline-flex;
+  font: inherit;
+  height: 36px;
+  padding: 0 var(--s3);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .hpos-word {
+  display: inline;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .hpos-close {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .hpos-num {
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: inline-grid;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  height: 34px;
+  place-items: center;
+  width: 34px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hpos-trigger {
+  background: rgba(13, 15, 17, 0.66);
+  border-color: var(--line-2);
+  color: var(--ink);
+  height: 48px;
+  padding: 0 var(--s2) 0 var(--s4);
+  width: auto;
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hpos-word {
+  display: inline;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hpos-num {
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: inline-grid;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  height: 34px;
+  place-items: center;
+  width: 34px;
+}
+
+/* Page grids follow the app breakpoints represented by each frame. */
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-home .game-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-home .game-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-home.is-home-positions .pos-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-home.is-home-positions .pos-card {
+  flex-basis: calc((100% - 2 * var(--s4)) / 3);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hero:has(.hero-inner.authed) {
+  padding-block-start: 144px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow {
+  gap: var(--s6);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  text-align: center;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow::before,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow::before {
+  background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent);
+  bottom: auto;
+  height: 2px;
+  left: 12.5%;
+  right: 12.5%;
+  top: 24px;
+  width: auto;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow-step,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow-step {
+  padding-left: 0;
+  padding-top: 68px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow-marker,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow-marker {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .ranking-rules-link {
+  margin-inline: auto;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .footer-grid {
+  gap: var(--s16);
+  grid-template-columns: 1.2fr 2fr;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .footer-cols {
+  gap: var(--s6);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .footer-col h4 {
+  margin-bottom: var(--s4);
+}
+
+/* Tablet and desktop use the app's centred trade modal, while mobile
+   retains the bottom-sheet presentation. */
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-drawer .bet-sheet {
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-xl);
+  bottom: auto;
+  left: 50%;
+  max-height: min(82%, 820px);
+  max-width: none;
+  opacity: 1;
+  padding-bottom: 0;
+  right: auto;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  visibility: visible;
+  width: min(760px, calc(100% - 48px));
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-drawer .bet-sheet-handle {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet-close {
+  display: none;
+  pointer-events: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-drawer .bet-sheet-close {
+  bottom: var(--s5);
+  display: inline-flex;
+  left: 50%;
+  min-width: 180px;
+  opacity: 1;
+  position: absolute;
+  transform: translateX(-50%);
+  visibility: visible;
+  z-index: 3;
+}
+
+/* The host page is desktop-sized even while displaying a mobile or tablet
+   frame. Explicitly restore the stacked game composition for those devices. */
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-layout {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-game {
+  display: flow-root;
+  grid-template-columns: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-layout::before {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-col-left {
+  display: block;
+  height: auto;
+  overflow: visible;
+  padding: 0;
+  position: static;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .gb-back-right {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .gb-topbar {
+  display: flex;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-col-right {
+  padding-top: 0;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-overall-head {
+  display: flex;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-tabs {
+  display: flex;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-panel[hidden] {
+  display: none !important;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-section-label {
+  display: none;
+}
+
+/* Desktop live games mirror the app's current sticky two-column page. */
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-layout {
+  align-items: start;
+  display: grid;
+  gap: 8%;
+  grid-template-columns: minmax(360px, 40%) 1fr;
+  isolation: isolate;
+  margin-top: 104px;
+  padding: 0 calc(var(--s4) + 40px) 0 var(--s4);
+  position: relative;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-layout::before {
+  inset: -104px 0 0;
+  position: absolute;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  justify-content: flex-start;
+  overflow: visible;
+  padding: var(--s5);
+  position: relative;
+  top: auto;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb {
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  padding: var(--s6) 0 var(--s8);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-glow,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-topbar {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-inner,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .markets,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right .stats-section {
+  margin-inline: 0;
+  max-width: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .markets {
+  margin-top: var(--s6);
+  padding: 0 var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-score {
+  gap: var(--s6);
+  grid-template-columns: auto auto auto;
+  justify-content: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-back-right {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right {
+  min-width: 0;
+  padding-top: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right .stats-section {
+  padding: 0 0 var(--s10);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-overall-head,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-tabs {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-panel[hidden] {
+  display: block !important;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-panel + .stats-panel {
+  margin-top: var(--s12);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-section-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin-bottom: var(--s5);
+  text-align: left;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .chart-grid-wrap,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .momentum-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
 }
