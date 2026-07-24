@@ -277,6 +277,12 @@
 .code-resend button:hover { text-decoration: underline; }
 .code-sent-to { font-weight: 600; color: var(--ink); }
 
+@media (max-width: 440px) {
+  .code-input { gap: var(--s1); }
+  .code-dash { width: 8px; margin-inline: 2px; }
+  .code-box { height: 52px; border-radius: var(--r-sm); font-size: 1.35rem; }
+}
+
 /* Forgot-password sent confirmation */
 .auth-sent { display: none; flex-direction: column; align-items: center; text-align: center; gap: var(--s4); }
 .auth-card.is-sent .auth-form { display: none; }

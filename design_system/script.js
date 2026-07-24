@@ -267,7 +267,7 @@ function renderAuthFrame(mode) {
     error: ["Welcome back", "Login to GTL", "sam", "Password", "Login"],
   }[mode];
   if (mode === "verify") {
-    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 2 of 3</span><h3>Check your email</h3><p>Enter the 6-digit code sent to alex@gtl.test.</p><div class="flat-code-row"><span>4</span><span>8</span><span>2</span><span></span><span></span><span></span></div><div class="flat-primary">Verify Email</div></div></div>`;
+    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 2 of 3</span><h3>Check your email</h3><p>Enter the 8-digit code sent to alex@gtl.test.</p><div class="flat-code-row"><span>4</span><span>8</span><span>2</span><span>6</span><span></span><span></span><span></span><span></span></div><div class="flat-primary">Verify Email</div></div></div>`;
   }
   const error = mode === "error";
   return `<div class="flat-screen is-auth"><div class="flat-auth-card">

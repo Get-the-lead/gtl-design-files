@@ -3483,7 +3483,7 @@ function initSignup() {
     e.preventDefault();
     clearCodeErr(codeWrap);
     const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
-    if (code.length < 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
+    if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit code we sent you"); return; }
     setAuth({ firstName, lastName, name: `${firstName} ${lastName}`, birthday, email, provider, memberSince: new Date().toISOString(), onboarding: true });
     location.href = postSignupDest();
   });
