@@ -902,7 +902,7 @@ function renderDrawerFrame(mode) {
   return `<div class="flat-screen is-drawer">${renderDrawerSheet(mode)}</div>`;
 }
 
-function renderDrawerSheet(mode, showClose = false) {
+function renderDrawerSheet(mode, showClose = false, timerVariant = "") {
   const sell = mode.startsWith("sell") || mode === "confirmSell";
   const limit = mode.toLowerCase().includes("limit") || mode === "invalid";
   const confirmation = mode === "confirmBuy" || mode === "confirmSell";
@@ -924,7 +924,7 @@ function renderDrawerSheet(mode, showClose = false) {
     : "";
   const marketPrice = paused ? "—" : "64¢";
   const purchasePrice = paused ? "—" : total;
-  const sheetClass = confirmation ? "bet-sheet is-open is-success" : "bet-sheet is-open";
+  const sheetClass = `${confirmation ? "bet-sheet is-open is-success" : "bet-sheet is-open"}${timerVariant ? ` ds-timer-variant--${timerVariant}` : ""}`;
   const confirmationTitle = sell ? "Place Sale?" : "Place Bet?";
   const confirmationCopy = sell
     ? "You have 5 seconds to cancel the sale, or press Blitz Sell to place immediately."
@@ -957,7 +957,7 @@ function renderDrawerSheet(mode, showClose = false) {
       </div>
       <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown${changeBetType ? " data-type-return" : ""} type="button">${changeBetType ? "Return" : "See Details"}</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary${changeBetType ? " data-type-confirm" : ""} type="button"${paused || invalid || changeBetType ? " disabled" : ""}>${changeBetType ? "Confirm Bet Type" : primary}</button></footer>
       <div class="bet-success">
-        <div class="success-content"><div class="bet-success-head"><span class="bet-countdown-clock" role="timer" aria-label="5 seconds remaining"><strong>5</strong></span><h3 class="bet-success-title">${confirmationTitle}</h3><p class="bet-success-sub">${confirmationCopy}</p></div><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Bet Type</span><strong>Get the Lead YES</strong></div><div class="summary-row"><span>Contract price</span><strong>64¢</strong></div><div class="summary-row"><span>Contracts</span><strong>${sell ? "60" : "100"}</strong></div><div class="summary-row"><span>Subtotal</span><strong>${sell ? "$38.40" : "$64.00"}</strong></div><div class="summary-row"><span>Trading fee</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>${sell ? "You receive" : "Total to pay"}</span><strong>${sell ? "$37.63" : "$65.28"}</strong></div></div></div></div><div class="success-actions"><button class="bet-secondary cancel-bet" type="button">${sell ? "Cancel Sale" : "Cancel Bet"}</button><button class="btn btn-primary success-close" type="button">${sell ? "Blitz Sell" : "Blitz Buy"}</button></div>
+        <div class="success-content"><div class="bet-success-head"><span class="bet-countdown-clock" role="timer" aria-label="5 seconds remaining"><strong>5</strong></span>${timerVariant === "bar" ? `<span class="bet-countdown-progress" aria-hidden="true"><span></span></span>` : ""}<h3 class="bet-success-title">${confirmationTitle}</h3><p class="bet-success-sub">${confirmationCopy}</p></div><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Bet Type</span><strong>Get the Lead YES</strong></div><div class="summary-row"><span>Contract price</span><strong>64¢</strong></div><div class="summary-row"><span>Contracts</span><strong>${sell ? "60" : "100"}</strong></div><div class="summary-row"><span>Subtotal</span><strong>${sell ? "$38.40" : "$64.00"}</strong></div><div class="summary-row"><span>Trading fee</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>${sell ? "You receive" : "Total to pay"}</span><strong>${sell ? "$37.63" : "$65.28"}</strong></div></div></div></div><div class="success-actions"><button class="bet-secondary cancel-bet" type="button">${sell ? "Cancel Sale" : "Cancel Bet"}</button><button class="btn btn-primary success-close" type="button">${sell ? "Blitz Sell" : "Blitz Buy"}</button></div>
       </div>
     </aside>
     ${showClose ? `<button class="btn btn-secondary bet-sheet-close ds-preview-close" type="button">Close</button>` : ""}`;
@@ -2202,8 +2202,17 @@ function syncAppComponentSections() {
       ["Buy confirmation", "confirmBuy"],
       ["Sell confirmation", "confirmSell"],
     ];
+    const timerOptions = [
+      ["Option 1", "Progress ring", "ring"],
+      ["Option 2", "Number only", "number"],
+      ["Option 3", "Current + progress bar", "bar"],
+    ];
     sections.drawers.innerHTML = `${componentSectionHeader("Buy/Sell Drawer", "Current order entry, trading interruption, validation, and five-second confirmation states from the app.")}
-      <div class="ds-current-drawer-grid">${drawerStates.map(([label, mode]) => `<article class="panel ds-current-drawer-card"><div class="panel-header"><h3>${label}</h3><span class="tag">Current flow</span></div><div class="ds-drawer-preview ds-drawer-mobile">${renderDrawerSheet(mode)}</div></article>`).join("")}</div>`;
+      <div class="ds-current-drawer-grid">${drawerStates.map(([label, mode]) => `<article class="panel ds-current-drawer-card"><div class="panel-header"><h3>${label}</h3><span class="tag">Current flow</span></div><div class="ds-drawer-preview ds-drawer-mobile">${renderDrawerSheet(mode)}</div></article>`).join("")}</div>
+      <section class="ds-timer-comparison" aria-labelledby="ds-timer-comparison-title">
+        <div class="ds-timer-comparison-head"><h3 id="ds-timer-comparison-title">5-second timer options</h3><p>Three Buy Confirmation treatments with identical content for direct client comparison.</p></div>
+        <div class="ds-timer-comparison-grid">${timerOptions.map(([option, label, variant]) => `<article class="panel ds-current-drawer-card ds-timer-option"><div class="panel-header"><h3>${option}</h3><span class="tag">${label}</span></div><div class="ds-drawer-preview ds-drawer-mobile">${renderDrawerSheet("confirmBuy", false, variant)}</div></article>`).join("")}</div>
+      </section>`;
   }
 
   if (sections.navigation) sections.navigation.innerHTML = `${componentSectionHeader("Navigation", "The shared floating header, page tabs, league filter, and current footer are the app's supported navigation patterns.")}
@@ -2284,11 +2293,46 @@ function syncAppComponentSections() {
   modal?.remove();
 }
 
+function startTimerComparison() {
+  const timers = Array.from(document.querySelectorAll(".ds-timer-option .bet-countdown-clock"));
+  if (!timers.length) return;
+
+  let remaining = 5;
+  const updateTimers = (value, resetting = false) => {
+    const progress = value / 5;
+    timers.forEach((timer) => {
+      const sheet = timer.closest(".bet-sheet");
+      const number = timer.querySelector("strong");
+      if (resetting) sheet?.classList.add("is-timer-resetting");
+      if (number) number.textContent = String(value);
+      timer.setAttribute("aria-label", `${value} ${value === 1 ? "second" : "seconds"} remaining`);
+      sheet?.style.setProperty("--ds-timer-progress", String(progress));
+      if (resetting) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => sheet?.classList.remove("is-timer-resetting"));
+        });
+      }
+    });
+  };
+
+  updateTimers(remaining, true);
+  window.setInterval(() => {
+    if (remaining === 0) {
+      remaining = 5;
+      updateTimers(remaining, true);
+      return;
+    }
+    remaining -= 1;
+    updateTimers(remaining);
+  }, 1000);
+}
+
 window.addEventListener("hashchange", () => {
   showSection(sectionFromHash(), { instant: true });
 });
 
 syncAppComponentSections();
+startTimerComparison();
 renderDrawerComponentStates();
 setDrawerView(drawerSection?.dataset.drawerViewMode);
 drawerSection?.querySelectorAll(".bet-sheet").forEach(updateDrawerPreview);
