@@ -373,14 +373,14 @@ body.confirmation-open { overflow: hidden; }
   .waitlist-shell { width: min(100% - 32px, 600px); }
   .waitlist-header { padding: 18px 16px; }
   .waitlist-brand { width: 104px; }
-  .header-cta { --btn-h: 40px; padding-inline: 14px; font-size: .7rem; }
+  .header-cta { --btn-h: 40px; padding-inline: 14px; font-size: var(--fs-label); }
   .waitlist-hero { padding: 120px 0 72px; }
   .hero-copy h1 { font-size: clamp(2.75rem, 12.5vw, 3.7rem); line-height: .96; }
   .form-row { grid-template-columns: 1fr; padding: 7px; border-radius: 17px; }
   .join-button { width: 100%; }
-  .trust-row { width: 100%; justify-content: space-between; gap: 8px; font-size: .64rem; }
-  .trust-row span { gap: 5px; }
-  .trust-row svg { width: 14px; height: 14px; padding: 2.5px; }
+  .trust-row { width: auto; flex-wrap: wrap; justify-content: center; gap: 12px 16px; font-size: .72rem; }
+  .trust-row span { gap: 6px; }
+  .trust-row svg { width: 15px; height: 15px; padding: 2.5px; }
   .section-intro { grid-template-columns: 1fr; gap: 18px; }
   .section-intro .eyebrow { grid-column: auto; }
   .promise-grid { grid-template-columns: 1fr; margin-top: 40px; }
