@@ -3000,8 +3000,8 @@
 
 .design-system-page .flat-code-row {
   display: grid;
-  gap: var(--s2);
-  grid-template-columns: repeat(6, 1fr);
+  gap: var(--s1);
+  grid-template-columns: repeat(8, 1fr);
 }
 
 .design-system-page .flat-code-row span {
