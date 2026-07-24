@@ -72,6 +72,107 @@
   background: var(--page-glow), var(--ds-bg);
 }
 
+/* Design-system chrome scrollbars mirror the app's floating overlay treatment. */
+.design-system-root,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  ) {
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  scrollbar-width: thin;
+}
+
+.design-system-root::-webkit-scrollbar,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.design-system-root::-webkit-scrollbar-track,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.design-system-root::-webkit-scrollbar-thumb,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: var(--r-pill);
+}
+
+.design-system-root::-webkit-scrollbar-thumb:hover,
+.design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.34);
+  background-clip: padding-box;
+}
+
+.design-system-root[data-theme="light"],
+.design-system-root[data-theme="light"]
+  .design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  ) {
+  scrollbar-color: rgba(10, 20, 25, 0.28) transparent;
+}
+
+.design-system-root[data-theme="light"]::-webkit-scrollbar-thumb,
+.design-system-root[data-theme="light"]
+  .design-system-page
+  :is(
+    .sidebar,
+    .ds-page-preview,
+    .flat-group,
+    .button-state-table,
+    .table-wrap,
+    .ds-nav-desktop-card
+  )::-webkit-scrollbar-thumb {
+  background: rgba(10, 20, 25, 0.28);
+  background-clip: padding-box;
+}
+
 .design-system-page .colorway-preview[data-theme-preview="light"] {
   --bg: #f4f6f8;
   --bg-2: #eceff3;
@@ -1176,8 +1277,8 @@
   padding: var(--s8);
 }
 
-.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account),
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account) {
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game) {
   display: grid;
   grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
   grid-auto-rows: max-content;
@@ -4795,4 +4896,421 @@
     text-align: left;
   }
 
+}
+
+/* -------------------------------------------------------------------
+   Device flat-lay parity
+
+   Flat lays render the real app page markup inside the design-system
+   document, so host-viewport media queries cannot be allowed to choose
+   the simulated device layout. These rules make the selected device the
+   single responsive source of truth.
+   ------------------------------------------------------------------- */
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] {
+  --flat-frame-w: 768px;
+  --flat-frame-h: 1024px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] {
+  --flat-frame-w: 1280px;
+  --flat-frame-h: 800px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-phone {
+  border: 8px solid #151917;
+  box-shadow: 0 24px 60px rgba(21, 25, 23, 0.18);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-phone {
+  border-radius: 28px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-phone {
+  border-radius: 20px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen {
+  padding: 0;
+}
+
+/* Tablet uses the product's intermediate header: menu + theme switch. */
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .site-header {
+  padding-inline: var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .brand-pill {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-right: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .header-nav {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .brand-menu,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .header-nav {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .brand-menu,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-account .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+/* Desktop uses the current full navigation pill and never shows both logos. */
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .site-header {
+  padding-inline: var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-pill {
+  background: rgba(13, 15, 17, 0.66);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-sm);
+  padding-right: var(--s2);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-nav,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-left > .theme-switch {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-menu {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-nav span:not(.header-nav-sep),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .header-nav button {
+  align-items: center;
+  color: var(--ink-2);
+  display: inline-flex;
+  font: inherit;
+  height: 36px;
+  padding: 0 var(--s3);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .hpos-word {
+  display: inline;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .hpos-close {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .hpos-num {
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: inline-grid;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  height: 34px;
+  place-items: center;
+  width: 34px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hpos-trigger {
+  background: rgba(13, 15, 17, 0.66);
+  border-color: var(--line-2);
+  color: var(--ink);
+  height: 48px;
+  padding: 0 var(--s2) 0 var(--s4);
+  width: auto;
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hpos-word {
+  display: inline;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hpos-num {
+  background: var(--green);
+  border-radius: 50%;
+  color: #06210f;
+  display: inline-grid;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  height: 34px;
+  place-items: center;
+  width: 34px;
+}
+
+/* Page grids follow the app breakpoints represented by each frame. */
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-home .game-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-home .game-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-home.is-home-positions .pos-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-home.is-home-positions .pos-card {
+  flex-basis: calc((100% - 2 * var(--s4)) / 3);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .hero:has(.hero-inner.authed) {
+  padding-block-start: 144px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow {
+  gap: var(--s6);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  text-align: center;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow::before,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow::before {
+  background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent);
+  bottom: auto;
+  height: 2px;
+  left: 12.5%;
+  right: 12.5%;
+  top: 24px;
+  width: auto;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow-step,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow-step {
+  padding-left: 0;
+  padding-top: 68px;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-home .flow-marker,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .flow-marker {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-ranking .ranking-rules-link {
+  margin-inline: auto;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .footer-grid {
+  gap: var(--s16);
+  grid-template-columns: 1.2fr 2fr;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .footer-cols {
+  gap: var(--s6);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen .footer-col h4 {
+  margin-bottom: var(--s4);
+}
+
+/* Tablet and desktop use the app's centred trade modal, while mobile
+   retains the bottom-sheet presentation. */
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-drawer .bet-sheet {
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-xl);
+  bottom: auto;
+  left: 50%;
+  max-height: min(82%, 820px);
+  max-width: none;
+  opacity: 1;
+  padding-bottom: 0;
+  right: auto;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  visibility: visible;
+  width: min(760px, calc(100% - 48px));
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-drawer .bet-sheet-handle {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-drawer .bet-sheet-close {
+  display: none;
+  pointer-events: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-drawer .bet-sheet-close {
+  bottom: var(--s5);
+  display: inline-flex;
+  left: 50%;
+  min-width: 180px;
+  opacity: 1;
+  position: absolute;
+  transform: translateX(-50%);
+  visibility: visible;
+  z-index: 3;
+}
+
+/* The host page is desktop-sized even while displaying a mobile or tablet
+   frame. Explicitly restore the stacked game composition for those devices. */
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-layout {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-game {
+  display: flow-root;
+  grid-template-columns: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-layout::before {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-col-left {
+  display: block;
+  height: auto;
+  overflow: visible;
+  padding: 0;
+  position: static;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .gb-back-right {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .gb-topbar {
+  display: flex;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-col-right {
+  padding-top: 0;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-overall-head {
+  display: flex;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-tabs {
+  display: flex;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-panel[hidden] {
+  display: none !important;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-section-label {
+  display: none;
+}
+
+/* Desktop live games mirror the app's current sticky two-column page. */
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-layout {
+  align-items: start;
+  display: grid;
+  gap: 8%;
+  grid-template-columns: minmax(360px, 40%) 1fr;
+  isolation: isolate;
+  margin-top: 104px;
+  padding: 0 calc(var(--s4) + 40px) 0 var(--s4);
+  position: relative;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-layout::before {
+  inset: -104px 0 0;
+  position: absolute;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  justify-content: flex-start;
+  overflow: visible;
+  padding: var(--s5);
+  position: relative;
+  top: auto;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb {
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  padding: var(--s6) 0 var(--s8);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-glow,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-topbar {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-inner,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .markets,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right .stats-section {
+  margin-inline: 0;
+  max-width: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .markets {
+  margin-top: var(--s6);
+  padding: 0 var(--s4);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-score {
+  gap: var(--s6);
+  grid-template-columns: auto auto auto;
+  justify-content: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .gb-back-right {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right {
+  min-width: 0;
+  padding-top: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right .stats-section {
+  padding: 0 0 var(--s10);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-overall-head,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-tabs {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-panel[hidden] {
+  display: block !important;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-panel + .stats-panel {
+  margin-top: var(--s12);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .stats-section-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin-bottom: var(--s5);
+  text-align: left;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .chart-grid-wrap,
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .momentum-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
 }

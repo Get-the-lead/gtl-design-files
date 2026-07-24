@@ -869,7 +869,8 @@ function renderGameFrame(mode) {
     const useLogos = mode === "liveLogos" || mode === "gameStatsLogos";
     const g = mode === "gameStatsNFL" ? gameFrameData.statsNfl : mode === "gameStatsNBA" || useLogos ? gameFrameData.live : gameFrameData[mode];
     const statsPanel = mode === "gameStatsNFL" || mode === "gameStatsNBA" || mode === "gameStatsLogos" || mode === "final" ? "game" : "market";
-    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(false)}<main>${gameScoreboard(g, useLogos)}${gameMarkets(g)}${gameStatsPreview(g, statsPanel, useLogos)}</main></div>`;
+    const gameColors = `--home-color:${g.home.color};--away-color:${g.away.color}`;
+    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(false)}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos)}</div></div></main>${homeFooter()}</div>`;
   }
   let banner = "";
   let markets = flatMarkets(mode === "pregame");
@@ -899,7 +900,7 @@ function drawerScoreboardHTML() {
 }
 
 function renderDrawerFrame(mode) {
-  return `<div class="flat-screen is-drawer">${renderDrawerSheet(mode)}</div>`;
+  return `<div class="flat-screen is-drawer">${renderDrawerSheet(mode)}<span class="btn btn-secondary bet-sheet-close">Close</span></div>`;
 }
 
 function renderDrawerSheet(mode, showClose = false, timerVariant = "") {
