@@ -5,10 +5,14 @@
 /* Scoreboard --------------------------------------------------------- */
 .gb {
   position: relative;
-  padding: 96px 0 var(--s10); /* top clears the floating header so the tint sits behind it */
+  padding: 108px 0 var(--s10); /* mobile top clears the floating header consistently with other pages */
   overflow: hidden;
   isolation: isolate;
   background: #070809; /* scoreboard stays dark in both themes */
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gb { padding-top: 96px; } /* preserve the existing non-mobile game-page position */
 }
 .gb-glow {
   position: absolute;
@@ -103,11 +107,28 @@
   align-items: center;
   width: 100%;
   gap: var(--s4);
+  margin-bottom: var(--s6);
 }
-.gb-team { display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
-.gb-logo { width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px); filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)); }
-.gb-logo .team-mark-abbr { font-size: clamp(1.05rem, 3.5vw, 1.65rem); }
-.gb-abbr { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lead); letter-spacing: 0.04em; color: #fff; }
+.gb-team { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 0; }
+.gb-logo { width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px); max-width: 100%; filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)); }
+.gb-logo.is-fallback { width: clamp(46px, 12vw, 60px); height: clamp(46px, 12vw, 60px); }
+.gb-logo .team-mark-abbr { font-size: clamp(0.9rem, 2.8vw, 1.2rem); }
+.gb-abbr {
+  position: absolute;
+  top: calc(100% + var(--s2));
+  left: 50%;
+  width: max-content;
+  max-width: 130px;
+  transform: translateX(-50%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-label);
+  letter-spacing: 0.01em;
+  color: #fff;
+}
 
 .gb-numbers { display: inline-flex; align-items: center; gap: var(--s3); }
 .gb-num {
@@ -120,6 +141,26 @@
 }
 .gb-num.is-leading { color: #fff; }
 .gb-dash { color: rgba(255, 255, 255, 0.35); font-size: var(--fs-score); font-family: var(--font-display); }
+
+@media (max-width: 520px) {
+  .gb-score.is-compact-score {
+    gap: var(--s2);
+  }
+  .gb-score.is-compact-score .gb-logo {
+    width: 48px;
+    height: 48px;
+  }
+  .gb-score.is-compact-score .gb-logo.is-fallback {
+    width: 44px;
+    height: 44px;
+  }
+  .gb-score.is-compact-score .gb-numbers {
+    gap: var(--s2);
+  }
+  .gb-score.is-compact-score :is(.gb-num, .gb-dash) {
+    font-size: 2.6rem;
+  }
+}
 
 .gb-league {
   margin: var(--s6) 0 0;
