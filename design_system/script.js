@@ -576,7 +576,7 @@ function renderRankingFrame(mode) {
   const months = [["July", 47], ["June", 14], ["May", 31], ["April", 19], ["March", 24], ["February", 38], ["January", 62]];
   const monthSelect = `<div class="ranking-month-select${mode === "months" ? " is-open" : ""}"><button class="ranking-month-trigger" type="button"><span>July 2026</span><svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="ranking-month-menu"${mode === "months" ? "" : " hidden"}>${months.map(([month, rank]) => `<button class="ranking-month-option${month === "July" ? " is-selected" : ""}" type="button"><span>${month}</span><strong>#${rank}</strong></button>`).join("")}</div></div>`;
   const rules = `<section class="ranking-rules"><div class="container ranking-rules-inner"><div class="section-head center"><span class="eyebrow">Competition summary</span><h2>Monthly Competition rules</h2></div><ol class="flow"><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="flow-num">01</span><h3 class="flow-title">Free to enter</h3><p class="flow-text">No purchase is necessary. Free Credits have no cash value and expire at competition end.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="flow-num">02</span><h3 class="flow-title">Be eligible</h3><p class="flow-text">You must be 18+, hold one account, and be located in an eligible state.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="11" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="7" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg></div><span class="flow-num">03</span><h3 class="flow-title">Climb the ranking</h3><p class="flow-text">The top 10 eligible players share $5,000 in monthly prizes.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="flow-num">04</span><h3 class="flow-title">Verify and receive</h3><p class="flow-text">Winners verify their identity, eligibility, location, and tax details before payment.</p></li></ol><span class="ranking-rules-link">Read the full Official Rules <span>→</span></span></div></section>`;
-  const resultModal = mode === "result" ? `<div class="gate-backdrop ranking-prize-backdrop is-open"></div><div class="auth-gate ranking-prize-gate is-open"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span><h3 class="gate-title">You finished in position #47</h3><p class="gate-desc">Try and reach the top 10 in August's competition to receive a cash reward!</p><div class="gate-actions"><span class="btn btn-secondary">Close</span></div></div></div>` : "";
+  const resultModal = mode === "result" ? `<div class="gate-backdrop ranking-prize-backdrop is-open"></div><div class="auth-gate ranking-prize-gate is-open"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span><h3 class="gate-title">You finished in position 47</h3><p class="gate-desc">Try and reach the top 10 in August's competition to receive a cash reward!</p><div class="gate-actions"><span class="btn btn-secondary">Close</span></div></div></div>` : "";
   return `<div class="flat-screen is-ranking ranking-body">${homeHeader(false)}<main><header class="ranking-hero"><div class="ranking-hero-glow"></div><div class="ranking-hero-inner container"><h1>Ranking Leaderboard</h1><div class="ranking-countdown"><span class="reset-label">Resets in</span><span class="reset-time tnum"><span class="reset-num">06</span><span class="reset-unit">d</span><span class="reset-num">10</span><span class="reset-unit">h</span><span class="reset-num">15</span><span class="reset-unit">m</span></span></div></div></header><section class="ranking-page container"><section class="ranking-card"><header class="ranking-card-head"><div>${monthSelect}</div><p>Top 10 win cash prizes</p></header><div class="ranking-table-head"><span>Rank</span><span>Player</span><span>Wins</span><span>Prize</span></div><div class="ranking-scroll">${rowHTML}</div>${currentRow}</section></section>${rules}</main>${homeFooter("ranking")}${resultModal}</div>`;
 }
 
@@ -2135,6 +2135,60 @@ function componentToast(type, message) {
   return `<div class="toast toast-${type}" role="${type === "error" ? "alert" : "status"}"><span class="toast-ico">${icon}</span><span class="toast-msg">${message}</span></div>`;
 }
 
+function componentDialogMarkup(type) {
+  if (type === "auth") {
+    return `<div class="gate-backdrop is-open"></div>
+      <div class="auth-gate is-open"><div class="gate-body"><h3 class="gate-title">You need an account to bet on the lead.</h3><p class="gate-desc">Login below or create an account in less than a minute.</p><div class="gate-actions"><button class="btn btn-secondary" type="button">Login</button><button class="btn btn-primary" type="button">Create Account</button></div></div></div>
+      <button class="btn btn-secondary gate-close is-open" type="button">Close</button>`;
+  }
+  if (type === "position") {
+    return `<div class="gate-backdrop is-open"></div>
+      <div class="auth-gate pos-gate is-open"><div class="gate-body"><h3 class="gate-title">You already have a position in this game</h3><p class="gate-desc">Only one position can win. Do you want to continue?</p><div class="gate-actions"><button class="btn btn-secondary" type="button">Cancel</button><button class="btn btn-primary" type="button">Continue</button></div><label class="pos-gate-check"><input type="checkbox"><span class="pos-check-box">${drawerCheckIcon}</span><span>Do not show this message again</span></label></div></div>`;
+  }
+  if (type === "ranking") {
+    return `<div class="gate-backdrop ranking-prize-backdrop is-open"></div>
+      <div class="auth-gate ranking-prize-gate is-open"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span><h3 class="gate-title">You finished in position 47</h3><p class="gate-desc">Try and reach the top 10 in August's competition to receive a cash reward!</p></div></div><button class="btn btn-secondary gate-close ranking-result-close is-open" type="button">Close</button>`;
+  }
+  if (type === "rankingWinner") {
+    return `<div class="gate-backdrop ranking-prize-backdrop is-open"></div>
+      <div class="ranking-celebration" aria-hidden="true"><span class="celebration-glow"></span><div class="confetti-burst burst-left"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="confetti-burst burst-right"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="celebration-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="auth-gate ranking-prize-gate is-open"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span><h3 class="gate-title">You finished in position 7!</h3><p class="gate-desc">The GTL team will contact you shortly about claiming your reward.</p><strong class="ranking-prize-value tnum">$250</strong></div></div><button class="btn btn-secondary gate-close ranking-result-close is-open" type="button">Close</button>`;
+  }
+  if (type === "rankingTopThree") {
+    return `<div class="gate-backdrop ranking-prize-backdrop is-open"></div>
+      <div class="ranking-celebration" aria-hidden="true"><span class="celebration-glow"></span><div class="confetti-burst burst-left"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="confetti-burst burst-right"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="celebration-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+      <div class="auth-gate ranking-prize-gate is-top-three is-open"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span><span class="ranking-prize-medal" data-rank="2" aria-hidden="true"><span class="ranking-medal-ribbon ribbon-left"></span><span class="ranking-medal-ribbon ribbon-right"></span><span class="ranking-medal-face"><strong>2</strong></span></span><h3 class="gate-title">You finished in position 2!</h3><p class="gate-desc">The GTL team will contact you shortly about claiming your reward.</p><strong class="ranking-prize-value tnum">$900</strong></div></div><button class="btn btn-secondary gate-close ranking-result-close is-open" type="button">Close</button>`;
+  }
+  if (type === "topup") {
+    return `<div class="addfunds-backdrop is-open"></div>
+      <aside class="addfunds-sheet is-open"><div class="addfunds-inner"><h3>Top Up</h3><div class="bet-field contracts-field"><span class="bet-label">Amount to add</span><div class="addfunds-amount"><span class="af-sign">$</span><input class="num-input" type="text" value="50" aria-label="Amount to add"></div><div class="qty-quick"><button type="button">$20</button><button class="is-active" type="button">$50</button><button type="button">$100</button><button type="button">$200</button></div></div><div class="addfunds-actions"><button class="btn btn-secondary" type="button">Cancel</button><button class="btn btn-primary" type="button">Add Funds</button></div><p class="addfunds-note">Prototype — no real payment is taken.</p></div></aside>`;
+  }
+  return `<div class="confirmation-backdrop"></div>
+    <section class="confirmation-card"><div class="confirmation-visual" aria-hidden="true"><span class="confirmation-ring confirmation-ring--outer"></span><span class="confirmation-ring confirmation-ring--inner"></span><span class="confirmation-route"></span><span class="confirmation-mark"><svg viewBox="0 0 32 32" fill="none"><path d="m8 16.5 5 5L24 10.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><span class="eyebrow confirmation-eyebrow">Joining the Waitlist</span><h2>Securing your place.</h2><p>Hold tight—we’re reserving your early-access spot.</p><div class="confirmation-progress" aria-hidden="true"><span></span></div></section>`;
+}
+
+function componentDialogAppScreen(type) {
+  if (type === "ranking" || type === "rankingWinner" || type === "rankingTopThree") return renderHomeFrame("logged");
+  if (type === "topup") return renderTrackerFrame("open");
+  if (type === "waitlist") {
+    return `<div class="flat-screen ds-waitlist-screen"><header><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"><span class="tag">Early access</span></header><main><span class="eyebrow">Live sports, traded live</span><h2>Call the lead before it happens.</h2><p>Join the early-access list for the fastest way to trade the moments that move live games.</p><span class="btn btn-primary">Join the Waitlist</span></main></div>`;
+  }
+  return renderGameFrame("live");
+}
+
+function componentDialogPhone(type) {
+  const frameType = type === "ranking" || type === "rankingWinner" || type === "rankingTopThree" ? "home" : type === "topup" ? "tracker" : type === "waitlist" ? "home" : "game";
+  return `<div class="ds-dialog-phone flat-lay-canvas" data-flat-device="mobile"><div class="flat-frame-wrap flat-frame--${frameType}"><div class="flat-phone">${componentDialogAppScreen(type)}<div class="ds-dialog-stage" data-dialog-type="${type}">${componentDialogMarkup(type)}</div></div></div></div>`;
+}
+
+function componentDialogGroup({ type, title, tag, copy }) {
+  if (type === "ranking") {
+    return `<section class="panel ds-dialog-group ds-dialog-ranking-group"><div class="ds-dialog-group-head"><span class="eyebrow">${tag}</span><h3>${title}</h3><p>${copy}</p></div><div class="ds-dialog-ranking-pair"><div class="ds-dialog-phone-state"><span class="flat-frame-label">Outside Top 10</span>${componentDialogPhone("ranking")}</div><div class="ds-dialog-phone-state"><span class="flat-frame-label">Inside Top 10</span>${componentDialogPhone("rankingWinner")}</div><div class="ds-dialog-phone-state"><span class="flat-frame-label">Top 3</span>${componentDialogPhone("rankingTopThree")}</div></div></section>`;
+  }
+  const scope = type === "topup" ? `<span class="tag ds-dialog-scope-tag">Out of Scope for MVP</span>` : "";
+  return `<section class="panel ds-dialog-group"><div class="ds-dialog-group-head"><span class="eyebrow">${tag}</span><div class="ds-dialog-title-row"><h3>${title}</h3>${scope}</div><p>${copy}</p></div>${componentDialogPhone(type)}</section>`;
+}
+
 function syncAppComponentSections() {
   const sections = {
     buttons: document.querySelector("#buttons"),
@@ -2276,10 +2330,13 @@ function syncAppComponentSections() {
       <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Loading state</h3><span class="tag">Cards</span></div>${flatLoading()}</article>
     </div>`;
 
-  if (sections.dialogs) sections.dialogs.innerHTML = `${componentSectionHeader("Dialogs", "App dialogs use the shared blurred backdrop, centered gate, full-width actions, and focused confirmation copy.")}
-    <div class="grid two ds-app-component-grid">
-      <article class="panel ds-dialog-card"><div class="panel-header"><h3>Sign in to bet</h3><span class="tag">Authentication</span></div><div class="ds-dialog-preview"><div class="gate-backdrop is-open"></div><div class="auth-gate is-open"><div class="gate-body"><h3 class="gate-title">You need an account to bet on the lead.</h3><p class="gate-desc">Login below or create an account in less than a minute.</p><div class="gate-actions"><button class="btn btn-secondary" type="button">Login</button><button class="btn btn-primary" type="button">Create Account</button></div></div></div><button class="btn btn-secondary gate-close is-open" type="button">Close</button></div></article>
-      <article class="panel ds-dialog-card"><div class="panel-header"><h3>Existing position</h3><span class="tag">Confirmation</span></div><div class="ds-dialog-preview"><div class="gate-backdrop is-open"></div><div class="auth-gate pos-gate is-open"><div class="gate-body"><h3 class="gate-title">You already have a position in this game</h3><p class="gate-desc">Only one position can win. Do you want to continue?</p><div class="gate-actions"><button class="btn btn-secondary" type="button">Cancel</button><button class="btn btn-primary" type="button">Continue</button></div><label class="pos-gate-check"><input type="checkbox"><span class="pos-check-box">${drawerCheckIcon}</span><span>Do not show this message again</span></label></div></div></div></article>
+  if (sections.dialogs) sections.dialogs.innerHTML = `${componentSectionHeader("Dialogs", "Every modal used by the app, shown implemented over the relevant screen in a complete phone mockup. Buy and sell confirmations remain in the dedicated Buy/Sell Drawer reference.")}
+    <div class="ds-dialog-catalog">
+      ${componentDialogGroup({ type: "auth", title: "Sign In to Bet", tag: "Authentication", copy: "Shown when a signed-out user selects a market. The separate Close action dismisses the saved bet intent." })}
+      ${componentDialogGroup({ type: "position", title: "Existing Position", tag: "Trading confirmation", copy: "Warns before a user opens a competing position in the same game, with an optional session-level dismissal." })}
+      ${componentDialogGroup({ type: "ranking", title: "Monthly Ranking Result", tag: "Ranking", copy: "Shown over whichever screen the user returns to after a monthly competition completes. These examples use the Home screen to demonstrate outside-top-10, rewarded-top-10, and top-three outcomes." })}
+      ${componentDialogGroup({ type: "topup", title: "Top Up Balance", tag: "Wallet", copy: "This wallet funding flow is outside the current MVP scope and is retained here as a future-state reference." })}
+      ${componentDialogGroup({ type: "waitlist", title: "Waitlist Confirmation", tag: "Marketing", copy: "A focused confirmation state shown while an early-access place is being secured." })}
     </div>`;
 
   modal?.remove();

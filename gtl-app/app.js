@@ -2262,20 +2262,22 @@ function ensureRankingPrizeModal() {
   if (gate) return gate;
   document.body.insertAdjacentHTML("beforeend", `
     <div class="gate-backdrop ranking-prize-backdrop" id="rankingPrizeBackdrop"></div>
+    <div class="ranking-celebration" data-ranking-celebration hidden aria-hidden="true">
+      <span class="celebration-glow"></span>
+      <div class="confetti-burst burst-left"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="confetti-burst burst-right"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="celebration-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
     <div class="auth-gate ranking-prize-gate" id="rankingPrizeGate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="rankingPrizeTitle">
       <div class="gate-body">
         <span class="ranking-prize-kicker" data-ranking-prize-kicker>July Rankings</span>
+        <span class="ranking-prize-medal" data-ranking-prize-medal hidden aria-hidden="true"></span>
         <h3 class="gate-title" id="rankingPrizeTitle">You won your ranking position.</h3>
         <p class="gate-desc" data-ranking-prize-desc></p>
-        <div class="ranking-prize-card" data-ranking-prize-card hidden>
-          <span><span>Position</span><strong class="tnum" data-ranking-prize-rank></strong></span>
-          <span><span>Prize</span><strong class="tnum" data-ranking-prize-value></strong></span>
-        </div>
-        <div class="gate-actions">
-          <button class="btn btn-secondary" type="button" id="rankingPrizeClose">Close</button>
-        </div>
+        <strong class="ranking-prize-value tnum" data-ranking-prize-value hidden></strong>
       </div>
-    </div>`);
+    </div>
+    <button class="btn btn-secondary gate-close ranking-result-close" type="button" id="rankingPrizeClose">Close</button>`);
   gate = $("#rankingPrizeGate");
   $("#rankingPrizeBackdrop").addEventListener("click", closeRankingPrizeModal);
   $("#rankingPrizeClose").addEventListener("click", closeRankingPrizeModal);
@@ -2288,26 +2290,36 @@ function openRankingPrizeModal() {
   const result = currentRankingResult();
   if (!result) return;
   const gate = ensureRankingPrizeModal();
-  const rankLabel = `#${result.rank}`;
+  const rankLabel = String(result.rank);
   const prizeLabel = result.prize || "0";
   const title = $("#rankingPrizeTitle", gate);
   const kicker = $("[data-ranking-prize-kicker]", gate);
   const desc = $("[data-ranking-prize-desc]", gate);
-  const rank = $("[data-ranking-prize-rank]", gate);
   const prize = $("[data-ranking-prize-value]", gate);
-  const prizeCard = $("[data-ranking-prize-card]", gate);
+  const medal = $("[data-ranking-prize-medal]", gate);
+  const celebration = $("[data-ranking-celebration]");
   const earnedPrize = prizeLabel !== "0" && prizeLabel !== "-";
+  const topThree = earnedPrize && Number(result.rank) <= 3;
   const resultDate = new Date();
   const nextCompetitionDate = new Date(resultDate.getFullYear(), resultDate.getMonth() + 1, 1);
   const monthName = new Intl.DateTimeFormat("en", { month: "long" });
   if (kicker) kicker.textContent = `${monthName.format(resultDate)} Rankings`;
   if (title) title.textContent = `You finished in position ${rankLabel}`;
-  if (desc) desc.textContent = `Try and reach the top 10 in ${monthName.format(nextCompetitionDate)}'s competition to receive a cash reward!`;
-  if (rank) rank.textContent = rankLabel;
+  if (desc) desc.textContent = earnedPrize
+    ? "The GTL team will contact you shortly about claiming your reward."
+    : `Try and reach the top 10 in ${monthName.format(nextCompetitionDate)}'s competition to receive a cash reward!`;
   if (prize) prize.textContent = prizeLabel;
-  if (prizeCard) prizeCard.hidden = !earnedPrize;
+  if (prize) prize.hidden = !earnedPrize;
+  if (medal) {
+    medal.innerHTML = `<span class="ranking-medal-ribbon ribbon-left"></span><span class="ranking-medal-ribbon ribbon-right"></span><span class="ranking-medal-face"><strong>${rankLabel}</strong></span>`;
+    medal.dataset.rank = rankLabel;
+    medal.hidden = !topThree;
+  }
+  if (celebration) celebration.hidden = !earnedPrize;
+  gate.classList.toggle("is-top-three", topThree);
   $("#rankingPrizeBackdrop").classList.add("is-open");
   gate.classList.add("is-open");
+  $("#rankingPrizeClose").classList.add("is-open");
   gate.setAttribute("aria-hidden", "false");
   document.body.classList.add("sheet-open");
 }
@@ -2318,6 +2330,7 @@ function closeRankingPrizeModal() {
   if (!gate || !backdrop) return;
   backdrop.classList.remove("is-open");
   gate.classList.remove("is-open");
+  $("#rankingPrizeClose")?.classList.remove("is-open");
   gate.setAttribute("aria-hidden", "true");
   document.body.classList.remove("sheet-open");
 }
