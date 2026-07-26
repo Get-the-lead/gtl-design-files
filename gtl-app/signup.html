@@ -116,11 +116,59 @@
             Back
           </button>
           <div class="auth-head">
+            <h1>Add your phone number</h1>
+            <p>We’ll send a verification code to confirm it’s yours.</p>
+          </div>
+
+          <form data-step3-form novalidate>
+            <div class="field">
+              <label for="phone">Phone number</label>
+              <input class="field-input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" required />
+              <span class="field-hint">US phone numbers only. Standard message rates may apply.</span>
+            </div>
+            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+          </form>
+        </div>
+
+        <div class="auth-step" data-step="4">
+          <button class="step-back" type="button" data-step-back="3">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="auth-head">
+            <h1>Verify your phone</h1>
+            <p>We sent an 8-digit code by text to <span class="code-sent-to" data-code-phone>your phone</span>.</p>
+          </div>
+
+          <form data-step4-form novalidate>
+            <div class="code-input" data-code-input>
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" />
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2" />
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3" />
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
+              <span class="code-dash" aria-hidden="true"></span>
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 7" />
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 8" />
+            </div>
+            <button class="btn btn-primary auth-submit" type="submit">Verify</button>
+          </form>
+
+          <p class="code-resend">Didn't get a code? <button type="button" data-resend>Resend</button></p>
+        </div>
+
+        <div class="auth-step" data-step="5">
+          <button class="step-back" type="button" data-step-back="4">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Back
+          </button>
+          <div class="auth-head">
             <h1>Create a password</h1>
             <p>Keep your account secure with a strong password.</p>
           </div>
 
-          <form data-step3-form novalidate>
+          <form data-step5-form novalidate>
             <div class="field">
               <label for="newpass">Password</label>
               <div class="field-pass">
@@ -148,34 +196,6 @@
             <p class="terms-error" data-terms-error role="alert" hidden>You need to accept the Terms and Conditions to create an account.</p>
             <button class="btn btn-primary auth-submit" type="submit">Create Account</button>
           </form>
-        </div>
-
-        <div class="auth-step" data-step="4">
-          <button class="step-back" type="button" data-step-back="3">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Back
-          </button>
-          <div class="auth-head">
-            <h1>Verify your account</h1>
-            <p>We sent an 8-digit code to <span class="code-sent-to" data-code-email>your email</span>.</p>
-          </div>
-
-          <form data-step4-form novalidate>
-            <div class="code-input" data-code-input>
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
-              <span class="code-dash" aria-hidden="true"></span>
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 7" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 8" />
-            </div>
-            <button class="btn btn-primary auth-submit" type="submit">Verify Account</button>
-          </form>
-
-          <p class="code-resend">Didn't get a code? <button type="button" data-resend>Resend</button></p>
         </div>
 
       </div>

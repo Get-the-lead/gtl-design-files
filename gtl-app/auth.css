@@ -180,7 +180,8 @@
 .auth-steps[data-step="1"] .auth-step[data-step="1"],
 .auth-steps[data-step="2"] .auth-step[data-step="2"],
 .auth-steps[data-step="3"] .auth-step[data-step="3"],
-.auth-steps[data-step="4"] .auth-step[data-step="4"] { display: flex; }
+.auth-steps[data-step="4"] .auth-step[data-step="4"],
+.auth-steps[data-step="5"] .auth-step[data-step="5"] { display: flex; }
 @keyframes step-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
 
 .signup-name-row {
