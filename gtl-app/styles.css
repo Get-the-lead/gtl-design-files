@@ -858,6 +858,11 @@ body.sheet-open { overflow: hidden; }
   font-size: 2.8rem;
   line-height: 1;
 }
+.bet-sheet[data-mode="buy"] .contracts-field .qty-quick { margin-top: var(--s2); }
+.bet-sheet[data-mode="buy"] .contracts-field .num-input.is-error {
+  color: var(--no);
+  caret-color: var(--no);
+}
 .drawer-price-mode,
 .drawer-purchase { padding-top: var(--s2); }
 .drawer-price-toggle button { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); }
