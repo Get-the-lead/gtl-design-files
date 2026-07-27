@@ -1205,6 +1205,61 @@
   font-weight: 800;
 }
 
+.design-system-page .flat-contract-value {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.design-system-page .flat-validation-error {
+  color: var(--no);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;
+}
+
+.design-system-page .flat-contract-total {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  margin: calc(var(--s2) * -1) 0 0;
+  text-align: center;
+}
+
+.design-system-page .flat-contract-total strong {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.design-system-page .flat-primary.is-disabled {
+  opacity: 0.45;
+}
+
+.design-system-page .flat-credit-ticket {
+  align-items: center;
+  background: color-mix(in srgb, var(--green) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--green) 45%, var(--line));
+  border-radius: var(--r-lg);
+  display: flex;
+  justify-content: space-between;
+  padding: var(--s4);
+}
+
+.design-system-page .flat-credit-ticket span {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  font-weight: 700;
+}
+
+.design-system-page .flat-credit-ticket strong {
+  color: var(--green);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .design-system-page .flat-code-row {
   display: grid;
   gap: var(--s1);
@@ -1231,6 +1286,28 @@
   display: grid;
   gap: var(--s3);
   padding: var(--s4);
+}
+
+.design-system-page .flat-game-status {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--s3);
+}
+
+.design-system-page .flat-game-status strong {
+  background: color-mix(in srgb, var(--green) 16%, transparent);
+  border-radius: var(--r-pill);
+  color: var(--green);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  padding: var(--s1) var(--s2);
+}
+
+.design-system-page .flat-game-status b {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  line-height: 1;
 }
 
 .design-system-page .flat-score-row {

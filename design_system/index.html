@@ -119,8 +119,11 @@
             <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Game" data-page-src="../gtl-app/game.html" data-page-compare-game="true">Game</button>
             <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Portfolio" data-page-src="../gtl-app/wallet.html" data-page-auth="logged">Portfolio</button>
             <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Login" data-page-src="../gtl-app/login.html">Login</button>
+            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Verification Login" data-page-src="../gtl-app/login-v2.html">Verification Login</button>
             <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Password" data-page-src="../gtl-app/forgot.html">Password</button>
             <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Register" data-page-src="../gtl-app/signup.html">Register</button>
+            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Phone Signup" data-page-src="../gtl-app/signup-v2.html">Phone Signup</button>
+            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Welcome" data-page-src="../gtl-app/welcome.html">Welcome</button>
             <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Fees" data-page-src="../gtl-app/fees.html">Fees</button>
           </div>
 
@@ -634,7 +637,49 @@
           <button type="button" data-drawer-view="desktop" aria-pressed="false">Desktop</button>
         </div>
 
-        <div class="ds-drawer-state">
+        <div class="ds-drawer-state" data-drawer-state="maximum-contracts-error">
+          <div class="section-header ds-subsection-header">
+            <h2>Maximum Contracts Error</h2>
+            <p>When more than 1,000 contracts are entered, preserve the entered value, format it with commas, show the error above the total-contracts line, and disable the primary action.</p>
+          </div>
+          <div class="grid two ds-drawer-grid">
+            <article class="panel ds-drawer-panel">
+              <div class="panel-header"><h3>Mobile</h3><span class="tag">Validation error</span></div>
+              <div class="ds-drawer-preview ds-drawer-mobile">
+                <div class="bet-sheet-backdrop is-open"></div>
+                <aside class="bet-sheet is-open" data-step="1" data-mode="buy" aria-hidden="false" aria-label="Maximum contracts validation error">
+                  <div class="bet-scoreboard" style="--home-color:#00338d;--away-color:#008e97"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div><div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div></div></div>
+                  <div class="bet-sheet-handle" aria-hidden="true"></div>
+                  <div class="bet-sheet-body"><div class="bet-step bet-step-1">
+                    <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input is-error" data-qty-input type="text" inputmode="numeric" value="1,100" aria-label="Number of contracts" aria-invalid="true"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit is-error" data-transaction-limit role="alert">The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total" data-qty-total>Total contracts after purchase — <strong>1,250</strong></p></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Order price</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div></div>
+                    <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$704.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$381.92</strong> after fees</p></div>
+                  </div></div>
+                  <footer class="bet-sheet-footer"><button class="bet-secondary" type="button">See Details</button><button class="btn btn-primary bet-primary" data-bet-primary type="button" disabled>Quick Bet</button></footer>
+                </aside>
+              </div>
+            </article>
+
+            <article class="panel ds-drawer-panel">
+              <div class="panel-header"><h3>Desktop</h3><span class="tag">Validation error</span></div>
+              <div class="ds-drawer-preview ds-drawer-desktop">
+                <div class="bet-sheet-backdrop is-open"></div>
+                <aside class="bet-sheet is-open" data-step="1" data-mode="buy" aria-hidden="false" aria-label="Maximum contracts validation error">
+                  <div class="bet-scoreboard" style="--home-color:#00338d;--away-color:#008e97"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div><div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div></div></div>
+                  <div class="bet-sheet-body"><div class="bet-step bet-step-1">
+                    <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input is-error" data-qty-input type="text" inputmode="numeric" value="1,100" aria-label="Number of contracts" aria-invalid="true"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit is-error" data-transaction-limit role="alert">The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total" data-qty-total>Total contracts after purchase — <strong>1,250</strong></p></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Order price</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div></div>
+                    <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$704.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$381.92</strong> after fees</p></div>
+                  </div></div>
+                  <footer class="bet-sheet-footer"><button class="bet-secondary" type="button">See Details</button><button class="btn btn-primary bet-primary" data-bet-primary type="button" disabled>Quick Bet</button></footer>
+                </aside>
+                <button class="btn btn-secondary bet-sheet-close ds-preview-close" type="button">Close</button>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="ds-drawer-state" data-drawer-state="default-buy">
           <div class="section-header ds-subsection-header">
             <h2>Default Buy</h2>
             <p>Standard quick-bet flow with contract quantity, market type, side selector and projected purchase price.</p>

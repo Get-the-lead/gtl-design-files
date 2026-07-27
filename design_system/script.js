@@ -78,9 +78,12 @@ const flatDocs = {
       { title: "Default states", frames: [
         { label: "Sign in", type: "auth", mode: "signin" },
         { label: "Create account", type: "auth", mode: "register" },
+        { label: "Add phone number", type: "auth", mode: "phone" },
+        { label: "Phone verification", type: "auth", mode: "verify" },
+        { label: "Create password", type: "auth", mode: "password" },
+        { label: "Welcome credits and username", type: "auth", mode: "welcome" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
-        { label: "Email verification", type: "auth", mode: "verify" },
       ] },
       { title: "Feedback states", frames: [
         { label: "Loading state", type: "auth", mode: "loading" },
@@ -134,6 +137,7 @@ const flatDocs = {
         { label: "Sell limit order", type: "drawer", mode: "sellLimit" },
       ] },
       { title: "Feedback states", frames: [
+        { label: "Maximum contracts exceeded", type: "drawer", mode: "quantityMax" },
         { label: "Insufficient balance", type: "drawer", mode: "balance" },
         { label: "Invalid limit price", type: "drawer", mode: "invalid" },
         { label: "Pending limit order confirmation", type: "drawer", mode: "pending" },
@@ -260,14 +264,23 @@ function flatLoading() {
 function renderAuthFrame(mode) {
   const content = {
     signin: ["Welcome back", "Login to GTL", "Email", "Password", "Login"],
-    register: ["Step 1 of 3", "Create your account", "Email", "Continue", "Create Account"],
+    register: ["Step 1 of 5", "Create your account", "Email", "Continue", "Create Account"],
     forgot: ["Reset password", "Forgot your password?", "Email", "Send Reset Link", "Back to Login"],
     reset: ["New password", "Set a new password", "New password", "Confirm password", "Update Password"],
     loading: ["Welcome back", "Login to GTL", "Email", "Password", "Processing..."],
     error: ["Welcome back", "Login to GTL", "sam", "Password", "Login"],
   }[mode];
+  if (mode === "phone") {
+    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 3 of 5</span><h3>Add your phone number</h3><p>We’ll send a verification code to confirm it’s yours.</p><div class="flat-field">(555) 123-4567</div><div class="flat-primary">Continue</div></div></div>`;
+  }
   if (mode === "verify") {
-    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 2 of 3</span><h3>Check your email</h3><p>Enter the 8-digit code sent to alex@gtl.test.</p><div class="flat-code-row"><span>4</span><span>8</span><span>2</span><span>6</span><span></span><span></span><span></span><span></span></div><div class="flat-primary">Verify Email</div></div></div>`;
+    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 4 of 5</span><h3>Verify your phone</h3><p>We sent an 8-digit code by text to (555) 123-4567.</p><div class="flat-code-row"><span>4</span><span>8</span><span>2</span><span>6</span><span></span><span></span><span></span><span></span></div><div class="flat-primary">Verify</div></div></div>`;
+  }
+  if (mode === "password") {
+    return `<div class="flat-screen is-auth"><div class="flat-auth-card"><span class="flat-chip">Step 5 of 5</span><h3>Create a password</h3><p>Keep your account secure with a strong password.</p><div class="flat-field">Password</div><div class="flat-field">Confirm password</div><div class="flat-primary">Create Account</div></div></div>`;
+  }
+  if (mode === "welcome") {
+    return `<div class="flat-screen is-auth"><div class="flat-auth-card flat-welcome-card"><span class="flat-chip">You’re officially in</span><h3>Welcome to GTL, Alex.</h3><p>Your account is live. Create a username to claim your welcome credits and start betting.</p><div class="flat-credit-ticket"><span>Welcome credits</span><strong>1,500</strong></div><div class="flat-field">Username</div><div class="flat-primary">Start Betting</div></div></div>`;
   }
   const error = mode === "error";
   return `<div class="flat-screen is-auth"><div class="flat-auth-card">
@@ -304,7 +317,8 @@ function renderGameFrame(mode) {
     position: `<div class="flat-list">${flatRows(1)}</div>`,
     pending: `<div class="flat-list">${flatRows(1, "pending")}</div>`,
   }[mode] || "";
-  return `<div class="flat-screen">${flatHeader("GTL", mode === "pregame" ? "Pregame" : "Q3 11:05")}
+  const gameStatus = mode === "pregame" ? `<span class="flat-chip">Pregame</span>` : `<span class="flat-game-status"><strong>Q3</strong><b>11:05</b></span>`;
+  return `<div class="flat-screen"><div class="flat-mini-header"><span class="flat-brand">GTL</span>${gameStatus}</div>
     <div class="flat-game-tile" style="--home-color:#00338d;--away-color:#008e97"><div class="flat-score-row"><span class="flat-team"><img src="${teamLogos.buf}" alt=""><strong>BUF</strong></span><span class="flat-score">${mode === "pregame" ? "0 - 0" : "24 - 20"}</span><span class="flat-team"><img src="${teamLogos.mia}" alt=""><strong>MIA</strong></span></div></div>
     ${banner}${markets}${extra}<div class="flat-card"><h3>Inside the game</h3><p>Lead changes, volume, and order flow.</p></div>${flatNav("Orders")}</div>`;
 }
@@ -312,6 +326,7 @@ function renderGameFrame(mode) {
 function renderDrawerFrame(mode) {
   const sell = mode.startsWith("sell");
   const limit = mode.toLowerCase().includes("limit") || mode === "invalid" || mode === "pending";
+  const quantityMax = mode === "quantityMax";
   const error = mode === "balance" || mode === "invalid" || mode === "error";
   const success = mode === "success";
   if (success) {
@@ -320,12 +335,13 @@ function renderDrawerFrame(mode) {
   return `<div class="flat-screen is-drawer"><div class="flat-drawer"><div class="flat-drawer-handle"></div>
     <h3>${sell ? "Sell position" : "Buy contract"}</h3><p class="flat-copy">BUF vs MIA - Get the Lead ${sell ? "YES" : "YES"}</p>
     <div class="flat-btn-row"><span class="flat-price yes">Yes 64c</span><span class="flat-price no">No 36c</span></div>
-    <div class="flat-field">${sell ? "Contracts to sell: 60" : "Contracts: 100"}</div>
+    <div class="flat-field ${quantityMax ? "is-error flat-contract-value" : ""}">${sell ? "Contracts to sell: 60" : quantityMax ? "1,100" : "Contracts: 100"}</div>
+    ${quantityMax ? `<p class="flat-validation-error">The maximum contracts that can be purchased in one bet is 1,000.</p><p class="flat-contract-total">Total contracts after purchase — <strong>1,250</strong></p>` : ""}
     ${limit ? `<div class="flat-field ${mode === "invalid" ? "is-error" : ""}">Limit price: ${mode === "invalid" ? "104c" : "52c"}</div>` : ""}
     ${mode === "pending" ? flatStatus("loading", "Limit order pending", "Waiting for the market to reach 52c.") : ""}
     ${error ? flatStatus("error", mode === "balance" ? "Insufficient balance" : mode === "invalid" ? "Invalid limit price" : "Order failed", mode === "balance" ? "Add funds before placing this bet." : "Check the order and try again.") : ""}
     <div class="flat-summary"><div><span>Subtotal</span><strong>$64.00</strong></div><div><span>Fee</span><strong>$1.28</strong></div><div><span>Total</span><strong>$65.28</strong></div></div>
-    <div class="flat-primary">${sell ? "Sell" : limit ? "Place Limit" : "Quick Bet"}</div>
+    <div class="flat-primary ${quantityMax ? "is-disabled" : ""}">${sell ? "Sell" : limit ? "Place Limit" : "Quick Bet"}</div>
   </div></div>`;
 }
 
@@ -579,7 +595,7 @@ function setDrawerView(view) {
 function createLimitOpenDrawerState() {
   if (!drawerSection || drawerSection.querySelector("[data-drawer-state='limit-open']")) return;
 
-  const baseState = drawerSection.querySelector(".ds-drawer-state");
+  const baseState = drawerSection.querySelector("[data-drawer-state='default-buy']");
   if (!baseState) return;
 
   const limitState = baseState.cloneNode(true);
@@ -623,6 +639,10 @@ function numberFromInput(input, fallback = 0) {
   return Number.isFinite(value) ? value : fallback;
 }
 
+function formatContracts(value) {
+  return Math.max(0, Math.floor(value)).toLocaleString("en-US");
+}
+
 function centsFromText(text, fallback = 0) {
   const value = Number(String(text || "").replace(/[^\d.]/g, ""));
   return Number.isFinite(value) ? value : fallback;
@@ -640,6 +660,30 @@ function updateDrawerPreview(sheet) {
   const buyQty = numberFromInput(sheet.querySelector("[data-qty-input]"), 100);
   const sellQty = numberFromInput(sheet.querySelector("[data-sell-qty-input]"), 60);
   const qty = mode === "sell" ? sellQty : buyQty;
+  const quantityInput = sheet.querySelector("[data-qty-input]");
+  const contractsField = quantityInput?.closest(".contracts-field");
+  let transactionMessage = contractsField?.querySelector("[data-transaction-limit]");
+  if (contractsField && !transactionMessage) {
+    transactionMessage = document.createElement("p");
+    transactionMessage.className = "limit-minmax transaction-limit";
+    transactionMessage.dataset.transactionLimit = "";
+    transactionMessage.setAttribute("role", "alert");
+    contractsField.insertBefore(transactionMessage, contractsField.querySelector("[data-qty-total]"));
+  }
+  const quantityInvalid = mode === "buy" && (buyQty < 1 || buyQty > 1000);
+  if (quantityInput) {
+    quantityInput.classList.toggle("is-error", quantityInvalid);
+    quantityInput.setAttribute("aria-invalid", String(quantityInvalid));
+  }
+  if (transactionMessage) {
+    transactionMessage.hidden = !quantityInvalid;
+    transactionMessage.classList.toggle("is-error", quantityInvalid);
+    transactionMessage.textContent = buyQty > 1000
+      ? "The maximum contracts that can be purchased in one bet is 1,000."
+      : "Enter at least 1 contract.";
+  }
+  const primaryButton = sheet.querySelector("[data-bet-primary]");
+  if (primaryButton) primaryButton.disabled = quantityInvalid;
   const subtotal = qty * (price / 100);
   const fee = subtotal * 0.02;
   const payout = qty;
@@ -712,7 +756,7 @@ drawerSection?.addEventListener("click", (event) => {
   const qtyButton = event.target.closest("[data-qty-set]");
   if (qtyButton) {
     const input = sheet.querySelector("[data-qty-input]");
-    if (input) input.value = qtyButton.dataset.qtySet;
+    if (input) input.value = formatContracts(Number(qtyButton.dataset.qtySet));
     qtyButton.parentElement?.querySelectorAll("[data-qty-set]").forEach((button) => {
       button.classList.toggle("is-active", button === qtyButton);
     });
@@ -751,6 +795,10 @@ drawerSection?.addEventListener("click", (event) => {
 drawerSection?.addEventListener("input", (event) => {
   const input = event.target.closest("[data-qty-input], [data-sell-qty-input], [data-limit-input]");
   if (!input) return;
+  if (input.matches("[data-qty-input]")) {
+    const quantity = numberFromInput(input, 0);
+    input.value = quantity ? formatContracts(quantity) : "";
+  }
   const sheet = input.closest(".bet-sheet");
   if (sheet) updateDrawerPreview(sheet);
 });
