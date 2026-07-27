@@ -80,8 +80,13 @@ const flatDocs = {
         { label: "Sign in", type: "auth", mode: "signin" },
         { label: "Create account", type: "auth", mode: "register" },
         { label: "Name and birthday", type: "auth", mode: "registerDetails" },
+        { label: "Add phone number", type: "auth", mode: "phone" },
+        { label: "Phone verification", type: "auth", mode: "verify" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
-        { label: "Email verification", type: "auth", mode: "verify" },
+        { label: "Phone-first registration", type: "auth", mode: "phoneSignup" },
+        { label: "Phone-first details", type: "auth", mode: "phoneSignupDetails" },
+        { label: "Passwordless phone login", type: "auth", mode: "phoneLogin" },
+        { label: "Phone login verification", type: "auth", mode: "phoneLoginVerify" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
       ] },
@@ -311,6 +316,34 @@ function authFoot(copy, action) {
 }
 
 function renderAuthFrame(mode) {
+  if (mode === "phone" || mode === "phoneSignup") {
+    const alternate = mode === "phoneSignup";
+    return authShell(`<div class="auth-steps" data-step="1"><div class="auth-step" data-step="1">
+        ${authHead("", "Create your account", alternate ? "Choose how you’d like to continue." : "We’ll send a verification code to confirm it’s yours.")}
+        ${alternate ? `${socialRow()}<div class="auth-divider">or</div>` : `<span class="step-back">${backIcon}Back</span>`}
+        <div class="auth-form">${field("Phone number", "(555) 123-4567", { type: "tel" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue with Phone</button></div>
+      </div></div>${authFoot("Already have an account?", "Sign in")}`);
+  }
+  if (mode === "phoneSignupDetails") {
+    return authShell(`<div class="auth-steps" data-step="3"><div class="auth-step" data-step="3">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("", "Tell us about you", "Add your name and confirm you’re eligible to use GTL.")}
+        <div class="auth-form"><div class="signup-name-row">${field("First name", "Alex")}${field("Last name", "Morgan")}</div>${field("Date of birth", "MM/DD/YYYY", { type: "date", hint: "You must be 18 or older to use GTL." })}<label class="terms-check"><input type="checkbox" tabindex="-1"><span>I agree to GTL's <a href="#" tabindex="-1">Terms of Service</a> and <a href="#" tabindex="-1">Privacy Policy</a>.</span></label><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div>
+      </div></div>${authFoot("Already have an account?", "Sign in")}`);
+  }
+  if (mode === "phoneLogin") {
+    return authShell(`${authHead("Welcome back", "Login to GTL", "Choose how you’d like to sign in.")}
+      ${socialRow()}<div class="auth-divider">or</div>
+      <div class="auth-form">${field("Phone number", "(555) 123-4567", { type: "tel" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue with Phone</button></div>
+      ${authFoot("New to GTL?", "Create an Account")}`);
+  }
+  if (mode === "phoneLoginVerify") {
+    return authShell(`<div class="auth-steps" data-step="2"><div class="auth-step" data-step="2">
+        <span class="step-back">${backIcon}Back</span>
+        ${authHead("", "Verify it’s you", `Enter the 8-digit verification code sent to <span class="code-sent-to">(555) 123-4567</span>.`)}
+        <div class="auth-form"><div class="code-input">${Array.from({ length: 8 }, (_, index) => `${index === 4 ? `<span class="code-dash" aria-hidden="true"></span>` : ""}<input class="code-box" type="text" aria-label="Digit ${index + 1}" tabindex="-1" readonly>`).join("")}</div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Verify and Login</button></div>
+      </div></div>${authFoot("New to GTL?", "Create an Account")}`);
+  }
   if (mode === "register") {
     return authShell(`<div class="auth-steps" data-step="1"><div class="auth-step" data-step="1">
         ${authHead("", "Create your account", "Start trading the live games in under a minute.")}
@@ -335,8 +368,8 @@ function renderAuthFrame(mode) {
   if (mode === "verify") {
     return authShell(`<div class="auth-steps" data-step="4"><div class="auth-step" data-step="4">
         <span class="step-back">${backIcon}Back</span>
-        ${authHead("", "Verify your account", `We sent an 8-digit code to <span class="code-sent-to">your email</span>.`)}
-        <div class="auth-form"><div class="code-input"><input class="code-box" type="text" aria-label="Digit 1" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 2" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 3" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 4" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" aria-label="Digit 5" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 6" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 7" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 8" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Verify Account</button></div>
+        ${authHead("", "Verify your phone", `We sent an 8-digit code by text to <span class="code-sent-to">(555) 123-4567</span>.`)}
+        <div class="auth-form"><div class="code-input"><input class="code-box" type="text" aria-label="Digit 1" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 2" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 3" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 4" tabindex="-1" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" aria-label="Digit 5" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 6" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 7" tabindex="-1" readonly><input class="code-box" type="text" aria-label="Digit 8" tabindex="-1" readonly></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Verify</button></div>
         <p class="code-resend">Didn't get a code? <button type="button" tabindex="-1">Resend</button></p>
       </div></div>${authFoot("Already have an account?", "Login")}`);
   }
@@ -655,6 +688,8 @@ const flatDocViews = {
     groups: [
       { title: "Login states", frames: [
         { label: "Sign in", type: "auth", mode: "signin" },
+        { label: "Passwordless phone sign in", type: "auth", mode: "phoneLogin" },
+        { label: "Phone verification", type: "auth", mode: "phoneLoginVerify" },
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
         { label: "Loading state", type: "auth", mode: "loading" },
@@ -664,13 +699,16 @@ const flatDocViews = {
   },
   registration: {
     title: "Registration Page",
-    description: "The four-step account creation flow: email, personal details, password and consent, then email verification.",
+    description: "Current and phone-first account creation flows, including phone verification and eligibility consent.",
     groups: [
       { title: "Registration states", frames: [
         { label: "Create account", type: "auth", mode: "register" },
         { label: "Name and birthday", type: "auth", mode: "registerDetails" },
+        { label: "Add phone number", type: "auth", mode: "phone" },
+        { label: "Phone verification", type: "auth", mode: "verify" },
         { label: "Create password", type: "auth", mode: "registerPassword" },
-        { label: "Email verification", type: "auth", mode: "verify" },
+        { label: "Phone-first registration", type: "auth", mode: "phoneSignup" },
+        { label: "Phone-first details", type: "auth", mode: "phoneSignupDetails" },
       ] },
     ],
   },
@@ -913,6 +951,7 @@ function renderDrawerSheet(mode, showClose = false) {
   const paused = mode === "paused";
   const changeBetType = mode === "changeBetType";
   const conflict = mode === "conflict";
+  const quantityMax = mode === "quantityMax";
   const primary = sell ? "Sell" : "Buy";
   const total = sell ? "$37.63" : limit ? "$53.04" : "$65.28";
   const profit = sell ? "$15.12" : limit ? "$46.96" : "$34.72";
@@ -941,7 +980,7 @@ function renderDrawerSheet(mode, showClose = false) {
           ${warning}
           ${paused ? `<div class="trade-pause drawer-trade-pause buy-only" data-buy-main${changeBetType ? " hidden" : ""} role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
           <div class="drawer-bet-heading buy-only" data-buy-main${changeBetType ? " hidden" : ""}><strong data-bet-heading>Get the Lead - Yes</strong><button class="limit-toggle" data-change-bet-type type="button">Change</button></div>
-          <div class="bet-field contracts-field buy-only" data-buy-main${changeBetType ? " hidden" : ""}><span class="bet-label">Select number of contracts</span><input class="num-input drawer-contract-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" hidden></p></div>
+          <div class="bet-field contracts-field buy-only" data-buy-main${changeBetType ? " hidden" : ""}><span class="bet-label">Select number of contracts</span><input class="num-input drawer-contract-input${quantityMax ? " is-error" : ""}" data-qty-input type="text" inputmode="numeric" value="${quantityMax ? "1,100" : "100"}" aria-label="Number of contracts" aria-invalid="${quantityMax}"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="${quantityMax ? "" : "is-active"}" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit${quantityMax ? " is-error" : ""}" role="alert"${quantityMax ? "" : " hidden"}>The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total"${quantityMax ? "" : " hidden"}>Total contracts after purchase — <strong>1,250</strong></p></div>
           <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3"><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
           <div class="drawer-bet-editor buy-only" data-bet-type-editor${changeBetType ? "" : " hidden"}>
             <div class="bet-field"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
@@ -956,7 +995,7 @@ function renderDrawerSheet(mode, showClose = false) {
           <div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong>${sell ? "$60.00" : "$100.00"}</strong></div><div class="summary-row"><span>Potential profit</span><strong>${profit}</strong></div><div class="summary-row"><span>Fees</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>Net potential gain</span><strong>${sell ? "$37.63" : "$33.44"}</strong></div></div></div>
         </div>
       </div>
-      <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown${changeBetType ? " data-type-return" : ""} type="button">${changeBetType ? "Return" : "See Details"}</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary${changeBetType ? " data-type-confirm" : ""} type="button"${paused || invalid || changeBetType ? " disabled" : ""}>${changeBetType ? "Confirm Bet Type" : primary}</button></footer>
+      <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown${changeBetType ? " data-type-return" : ""} type="button">${changeBetType ? "Return" : "See Details"}</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary${changeBetType ? " data-type-confirm" : ""} type="button"${paused || invalid || changeBetType || quantityMax ? " disabled" : ""}>${changeBetType ? "Confirm Bet Type" : primary}</button></footer>
       <div class="bet-success">
         <div class="success-content"><div class="bet-success-head"><span class="bet-countdown-clock" role="timer" aria-live="polite" aria-label="5 seconds remaining"><strong>5</strong></span><h3 class="bet-success-title">${confirmationTitle}</h3><p class="bet-success-sub">${confirmationCopy}</p></div><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Bet Type</span><strong>Get the Lead YES</strong></div><div class="summary-row"><span>Contract price</span><strong>64¢</strong></div><div class="summary-row"><span>Contracts</span><strong>${sell ? "60" : "100"}</strong></div><div class="summary-row"><span>Subtotal</span><strong>${sell ? "$38.40" : "$64.00"}</strong></div><div class="summary-row"><span>Trading fee</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>${sell ? "You receive" : "Total to pay"}</span><strong>${sell ? "$37.63" : "$65.28"}</strong></div></div></div></div><div class="success-actions"><button class="bet-secondary cancel-bet" type="button">${sell ? "Cancel Sale" : "Cancel Bet"}</button><button class="btn btn-primary success-close" type="button">${sell ? "Blitz Sell" : "Blitz Buy"}</button></div>
       </div>

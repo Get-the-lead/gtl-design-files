@@ -172,6 +172,14 @@
 .auth-foot a:hover { text-decoration: underline; }
 :root[data-theme="light"] .auth-foot a { color: #16a34a; }
 
+.prototype-switch {
+  margin: var(--s3) 0 0;
+  text-align: center;
+  font-size: var(--fs-label);
+}
+.prototype-switch a { color: var(--ink-3); text-decoration: underline; text-underline-offset: 3px; }
+.prototype-switch a:hover { color: var(--ink); }
+
 .auth-fineprint { margin-top: var(--s6); text-align: center; color: var(--ink-3); font-size: var(--fs-eyebrow); line-height: 1.7; }
 .auth-fineprint a { color: var(--ink-2); text-decoration: underline; }
 
@@ -190,6 +198,7 @@
   gap: var(--s4);
 }
 .signup-name-row .field + .field { margin-top: 0; }
+.prototype-dob-field { margin-top: var(--s5); }
 .signup-birthday-field { min-width: 0; margin: var(--s5) 0 0; padding: 0; border: 0; }
 .signup-birthday-field legend { margin-bottom: var(--s2); }
 .date-fields { display: grid; grid-template-columns: 1.25fr 0.8fr 1fr; gap: var(--s2); }
@@ -248,6 +257,9 @@
 .terms-check a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .terms-error { margin: var(--s2) 0 0 36px; color: var(--no); font-size: var(--fs-label); font-weight: 600; }
 .terms-check + .terms-error + .auth-submit { margin-top: var(--s8); }
+.consent-list { display: grid; gap: var(--s4); margin-top: var(--s8); }
+.consent-list .terms-check { margin-top: 0; }
+.consent-list + .terms-error + .auth-submit { margin-top: var(--s8); }
 
 .step-back {
   align-self: flex-start;

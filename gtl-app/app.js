@@ -3179,6 +3179,13 @@ function initAccountSubpages() {
 const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const phoneDigits = (value) => value.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
 const validPhone = (value) => phoneDigits(value).length === 10;
+const formatPhoneInput = (value) => {
+  const digits = phoneDigits(value).slice(0, 10);
+  if (!digits) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+};
 const formatPhone = (value) => {
   const digits = phoneDigits(value);
   return digits.length === 10 ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}` : value.trim();
@@ -3496,6 +3503,7 @@ function initSignup() {
 
   const f3 = steps.querySelector("[data-step3-form]");
   const phoneEl = f3.querySelector("#phone");
+  phoneEl.addEventListener("input", () => { phoneEl.value = formatPhoneInput(phoneEl.value); });
   f3.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(phoneEl);
@@ -3546,6 +3554,156 @@ function initSignup() {
   const resend = steps.querySelector("[data-resend]");
   if (resend) resend.addEventListener("click", () => showToast("Code resent — check your phone", "success"));
   clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f3); clearErrsOnInput(f5);
+  initCodeInput(codeWrap);
+}
+
+function initSignupPrototype() {
+  const steps = $("#signupPrototypeSteps");
+  if (!steps) return;
+
+  let provider = "phone";
+  let phone = "";
+  let email = "";
+  let detailsBackStep = 1;
+  const go = (step) => {
+    steps.dataset.step = step;
+    const focusEl = steps.querySelector(`.auth-step[data-step="${step}"] input`);
+    if (focusEl) setTimeout(() => focusEl.focus(), 80);
+  };
+
+  const phoneForm = $("[data-prototype-phone-form]", steps);
+  const phoneEl = $("#prototypePhone", phoneForm);
+  const phoneSubmit = $("[data-prototype-phone-submit]", phoneForm);
+  const syncPhoneSubmit = () => { phoneSubmit.disabled = !phoneEl.value.trim(); };
+  phoneEl.addEventListener("input", () => {
+    phoneEl.value = formatPhoneInput(phoneEl.value);
+    syncPhoneSubmit();
+  });
+  syncPhoneSubmit();
+  phoneForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearErr(phoneEl);
+    if (!phoneEl.value.trim()) { showErr(phoneEl, "Enter your phone number"); return; }
+    if (!validPhone(phoneEl.value)) { showErr(phoneEl, "Enter a valid 10-digit US phone number"); return; }
+    provider = "phone";
+    phone = formatPhone(phoneEl.value);
+    phoneEl.value = phone;
+    const destination = $("[data-prototype-code-phone]", steps);
+    if (destination) destination.textContent = phone;
+    detailsBackStep = 2;
+    go(2);
+  });
+
+  const codeForm = $("[data-prototype-code-form]", steps);
+  const codeWrap = $("[data-code-input]", codeForm);
+  codeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearCodeErr(codeWrap);
+    const code = $$(".code-box", codeWrap).map((box) => box.value).join("");
+    if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit code we sent you"); return; }
+    go(3);
+  });
+
+  const detailsForm = $("[data-prototype-details-form]", steps);
+  const firstNameEl = $("#prototypeFirstName", detailsForm);
+  const lastNameEl = $("#prototypeLastName", detailsForm);
+  const birthdayEl = $("#prototypeDob", detailsForm);
+  const termsEl = $("#prototypeTerms", detailsForm);
+  const consentError = $("[data-prototype-consent-error]", detailsForm);
+  detailsForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearErr(firstNameEl);
+    clearErr(lastNameEl);
+    clearErr(birthdayEl);
+    consentError.hidden = true;
+    let valid = true;
+    if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); valid = false; }
+    if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); valid = false; }
+    if (!birthdayEl.value) { showErr(birthdayEl, "Enter your date of birth"); valid = false; }
+    else if (!isAtLeastAge(birthdayEl.value, 18)) { showErr(birthdayEl, "GTL is for users 18 or older."); valid = false; }
+    if (!termsEl.checked) { consentError.hidden = false; valid = false; }
+    if (!valid) return;
+    const firstName = firstNameEl.value.trim();
+    const lastName = lastNameEl.value.trim();
+    setAuth({
+      firstName,
+      lastName,
+      name: `${firstName} ${lastName}`,
+      email,
+      phone,
+      birthday: birthdayEl.value,
+      provider,
+      memberSince: new Date().toISOString(),
+      onboarding: true,
+    });
+    location.href = postSignupDest();
+  });
+
+  $$('[data-prototype-social]', steps).forEach((button) => button.addEventListener("click", () => {
+    provider = button.dataset.prototypeSocial;
+    email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
+    phone = "";
+    detailsBackStep = 1;
+    go(3);
+  }));
+  $("[data-prototype-back]", steps)?.addEventListener("click", () => go(1));
+  $("[data-prototype-details-back]", steps)?.addEventListener("click", () => go(detailsBackStep));
+  $("[data-prototype-resend]", steps)?.addEventListener("click", () => showToast("Code resent — check your phone", "success"));
+  termsEl.addEventListener("change", () => { if (termsEl.checked) consentError.hidden = true; });
+  clearErrsOnInput(phoneForm);
+  clearErrsOnInput(detailsForm);
+  initCodeInput(codeWrap);
+}
+
+function initLoginPrototype() {
+  const steps = $("#loginPrototypeSteps");
+  if (!steps) return;
+
+  let phone = "";
+  const go = (step) => {
+    steps.dataset.step = step;
+    const focusEl = steps.querySelector(`.auth-step[data-step="${step}"] input`);
+    if (focusEl) setTimeout(() => focusEl.focus(), 80);
+  };
+
+  const loginForm = $("[data-prototype-login-form]", steps);
+  const phoneEl = $("#prototypeLoginPhone", loginForm);
+  const phoneSubmit = $("[data-prototype-login-submit]", loginForm);
+  const syncPhoneSubmit = () => { phoneSubmit.disabled = !phoneEl.value.trim(); };
+  phoneEl.addEventListener("input", () => {
+    phoneEl.value = formatPhoneInput(phoneEl.value);
+    syncPhoneSubmit();
+  });
+  syncPhoneSubmit();
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearErr(phoneEl);
+    phone = phoneEl.value.trim();
+    let valid = true;
+    if (!phone) { showErr(phoneEl, "Enter your phone number"); valid = false; }
+    else if (!validPhone(phone)) { showErr(phoneEl, "Enter a valid 10-digit US phone number"); valid = false; }
+    if (!valid) return;
+    phone = formatPhone(phone);
+    phoneEl.value = phone;
+    const destination = $("[data-prototype-login-destination]", steps);
+    if (destination) destination.textContent = phone;
+    go(2);
+  });
+
+  const codeForm = $("[data-prototype-login-code-form]", steps);
+  const codeWrap = $("[data-code-input]", codeForm);
+  codeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearCodeErr(codeWrap);
+    const code = $$(".code-box", codeWrap).map((box) => box.value).join("");
+    if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit verification code"); return; }
+    setAuth({ name: USER.name, phone });
+    location.href = postAuthDest();
+  });
+
+  $("[data-prototype-login-back]", steps)?.addEventListener("click", () => go(1));
+  $("[data-prototype-login-resend]", steps)?.addEventListener("click", () => showToast("Verification code resent", "success"));
+  clearErrsOnInput(loginForm);
   initCodeInput(codeWrap);
 }
 
@@ -3775,6 +3933,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initSocialButtons();
   initLogin();
   initSignup();
+  initLoginPrototype();
+  initSignupPrototype();
   initWelcome();
   initForgot();
   initContact();

@@ -151,6 +151,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 
 .btn-primary { background: var(--green); color: #06210f; }
 .btn-primary:hover { background: var(--green-strong); }
+.btn:disabled,
+.btn:disabled:hover,
+.btn:disabled:active {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--ink-3);
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+}
 
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-2); }
 .btn-ghost:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--line-2); }
