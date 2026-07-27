@@ -1151,6 +1151,7 @@ function initGameRecalc() {
 
 /* ----------------------------------------------- BET DRAWER (two-step) */
 const betState = { game: null, market: "gtl", contract: "yes", draftMarket: "gtl", draftContract: "yes", quantity: 100, step: 1, markets: {}, limit: null, limitOpen: false, typeOpen: false, confirming: null };
+const MAX_TRANSACTION_CONTRACTS = 1000;
 const money = (v) => `$${v.toFixed(2)}`;
 
 function limitValidation(maxPrice) {
@@ -1172,6 +1173,15 @@ function computeBet() {
   const profit = Math.max(0, payout - subtotal);
   const net = Math.max(0, profit - fee);
   return { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net };
+}
+
+function transactionValidation(quantity) {
+  if (quantity < 1) return { valid: false, message: "Enter at least 1 contract." };
+  const valid = quantity <= MAX_TRANSACTION_CONTRACTS;
+  return {
+    valid,
+    message: valid ? "" : `The maximum contracts that can be purchased in one bet is ${MAX_TRANSACTION_CONTRACTS.toLocaleString("en-US")}.`,
+  };
 }
 
 function fillScoreboard(sb, g) {
@@ -1230,8 +1240,9 @@ function ensureBetSheet() {
               <button data-qty-set="50">50</button>
               <button data-qty-set="100">100</button>
               <button data-qty-set="500">500</button>
-              <button data-qty-set="1000">1000</button>
+              <button data-qty-set="1000">1,000</button>
             </div>
+            <p class="limit-minmax transaction-limit" data-transaction-limit role="alert" hidden></p>
             <p class="qty-total" data-qty-total hidden></p>
           </div>
 
@@ -1279,7 +1290,6 @@ function ensureBetSheet() {
             <span class="bet-total-big tnum" data-total-big>$0.00</span>
             <p class="potential-win">Potential profit of <strong data-profit-big>$0.00</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p>
           </div>
-
           <!-- SELL: proceeds + realised P&L -->
           <div class="bet-highlight sell-only">
             <span class="bet-label">You receive</span>
@@ -1360,7 +1370,11 @@ function ensureBetSheet() {
     betState.draftContract = b.dataset.contract;
     updateBetSheet();
   }));
-  $$("[data-qty-set]", sheet).forEach((b) => b.addEventListener("click", () => { betState.quantity = Number(b.dataset.qtySet); qtyInput.value = betState.quantity; updateBetSheet(); }));
+  $$("[data-qty-set]", sheet).forEach((b) => b.addEventListener("click", () => {
+    betState.quantity = Number(b.dataset.qtySet);
+    qtyInput.value = betState.quantity.toLocaleString("en-US");
+    updateBetSheet();
+  }));
   sheet.querySelector("[data-change-bet-type]").addEventListener("click", () => {
     betState.draftMarket = betState.market;
     betState.draftContract = betState.contract;
@@ -1396,7 +1410,13 @@ function ensureBetSheet() {
   sheet.querySelector("[data-success-close]").addEventListener("click", blitzBet);
   sheet.addEventListener("click", (e) => { if (e.target.closest("[data-fees-link]")) { e.preventDefault(); goToFees(); } }); // delegated: covers the buy line AND the (regenerated) sell line's fees link
 
-  qtyInput.addEventListener("input", () => { const v = parseInt(qtyInput.value.replace(/[^0-9]/g, ""), 10); betState.quantity = v >= 1 ? v : 1; updateBetSheet(); });
+  qtyInput.addEventListener("input", () => {
+    const digits = qtyInput.value.replace(/[^0-9]/g, "");
+    const value = parseInt(digits, 10);
+    betState.quantity = Number.isNaN(value) ? 0 : value;
+    qtyInput.value = betState.quantity ? betState.quantity.toLocaleString("en-US") : "";
+    updateBetSheet();
+  });
   limitInput.addEventListener("input", () => {
     const value = limitInput.value.replace(/[^0-9]/g, "").slice(0, 3);
     limitInput.value = value;
@@ -1474,7 +1494,7 @@ function updateBetSheet() {
   if (qtyTotalEl) {
     const showTotal = betState.mode === "buy" && (betState.existingQty || 0) > 0;
     qtyTotalEl.hidden = !showTotal;
-    if (showTotal) qtyTotalEl.innerHTML = `Total contracts after purchase — <strong>${betState.existingQty + (betState.quantity || 0)}</strong>`;
+    if (showTotal) qtyTotalEl.innerHTML = `Total contracts after purchase — <strong>${(betState.existingQty + (betState.quantity || 0)).toLocaleString("en-US")}</strong>`;
   }
 
   // Warn when this buy takes the opposite side of a position already held in this game
@@ -1490,6 +1510,7 @@ function updateBetSheet() {
   const limitMode = sheet.querySelector("[data-price-mode=limit]");
   const limitEntry = sheet.querySelector("[data-limit-entry]");
   const limitStatus = limitValidation(marketPrice);
+  const transactionStatus = transactionValidation(qty);
   marketMode.classList.toggle("is-active", !betState.limitOpen);
   limitMode.classList.toggle("is-active", betState.limitOpen);
   limitMode.classList.toggle("is-error", betState.limitOpen && !limitStatus.valid);
@@ -1502,6 +1523,13 @@ function updateBetSheet() {
   if (betState.limitOpen) {
     limitMessage.textContent = limitStatus.message;
   }
+  const transactionMessage = sheet.querySelector("[data-transaction-limit]");
+  transactionMessage.hidden = betState.typeOpen || transactionStatus.valid;
+  transactionMessage.textContent = transactionStatus.message;
+  transactionMessage.classList.toggle("is-error", !transactionStatus.valid);
+  const quantityInput = sheet.querySelector("[data-qty-input]");
+  quantityInput.classList.toggle("is-error", betState.mode === "buy" && !transactionStatus.valid);
+  quantityInput.setAttribute("aria-invalid", betState.mode === "buy" && !transactionStatus.valid ? "true" : "false");
 
   // highlight — total bet + green profit-after-fees
   sheet.querySelector("[data-total-big]").textContent = betState.priceUpdating ? "—" : money(total);
@@ -1538,7 +1566,8 @@ function updateBetSheet() {
   const primary = sheet.querySelector("[data-bet-primary]");
   if (primary) {
     const unchangedType = betState.draftMarket === betState.market && betState.draftContract === betState.contract;
-    primary.disabled = !!betState.priceUpdating || (betState.typeOpen && unchangedType) || (betState.limitOpen && !limitStatus.valid);
+    const transactionTooLarge = betState.mode === "buy" && !betState.typeOpen && !transactionStatus.valid;
+    primary.disabled = !!betState.priceUpdating || transactionTooLarge || (betState.typeOpen && unchangedType) || (betState.limitOpen && !limitStatus.valid);
     primary.textContent = betState.typeOpen ? "Confirm Bet Type" : betState.editPending != null ? "Update Bet" : (betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Buy"));
   }
   const breakdown = sheet.querySelector("[data-breakdown]");
@@ -1588,7 +1617,7 @@ function stopBetTicker() {
 function syncInputs() {
   const sheet = $("#betSheet");
   if (!sheet) return;
-  sheet.querySelector("[data-qty-input]").value = betState.quantity;
+  sheet.querySelector("[data-qty-input]").value = betState.quantity.toLocaleString("en-US");
   sheet.querySelector("[data-limit-input]").value = betState.limit != null ? betState.limit : "";
   syncLimitSize();
 }
@@ -1714,6 +1743,7 @@ function placeBet() {
   const activeMarket = betState.markets[betState.market] || { yes: 50, no: 50 };
   const activePrice = betState.contract === "yes" ? activeMarket.yes : activeMarket.no;
   if (!limitValidation(activePrice).valid) return;
+  if (!transactionValidation(computeBet().qty).valid) return;
   if (betState.editPending != null) return updatePendingOrder();
   const sheet = ensureBetSheet();
   const { priceCents, qty, subtotal, fee, total } = computeBet();
@@ -3147,6 +3177,12 @@ function initAccountSubpages() {
 /* ---------------------------------------------------------- AUTH SCREENS */
 // Inline validation errors (shown in-app, not via native browser bubbles)
 const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const phoneDigits = (value) => value.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+const validPhone = (value) => phoneDigits(value).length === 10;
+const formatPhone = (value) => {
+  const digits = phoneDigits(value);
+  return digits.length === 10 ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}` : value.trim();
+};
 function isAtLeastAge(dateValue, age) {
   const birth = new Date(`${dateValue}T00:00:00`);
   if (!dateValue || Number.isNaN(birth.getTime())) return false;
@@ -3404,6 +3440,7 @@ function initSignup() {
   let firstName = "";
   let lastName = "";
   let birthday = "";
+  let phone = "";
   const go = (n) => {
     steps.dataset.step = n;
     const focusEl = steps.querySelector(`.auth-step[data-step="${n}"] input`);
@@ -3418,8 +3455,6 @@ function initSignup() {
     provider = "password";
     if (!email) { showErr(emailEl, "Enter your email"); return; }
     if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); return; }
-    const tgt = steps.querySelector("[data-code-email]");
-    if (tgt) tgt.textContent = email;
     go(2);
   });
 
@@ -3460,22 +3495,18 @@ function initSignup() {
   initDateComboboxes(f2);
 
   const f3 = steps.querySelector("[data-step3-form]");
-  const p1 = f3.querySelector("#newpass");
-  const p2 = f3.querySelector("#confirmpass");
-  const terms = f3.querySelector("#acceptTerms");
-  const termsError = f3.querySelector("[data-terms-error]");
+  const phoneEl = f3.querySelector("#phone");
   f3.addEventListener("submit", (e) => {
     e.preventDefault();
-    clearErr(p1); clearErr(p2);
-    termsError.hidden = true;
-    if (!p1.value) { showErr(p1, "Create a password"); return; }
-    if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
-    if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
-    if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
-    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
+    clearErr(phoneEl);
+    if (!phoneEl.value.trim()) { showErr(phoneEl, "Enter your phone number"); return; }
+    if (!validPhone(phoneEl.value)) { showErr(phoneEl, "Enter a valid 10-digit US phone number"); return; }
+    phone = formatPhone(phoneEl.value);
+    phoneEl.value = phone;
+    const tgt = steps.querySelector("[data-code-phone]");
+    if (tgt) tgt.textContent = phone;
     go(4);
   });
-  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
 
   const f4 = steps.querySelector("[data-step4-form]");
   const codeWrap = f4.querySelector("[data-code-input]");
@@ -3484,21 +3515,37 @@ function initSignup() {
     clearCodeErr(codeWrap);
     const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
     if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit code we sent you"); return; }
-    setAuth({ firstName, lastName, name: `${firstName} ${lastName}`, birthday, email, provider, memberSince: new Date().toISOString(), onboarding: true });
+    go(5);
+  });
+
+  const f5 = steps.querySelector("[data-step5-form]");
+  const p1 = f5.querySelector("#newpass");
+  const p2 = f5.querySelector("#confirmpass");
+  const terms = f5.querySelector("#acceptTerms");
+  const termsError = f5.querySelector("[data-terms-error]");
+  f5.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearErr(p1); clearErr(p2);
+    termsError.hidden = true;
+    if (!p1.value) { showErr(p1, "Create a password"); return; }
+    if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
+    if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
+    if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
+    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
+    setAuth({ firstName, lastName, name: `${firstName} ${lastName}`, birthday, email, phone, provider, memberSince: new Date().toISOString(), onboarding: true });
     location.href = postSignupDest();
   });
+  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
 
   $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
   $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => {
     provider = b.dataset.social;
     email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
-    const tgt = steps.querySelector("[data-code-email]");
-    if (tgt) tgt.textContent = email;
     go(2);
   }));
   const resend = steps.querySelector("[data-resend]");
-  if (resend) resend.addEventListener("click", () => showToast("Code resent — check your email", "success"));
-  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f3);
+  if (resend) resend.addEventListener("click", () => showToast("Code resent — check your phone", "success"));
+  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f3); clearErrsOnInput(f5);
   initCodeInput(codeWrap);
 }
 
@@ -3509,21 +3556,13 @@ function initWelcome() {
 
   const credit = WELCOME_CREDIT.toLocaleString("en-US");
   const bonusEl = $("[data-welcome-bonus]", main);
-  const usernamePanel = $("[data-welcome-username]", main);
   const reward = $("[data-welcome-reward]", main);
   const usernameForm = $("[data-username-form]", main);
-  const primary = $("[data-welcome-primary]", main);
   if (bonusEl) bonusEl.textContent = credit;
-
-  const showPanel = (current, next, state, focusSelector) => {
-    current.hidden = true;
-    next.hidden = false;
-    main.dataset.welcomeState = state;
-    if (focusSelector) setTimeout(() => $(focusSelector, next)?.focus(), 80);
-  };
 
   const usernameEl = $("#username", usernameForm);
   const authAtStart = getAuth();
+  $$('[data-welcome-name]', reward).forEach((el) => { el.textContent = firstNameFor(authAtStart); });
   const suggestedUsername = `${authAtStart?.firstName || ""}${authAtStart?.lastName || ""}`
     .toLowerCase()
     .replace(/[^a-z0-9_]/g, "")
@@ -3538,19 +3577,10 @@ function initWelcome() {
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3–20 letters, numbers, or underscores"); return; }
     const auth = getAuth();
     setAuth({ ...auth, username, onboarding: false });
-    $$('[data-welcome-name]', reward).forEach((el) => { el.textContent = firstNameFor(auth); });
-    showPanel(usernamePanel, reward, "reward");
+    clearBetIntent();
+    location.href = "home.html";
   });
   clearErrsOnInput(usernameForm);
-
-  if (primary) {
-    primary.href = "home.html";
-    primary.addEventListener("click", (e) => {
-      e.preventDefault();
-      clearBetIntent();
-      location.href = "home.html";
-    });
-  }
 }
 
 function initForgot() {

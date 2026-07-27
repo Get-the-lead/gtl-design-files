@@ -18,24 +18,7 @@
 </head>
 <body class="welcome-body">
 
-  <main class="welcome-main container" id="welcomeMain" data-welcome-state="username">
-    <section class="welcome-panel welcome-username" aria-labelledby="usernameTitle" data-welcome-username>
-      <div class="welcome-copy">
-        <p class="welcome-kicker">Your GTL identity</p>
-        <h1 id="usernameTitle">Choose a username.</h1>
-        <p>This is how you’ll appear in rankings and across GTL.</p>
-      </div>
-
-      <form class="welcome-form" data-username-form novalidate>
-        <div class="field">
-          <label for="username">Username</label>
-          <input class="field-input" id="username" type="text" autocomplete="username" placeholder="alexmorgan" required />
-          <span class="field-hint">Use 3–20 letters, numbers, or underscores.</span>
-        </div>
-        <button class="btn btn-primary btn-lg" type="submit">Complete Setup</button>
-      </form>
-    </section>
-
+  <main class="welcome-main container" id="welcomeMain" data-welcome-state="reward">
     <div class="welcome-celebration-bg" aria-hidden="true">
         <span class="celebration-glow"></span>
         <span class="celebration-ring ring-one"></span><span class="celebration-ring ring-two"></span>
@@ -50,11 +33,11 @@
         </div>
     </div>
 
-    <section class="welcome-panel welcome-reward" aria-labelledby="rewardTitle" data-welcome-reward hidden>
+    <section class="welcome-panel welcome-reward" aria-labelledby="rewardTitle" data-welcome-reward>
       <div class="welcome-copy">
         <p class="welcome-kicker">You’re officially in</p>
         <h1 id="rewardTitle">Welcome to GTL, <span data-welcome-name>Alex</span>.</h1>
-        <p>Your account is live and the next lead is yours to call. Use your credits to bet the moments that matter to you.</p>
+        <p>Your account is live. Create a username to claim your welcome credits and start betting the moments that matter to you.</p>
       </div>
 
       <div class="credit-ticket">
@@ -62,9 +45,14 @@
         <strong class="ticket-value tnum" data-welcome-bonus>1,500</strong>
       </div>
 
-      <div class="welcome-actions">
-        <a class="btn btn-primary btn-lg" href="home.html" data-welcome-primary>Start Betting</a>
-      </div>
+      <form class="welcome-form" data-username-form novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input class="field-input" id="username" type="text" autocomplete="username" placeholder="alexmorgan" required />
+          <span class="field-hint">Use 3–20 letters, numbers, or underscores. This is how you’ll appear in rankings.</span>
+        </div>
+        <button class="btn btn-primary btn-lg" type="submit" data-welcome-primary>Start Betting</button>
+      </form>
     </section>
 
   </main>
