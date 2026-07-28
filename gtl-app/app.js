@@ -189,6 +189,53 @@ function renderTiles() {
   }).join("");
 }
 
+function renderHomeEdgeCase() {
+  const grid = $("#gameGrid");
+  if (!grid) return;
+  const state = new URLSearchParams(location.search).get("ds-home-state");
+  if (!state) return;
+
+  if (state === "loading") {
+    grid.setAttribute("aria-busy", "true");
+    grid.setAttribute("aria-label", "Loading live games");
+    grid.innerHTML = Array.from({ length: 3 }, () => `<article class="home-loading-card" aria-hidden="true">
+      <div class="home-loading-score"><span></span><span></span><span></span></div>
+      <div class="home-loading-line is-wide"></div>
+      <div class="home-loading-line"></div>
+    </article>`).join("");
+    return;
+  }
+
+  const states = {
+    "no-live": {
+      icon: `<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      title: "No Live Games Right Now",
+      copy: "There aren’t any live NFL games available. Check back when the next game begins.",
+    },
+    error: {
+      icon: `<svg viewBox="0 0 24 24" fill="none"><path d="M4.5 9.5A12 12 0 0 1 12 7c2.9 0 5.6 1 7.5 2.5M7.5 13a7.7 7.7 0 0 1 4.5-1.4c1.7 0 3.3.5 4.5 1.4M10.5 16.4c.5-.3 1-.4 1.5-.4s1 .1 1.5.4M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+      title: "Unable to Load Live Games",
+      copy: "We couldn’t load the latest games. Check your connection and try again.",
+      action: "Try Again",
+    },
+  };
+  const content = states[state];
+  if (!content) return;
+
+  grid.innerHTML = `<div class="home-game-state" role="${state === "error" ? "alert" : "status"}">
+    <span class="home-game-state-icon" aria-hidden="true">${content.icon}</span>
+    <h3>${content.title}</h3>
+    <p>${content.copy}</p>
+    ${content.action ? `<button class="btn btn-secondary" type="button" data-home-state-retry>${content.action}</button>` : ""}
+  </div>`;
+
+  $("[data-home-state-retry]", grid)?.addEventListener("click", () => {
+    const nextUrl = new URL(location.href);
+    nextUrl.searchParams.delete("ds-home-state");
+    location.assign(nextUrl);
+  });
+}
+
 /* --------------------------------------------------------- HOME: EXPAND */
 function initExpanders() {
   $$("[data-expand]").forEach((btn) =>
@@ -923,6 +970,11 @@ function renderGamePage() {
   const lead = leaderOf(g);
   const compactScore = String(g.home.score).length >= 3 || String(g.away.score).length >= 3;
   const back = gameBackTarget();
+  const periodLabel = String(g.period || "").trim();
+  const isFinal = /^(final|ft)$/i.test(periodLabel);
+  const isQuarterTime = !isFinal && !g.clock;
+  const clockState = isFinal ? "is-final" : isQuarterTime ? "is-quarter-time" : "is-live";
+  const clockLabel = isFinal ? "Final" : isQuarterTime ? "QTR Time" : periodLabel;
 
   const teamCol = (side) => {
     const t = g[side];
@@ -937,7 +989,7 @@ function renderGamePage() {
       ${marketRow(g, "TIE", "", "tie")}
       ${marketRow(g, "KTL", "Keep the Lead", "ktl")}
     </div>
-    <p class="bet-help">Tap a price to start your bet · Prices updated every 10 seconds</p>`;
+    <p class="bet-help">Tap a price to start your bet.</p>`;
 
   const bettingStatsHTML = bettingChartsPro(g);
   const gameSummaryHTML = gameMomentumCardsPro(g);
@@ -963,16 +1015,17 @@ function renderGamePage() {
     <div class="game-layout" style="--home-color:${g.home.color};--away-color:${g.away.color}">
     <div class="game-col-left" style="--home-color:${g.home.color};--away-color:${g.away.color}">
     <a class="gb-back gb-back-right" href="${back.href}" aria-label="Back to ${back.label}">${CHEVRON}<span>${back.label}</span></a>
-    <section class="gb" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <section class="gb" id="scorecardSection" style="--home-color:${g.home.color};--away-color:${g.away.color}">
       <div class="gb-glow" aria-hidden="true"></div>
       <div class="container gb-inner">
         <div class="gb-topbar">
           <a class="gb-back" href="${back.href}" aria-label="Back to ${back.label}">${CHEVRON}<span>${back.label}</span></a>
         </div>
         <div class="gb-score-stack">
-          <span class="live-badge game-clock-badge">
-            <span class="game-period"><span class="live-dot"></span>${g.period}</span>
-            <span class="game-clock tnum" data-game-clock="${g.id}">${g.clock}</span>
+          <p class="gb-league">${g.league.toUpperCase()} · Regular season</p>
+          <span class="live-badge game-clock-badge ${clockState}">
+            <span class="game-period">${!isFinal && !isQuarterTime ? '<span class="live-dot"></span>' : ""}${clockLabel}</span>
+            ${!isFinal && !isQuarterTime ? `<span class="game-clock tnum" data-game-clock="${g.id}">${g.clock}</span>` : ""}
           </span>
           <div class="gb-score${compactScore ? " is-compact-score" : ""}">
             ${teamCol("home")}
@@ -984,7 +1037,6 @@ function renderGamePage() {
             ${teamCol("away")}
           </div>
         </div>
-        <p class="gb-league">${g.league.toUpperCase()} · Regular season</p>
       </div>
     </section>
 
@@ -1151,7 +1203,7 @@ function initGameRecalc() {
 
 /* ----------------------------------------------- BET DRAWER (two-step) */
 const betState = { game: null, market: "gtl", contract: "yes", draftMarket: "gtl", draftContract: "yes", quantity: 100, step: 1, markets: {}, limit: null, limitOpen: false, typeOpen: false, confirming: null };
-const MAX_TRANSACTION_CONTRACTS = 1000;
+const MAX_TRANSACTION_CREDITS = 1000;
 const money = (v) => `$${v.toFixed(2)}`;
 
 function limitValidation(maxPrice) {
@@ -1175,12 +1227,12 @@ function computeBet() {
   return { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net };
 }
 
-function transactionValidation(quantity) {
+function transactionValidation(quantity, purchasePrice) {
   if (quantity < 1) return { valid: false, message: "Enter at least 1 contract." };
-  const valid = quantity <= MAX_TRANSACTION_CONTRACTS;
+  const valid = purchasePrice <= MAX_TRANSACTION_CREDITS;
   return {
     valid,
-    message: valid ? "" : `The maximum contracts that can be purchased in one bet is ${MAX_TRANSACTION_CONTRACTS.toLocaleString("en-US")}.`,
+    message: valid ? "" : `The maximum purchase price for one bet is ${MAX_TRANSACTION_CREDITS.toLocaleString("en-US")} credits.`,
   };
 }
 
@@ -1286,9 +1338,9 @@ function ensureBetSheet() {
           </div>
 
           <div class="bet-highlight drawer-purchase buy-only" data-buy-main>
-            <span class="bet-label">Purchase price</span>
+            <span class="bet-label">Credit price</span>
             <span class="bet-total-big tnum" data-total-big>$0.00</span>
-            <p class="potential-win">Potential profit of <strong data-profit-big>$0.00</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p>
+            <p class="potential-win">Potential profit of <strong data-profit-big>$0.00</strong> after <a href="#" class="fees-link" data-fees-link>fees</a>. Remaining credit balance <strong class="remaining-credit-value" data-remaining-balance>$0.00</strong> after purchase.</p>
           </div>
           <!-- SELL: proceeds + realised P&L -->
           <div class="bet-highlight sell-only">
@@ -1510,7 +1562,7 @@ function updateBetSheet() {
   const limitMode = sheet.querySelector("[data-price-mode=limit]");
   const limitEntry = sheet.querySelector("[data-limit-entry]");
   const limitStatus = limitValidation(marketPrice);
-  const transactionStatus = transactionValidation(qty);
+  const transactionStatus = transactionValidation(qty, total);
   marketMode.classList.toggle("is-active", !betState.limitOpen);
   limitMode.classList.toggle("is-active", betState.limitOpen);
   limitMode.classList.toggle("is-error", betState.limitOpen && !limitStatus.valid);
@@ -1534,6 +1586,7 @@ function updateBetSheet() {
   // highlight — total bet + green profit-after-fees
   sheet.querySelector("[data-total-big]").textContent = betState.priceUpdating ? "—" : money(total);
   sheet.querySelector("[data-profit-big]").textContent = money(net);
+  sheet.querySelector("[data-remaining-balance]").textContent = money(Math.max(0, USER.balance - total));
 
   // see-details breakdown
   sheet.querySelector("[data-s-price]").textContent = `${priceCents}¢`;
@@ -1743,7 +1796,8 @@ function placeBet() {
   const activeMarket = betState.markets[betState.market] || { yes: 50, no: 50 };
   const activePrice = betState.contract === "yes" ? activeMarket.yes : activeMarket.no;
   if (!limitValidation(activePrice).valid) return;
-  if (!transactionValidation(computeBet().qty).valid) return;
+  const bet = computeBet();
+  if (!transactionValidation(bet.qty, bet.total).valid) return;
   if (betState.editPending != null) return updatePendingOrder();
   const sheet = ensureBetSheet();
   const { priceCents, qty, subtotal, fee, total } = computeBet();
@@ -2056,9 +2110,9 @@ function initFeesPage() {
 
 function initStickyBet() {
   const bar = $("#betBar");
-  const grid = $(".markets .mkt-grid");
+  const scorecard = $("#scorecardSection");
   const hero = $(".markets .mkt-row"); // first row = Get the Lead
-  if (!bar || !hero) return;
+  if (!bar || !hero || !scorecard) return;
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       ([entry]) => bar.classList.toggle("is-visible", !entry.isIntersecting && entry.boundingClientRect.top < 0),
@@ -2067,7 +2121,7 @@ function initStickyBet() {
     io.observe(hero);
   }
   bar.querySelector(".betbar-cta").addEventListener("click", () => {
-    grid.scrollIntoView({ behavior: "smooth", block: "center" });
+    scorecard.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -2118,6 +2172,13 @@ function getAuth() {
 function isAuthed() { return !!getAuth(); }
 function setAuth(user) { try { localStorage.setItem(AUTH_KEY, JSON.stringify(user)); } catch (e) { /* ignore */ } }
 function clearAuth() { try { localStorage.removeItem(AUTH_KEY); } catch (e) { /* ignore */ } }
+function syncUserBalanceFromAuth() {
+  const auth = getAuth();
+  const storedBalance = Number(auth?.balance);
+  if (!Number.isFinite(storedBalance)) return;
+  const isHome = !!$("#gameGrid") && !!$(".hero");
+  USER.balance = auth.welcomeCreditPending && isHome ? 0 : storedBalance;
+}
 function firstNameFor(auth = getAuth()) {
   const value = auth?.firstName || auth?.name || USER.name;
   return String(value).trim().split(/\s+/)[0] || "Player";
@@ -2728,6 +2789,51 @@ function animateWalletCredit(amount) {
   requestAnimationFrame(step);
 }
 
+// On the new user's first home visit, let the wallet visibly receive the
+// welcome credits. The pending flag is cleared immediately so refreshes do not replay it.
+function initWelcomeCreditAnimation() {
+  const auth = getAuth();
+  if (!auth?.welcomeCreditPending || !$("#gameGrid") || !$(".hero")) return;
+
+  const target = Number(auth.balance) || WELCOME_CREDIT;
+  setAuth({ ...auth, balance: target, welcomeCreditPending: false });
+  USER.balance = target;
+
+  const chip = $("#headerWallet .wallet-chip");
+  const amountEl = $("#headerWallet .wallet-amount");
+  if (!chip || !amountEl) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    amountEl.textContent = money(target);
+    return;
+  }
+
+  window.setTimeout(() => {
+    chip.classList.add("wallet-credit", "wallet-welcome-credit");
+    const pop = document.createElement("span");
+    pop.className = "wallet-pop wallet-welcome-pop tnum";
+    pop.textContent = `+${money(target)}`;
+    chip.appendChild(pop);
+
+    let startedAt = null;
+    const duration = 1600;
+    const step = (now) => {
+      if (startedAt === null) startedAt = now;
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      amountEl.textContent = money(target * eased);
+      if (progress < 1) requestAnimationFrame(step);
+      else {
+        amountEl.textContent = money(target);
+        window.setTimeout(() => {
+          chip.classList.remove("wallet-credit", "wallet-welcome-credit");
+          pop.remove();
+        }, 700);
+      }
+    };
+    requestAnimationFrame(step);
+  }, 550);
+}
+
 function initPositionsCarousel() {
   const car = $("#positionList");
   const dots = $("#posDots");
@@ -3014,7 +3120,12 @@ function initAddFunds() {
   sheet.querySelector("[data-add-cancel]").addEventListener("click", close);
   sheet.querySelector("[data-add-confirm]").addEventListener("click", () => {
     const v = parseInt(input.value.replace(/[^0-9]/g, ""), 10) || 0;
-    if (v > 0) { USER.balance += v; $("[data-balance]").textContent = money(USER.balance); applyAuthChrome(); }
+    if (v > 0) {
+      USER.balance += v;
+      setAuth({ ...getAuth(), balance: USER.balance });
+      $("[data-balance]").textContent = money(USER.balance);
+      applyAuthChrome();
+    }
     close();
   });
   setAmt(50);
@@ -3267,23 +3378,68 @@ function initSocialButtons() {
 }
 
 function initLogin() {
-  const form = $("[data-login-form]");
-  if (!form) return;
-  const emailEl = form.querySelector("#email");
-  const passEl = form.querySelector("#password");
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearErr(emailEl); clearErr(passEl);
-    const email = emailEl.value.trim();
-    let ok = true;
-    if (!email) { showErr(emailEl, "Enter your email"); ok = false; }
-    else if (!validEmail(email)) { showErr(emailEl, "Enter a valid email address"); ok = false; }
-    if (!passEl.value) { showErr(passEl, "Enter your password"); ok = false; }
-    if (!ok) return;
-    setAuth({ name: nameFromEmail(email), email });
+  const steps = $("#loginSteps");
+  if (!steps) return;
+
+  let identifier = "";
+  let identifierType = "email";
+  const go = (step) => {
+    steps.dataset.step = step;
+    const focusEl = steps.querySelector(`.auth-step[data-step="${step}"] input`);
+    if (focusEl) setTimeout(() => focusEl.focus(), 80);
+  };
+  const finishLogin = () => {
+    const existing = getAuth() || {};
+    setAuth({
+      ...existing,
+      name: existing.name || (identifierType === "email" ? nameFromEmail(identifier) : USER.name),
+      email: identifierType === "email" ? identifier : existing.email,
+      phone: identifierType === "phone" ? formatPhone(identifier) : existing.phone,
+      provider: "password",
+    });
     location.href = postAuthDest();
+  };
+
+  const identifierForm = $("[data-login-identifier-form]", steps);
+  const identifierEl = $("#loginIdentifier", identifierForm);
+  identifierForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearErr(identifierEl);
+    identifier = identifierEl.value.trim();
+    if (!identifier) { showErr(identifierEl, "Enter your email or phone number"); return; }
+    if (validEmail(identifier)) identifierType = "email";
+    else if (validPhone(identifier)) identifierType = "phone";
+    else { showErr(identifierEl, "Enter a valid email or 10-digit US phone number"); return; }
+    const phoneEnding = identifierType === "phone" ? phoneDigits(identifier).slice(-4) : "4567";
+    $("[data-login-phone-ending]", steps).textContent = phoneEnding;
+    go(2);
   });
-  clearErrsOnInput(form);
+
+  const codeForm = $("[data-login-code-form]", steps);
+  const codeWrap = $("[data-code-input]", codeForm);
+  codeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearCodeErr(codeWrap);
+    const code = $$(".code-box", codeWrap).map((box) => box.value).join("");
+    if (code.length !== 6) { showCodeErr(codeWrap, "Enter the 6-digit verification code"); return; }
+    finishLogin();
+  });
+
+  const passwordForm = $("[data-login-password-form]", steps);
+  const passwordEl = $("#loginPassword", passwordForm);
+  passwordForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearErr(passwordEl);
+    if (!passwordEl.value) { showErr(passwordEl, "Enter your password"); return; }
+    finishLogin();
+  });
+
+  $("[data-login-password-option]", steps).addEventListener("click", () => go(3));
+  $$('[data-login-back]', steps).forEach((button) => button.addEventListener("click", () => go(Number(button.dataset.loginBack))));
+  $("[data-login-resend]", steps).addEventListener("click", () => showToast("Verification code resent to your registered phone", "success"));
+  clearErrsOnInput(identifierForm);
+  clearErrsOnInput(passwordForm);
+  initCodeInput(codeWrap);
 }
 
 function initCodeInput(wrap) {
@@ -3444,9 +3600,6 @@ function initSignup() {
   if (!steps) return;
   let email = "";
   let provider = "password";
-  let firstName = "";
-  let lastName = "";
-  let birthday = "";
   let phone = "";
   const go = (n) => {
     steps.dataset.step = n;
@@ -3466,84 +3619,43 @@ function initSignup() {
   });
 
   const f2 = steps.querySelector("[data-step2-form]");
-  const firstNameEl = f2.querySelector("#firstName");
-  const lastNameEl = f2.querySelector("#lastName");
-  const birthdayInputs = [$("#dobMonth", f2), $("#dobDay", f2), $("#dobYear", f2)];
-  const birthdayError = $("[data-birthday-error]", f2);
-  const clearBirthdayError = () => {
-    birthdayInputs.forEach((input) => input.classList.remove("is-error"));
-    birthdayError.hidden = true;
-    birthdayError.textContent = "";
-  };
-  const showBirthdayError = (message) => {
-    birthdayInputs.forEach((input) => input.classList.add("is-error"));
-    birthdayError.textContent = message;
-    birthdayError.hidden = false;
-  };
-  birthdayInputs.forEach((input) => {
-    input.addEventListener("input", clearBirthdayError);
-    input.addEventListener("change", clearBirthdayError);
-  });
-  f2.addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearErr(firstNameEl); clearErr(lastNameEl); clearBirthdayError();
-    let ok = true;
-    if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); ok = false; }
-    if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); ok = false; }
-    birthday = birthdayISOFromFields(f2);
-    if (!birthday) { showBirthdayError("Enter a valid month, day, and year"); ok = false; }
-    else if (!isAtLeastAge(birthday, 18)) { showBirthdayError("GTL is for users 18 or older."); ok = false; }
-    if (!ok) return;
-    firstName = firstNameEl.value.trim();
-    lastName = lastNameEl.value.trim();
-    go(3);
-  });
-  [firstNameEl, lastNameEl].forEach((input) => input.addEventListener("input", () => clearErr(input)));
-  initDateComboboxes(f2);
-
-  const f3 = steps.querySelector("[data-step3-form]");
-  const phoneEl = f3.querySelector("#phone");
+  const phoneEl = f2.querySelector("#phone");
   phoneEl.addEventListener("input", () => { phoneEl.value = formatPhoneInput(phoneEl.value); });
-  f3.addEventListener("submit", (e) => {
+  f2.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(phoneEl);
     if (!phoneEl.value.trim()) { showErr(phoneEl, "Enter your phone number"); return; }
     if (!validPhone(phoneEl.value)) { showErr(phoneEl, "Enter a valid 10-digit US phone number"); return; }
     phone = formatPhone(phoneEl.value);
     phoneEl.value = phone;
-    const tgt = steps.querySelector("[data-code-phone]");
-    if (tgt) tgt.textContent = phone;
+    const target = steps.querySelector("[data-code-phone]");
+    if (target) target.textContent = phone;
+    go(3);
+  });
+
+  const f3 = steps.querySelector("[data-step3-form]");
+  const codeWrap = f3.querySelector("[data-code-input]");
+  f3.addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearCodeErr(codeWrap);
+    const code = $$(".code-box", codeWrap).map((box) => box.value).join("");
+    if (code.length !== 6) { showCodeErr(codeWrap, "Enter the 6-digit code we sent you"); return; }
     go(4);
   });
 
   const f4 = steps.querySelector("[data-step4-form]");
-  const codeWrap = f4.querySelector("[data-code-input]");
+  const p1 = f4.querySelector("#newpass");
+  const p2 = f4.querySelector("#confirmpass");
   f4.addEventListener("submit", (e) => {
     e.preventDefault();
-    clearCodeErr(codeWrap);
-    const code = $$(".code-box", codeWrap).map((b) => b.value).join("");
-    if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit code we sent you"); return; }
-    go(5);
-  });
-
-  const f5 = steps.querySelector("[data-step5-form]");
-  const p1 = f5.querySelector("#newpass");
-  const p2 = f5.querySelector("#confirmpass");
-  const terms = f5.querySelector("#acceptTerms");
-  const termsError = f5.querySelector("[data-terms-error]");
-  f5.addEventListener("submit", (e) => {
-    e.preventDefault();
     clearErr(p1); clearErr(p2);
-    termsError.hidden = true;
     if (!p1.value) { showErr(p1, "Create a password"); return; }
     if (p1.value.length < 8) { showErr(p1, "Use at least 8 characters"); return; }
     if (!p2.value) { showErr(p2, "Re-enter your password to confirm"); return; }
     if (p1.value !== p2.value) { showErr(p2, "Passwords don't match"); return; }
-    if (!terms.checked) { termsError.hidden = false; terms.focus(); return; }
-    setAuth({ firstName, lastName, name: `${firstName} ${lastName}`, birthday, email, phone, provider, memberSince: new Date().toISOString(), onboarding: true });
+    setAuth({ email, phone, provider, memberSince: new Date().toISOString(), onboarding: true });
     location.href = postSignupDest();
   });
-  terms.addEventListener("change", () => { if (terms.checked) termsError.hidden = true; });
 
   $$("[data-step-back]", steps).forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.stepBack))));
   $$("[data-social]", steps).forEach((b) => b.addEventListener("click", () => {
@@ -3553,157 +3665,7 @@ function initSignup() {
   }));
   const resend = steps.querySelector("[data-resend]");
   if (resend) resend.addEventListener("click", () => showToast("Code resent — check your phone", "success"));
-  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f3); clearErrsOnInput(f5);
-  initCodeInput(codeWrap);
-}
-
-function initSignupPrototype() {
-  const steps = $("#signupPrototypeSteps");
-  if (!steps) return;
-
-  let provider = "phone";
-  let phone = "";
-  let email = "";
-  let detailsBackStep = 1;
-  const go = (step) => {
-    steps.dataset.step = step;
-    const focusEl = steps.querySelector(`.auth-step[data-step="${step}"] input`);
-    if (focusEl) setTimeout(() => focusEl.focus(), 80);
-  };
-
-  const phoneForm = $("[data-prototype-phone-form]", steps);
-  const phoneEl = $("#prototypePhone", phoneForm);
-  const phoneSubmit = $("[data-prototype-phone-submit]", phoneForm);
-  const syncPhoneSubmit = () => { phoneSubmit.disabled = !phoneEl.value.trim(); };
-  phoneEl.addEventListener("input", () => {
-    phoneEl.value = formatPhoneInput(phoneEl.value);
-    syncPhoneSubmit();
-  });
-  syncPhoneSubmit();
-  phoneForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    clearErr(phoneEl);
-    if (!phoneEl.value.trim()) { showErr(phoneEl, "Enter your phone number"); return; }
-    if (!validPhone(phoneEl.value)) { showErr(phoneEl, "Enter a valid 10-digit US phone number"); return; }
-    provider = "phone";
-    phone = formatPhone(phoneEl.value);
-    phoneEl.value = phone;
-    const destination = $("[data-prototype-code-phone]", steps);
-    if (destination) destination.textContent = phone;
-    detailsBackStep = 2;
-    go(2);
-  });
-
-  const codeForm = $("[data-prototype-code-form]", steps);
-  const codeWrap = $("[data-code-input]", codeForm);
-  codeForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    clearCodeErr(codeWrap);
-    const code = $$(".code-box", codeWrap).map((box) => box.value).join("");
-    if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit code we sent you"); return; }
-    go(3);
-  });
-
-  const detailsForm = $("[data-prototype-details-form]", steps);
-  const firstNameEl = $("#prototypeFirstName", detailsForm);
-  const lastNameEl = $("#prototypeLastName", detailsForm);
-  const birthdayEl = $("#prototypeDob", detailsForm);
-  const termsEl = $("#prototypeTerms", detailsForm);
-  const consentError = $("[data-prototype-consent-error]", detailsForm);
-  detailsForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    clearErr(firstNameEl);
-    clearErr(lastNameEl);
-    clearErr(birthdayEl);
-    consentError.hidden = true;
-    let valid = true;
-    if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); valid = false; }
-    if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); valid = false; }
-    if (!birthdayEl.value) { showErr(birthdayEl, "Enter your date of birth"); valid = false; }
-    else if (!isAtLeastAge(birthdayEl.value, 18)) { showErr(birthdayEl, "GTL is for users 18 or older."); valid = false; }
-    if (!termsEl.checked) { consentError.hidden = false; valid = false; }
-    if (!valid) return;
-    const firstName = firstNameEl.value.trim();
-    const lastName = lastNameEl.value.trim();
-    setAuth({
-      firstName,
-      lastName,
-      name: `${firstName} ${lastName}`,
-      email,
-      phone,
-      birthday: birthdayEl.value,
-      provider,
-      memberSince: new Date().toISOString(),
-      onboarding: true,
-    });
-    location.href = postSignupDest();
-  });
-
-  $$('[data-prototype-social]', steps).forEach((button) => button.addEventListener("click", () => {
-    provider = button.dataset.prototypeSocial;
-    email = provider === "google" ? "alex.morgan@gmail.com" : "alex@icloud.com";
-    phone = "";
-    detailsBackStep = 1;
-    go(3);
-  }));
-  $("[data-prototype-back]", steps)?.addEventListener("click", () => go(1));
-  $("[data-prototype-details-back]", steps)?.addEventListener("click", () => go(detailsBackStep));
-  $("[data-prototype-resend]", steps)?.addEventListener("click", () => showToast("Code resent — check your phone", "success"));
-  termsEl.addEventListener("change", () => { if (termsEl.checked) consentError.hidden = true; });
-  clearErrsOnInput(phoneForm);
-  clearErrsOnInput(detailsForm);
-  initCodeInput(codeWrap);
-}
-
-function initLoginPrototype() {
-  const steps = $("#loginPrototypeSteps");
-  if (!steps) return;
-
-  let phone = "";
-  const go = (step) => {
-    steps.dataset.step = step;
-    const focusEl = steps.querySelector(`.auth-step[data-step="${step}"] input`);
-    if (focusEl) setTimeout(() => focusEl.focus(), 80);
-  };
-
-  const loginForm = $("[data-prototype-login-form]", steps);
-  const phoneEl = $("#prototypeLoginPhone", loginForm);
-  const phoneSubmit = $("[data-prototype-login-submit]", loginForm);
-  const syncPhoneSubmit = () => { phoneSubmit.disabled = !phoneEl.value.trim(); };
-  phoneEl.addEventListener("input", () => {
-    phoneEl.value = formatPhoneInput(phoneEl.value);
-    syncPhoneSubmit();
-  });
-  syncPhoneSubmit();
-  loginForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    clearErr(phoneEl);
-    phone = phoneEl.value.trim();
-    let valid = true;
-    if (!phone) { showErr(phoneEl, "Enter your phone number"); valid = false; }
-    else if (!validPhone(phone)) { showErr(phoneEl, "Enter a valid 10-digit US phone number"); valid = false; }
-    if (!valid) return;
-    phone = formatPhone(phone);
-    phoneEl.value = phone;
-    const destination = $("[data-prototype-login-destination]", steps);
-    if (destination) destination.textContent = phone;
-    go(2);
-  });
-
-  const codeForm = $("[data-prototype-login-code-form]", steps);
-  const codeWrap = $("[data-code-input]", codeForm);
-  codeForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    clearCodeErr(codeWrap);
-    const code = $$(".code-box", codeWrap).map((box) => box.value).join("");
-    if (code.length !== 8) { showCodeErr(codeWrap, "Enter the 8-digit verification code"); return; }
-    setAuth({ name: USER.name, phone });
-    location.href = postAuthDest();
-  });
-
-  $("[data-prototype-login-back]", steps)?.addEventListener("click", () => go(1));
-  $("[data-prototype-login-resend]", steps)?.addEventListener("click", () => showToast("Verification code resent", "success"));
-  clearErrsOnInput(loginForm);
+  clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f4);
   initCodeInput(codeWrap);
 }
 
@@ -3714,19 +3676,76 @@ function initWelcome() {
 
   const credit = WELCOME_CREDIT.toLocaleString("en-US");
   const bonusEl = $("[data-welcome-bonus]", main);
-  const reward = $("[data-welcome-reward]", main);
+  const intro = $("[data-welcome-intro]", main);
+  const details = $("[data-welcome-details]", main);
+  const usernamePanel = $("[data-welcome-username]", main);
+  const detailsForm = $("[data-details-form]", main);
   const usernameForm = $("[data-username-form]", main);
   if (bonusEl) bonusEl.textContent = credit;
 
-  const usernameEl = $("#username", usernameForm);
   const authAtStart = getAuth();
-  $$('[data-welcome-name]', reward).forEach((el) => { el.textContent = firstNameFor(authAtStart); });
-  const suggestedUsername = `${authAtStart?.firstName || ""}${authAtStart?.lastName || ""}`
-    .toLowerCase()
-    .replace(/[^a-z0-9_]/g, "")
-    .slice(0, 20);
-  if (!usernameEl.value && authAtStart?.username) usernameEl.value = authAtStart.username;
-  else if (!usernameEl.value && suggestedUsername.length >= 3) usernameEl.value = suggestedUsername;
+  const firstNameEl = $("#firstName", detailsForm);
+  const lastNameEl = $("#lastName", detailsForm);
+  const birthdayInputs = [$("#dobMonth", detailsForm), $("#dobDay", detailsForm), $("#dobYear", detailsForm)];
+  const birthdayError = $("[data-birthday-error]", detailsForm);
+  const usernameEl = $("#username", usernameForm);
+
+  const showState = (state) => {
+    main.dataset.welcomeState = state;
+    intro.hidden = state !== "intro";
+    details.hidden = state !== "details";
+    usernamePanel.hidden = state !== "username";
+    const focusEl = state === "details" ? firstNameEl : state === "username" ? usernameEl : null;
+    if (focusEl) setTimeout(() => focusEl.focus(), 120);
+  };
+  const clearBirthdayError = () => {
+    birthdayInputs.forEach((input) => input.classList.remove("is-error"));
+    birthdayError.hidden = true;
+    birthdayError.textContent = "";
+  };
+  const showBirthdayError = (message) => {
+    birthdayInputs.forEach((input) => input.classList.add("is-error"));
+    birthdayError.textContent = message;
+    birthdayError.hidden = false;
+  };
+
+  firstNameEl.value = authAtStart?.firstName || "";
+  lastNameEl.value = authAtStart?.lastName || "";
+  birthdayInputs.forEach((input) => {
+    input.addEventListener("input", clearBirthdayError);
+    input.addEventListener("change", clearBirthdayError);
+  });
+  initDateComboboxes(detailsForm);
+  clearErrsOnInput(detailsForm);
+
+  detailsForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    clearErr(firstNameEl); clearErr(lastNameEl); clearBirthdayError();
+    let valid = true;
+    if (!firstNameEl.value.trim()) { showErr(firstNameEl, "Enter your first name"); valid = false; }
+    if (!lastNameEl.value.trim()) { showErr(lastNameEl, "Enter your last name"); valid = false; }
+    const birthday = birthdayISOFromFields(detailsForm);
+    if (!birthday) { showBirthdayError("Enter a valid month, day, and year"); valid = false; }
+    else if (!isAtLeastAge(birthday, 18)) { showBirthdayError("GTL is for users 18 or older."); valid = false; }
+    if (!valid) return;
+
+    const firstName = firstNameEl.value.trim();
+    const lastName = lastNameEl.value.trim();
+    setAuth({ ...getAuth(), firstName, lastName, name: `${firstName} ${lastName}`, birthday });
+    const suggestedUsername = `${firstName}${lastName}`.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 20);
+    if (!usernameEl.value && suggestedUsername.length >= 3) usernameEl.value = suggestedUsername;
+    showState("username");
+  });
+
+  const introDelay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 900 : 3200;
+  window.setTimeout(() => {
+    main.classList.add("is-transitioning");
+    window.setTimeout(() => {
+      main.classList.remove("is-transitioning");
+      showState("details");
+    }, 280);
+  }, introDelay);
+
   usernameForm.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(usernameEl);
@@ -3734,7 +3753,7 @@ function initWelcome() {
     if (!username) { showErr(usernameEl, "Choose a username"); return; }
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) { showErr(usernameEl, "Use 3–20 letters, numbers, or underscores"); return; }
     const auth = getAuth();
-    setAuth({ ...auth, username, onboarding: false });
+    setAuth({ ...auth, username, onboarding: false, balance: WELCOME_CREDIT, welcomeCreditPending: true });
     clearBetIntent();
     location.href = "home.html";
   });
@@ -3907,11 +3926,54 @@ function initContact() {
 }
 
 /* ------------------------------------------------------------- INIT */
+function initEmbeddedPreviewHeightReporting() {
+  if (window.parent === window) return;
+
+  let animationFrame = 0;
+  const reportHeight = () => {
+    if (animationFrame) cancelAnimationFrame(animationFrame);
+    animationFrame = requestAnimationFrame(() => {
+      animationFrame = 0;
+      const root = document.documentElement;
+      const pageBody = document.body;
+      const height = Math.max(
+        root.scrollHeight,
+        root.offsetHeight,
+        pageBody?.scrollHeight || 0,
+        pageBody?.offsetHeight || 0,
+      );
+      window.parent.postMessage({ type: "gtl-preview-height", height: Math.ceil(height) }, "*");
+    });
+  };
+
+  const resizeObserver = new ResizeObserver(reportHeight);
+  resizeObserver.observe(document.documentElement);
+  if (document.body) resizeObserver.observe(document.body);
+
+  const mutationObserver = new MutationObserver(reportHeight);
+  mutationObserver.observe(document.body || document.documentElement, {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true,
+  });
+
+  window.addEventListener("load", reportHeight);
+  window.addEventListener("resize", reportHeight);
+  document.fonts?.ready.then(reportHeight).catch(() => {});
+  [0, 100, 500, 1500].forEach((delay) => setTimeout(reportHeight, delay));
+  reportHeight();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  initEmbeddedPreviewHeightReporting();
+  syncUserBalanceFromAuth();
   renderHeader();
   applyAuthChrome();
   renderTiles();
+  renderHomeEdgeCase();
   renderAuthedHome();
+  initWelcomeCreditAnimation();
   initExpanders();
   initPausedDemo();
   initLeagueFilter();
@@ -3933,8 +3995,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initSocialButtons();
   initLogin();
   initSignup();
-  initLoginPrototype();
-  initSignupPrototype();
   initWelcome();
   initForgot();
   initContact();

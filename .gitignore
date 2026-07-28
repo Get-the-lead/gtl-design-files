@@ -10,6 +10,9 @@ PRODUCT.md
 gate.config.js
 **/gate.config.js
 
+# Supabase CLI local project metadata
+supabase/.temp/
+
 # macOS
 .DS_Store
 **/.DS_Store

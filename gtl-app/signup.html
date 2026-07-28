@@ -3,35 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GTL - Create Account</title>
+  <title>GTL — Create Account</title>
   <script>try{var t=localStorage.getItem('gtl-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
   <script>(function(){try{if(sessionStorage.getItem('gtl-gate')==='ok')return;}catch(e){return;}location.replace('index.html');})();</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="auth.css" />
 </head>
 <body class="auth-body">
-
   <header class="site-header" id="siteHeader"></header>
 
   <main class="auth-main">
     <div class="auth-card">
       <a class="auth-close" href="home.html" aria-label="Close sign up">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </a>
 
       <div class="auth-steps" data-step="1" id="signupSteps">
-        <div class="auth-step" data-step="1">
+        <section class="auth-step" data-step="1" aria-labelledby="signupEmailTitle">
           <div class="auth-head">
-            <h1>Create your account</h1>
-            <p>Start trading the live games in under a minute.</p>
+            <h1 id="signupEmailTitle">Create your account</h1>
+            <p>Choose a social account or continue with your email.</p>
           </div>
 
           <div class="social-row">
@@ -46,81 +42,25 @@
           </div>
 
           <div class="auth-divider">or</div>
-
           <form data-step1-form novalidate>
             <div class="field">
               <label for="email">Email</label>
               <input class="field-input" id="email" type="email" autocomplete="email" placeholder="you@email.com" required />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+            <button class="btn btn-primary auth-submit" type="submit">Continue with Email</button>
           </form>
+          <p class="auth-fineprint">By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+        </section>
 
-        </div>
-
-        <div class="auth-step" data-step="2">
+        <section class="auth-step" data-step="2" aria-labelledby="signupPhoneTitle">
           <button class="step-back" type="button" data-step-back="1">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Back
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1>Tell us about you</h1>
-            <p>Add your name and date of birth to confirm your eligibility.</p>
+            <h1 id="signupPhoneTitle">Add your phone number</h1>
+            <p>We’ll use this number to verify and protect your account.</p>
           </div>
-
           <form data-step2-form novalidate>
-            <div class="signup-name-row">
-              <div class="field">
-                <label for="firstName">First name</label>
-                <input class="field-input" id="firstName" type="text" autocomplete="given-name" placeholder="Alex" required />
-              </div>
-              <div class="field">
-                <label for="lastName">Last name</label>
-                <input class="field-input" id="lastName" type="text" autocomplete="family-name" placeholder="Morgan" required />
-              </div>
-            </div>
-            <fieldset class="field signup-birthday-field" data-birthday-field>
-              <legend>Date of birth</legend>
-              <div class="date-fields">
-                <div class="date-part">
-                  <div class="field-combobox" data-date-combobox="month">
-                    <input class="field-input" id="dobMonth" type="text" inputmode="text" autocomplete="bday-month" placeholder="Month" role="combobox" aria-label="Month" aria-autocomplete="list" aria-controls="dobMonthOptions" aria-expanded="false" required />
-                    <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show month options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                    <div class="combobox-menu" id="dobMonthOptions" role="listbox" hidden></div>
-                  </div>
-                </div>
-                <div class="date-part">
-                  <div class="field-combobox" data-date-combobox="day">
-                    <input class="field-input" id="dobDay" type="text" inputmode="numeric" autocomplete="bday-day" placeholder="Day" role="combobox" aria-label="Day" aria-autocomplete="list" aria-controls="dobDayOptions" aria-expanded="false" maxlength="2" required />
-                    <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show day options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                    <div class="combobox-menu" id="dobDayOptions" role="listbox" hidden></div>
-                  </div>
-                </div>
-                <div class="date-part">
-                  <div class="field-combobox" data-date-combobox="year">
-                    <input class="field-input" id="dobYear" type="text" inputmode="numeric" autocomplete="bday-year" placeholder="Year" role="combobox" aria-label="Year" aria-autocomplete="list" aria-controls="dobYearOptions" aria-expanded="false" maxlength="4" required />
-                    <button class="combobox-toggle" type="button" data-date-toggle aria-label="Show year options" tabindex="-1"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                    <div class="combobox-menu" id="dobYearOptions" role="listbox" hidden></div>
-                  </div>
-                </div>
-              </div>
-              <span class="field-hint">You must be 18 or older to use GTL.</span>
-              <p class="field-error birthday-error" data-birthday-error role="alert" hidden></p>
-            </fieldset>
-            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
-          </form>
-        </div>
-
-        <div class="auth-step" data-step="3">
-          <button class="step-back" type="button" data-step-back="2">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Back
-          </button>
-          <div class="auth-head">
-            <h1>Add your phone number</h1>
-            <p>We’ll send a verification code to confirm it’s yours.</p>
-          </div>
-
-          <form data-step3-form novalidate>
             <div class="field">
               <label for="phone">Phone number</label>
               <input class="field-input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" required />
@@ -128,51 +68,44 @@
             </div>
             <button class="btn btn-primary auth-submit" type="submit">Continue</button>
           </form>
-        </div>
+        </section>
 
-        <div class="auth-step" data-step="4">
-          <button class="step-back" type="button" data-step-back="3">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Back
+        <section class="auth-step" data-step="3" aria-labelledby="signupVerifyTitle">
+          <button class="step-back" type="button" data-step-back="2">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1>Verify your phone</h1>
-            <p>We sent an 8-digit code by text to <span class="code-sent-to" data-code-phone>your phone</span>.</p>
+            <h1 id="signupVerifyTitle">Verify your phone</h1>
+            <p>Enter the 6-digit code sent to <span class="code-sent-to" data-code-phone>your phone</span>.</p>
           </div>
-
-          <form data-step4-form novalidate>
+          <form data-step3-form novalidate>
             <div class="code-input" data-code-input>
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" />
+              <input class="code-box" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Digit 1" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
               <span class="code-dash" aria-hidden="true"></span>
+              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 7" />
-              <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 8" />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Verify</button>
+            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
           </form>
-
           <p class="code-resend">Didn't get a code? <button type="button" data-resend>Resend</button></p>
-        </div>
+        </section>
 
-        <div class="auth-step" data-step="5">
-          <button class="step-back" type="button" data-step-back="4">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Back
+        <section class="auth-step" data-step="4" aria-labelledby="signupPasswordTitle">
+          <button class="step-back" type="button" data-step-back="3">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1>Create a password</h1>
-            <p>Keep your account secure with a strong password.</p>
+            <h1 id="signupPasswordTitle">Enter a password</h1>
+            <p>Keep your account secure with a password you don’t use elsewhere.</p>
           </div>
-
-          <form data-step5-form novalidate>
+          <form data-step4-form novalidate>
             <div class="field">
               <label for="newpass">Password</label>
               <div class="field-pass">
-                <input class="field-input" id="newpass" type="password" autocomplete="new-password" placeholder="At least 8 characters" required minlength="8" />
+                <input class="field-input" id="newpass" type="password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required />
                 <button class="pass-toggle" type="button" data-pass-toggle aria-label="Show password">
                   <svg class="icon-show" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
                   <svg class="icon-hide" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 10.7a3 3 0 0 0 4.2 4.2M9.4 5.2A10.6 10.6 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.4 4.1M6.5 6.6A17.4 17.4 0 0 0 2 12s3.5 7 10 7c1.2 0 2.3-.2 3.3-.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -189,22 +122,15 @@
                 </button>
               </div>
             </div>
-            <label class="terms-check" for="acceptTerms">
-              <input id="acceptTerms" type="checkbox" required />
-              <span>I agree to GTL's <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.</span>
-            </label>
-            <p class="terms-error" data-terms-error role="alert" hidden>You need to accept the Terms and Conditions to create an account.</p>
             <button class="btn btn-primary auth-submit" type="submit">Create Account</button>
           </form>
-        </div>
-
+        </section>
       </div>
 
       <p class="auth-foot">Already have an account? <a href="login.html">Login</a></p>
-      <p class="prototype-switch"><a href="signup-v2.html">Create an account with your phone</a></p>
     </div>
   </main>
 
-  <script src="app.js?v=20260728-3" defer></script>
+  <script src="app.js?v=20260729-1" defer></script>
 </body>
 </html>
