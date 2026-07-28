@@ -10,7 +10,7 @@ const GAMES = [
     id: "ny-bos", league: "nba", clock: "05:18", period: "Q4", variant: 2,
     home: { abbr: "NYK", name: "Knicks", score: 84, color: "#F58426", logo: L + "nba-ny.png" },
     away: { abbr: "BOS", name: "Celtics", score: 89, color: "#007A33", logo: L + "nba-bos.png" },
-    markets: { gtl: { yes: 41, no: 59 }, tie: { yes: 17, no: 83 }, ktl: { yes: 63, no: 37 } },
+    markets: { gtl: { yes: 41, no: 59 }, tie: { yes: 17, no: 83 }, ktl: { yes: 42, no: 58 } },
     stats: [
       { label: "Field Goal %", home: 46, away: 51 },
       { label: "Rebounds", home: 38, away: 35 },
@@ -23,7 +23,7 @@ const GAMES = [
     id: "kc-sf", league: "nfl", clock: "08:42", period: "Q2", variant: 1,
     home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", logo: L + "nfl-kc.png" },
     away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D", logo: L + "nfl-sf.png" },
-    markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 64, no: 36 } },
+    markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 40, no: 60 } },
     stats: [
       { label: "Total Team Yards", home: 214, away: 186 },
       { label: "Pass Yards", home: 151, away: 129 },
@@ -36,7 +36,7 @@ const GAMES = [
     id: "den-dal", league: "nba", clock: "01:33", period: "Q4", variant: 4,
     home: { abbr: "DEN", name: "Nuggets", score: 102, color: "#FEC524", logo: L + "nba-den.png" },
     away: { abbr: "DAL", name: "Mavericks", score: 99, color: "#00538C", logo: L + "nba-dal.png" },
-    markets: { gtl: { yes: 33, no: 67 }, tie: { yes: 26, no: 74 }, ktl: { yes: 71, no: 29 } },
+    markets: { gtl: { yes: 33, no: 67 }, tie: { yes: 26, no: 74 }, ktl: { yes: 41, no: 59 } },
     stats: [
       { label: "Field Goal %", home: 49, away: 47 },
       { label: "Rebounds", home: 41, away: 39 },
@@ -50,7 +50,7 @@ const GAMES = [
     paused: { message: "Trading paused. Recalculating markets.", clears: true },
     home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", logo: L + "nfl-buf.png" },
     away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: L + "nfl-mia.png" },
-    markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
+    markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 37, no: 63 } },
     stats: [
       { label: "Total Team Yards", home: 288, away: 264 },
       { label: "Pass Yards", home: 201, away: 188 },
@@ -63,7 +63,7 @@ const GAMES = [
     id: "lal-gs", league: "nba", clock: "03:42", period: "Q3", variant: 6,
     home: { abbr: "LAL", name: "Lakers", score: 58, color: "#552583", logo: L + "nba-lal.png" },
     away: { abbr: "GSW", name: "Warriors", score: 61, color: "#1D428A", logo: L + "nba-gs.png" },
-    markets: { gtl: { yes: 47, no: 53 }, tie: { yes: 28, no: 72 }, ktl: { yes: 55, no: 45 } },
+    markets: { gtl: { yes: 47, no: 53 }, tie: { yes: 28, no: 72 }, ktl: { yes: 25, no: 75 } },
     stats: [
       { label: "Field Goal %", home: 44, away: 48 },
       { label: "Rebounds", home: 29, away: 26 },
@@ -77,7 +77,7 @@ const GAMES = [
     paused: { message: "Markets open when a team takes the lead.", clears: false },
     home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: L + "nfl-dal.png" },
     away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: L + "nfl-phi.png" },
-    markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 64, no: 36 }, ktl: { yes: 50, no: 50 } },
+    markets: { gtl: { yes: 34, no: 66 }, tie: { yes: 33, no: 67 }, ktl: { yes: 33, no: 67 } },
     stats: [
       { label: "Total Team Yards", home: 341, away: 352 },
       { label: "Pass Yards", home: 246, away: 258 },
@@ -519,6 +519,57 @@ function initScrollTop() {
 // A price move of at least 5¢, in either direction
 const priceDelta = () => (5 + Math.floor(Math.random() * 5)) * (Math.random() < 0.5 ? -1 : 1);
 
+function setMarketRowYesPrice(row, yes) {
+  const yesEl = row.querySelector(".price.yes");
+  const noEl = row.querySelector(".price.no");
+  if (!yesEl || !noEl) return;
+  const no = 100 - yes;
+  const gameId = yesEl.dataset.game;
+  const market = yesEl.dataset.market;
+
+  yesEl.textContent = `${yes}¢`;
+  noEl.textContent = `${no}¢`;
+  const marketLabel = MARKET_LABELS[market] || market;
+  yesEl.setAttribute("aria-label", `${marketLabel} Yes ${yes} cents`);
+  noEl.setAttribute("aria-label", `${marketLabel} No ${no} cents`);
+
+  const game = GAMES.find((item) => item.id === gameId);
+  if (game?.markets[market]) game.markets[market] = { yes, no };
+  if (betState.game?.id === gameId && betState.markets[market]) betState.markets[market] = { yes, no };
+
+  [yesEl, noEl].forEach((element) => {
+    element.classList.remove("flash");
+    void element.offsetWidth;
+    element.classList.add("flash");
+  });
+}
+
+function moveYesPrices(rows, primaryRow, requestedDelta, allowDisabled = false) {
+  const primaryYes = primaryRow?.querySelector(".price.yes");
+  if (!primaryYes || (!allowDisabled && primaryYes.disabled)) return;
+  const primaryPrice = parseInt(primaryYes.textContent, 10);
+  if (!Number.isFinite(primaryPrice)) return;
+
+  const candidates = rows
+    .filter((row) => row !== primaryRow)
+    .map((row) => {
+      const yesEl = row.querySelector(".price.yes");
+      const price = parseInt(yesEl?.textContent, 10);
+      if (!yesEl || (!allowDisabled && yesEl.disabled) || !Number.isFinite(price)) return null;
+      const minDelta = Math.max(5 - primaryPrice, price - 95);
+      const maxDelta = Math.min(95 - primaryPrice, price - 5);
+      const delta = Math.max(minDelta, Math.min(maxDelta, requestedDelta));
+      return { row, price, delta };
+    })
+    .filter((candidate) => candidate && candidate.delta !== 0)
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+  if (!candidates.length) return;
+
+  const partner = candidates[0];
+  setMarketRowYesPrice(primaryRow, primaryPrice + partner.delta);
+  setMarketRowYesPrice(partner.row, partner.price - partner.delta);
+}
+
 // Live clocks — tick each running game's clock down once a second (prototype liveness).
 // Games with no clock (e.g. a quarter break) are skipped.
 function startClockTicker() {
@@ -538,15 +589,10 @@ function startPriceTicker() {
   if (!rows.length) return;
   const bump = (row) => {
     if (row.closest("[data-recalc-managed]")) return; // the recalc cycle owns these rows (game 1)
-    const yesEl = row.querySelector(".price.yes");
-    const noEl = row.querySelector(".price.no");
-    if (!yesEl || !noEl) return;
-    if (yesEl.disabled || noEl.disabled) return;
-    let yes = parseInt(yesEl.textContent, 10) + priceDelta();
-    yes = Math.max(5, Math.min(95, yes));
-    yesEl.textContent = `${yes}¢`;
-    noEl.textContent = `${100 - yes}¢`;
-    [yesEl, noEl].forEach((el) => { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); });
+    const yesEl = row.querySelector(".price.yes[data-game]");
+    if (!yesEl) return;
+    const gameRows = rows.filter((candidate) => candidate.querySelector(`.price.yes[data-game="${yesEl.dataset.game}"]`));
+    moveYesPrices(gameRows, row, priceDelta());
   };
   setInterval(() => {
     // sporadic: nudge just one or two markets each tick
@@ -1179,16 +1225,8 @@ function initGameRecalc() {
       updateBetSheet();
     }
     setTimeout(() => {
-      rows.forEach((row) => {                       // reveal the recalculated prices
-        const yesEl = row.querySelector(".price.yes");
-        const noEl = row.querySelector(".price.no");
-        if (!yesEl || !noEl) return;
-        const yes = Math.max(5, Math.min(95, parseInt(yesEl.textContent, 10) + priceDelta()));
-        yesEl.textContent = `${yes}¢`;
-        noEl.textContent = `${100 - yes}¢`;
-        if (pauseOpenDrawer && yesEl.dataset.market) betState.markets[yesEl.dataset.market] = { yes, no: 100 - yes };
-        [yesEl, noEl].forEach((el) => { el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); });
-      });
+      const primaryRow = rows[Math.floor(Math.random() * rows.length)];
+      moveYesPrices(rows, primaryRow, priceDelta(), true); // paired move keeps all three Yes prices at 100¢
       if (pauseOpenDrawer) {
         betState.priceUpdating = false;
         updateBetSheet();
@@ -1227,12 +1265,34 @@ function computeBet() {
   return { mk, marketPrice, priceCents, qty, subtotal, fee, total, payout, profit, net };
 }
 
-function transactionValidation(quantity, purchasePrice) {
+function purchaseTotalFor(quantity, priceCents) {
+  if (quantity < 1 || priceCents < 1) return 0;
+  const subtotal = (priceCents / 100) * quantity;
+  return subtotal + Math.max(0.01, subtotal * 0.02);
+}
+
+function maximumContractsForPrice(priceCents, creditLimit) {
+  if (priceCents < 1 || creditLimit <= 0) return 0;
+  const unitPrice = priceCents / 100;
+  let maximum = Math.max(0, Math.floor(creditLimit / (unitPrice * 1.02)));
+  while (maximum > 0 && purchaseTotalFor(maximum, priceCents) > creditLimit + Number.EPSILON) maximum -= 1;
+  while (purchaseTotalFor(maximum + 1, priceCents) <= creditLimit + Number.EPSILON) maximum += 1;
+  return maximum;
+}
+
+function transactionValidation(quantity, priceCents) {
   if (quantity < 1) return { valid: false, message: "Enter at least 1 contract." };
-  const valid = purchasePrice <= MAX_TRANSACTION_CREDITS;
+  const availableCredits = Math.max(0, USER.balance);
+  const creditLimit = Math.min(availableCredits, MAX_TRANSACTION_CREDITS);
+  const maximumContracts = maximumContractsForPrice(priceCents, creditLimit);
+  const valid = quantity <= maximumContracts;
+  const limitingSource = availableCredits <= MAX_TRANSACTION_CREDITS
+    ? `Your available balance of ${money(availableCredits)}`
+    : `The ${MAX_TRANSACTION_CREDITS.toLocaleString("en-US")}-credit purchase limit`;
   return {
     valid,
-    message: valid ? "" : `The maximum purchase price for one bet is ${MAX_TRANSACTION_CREDITS.toLocaleString("en-US")} credits.`,
+    maximumContracts,
+    message: valid ? "" : `${limitingSource} allows a maximum of ${maximumContracts.toLocaleString("en-US")} contracts at ${priceCents}¢.`,
   };
 }
 
@@ -1340,7 +1400,7 @@ function ensureBetSheet() {
           <div class="bet-highlight drawer-purchase buy-only" data-buy-main>
             <span class="bet-label">Credit price</span>
             <span class="bet-total-big tnum" data-total-big>$0.00</span>
-            <p class="potential-win">Potential profit of <strong data-profit-big>$0.00</strong> after <a href="#" class="fees-link" data-fees-link>fees</a>. Remaining credit balance <strong class="remaining-credit-value" data-remaining-balance>$0.00</strong> after purchase.</p>
+            <p class="potential-win">Potential profit of <strong data-profit-big>$0.00</strong> after <a href="#" class="fees-link" data-fees-link>fees</a>.</p>
           </div>
           <!-- SELL: proceeds + realised P&L -->
           <div class="bet-highlight sell-only">
@@ -1359,6 +1419,7 @@ function ensureBetSheet() {
               <div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>—</strong></div>
               <div class="summary-row"><span>Trading fee</span><strong data-s-fee>—</strong></div>
               <div class="summary-row total"><span>Total to pay</span><strong data-s-total>—</strong></div>
+              <div class="summary-row"><span>Remaining credit balance</span><strong data-remaining-balance>—</strong></div>
             </div>
           </div>
           <div class="bet-field">
@@ -1562,7 +1623,7 @@ function updateBetSheet() {
   const limitMode = sheet.querySelector("[data-price-mode=limit]");
   const limitEntry = sheet.querySelector("[data-limit-entry]");
   const limitStatus = limitValidation(marketPrice);
-  const transactionStatus = transactionValidation(qty, total);
+  const transactionStatus = transactionValidation(qty, priceCents);
   marketMode.classList.toggle("is-active", !betState.limitOpen);
   limitMode.classList.toggle("is-active", betState.limitOpen);
   limitMode.classList.toggle("is-error", betState.limitOpen && !limitStatus.valid);
@@ -1576,9 +1637,9 @@ function updateBetSheet() {
     limitMessage.textContent = limitStatus.message;
   }
   const transactionMessage = sheet.querySelector("[data-transaction-limit]");
-  transactionMessage.hidden = betState.typeOpen || transactionStatus.valid;
+  transactionMessage.hidden = betState.typeOpen || betState.mode !== "buy" || transactionStatus.valid;
   transactionMessage.textContent = transactionStatus.message;
-  transactionMessage.classList.toggle("is-error", !transactionStatus.valid);
+  transactionMessage.classList.toggle("is-error", betState.mode === "buy" && !transactionStatus.valid);
   const quantityInput = sheet.querySelector("[data-qty-input]");
   quantityInput.classList.toggle("is-error", betState.mode === "buy" && !transactionStatus.valid);
   quantityInput.setAttribute("aria-invalid", betState.mode === "buy" && !transactionStatus.valid ? "true" : "false");
@@ -1797,7 +1858,7 @@ function placeBet() {
   const activePrice = betState.contract === "yes" ? activeMarket.yes : activeMarket.no;
   if (!limitValidation(activePrice).valid) return;
   const bet = computeBet();
-  if (!transactionValidation(bet.qty, bet.total).valid) return;
+  if (!transactionValidation(bet.qty, bet.priceCents).valid) return;
   if (betState.editPending != null) return updatePendingOrder();
   const sheet = ensureBetSheet();
   const { priceCents, qty, subtotal, fee, total } = computeBet();

@@ -944,7 +944,6 @@ body.sheet-open { overflow: hidden; }
    drawer: muted copy with a green amount, red amount on loss. */
 .potential-win { margin: var(--s2) 0 0; text-align: center; color: var(--ink-2); font-size: 12px; font-weight: 500; }
 .potential-win strong { color: var(--green); font-family: inherit; font-size: 12px; font-weight: 500; }
-.potential-win .remaining-credit-value { color: inherit; }
 .potential-win span { color: inherit; font-size: 12px; font-weight: 500; }
 .potential-win.is-loss strong { color: var(--no); }
 .fees-link { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
