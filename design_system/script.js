@@ -138,12 +138,12 @@ const flatDocs = {
         { label: "Final - away team won", type: "game", mode: "final" },
         { label: "Pregame unavailable", type: "game", mode: "pregame" },
         { label: "Betting paused after score change", type: "game", mode: "paused" },
+        { label: "Open game positions", type: "game", mode: "openPositions" },
         { label: "NFL game stats selected", type: "game", mode: "gameStatsNFL" },
-        { label: "NBA game stats selected", type: "game", mode: "gameStatsNBA" },
       ] },
       { title: "Logo reference — future use", frames: [
-        { label: "Live game with licensed team logos", type: "game", mode: "liveLogos" },
-        { label: "Game stats with licensed team logos", type: "game", mode: "gameStatsLogos" },
+        { label: "Live NFL game with licensed team logos", type: "game", mode: "liveLogos" },
+        { label: "NFL game stats with licensed team logos", type: "game", mode: "gameStatsLogos" },
       ] },
     ],
   },
@@ -188,7 +188,7 @@ const flatDocs = {
     ],
   },
   account: {
-    title: "Account Page",
+    title: "Profile & Settings Page",
     description: "Profile and settings states, connected-account variants, and the account-management subpages.",
     groups: [
       { title: "Profile & Settings", frames: [
@@ -203,6 +203,209 @@ const flatDocs = {
         { label: "Delete Account", type: "account", mode: "deleteAccount" },
       ] },
     ],
+  },
+};
+
+const gameVariantDocumentation = {
+  live: {
+    summary: "The standard in-play Game page while the market is open and live prices are available.",
+    trigger: "Use when the feed supplies an active period, a non-empty game clock, and tradable GTL/TIE/KTL markets.",
+    changes: "Market Stats is selected initially. Prices are enabled. The production no-logo treatment uses abbreviation marks with full team names beneath them.",
+    data: "League, period, clock, both teams’ names/abbreviations/scores/colours, and complementary Yes/No prices for all three markets are required.",
+    behavior: "Update the clock and scores from the live feed. Selecting a price opens the Buy drawer with game, market, side, and current prices preserved.",
+  },
+  countdown: {
+    summary: "The pre-start countdown before game data and trading become live.",
+    trigger: "Use only after the game is scheduled but before play begins, when a reliable remaining-start duration is available.",
+    changes: "Show a blue dot and blue countdown copy, a 0–0 score, disabled dash prices, an empty market book, and Market Stats selected.",
+    data: "Scheduled game, both teams, league, team colours, and a countdown value are required; live period, score, and order-book values are intentionally absent.",
+    behavior: "Count down without enabling prices. At zero, replace this state with the live state from a fresh feed response rather than mutating placeholder values.",
+  },
+  final: {
+    summary: "The terminal Game state after the official result is confirmed.",
+    trigger: "Use when the normalized feed status is Final or FT and the final score has been accepted.",
+    changes: "Replace period and clock with the gold Final status, retain the completed score, disable settled prices, and keep Market Stats as the initial mobile/tablet panel.",
+    data: "Final status, official score, team identity/colours, and settled market outcomes are required. Do not derive Final from a zero clock alone.",
+    behavior: "No new bet may be initiated. Existing market and game statistics remain readable and desktop continues to expose both statistics sections.",
+  },
+  pregame: {
+    summary: "An active game whose markets cannot open until a team first takes the lead.",
+    trigger: "Use when play has begun but the score is tied and the market payload explicitly reports waiting-for-first-lead.",
+    changes: "Keep the live period and clock, show the waiting explanation, replace every price with a disabled dash, and render empty Market Stats.",
+    data: "Active clock/period, tied score, team identity, and the non-clearing waiting reason are required.",
+    behavior: "Do not auto-enable from a local score calculation. Re-render from the next feed event that supplies an open market after a lead is established.",
+  },
+  paused: {
+    summary: "A temporary trading lock while prices are recalculated after a scoring or feed event.",
+    trigger: "Use when the market service reports a clearing recalculation state for an otherwise active game.",
+    changes: "Show the recalculation banner, retain the current score and last prices for context, and disable all market-price controls until replacement prices arrive.",
+    data: "The last stable game/market snapshot plus a clearing pause reason are required. The implementation demo clears after roughly 1.6 seconds.",
+    behavior: "Keep statistics available, prevent drawer entry and submissions, then atomically replace all complementary prices before re-enabling interaction.",
+  },
+  openPositions: {
+    summary: "The signed-in Game page when the customer holds one or more positions in this game.",
+    trigger: "Use when the authenticated portfolio contains positions whose gameId matches the active Game page.",
+    changes: "Add the game-position control to the mobile/tablet bottom bar and expose the position panel above it when opened. Desktop renders the same panel inline below the markets in the sticky left column.",
+    data: "For each matching position provide market, side, quantity, average entry price, current price, current value, and unrealized return; retain the active game/team context.",
+    behavior: "Buy More opens a prefilled Buy drawer and Sell opens a prefilled Sell drawer. Closing, backdrop click, or Escape dismisses the mobile/tablet panel; desktop remains persistently visible.",
+  },
+  gameStatsNFL: {
+    summary: "The standard live NFL Game page with the Game Stats tab selected.",
+    trigger: "Use after the customer selects Game Stats on mobile/tablet; desktop renders this section alongside Market Stats without a toggle.",
+    changes: "Only the selected tab/panel changes. Show the score worm, lead-change and tie totals, followed by five NFL comparison rows.",
+    data: "Score history, team colours, and NFL stats in the required order: total, pass, rush, possession, and turnovers.",
+    behavior: "Preserve the current game and market state while switching panels. Update aria-selected and hidden so exactly one panel is exposed on mobile/tablet.",
+  },
+  liveLogos: {
+    summary: "Future-use NFL live-market reference using licensed team artwork.",
+    trigger: "Use only when NFL logo licensing and asset delivery are approved; this is not the current production no-logo default.",
+    changes: "Replace abbreviation marks with NFL logos and display team initials beneath each logo. All other live-market layout and behavior remains unchanged.",
+    data: "The normal live NFL payload plus validated transparent logo assets and textual abbreviation fallbacks are required.",
+    behavior: "If an image fails, fall back to the abbreviation mark without changing layout. Never substitute an NBA example in this reference group.",
+  },
+  gameStatsLogos: {
+    summary: "Future-use NFL Game Stats reference using licensed team artwork.",
+    trigger: "Use only when licensed NFL assets are approved and the Game Stats view is selected.",
+    changes: "Use NFL logos with initials beneath them in the scorecard; keep compact abbreviation marks inside the comparison card and select Game Stats.",
+    data: "Licensed NFL logos, abbreviation fallbacks, score history, and the five required NFL comparison statistics are required.",
+    behavior: "Logo failure must degrade to initials. Tab semantics, responsive panel behavior, score worm, and market state remain identical to the no-logo implementation.",
+  },
+};
+
+const rankingVariantDocumentation = {
+  signedOut: {
+    summary: "The public leaderboard before a customer has authenticated.",
+    trigger: "Use whenever Ranking is opened without a valid authenticated session.",
+    changes: "The top ten remain visible, the customer-position row is omitted, and month options replace private ranks with ‘Sign in to view’.",
+    data: "Competition month, reset deadline, public top-ten usernames, balances, and prizes are required; no customer result is requested.",
+    behavior: "Keep the leaderboard readable. Authentication is required before exposing a customer’s current or historical rank.",
+  },
+  signedOutMonths: {
+    summary: "The public month selector expanded before authentication.",
+    trigger: "Use while a signed-out visitor opens the competition-month selector.",
+    changes: "Show the same available months as the authenticated selector, but replace every private rank with ‘Sign in to view’.",
+    data: "Only the public available-month range is required; do not fetch or embed customer ranking history.",
+    behavior: "Selecting a month may update the public top ten, but private rank labels remain gated. Click-away and Escape close the list.",
+  },
+  current: {
+    summary: "The authenticated leaderboard for the current competition month.",
+    trigger: "Use after authentication when the current month is selected and the customer sits outside the top ten.",
+    changes: "Show the signed-in header and add the customer’s green highlighted row below the top-ten list.",
+    data: "Public top ten plus the customer’s current rank, username, credit balance, prize, and the competition reset deadline are required.",
+    behavior: "Keep the customer row separate when outside the top ten. If the customer reaches positions 1–10, render them in that ranked row and hide the separate slot.",
+  },
+  months: {
+    summary: "The expanded competition-month selector for an authenticated customer.",
+    trigger: "Use while the month trigger is open, before a new month has been chosen.",
+    changes: "Rotate the trigger chevron, apply the open treatment, and show available months newest-first with the customer’s rank for each month.",
+    data: "Every available month needs its calendar month, year context, customer rank, balance, and prize result.",
+    behavior: "The selected option uses aria-selected. Selection updates the label and leaderboard, then closes the list; click-away and Escape also close it.",
+  },
+  historical: {
+    summary: "A completed historical month after the customer selects it from the month menu.",
+    trigger: "Use after an authenticated customer selects any available month before the current competition.",
+    changes: "Update the month label and all leaderboard rows. Here the customer is sixth, so ‘You’ appears directly inside the top ten and no detached current row is shown.",
+    data: "Use one internally consistent archived result set: month, ordered competitors, balances, fixed prizes, and the customer’s archived rank.",
+    behavior: "Animate reordered rows only when motion is allowed. Do not combine current-month rows with historical customer data.",
+  },
+  resultOutside: {
+    summary: "The completed-competition result for a customer outside the prize-paying top ten.",
+    trigger: "Show once after reset for an authenticated customer whose completed rank is greater than ten.",
+    changes: "Dim the page, center the result dialog, omit prize and celebration artwork, and place the standalone Close button at the bottom safe area.",
+    data: "Completed month, final rank, and the next competition month are required.",
+    behavior: "Close is a sibling of the dialog, not part of its body. Backdrop click, Close, or Escape dismisses the result without changing leaderboard data.",
+  },
+  resultWinner: {
+    summary: "The completed-competition result for a prize winner in positions 4–10.",
+    trigger: "Show once after reset when the authenticated customer finished inside the top ten but outside the podium.",
+    changes: "Add the prize value and celebration layer while retaining the standard result-dialog proportions and standalone bottom Close button.",
+    data: "Completed month, final rank, exact prize label, and customer identity are required.",
+    behavior: "Announce the result as a modal, expose the prize as text, and direct fulfillment to the GTL follow-up process. Respect reduced-motion preferences.",
+  },
+  resultTopThree: {
+    summary: "The enhanced completed-competition result for a podium finish.",
+    trigger: "Show once after reset when the authenticated customer finished first, second, or third.",
+    changes: "Add the ranked medal, top-three dialog offset, prize value, and celebration layer; Close remains independent at the bottom safe area.",
+    data: "Completed month, podium rank, exact prize label, and customer identity are required.",
+    behavior: "Keep rank visible in both the title and medal. The celebration is decorative and must be hidden from assistive technology and reduced-motion users.",
+  },
+};
+
+const authVariantDocumentation = {
+  signin: {
+    summary: "Login variation 1: the current email-and-password route implemented in login.html.",
+    trigger: "Retain only if product selects password credentials as the production login method.",
+    changes: "Google and Apple remain available above email and password fields, with a Forgot Password route below the password input.",
+    data: "Email, password, social-provider availability, authentication errors, and the post-login destination are required.",
+    behavior: "Validate both credentials before submission, expose password visibility without changing its value, and keep recovery reachable. Remove login-v2.html if this variation is selected.",
+  },
+  phoneLogin: {
+    summary: "Login variation 2: the passwordless phone route implemented in login-v2.html and awaiting a product decision.",
+    trigger: "Implement only if product explicitly selects phone verification as the single production login route.",
+    changes: "Replace email, password, and Forgot Password with one phone-number field and Continue with Phone; Google and Apple remain available.",
+    data: "Normalized phone number, SMS delivery capability, resend limits, code expiry, authentication errors, and post-login destination are required.",
+    behavior: "Submitting a valid phone number advances to verification without leaving the auth card. Remove the password-login route and its recovery UI if this variation is selected.",
+  },
+  phoneLoginVerify: {
+    summary: "The second step belonging exclusively to passwordless login variation 2.",
+    trigger: "Show only after a code has been successfully requested for the supplied phone number.",
+    changes: "Replace the phone entry step with eight single-character code inputs, destination context, Back, Verify and Login, and Resend.",
+    data: "Masked destination, challenge identifier, eight-digit code rules, expiry, resend cooldown, attempt count, and server error are required.",
+    behavior: "Support numeric paste and sequential focus, preserve the phone number when going Back, throttle Resend, and complete login only after server verification.",
+  },
+  forgot: {
+    summary: "Password recovery entry for email-and-password login variation 1 only.",
+    trigger: "Show after Forgot Password is selected from the password login screen.",
+    changes: "Request the account email, then replace the form with the non-enumerating Check Your Email confirmation after submission.",
+    data: "Email, reset-token lifetime, resend policy, and a neutral delivery response are required.",
+    behavior: "Do not reveal whether an account exists. Back returns to password login; this entire route is removed if variation 2 is selected.",
+  },
+  reset: {
+    summary: "New-password entry reached from a valid recovery link in login variation 1.",
+    trigger: "Show only when the reset token is present, valid, and unexpired.",
+    changes: "Collect and confirm the new password with strength guidance and password-visibility controls.",
+    data: "Reset token, password policy, confirmation value, expiry state, and success destination are required.",
+    behavior: "Reject mismatched or weak passwords, invalidate the token after success, and return to Login. Remove with password recovery if variation 2 is selected.",
+  },
+  loading: {
+    summary: "Submission-in-progress feedback shown here against login variation 1.",
+    trigger: "Use after a valid login request starts and before it resolves.",
+    changes: "Keep entered values visible, disable repeat submission, and replace the primary action label with Processing….",
+    data: "The active authentication request and its cancellation or timeout policy are required.",
+    behavior: "Prevent duplicate requests and restore the selected login variation on failure. The final implementation needs equivalent loading feedback for whichever route is chosen.",
+  },
+  error: {
+    summary: "Inline validation feedback shown here against login variation 1.",
+    trigger: "Use when local validation or the authentication service rejects the submitted input.",
+    changes: "Mark the affected field, place a specific error directly beneath it, and retain all non-sensitive valid input.",
+    data: "A field or form error code mapped to safe customer-facing copy is required.",
+    behavior: "Move focus to the first invalid field and announce the message. The chosen production variation must map equivalent phone, code, social, rate-limit, and service errors.",
+  },
+};
+
+const standaloneVariantDocumentation = {
+  waitlist: {
+    default: { summary: "The public launch landing page before an email is submitted.", trigger: "Use for every new public Waitlist visit.", changes: "Show the complete launch story and enabled email capture without modal feedback.", data: "Launch-season copy, email placeholder, product preview content, prize summary, and destination endpoint configuration.", behavior: "Header and final CTA return focus to the hero email field; animated previews pause for reduced motion." },
+    error: { summary: "Local email validation failure before a waitlist request begins.", trigger: "Use when the email field is empty or fails native email validity.", changes: "Apply the field error treatment and show the explicit valid-email message below the form.", data: "The rejected email value and validation result only; no network request is created.", behavior: "Focus the email field and clear the message as the customer edits." },
+    joining: { summary: "Indeterminate progress while the waitlist request and minimum feedback interval are running.", trigger: "Use immediately after a valid submission starts.", changes: "Dim the page and show the Securing Your Place progress dialog without a dismiss action.", data: "Submitted email, request state, endpoint result, and minimum progress duration.", behavior: "Disable duplicate submission. Do not permit dismissal until success or failure resolves." },
+    confirmed: { summary: "Successful early-access confirmation after the email has been saved.", trigger: "Use only after the waitlist endpoint confirms success.", changes: "Replace progress with the confirmed eyebrow, check treatment, expanded explanation, and Continue Exploring action.", data: "Confirmed request result and retained page position.", behavior: "Backdrop, Escape, or Continue Exploring may close; the explicit action scrolls to the product explanation." },
+  },
+  contact: {
+    default: { summary: "The empty structured support-request form.", trigger: "Use when Contact opens or after Send Another Message.", changes: "Show the introductory SLA note and blank name, email, topic, and message fields.", data: "Topic options, maximum message length, privacy copy, and delivery configuration.", behavior: "Update the character count while typing and submit only after required fields validate." },
+    topicOpen: { summary: "The Contact topic combobox expanded to its five implemented options.", trigger: "Use while the topic input or toggle has opened the listbox.", changes: "Show the menu below the field, rotate the control, and retain form context.", data: "Stable option identifiers and customer-facing topic labels.", behavior: "Support arrows, Home/End, Enter, Escape, click-away, aria-expanded, active descendant, and one selected option." },
+    error: { summary: "Field-level validation feedback for an incomplete Contact request.", trigger: "Use after submission when any required value is missing or malformed.", changes: "Mark only affected controls and place specific messages directly beneath them.", data: "Validation results for name, email, topic, and message.", behavior: "Preserve valid values, focus the first invalid control, and announce its message." },
+    success: { summary: "The submitted Contact confirmation replacing the form inside the same card.", trigger: "Use after the request is stored or accepted by the support service.", changes: "Show Message Sent, destination email, traceable reference, and Send Another Message.", data: "Submitted email and generated support reference.", behavior: "Move focus to the status region; starting another request clears all fields and returns to default." },
+  },
+  fees: {
+    default: { summary: "The standalone pricing and fees explanation.", trigger: "Use when Fees is opened outside an active order.", changes: "Show the four numbered explanations without a floating return control.", data: "Production-approved fee percentage, minimum, price range, payout, and settlement policy.", behavior: "Back uses valid same-origin history or Home fallback." },
+    continueBet: { summary: "Fees opened from an in-progress order with valid return context.", trigger: "Use only while a restorable Buy/Sell draft exists.", changes: "Add the floating team-colour Continue Bet pill above the safe area.", data: "Originating game/team context plus the serialized valid order draft.", behavior: "Return to the correct game and reopen the drawer after revalidating freshness." },
+  },
+  rules: {
+    default: { summary: "The complete published Monthly Prize Competition rules document.", trigger: "Use from Ranking, footer Official Rules, and any competition legal disclosure.", changes: "Render all 13 numbered legal sections and the ten-row $5,000 prize schedule.", data: "Approved legal entity, jurisdiction, eligible states, dates, contact details, payment method, URLs, and rules version.", behavior: "Preserve semantic reading order, table structure, stable deep-link behavior if added, and a visible last-updated record." },
+  },
+  access: {
+    default: { summary: "The private-prototype gate before passphrase entry.", trigger: "Use only when the preview session has not been unlocked.", changes: "Show Restricted, the passphrase field, visibility control, and Unlock.", data: "A locally configured preview passphrase and session-storage availability.", behavior: "Focus the field on load and route successful entry to Home." },
+    invalid: { summary: "Incorrect private-preview passphrase feedback.", trigger: "Use after the supplied value does not match the local preview configuration.", changes: "Clear and mark the field, then show Incorrect Passphrase directly beneath it.", data: "The failed comparison result only; never log the supplied passphrase.", behavior: "Return focus to the field and clear the error as the reviewer types again." },
   },
 };
 
@@ -604,42 +807,136 @@ function renderLocationFrame() {
   return `<div class="flat-screen is-location"><main class="location-main"><section class="location-panel"><span class="location-brand"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></span><div class="location-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M26 13.3C26 20 16 28 16 28S6 20 6 13.3a10 10 0 1 1 20 0Z" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="13" r="3.25" stroke="currentColor" stroke-width="2"/><path d="m7 27 18-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="location-copy"><p class="location-kicker">Location unavailable</p><h1>GTL isn’t available in this location.</h1><p>We’re working to bring GTL to more locations. Please check back again soon.</p></div><p class="location-footnote">Availability is based on your current location.</p></section></main></div>`;
 }
 
+function supportBack() {
+  return `<span class="support-back"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></span>`;
+}
+
+function renderAccessFrame(mode) {
+  const invalid = mode === "invalid";
+  return `<div class="flat-screen is-auth is-access"><main class="auth-main"><div class="auth-card"><div class="auth-head"><span class="eyebrow">Restricted</span><h1>Enter passphrase</h1><p>This preview is private. Enter the passphrase to continue.</p></div><div class="auth-form"><div class="field"><label for="ds-passphrase-${mode}">Passphrase</label><div class="field-pass"><input class="field-input${invalid ? " is-error" : ""}" id="ds-passphrase-${mode}" type="password" placeholder="Enter passphrase" tabindex="-1" readonly><button class="pass-toggle" type="button" tabindex="-1" aria-hidden="true">${showIcon}</button></div>${invalid ? `<p class="field-error">Incorrect passphrase. Try again.</p>` : ""}</div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Unlock</button></div></div></main></div>`;
+}
+
+function renderContactFrame(mode) {
+  const success = mode === "success";
+  const menuOpen = mode === "topicOpen";
+  const invalid = mode === "error";
+  const input = (id, label, type, placeholder, error = "") => `<div class="field"><label for="${id}">${label}</label><input class="field-input${error ? " is-error" : ""}" id="${id}" type="${type}" placeholder="${placeholder}" tabindex="-1" readonly>${error ? `<p class="field-error">${error}</p>` : ""}</div>`;
+  const form = `<form><div class="contact-name-row">${input(`contact-name-${mode}`, "Name", "text", "Your name")}${input(`contact-email-${mode}`, "Email", "email", "you@example.com", invalid ? "Enter a valid email address." : "")}</div><div class="field"><label for="contact-topic-${mode}">What can we help with?</label><div class="field-combobox${menuOpen ? " is-open" : ""}"><input class="field-input" id="contact-topic-${mode}" type="text" placeholder="Choose a topic" role="combobox" aria-expanded="${menuOpen}" tabindex="-1" readonly><button class="combobox-toggle" type="button" tabindex="-1" aria-hidden="true">${chevronDownIcon}</button><div class="combobox-menu" role="listbox"${menuOpen ? "" : " hidden"}>${["Account support", "Gameplay or markets", "Monthly competition", "Product feedback", "Something else"].map((label) => `<button class="combobox-option" type="button" role="option" tabindex="-1">${label}</button>`).join("")}</div></div>${invalid ? `<p class="field-error">Choose what we can help with.</p>` : ""}</div><div class="field"><label for="contact-message-${mode}">Message</label><textarea class="field-input contact-message${invalid ? " is-error" : ""}" id="contact-message-${mode}" rows="6" placeholder="Tell us what happened or what you need help with" tabindex="-1" readonly></textarea><span class="field-hint">0/1000 characters</span>${invalid ? `<p class="field-error">Enter a message.</p>` : ""}</div><button class="btn btn-primary btn-block contact-submit" type="button" tabindex="-1">Send Message</button><p class="contact-privacy">We’ll only use your details to respond to this request.</p></form>`;
+  const successState = `<div class="contact-success"><span class="contact-success-icon" aria-hidden="true">${sentIcon}</span><span class="eyebrow">Message sent</span><h2>Thanks for getting in touch.</h2><p>We’ve received your request and will reply to <strong>alex@gtl.test</strong>.</p><p class="contact-reference">Reference <span class="tnum">GTL-7F3K9Q</span></p><button class="btn btn-secondary" type="button" tabindex="-1">Send another message</button></div>`;
+  return `<div class="flat-screen is-contact contact-body">${homeHeader(false)}<main class="contact-page container">${supportBack()}<div class="contact-layout"><section class="contact-intro"><span class="eyebrow">Contact GTL</span><h1>How can we help?</h1><p>Send us a message and the GTL team will get back to you as soon as possible.</p><div class="contact-note"><span class="contact-note-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16v11H4z" stroke="currentColor" stroke-width="1.8"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>We usually reply within 1–2 business days.</strong><span>For account questions, use the email linked to your GTL account.</span></div></div></section><section class="contact-card" aria-label="Contact request form">${success ? successState : form}</section></div></main>${homeFooter()}</div>`;
+}
+
+function renderFeesFrame(mode) {
+  const items = [
+    ["01", "Contracts are priced 1¢–99¢", "Every market is priced in cents. The price reflects the live likelihood of the outcome. Each contract settles at $1.00 if your side wins, or $0.00 if it doesn't."],
+    ["02", "What you pay", "Your cost is the contract price × the number of contracts, plus the 2% trading fee. The full breakdown is shown in your order summary before you confirm."],
+    ["03", "What you can win", "If your side settles in your favour, each contract pays out $1.00. Your potential profit is the payout less your cost and fees."],
+    ["04", "Settlement", "Markets settle automatically the moment the live result is final, and winnings are credited to your balance right away."],
+  ];
+  const mini = mode === "continueBet" ? `<div class="bet-mini" style="--home-color:#E31837;--away-color:#B3995D"><span class="bet-mini-teams"><img class="bet-mini-logo" src="${teamLogos.kc}" alt=""><span class="bet-mini-v">v</span><img class="bet-mini-logo" src="${teamLogos.sf}" alt=""></span><span class="bet-mini-label">Continue Bet</span></div>` : "";
+  return `<div class="flat-screen is-support is-fees fees-body">${homeHeader(false)}<main class="support-page">${supportBack()}<div class="support-head"><span class="eyebrow">Pricing &amp; fees</span><h1>What you pay, what you win</h1><p class="support-lead">Simple, transparent pricing — no hidden charges. Every order carries a flat <strong>2% trading fee</strong> (minimum $0.01), and that's the only cost. Here's exactly how it works.</p></div><ol class="support-list">${items.map(([n, title, copy]) => `<li class="support-item"><span class="support-num">${n}</span><div><h3>${title}</h3><p>${copy}</p></div></li>`).join("")}</ol></main>${mini}</div>`;
+}
+
+const rulesContent = [
+  ["Sponsor", `<p>The Competition is sponsored and operated by [LEGAL ENTITY NAME], a [STATE] [entity type] ("Sponsor"). Sponsor's decisions on all matters relating to the Competition are final and binding.</p>`],
+  ["Competition period", `<p>Each Competition runs for one (1) calendar month, beginning at 12:00:00 AM ET on the first day of the month and ending at 11:59:59 PM ET on the last day of the month (each, a "Monthly Competition"). Each Monthly Competition is a separate and independent promotion with its own entry period, leaderboard, prize pool, and winners. Monthly Competitions are offered only during the NFL and NBA regular seasons and postseasons, at Sponsor's discretion. Sponsor will announce active Competition months in the App.</p>`],
+  ["Eligibility", `<p>To participate, you must, at the time of entry and at the time of prize award:</p><ol class="rules-sublist"><li>Be a natural person at least eighteen (18) years of age (or the age of majority in your state of residence, if higher);</li><li>Be a legal resident of, and physically located in, Texas, Colorado, or Florida;</li><li>Maintain one (1), and only one (1), registered account in your own legal name;</li><li>Not be an employee, officer, director, or contractor of Sponsor, or an immediate family or household member;</li><li>Not be a person barred from participating under any applicable law.</li></ol><p>Sponsor uses geolocation and identity-verification technology to enforce eligibility. Sponsor may add or remove Eligible States in response to changes in law; the list in effect on the first day governs that Monthly Competition.</p>`],
+  ["How to enter and play", `<ol class="rules-sublist"><li>Access the platform and create a free account. No purchase, payment, or deposit is required or accepted.</li><li>Each participant receives Credits free of charge. Credits have no cash value, cannot be purchased, sold, transferred, or redeemed, and expire at competition end.</li><li>During live games, participants use Credits on skill-based GTL, TIE, and KTL prediction contracts priced by Sponsor's quantitative engine.</li><li>Leaderboard standing is determined solely by Credit balance performance during the Monthly Competition, measured by the scoring formula published in the App.</li></ol>`],
+  ["Winner determination", `<p>At the close of each Monthly Competition, the ten (10) eligible participants with the highest final leaderboard scores win cash prizes ("Winners"). Leaderboard scores are calculated exclusively from gameplay results; success depends on participants' skill in evaluating live game situations, probabilities, and contract pricing.</p>`],
+  ["Prizes", `<p>Total announced prize value per Monthly Competition: <strong>$5,000.00 USD.</strong> No other prizes, bonuses, or awards are offered.</p>`],
+  ["Winner verification and payment", `<ol class="rules-sublist"><li>Provisional Winners are notified through the App and/or account email within seven (7) days.</li><li>Before payment, each provisional Winner must complete identity and eligibility verification and submit a completed IRS Form W-9.</li><li>Verified prizes will be paid by [ACH transfer / check / payment platform] within thirty (30) days after verification and no later than sixty (60) days after competition close.</li><li>Failure to respond or complete verification within fourteen (14) days forfeits the prize and advances the leaderboard.</li><li>Winners are responsible for all taxes. Sponsor will issue IRS Form 1099-MISC where required.</li></ol>`],
+  ["Conduct and disqualification", `<p>Sponsor may disqualify participants, void entries, and withhold prizes for multiple accounts, account sharing, collusion, bots, scripts, automated play, exploiting software errors or latency, location spoofing, false registration or verification information, fraud, abuse, or conduct contrary to competitive integrity.</p>`],
+  ["Game integrity and data", `<p>Contract settlement is based on official league data feeds and final official scoring. Sponsor may void or re-settle contracts affected by feed errors, postponed or cancelled games, or pricing errors. If a Monthly Competition is materially disrupted, Sponsor may suspend, modify, or terminate it and award prizes based on standings at disruption or carry the pool forward.</p>`],
+  ["Publicity", `<p>Except where prohibited by law, acceptance of a prize permits Sponsor to use the Winner's username, first name, last initial, and state of residence for Competition-related publicity without additional compensation. Legal names will not be published without separate consent except where required by law.</p>`],
+  ["Privacy", `<p>Information collected in connection with the Competition is used for administration, verification, prize fulfillment, and tax compliance, and is handled per Sponsor's Privacy Policy at [URL].</p>`],
+  ["General conditions", `<ol class="rules-sublist"><li>By participating, you agree to these Official Rules and Sponsor's Terms of Service.</li><li>These Rules may not be changed during an active Monthly Competition except as required by law.</li><li>Apple Inc. and Google LLC do not sponsor, endorse, or administer the Competition.</li><li>Sponsor is not responsible for technical malfunctions, lost or delayed transmissions, or errors beyond its reasonable control.</li><li>To the fullest extent permitted by law, participants release Sponsor and its officers, employees, and agents from claims arising from participation or prize use.</li><li>These Rules are governed by the laws of [STATE], and disputes are resolved by binding individual arbitration in [COUNTY, STATE].</li><li>If any provision is invalid, the remainder continues in force.</li></ol>`],
+  ["Winners list", `<p>For the names (username, first name and last name) of Winners of any Monthly Competition, email [EMAIL] within sixty (60) days after the close of that Competition.</p>`],
+];
+
+function renderRulesFrame() {
+  const prizes = [["1st", "$1,500"], ["2nd", "$900"], ["3rd", "$650"], ["4th", "$500"], ["5th", "$400"], ["6th", "$300"], ["7th", "$250"], ["8th", "$200"], ["9th", "$175"], ["10th", "$125"]];
+  return `<div class="flat-screen is-support is-rules rules-body">${homeHeader(false)}<main class="support-page">${supportBack()}<div class="support-head"><span class="eyebrow">Official rules</span><h1>GTL Monthly Prize Competition</h1><p class="rules-notice"><strong>NO PURCHASE NECESSARY TO ENTER OR WIN. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. VOID WHERE PROHIBITED BY LAW.</strong></p><p class="rules-summary"><em>This is a free-to-play, skill-based prediction competition. Credits used in gameplay have no monetary value, cannot be purchased, and cannot be redeemed, transferred, or exchanged for cash or anything of value.</em></p></div><ol class="support-list">${rulesContent.map(([title, copy], index) => `<li class="support-item"><span class="support-num" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><section><h2>${title}</h2>${copy}${title === "Prizes" ? `<div class="rules-table-wrap"><table class="rules-table"><caption>Monthly Competition prize schedule</caption><thead><tr><th>Rank</th><th>Prize</th></tr></thead><tbody>${prizes.map(([rank, prize]) => `<tr><td>${rank}</td><td>${prize}</td></tr>`).join("")}</tbody></table></div><p><strong>Ties.</strong> Tied rank prizes are combined and divided equally among tied participants; the next participant takes the next unoccupied rank.</p><p>Prizes are non-transferable. Sponsor may substitute a prize of equal value if a listed prize becomes unavailable.</p>` : ""}</section></li>`).join("")}</ol><p class="rules-updated"><em>Last updated: [DATE]. © [YEAR] [LEGAL ENTITY NAME]. Get The Lead, GTL, and KTL are trademarks of Sponsor.</em></p></main>${homeFooter()}</div>`;
+}
+
+function waitlistConfirmation(mode) {
+  if (mode !== "joining" && mode !== "confirmed") return "";
+  const confirmed = mode === "confirmed";
+  return `<div class="waitlist-confirmation is-visible${confirmed ? " is-confirmed" : ""}"><div class="confirmation-backdrop"></div><section class="confirmation-card" role="dialog" aria-modal="true"><div class="confirmation-visual" aria-hidden="true"><span class="confirmation-ring confirmation-ring--outer"></span><span class="confirmation-ring confirmation-ring--inner"></span><span class="confirmation-route"></span><span class="confirmation-mark"><svg viewBox="0 0 32 32" fill="none"><path class="confirmation-check" d="m8 16.5 5 5L24 10.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><span class="eyebrow confirmation-eyebrow">${confirmed ? "Early Access Confirmed" : "Joining the Waitlist"}</span><h2>${confirmed ? "You’re in before kickoff." : "Securing your place."}</h2><p>${confirmed ? "We’ll email you before live trading opens, with early market previews and a quick-start guide so you’re ready to make your first move." : "Hold tight—we’re reserving your early-access spot."}</p>${confirmed ? `<button class="btn btn-primary confirmation-action" type="button" tabindex="-1">Continue Exploring</button>` : `<div class="confirmation-progress" aria-hidden="true"><span></span></div>`}</section></div>`;
+}
+
+function renderWaitlistFrame(mode) {
+  const error = mode === "error";
+  const marketRows = [["GTL", "Get the Lead", 38, 62], ["TIE", "", 22, 78], ["KTL", "Keep the Lead", 64, 36]];
+  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta">Join the Waitlist</span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form"><div class="form-row"><div class="email-field"><input class="field-input${error ? " is-error" : ""}" type="email" placeholder="Enter Your Email" tabindex="-1" readonly></div><button class="btn btn-primary join-button" type="button" tabindex="-1"><span>Get Early Access</span></button></div><p class="form-message${error ? " is-error" : ""}">${error ? "Enter a valid email address to join the waitlist." : ""}</p></div><div class="trust-row"><span>✓ First Access</span><span>✓ Launch Rewards</span><span>✓ Free to Join</span></div></div></div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${[["01", "Live by the play", "Prices shift as the game turns. Read the moment and make your move in seconds."], ["02", "Made for momentum", "Back the lead, the tie, or the comeback—without leaving the game you’re watching."], ["03", "Simple by design", "Clear Yes or No positions. No clutter, no complicated bet slips, no missed plays."]].map(([n, title, copy], i) => `<article class="promise-card${i === 1 ? " promise-card--feature" : ""}"><span class="promise-number">${n}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><article class="game-tile launch-game-card fan-card--center is-open" style="--home-color:#E31837;--away-color:#B3995D"><div class="tile-main"><div class="game-row"><div class="team team-home is-leading"><span class="team-mark team-logo is-fallback" style="--team-color:#E31837"><span class="team-mark-abbr">KC</span></span><div class="team-meta"><span class="team-abbr team-name">Chiefs</span><span class="team-score tnum">17</span></div></div><div class="game-center"><span class="period">Q2</span><span class="clock tnum">08:42</span></div><div class="team team-away"><span class="team-mark team-logo is-fallback" style="--team-color:#B3995D"><span class="team-mark-abbr">SF</span></span><div class="team-meta"><span class="team-abbr team-name">49ers</span><span class="team-score tnum">14</span></div></div></div></div><div class="tile-foot"><div class="foot-toggle"><span class="toggle-label">Hide Bets</span></div><div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad"><div class="mkt-grid"><div class="mkt-head"><span>Yes</span><span>Markets</span><span>No</span></div>${marketRows.map(([name, sub, yes, no]) => `<div class="mkt-row"><span class="price yes tnum">${yes}¢</span><span class="mkt-name">${name}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span><span class="price no tnum">${no}¢</span></div>`).join("")}</div></div></div></div></div></article></div></section><section class="ranking-section"><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong>$5,000</strong><span>Prize Pool</span></div><div><strong>Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${[["1", "leadstorm", "6,840", "$1,500"], ["2", "fourthquarter", "6,210", "$900"], ["3", "linehunter", "5,980", "$650"]].map(([rank, user, balance, prize]) => `<div class="competition-row"><span class="competition-rank">${rank}</span><strong>${user}</strong><span>${balance}</span><span>${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span>4,880</span><span>$300</span></div></div></div></div></section><section class="final-cta"><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button">Join the Waitlist</span></div></section></main>${waitlistConfirmation(mode)}<footer class="waitlist-footer"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"><p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
+}
+
 function renderRankingFrame(mode) {
-  const rows = [
-    [1, "leadstorm", 128, "$1,500"], [2, "fourthquarter", 119, "$900"], [3, "linehunter", 112, "$650"],
-    [4, "greenlight", 107, "$500"], [5, "clockedge", 101, "$400"], [6, "marketmaker", 96, "$300"],
-    [7, "snapcount", 91, "$250"], [8, "fastbreak", 88, "$200"], [9, "leadkeeper", 84, "$175"], [10, "swingtrader", 81, "$125"],
+  const signedOut = mode === "signedOut" || mode === "signedOutMonths";
+  const monthMenuOpen = mode === "months" || mode === "signedOutMonths";
+  const historical = mode === "historical";
+  const rows = historical ? [
+    [1, "leadstorm", 6630, "$1,500"], [2, "fourthquarter", 6280, "$900"], [3, "linehunter", 5930, "$650"],
+    [4, "greenlight", 5580, "$500"], [5, "clockedge", 5230, "$400"], [6, "You", 4880, "$300", true],
+    [7, "marketmaker", 4530, "$250"], [8, "snapcount", 4180, "$200"], [9, "fastbreak", 3830, "$175"], [10, "leadkeeper", 3480, "$125"],
+  ] : [
+    [1, "linehunter", 6980, "$1,500"], [2, "greenlight", 6630, "$900"], [3, "clockedge", 6280, "$650"],
+    [4, "marketmaker", 5930, "$500"], [5, "snapcount", 5580, "$400"], [6, "fastbreak", 5230, "$300"],
+    [7, "leadkeeper", 4880, "$250"], [8, "swingtrader", 4530, "$200"], [9, "leadstorm", 4180, "$175"], [10, "fourthquarter", 3830, "$125"],
   ];
   const trophy = `<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v3.5a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 6H5.5A2.5 2.5 0 0 0 8 8.5M16 6h2.5A2.5 2.5 0 0 1 16 8.5M12 12v4M9 20h6M10 16h4v4h-4z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const medal = `<svg class="rank-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 3 4 6 4-6M12 9a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12.7v3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-  const rowHTML = rows.map(([rank, user, wins, prize]) => `<div class="ranking-row${rank <= 3 ? ` is-podium is-rank-${rank}` : ""}">${rank <= 3 ? `<span class="rank-medal">${rank === 1 ? trophy : medal}</span>` : `<span class="rank-pos">${rank}</span>`}<span class="rank-user">${user}</span><span class="rank-win tnum">${wins}</span><span class="rank-prize tnum">${prize}</span></div>`).join("");
-  const currentRow = `<div class="ranking-current-slot"><div class="ranking-row is-current"><span class="rank-pos">47</span><span class="rank-user">You</span><span class="rank-win tnum">34</span><span class="rank-prize tnum">0</span></div></div>`;
-  const months = [["July", 47], ["June", 14], ["May", 31], ["April", 19], ["March", 24], ["February", 38], ["January", 62]];
-  const monthSelect = `<div class="ranking-month-select${mode === "months" ? " is-open" : ""}"><button class="ranking-month-trigger" type="button"><span>July 2026</span><svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="ranking-month-menu"${mode === "months" ? "" : " hidden"}>${months.map(([month, rank]) => `<button class="ranking-month-option${month === "July" ? " is-selected" : ""}" type="button"><span>${month}</span><strong>#${rank}</strong></button>`).join("")}</div></div>`;
+  const rowHTML = rows.map(([rank, user, balance, prize, isCurrent]) => `<div class="ranking-row${rank <= 3 && !isCurrent ? ` is-podium is-rank-${rank}` : ""}${isCurrent ? " is-current" : ""}" role="row"${isCurrent ? ` aria-label="Your rank, position ${rank}, You, balance ${balance.toLocaleString("en-US")} credits, prize ${prize}"` : ""}>${rank <= 3 && !isCurrent ? `<span class="rank-medal" role="cell">${rank === 1 ? trophy : medal}</span>` : `<span class="rank-pos" role="cell">${rank}</span>`}<span class="rank-user" role="cell">${user}</span><span class="rank-balance tnum" role="cell">${balance.toLocaleString("en-US")}</span><span class="rank-prize tnum" role="cell">${prize}</span></div>`).join("");
+  const currentRow = signedOut || historical ? "" : `<div class="ranking-current-slot" role="rowgroup"><div class="ranking-row is-current" role="row" aria-label="Your rank, position 47, You, balance 1,710 credits, prize 0"><span class="rank-pos" role="cell">47</span><span class="rank-user" role="cell">You</span><span class="rank-balance tnum" role="cell">1,710</span><span class="rank-prize tnum" role="cell">0</span></div></div>`;
+  const months = [["July", 47], ["June", 6], ["May", 31], ["April", 3], ["March", 24], ["February", 8], ["January", 62]];
+  const selectedMonth = historical ? "June" : "July";
+  const monthSelect = `<div class="ranking-month-select${monthMenuOpen ? " is-open" : ""}"><button class="ranking-month-trigger" type="button" aria-haspopup="listbox" aria-expanded="${monthMenuOpen}"><span>${selectedMonth} 2026</span><svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="ranking-month-menu" role="listbox"${monthMenuOpen ? "" : " hidden"}>${months.map(([month, rank]) => `<button class="ranking-month-option${month === selectedMonth ? " is-selected" : ""}" type="button" role="option" aria-selected="${month === selectedMonth}"><span>${month}</span><strong>${signedOut ? "Sign in to view" : `#${rank}`}</strong></button>`).join("")}</div></div>`;
   const rules = `<section class="ranking-rules"><div class="container ranking-rules-inner"><div class="section-head center"><span class="eyebrow">Competition summary</span><h2>Monthly Competition rules</h2></div><ol class="flow"><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="flow-num">01</span><h3 class="flow-title">Free to enter</h3><p class="flow-text">No purchase is necessary. Free Credits have no cash value and expire at competition end.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="flow-num">02</span><h3 class="flow-title">Be eligible</h3><p class="flow-text">You must be 18+, hold one account, and be located in an eligible state.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="11" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="7" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg></div><span class="flow-num">03</span><h3 class="flow-title">Climb the ranking</h3><p class="flow-text">The top 10 eligible players share $5,000 in monthly prizes.</p></li><li class="flow-step"><div class="flow-marker"><svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="flow-num">04</span><h3 class="flow-title">Verify and receive</h3><p class="flow-text">Winners verify their identity, eligibility, location, and tax details before payment.</p></li></ol><span class="ranking-rules-link">Read the full Official Rules <span>→</span></span></div></section>`;
-  const resultModal = mode === "result" ? `<div class="gate-backdrop ranking-prize-backdrop is-open"></div><div class="auth-gate ranking-prize-gate is-open"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span><h3 class="gate-title">You finished in position 47</h3><p class="gate-desc">Try and reach the top 10 in August's competition to receive a cash reward!</p><div class="gate-actions"><span class="btn btn-secondary">Close</span></div></div></div>` : "";
-  return `<div class="flat-screen is-ranking ranking-body">${homeHeader(false)}<main><header class="ranking-hero"><div class="ranking-hero-glow"></div><div class="ranking-hero-inner container"><h1>Ranking Leaderboard</h1><div class="ranking-countdown"><span class="reset-label">Resets in</span><span class="reset-time tnum"><span class="reset-num">06</span><span class="reset-unit">d</span><span class="reset-num">10</span><span class="reset-unit">h</span><span class="reset-num">15</span><span class="reset-unit">m</span></span></div></div></header><section class="ranking-page container"><section class="ranking-card"><header class="ranking-card-head"><div>${monthSelect}</div><p>Top 10 win cash prizes</p></header><div class="ranking-table-head"><span>Rank</span><span>Player</span><span>Wins</span><span>Prize</span></div><div class="ranking-scroll">${rowHTML}</div>${currentRow}</section></section>${rules}</main>${homeFooter("ranking")}${resultModal}</div>`;
+  const resultConfig = {
+    resultOutside: { rank: 47, description: "Try and reach the top 10 in August's competition to receive a cash reward!", prize: "", topThree: false },
+    resultWinner: { rank: 7, description: "The GTL team will contact you shortly about claiming your reward.", prize: "$250", topThree: false },
+    resultTopThree: { rank: 2, description: "The GTL team will contact you shortly about claiming your reward.", prize: "$900", topThree: true },
+  }[mode];
+  const celebration = resultConfig?.prize ? `<div class="ranking-celebration" aria-hidden="true"><span class="celebration-glow"></span><div class="confetti-burst burst-left"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="confetti-burst burst-right"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="celebration-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>` : "";
+  const resultModal = resultConfig ? `<div class="gate-backdrop ranking-prize-backdrop is-open"></div>${celebration}<div class="auth-gate ranking-prize-gate${resultConfig.topThree ? " is-top-three" : ""} is-open" role="dialog" aria-modal="true"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span>${resultConfig.topThree ? `<span class="ranking-prize-medal" data-rank="${resultConfig.rank}" aria-hidden="true"><span class="ranking-medal-ribbon ribbon-left"></span><span class="ranking-medal-ribbon ribbon-right"></span><span class="ranking-medal-face"><strong>${resultConfig.rank}</strong></span></span>` : ""}<h3 class="gate-title">You finished in position ${resultConfig.rank}</h3><p class="gate-desc">${resultConfig.description}</p>${resultConfig.prize ? `<strong class="ranking-prize-value tnum">${resultConfig.prize}</strong>` : ""}</div></div><button class="btn btn-secondary gate-close ranking-result-close is-open" type="button">Close</button>` : "";
+  return `<div class="flat-screen is-ranking ranking-body">${homeHeader(!signedOut)}<main><header class="ranking-hero"><div class="ranking-hero-glow"></div><div class="ranking-hero-inner container"><h1>Ranking Leaderboard</h1><div class="ranking-countdown"><span class="reset-label">Resets in</span><span class="reset-time tnum"><span class="reset-num">06</span><span class="reset-unit">d</span><span class="reset-num">10</span><span class="reset-unit">h</span><span class="reset-num">15</span><span class="reset-unit">m</span></span></div></div></header><section class="ranking-page container"><section class="ranking-card" aria-label="Monthly leaderboard" role="table"><header class="ranking-card-head"><div>${monthSelect}</div><p>Top 10 win cash prizes</p></header><div class="ranking-table-head" role="row"><span role="columnheader">Rank</span><span role="columnheader">Player</span><span role="columnheader">Balance</span><span role="columnheader">Prize</span></div><div class="ranking-scroll" role="rowgroup">${rowHTML}</div>${currentRow}</section></section>${rules}</main>${homeFooter("ranking")}${resultModal}</div>`;
 }
 
 const gameFrameData = {
   live: {
     league: "NBA",
+    variant: 2,
     period: "Q4",
     clock: "05:18",
     home: { abbr: "NYK", name: "Knicks", score: 84, color: "#F58426", logo: teamLogos.ny },
     away: { abbr: "BOS", name: "Celtics", score: 89, color: "#007A33", logo: teamLogos.bos },
     markets: { gtl: { yes: 41, no: 59 }, tie: { yes: 17, no: 83 }, ktl: { yes: 63, no: 37 } },
+    stats: [
+      { label: "Field Goal %", home: 46, away: 51 },
+      { label: "Rebounds", home: 38, away: 35 },
+      { label: "Assists", home: 19, away: 24 },
+      { label: "3PT %", home: 34, away: 41 },
+      { label: "Turnovers", home: 11, away: 8 },
+    ],
   },
   statsNfl: {
     league: "NFL",
+    variant: 1,
     period: "Q2",
     clock: "08:42",
     home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", logo: teamLogos.kc },
     away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D", logo: teamLogos.sf },
     markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 64, no: 36 } },
+    stats: [
+      { label: "Total Team Yards", home: 214, away: 186 },
+      { label: "Pass Yards", home: 151, away: 129 },
+      { label: "Rush Yards", home: 63, away: 57 },
+      { label: "Possession Time", home: "11:46", away: "09:32", homeMetric: 706, awayMetric: 572 },
+      { label: "Turnovers", home: 0, away: 1 },
+    ],
   },
   pregame: {
     league: "NFL",
+    variant: 5,
     period: "Q1",
     clock: "14:22",
     waiting: true,
@@ -647,9 +944,17 @@ const gameFrameData = {
     home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: teamLogos.dalNfl },
     away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: teamLogos.phi },
     markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 64, no: 36 }, ktl: { yes: 50, no: 50 } },
+    stats: [
+      { label: "Total Team Yards", home: 341, away: 352 },
+      { label: "Pass Yards", home: 246, away: 258 },
+      { label: "Rush Yards", home: 95, away: 94 },
+      { label: "Possession Time", home: "28:42", away: "29:04", homeMetric: 1722, awayMetric: 1744 },
+      { label: "Turnovers", home: 2, away: 1 },
+    ],
   },
   countdown: {
     league: "NFL",
+    variant: 5,
     period: "Starts in",
     clock: "9:59",
     countdown: true,
@@ -658,9 +963,17 @@ const gameFrameData = {
     home: { abbr: "DAL", name: "Cowboys", score: 0, color: "#003594", logo: teamLogos.dalNfl },
     away: { abbr: "PHI", name: "Eagles", score: 0, color: "#004C54", logo: teamLogos.phi },
     markets: { gtl: { yes: 50, no: 50 }, tie: { yes: 50, no: 50 }, ktl: { yes: 50, no: 50 } },
+    stats: [
+      { label: "Total Team Yards", home: 0, away: 0 },
+      { label: "Pass Yards", home: 0, away: 0 },
+      { label: "Rush Yards", home: 0, away: 0 },
+      { label: "Possession Time", home: "00:00", away: "00:00", homeMetric: 0, awayMetric: 0 },
+      { label: "Turnovers", home: 0, away: 0 },
+    ],
   },
   paused: {
     league: "NFL",
+    variant: 3,
     period: "Q3",
     clock: "11:05",
     recalc: true,
@@ -668,9 +981,33 @@ const gameFrameData = {
     home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", logo: teamLogos.buf },
     away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: teamLogos.mia },
     markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
+    stats: [
+      { label: "Total Team Yards", home: 288, away: 264 },
+      { label: "Pass Yards", home: 201, away: 188 },
+      { label: "Rush Yards", home: 87, away: 76 },
+      { label: "Possession Time", home: "17:38", away: "16:17", homeMetric: 1058, awayMetric: 977 },
+      { label: "Turnovers", home: 1, away: 1 },
+    ],
+  },
+  openPositions: {
+    league: "NFL",
+    variant: 3,
+    period: "Q3",
+    clock: "11:05",
+    home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", logo: teamLogos.buf },
+    away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97", logo: teamLogos.mia },
+    markets: { gtl: { yes: 44, no: 56 }, tie: { yes: 19, no: 81 }, ktl: { yes: 58, no: 42 } },
+    stats: [
+      { label: "Total Team Yards", home: 288, away: 264 },
+      { label: "Pass Yards", home: 201, away: 188 },
+      { label: "Rush Yards", home: 87, away: 76 },
+      { label: "Possession Time", home: "17:38", away: "16:17", homeMetric: 1058, awayMetric: 977 },
+      { label: "Turnovers", home: 1, away: 1 },
+    ],
   },
   final: {
     league: "NBA",
+    variant: 2,
     period: "Final",
     clock: "",
     final: true,
@@ -678,11 +1015,28 @@ const gameFrameData = {
     home: { abbr: "NYK", name: "Knicks", score: 98, color: "#F58426", logo: teamLogos.ny },
     away: { abbr: "BOS", name: "Celtics", score: 104, color: "#007A33", logo: teamLogos.bos },
     markets: { gtl: { yes: 0, no: 100 }, tie: { yes: 0, no: 100 }, ktl: { yes: 100, no: 0 } },
+    stats: [
+      { label: "Field Goal %", home: 46, away: 51 },
+      { label: "Rebounds", home: 38, away: 35 },
+      { label: "Assists", home: 19, away: 24 },
+      { label: "3PT %", home: 34, away: 41 },
+      { label: "Turnovers", home: 11, away: 8 },
+    ],
   },
 };
 
 const flatDocViews = {
   home: flatDocs.home,
+  waitlist: {
+    title: "Waitlist Page",
+    description: "Public launch landing page, email validation, submission progress, and confirmed early-access states.",
+    groups: [{ title: "Waitlist States", frames: [
+      { label: "Default", type: "waitlist", mode: "default" },
+      { label: "Email Validation Error", type: "waitlist", mode: "error" },
+      { label: "Joining the Waitlist", type: "waitlist", mode: "joining" },
+      { label: "Early Access Confirmed", type: "waitlist", mode: "confirmed" },
+    ] }],
+  },
   welcome: flatDocs.welcome,
   game: flatDocs.game,
   portfolio: {
@@ -690,16 +1044,30 @@ const flatDocViews = {
     title: "Portfolio Page",
     description: "Wallet page variants for portfolio stats, orders, settled history, order detail, loading, and empty states.",
   },
+  fees: {
+    title: "Fees Page",
+    description: "Pricing, trading-fee, payout, and settlement explanation with the conditional Continue Bet return control.",
+    groups: [{ title: "Fees States", frames: [
+      { label: "Default", type: "fees", mode: "default" },
+      { label: "Continue Bet", type: "fees", mode: "continueBet" },
+    ] }],
+  },
   login: {
     title: "Login Page",
-    description: "Static sign-in and account recovery states from the authentication flow.",
+    description: "Two mutually exclusive login implementations are retained for product selection. Choose one production route and remove the other before build handoff.",
     groups: [
-      { title: "Login states", frames: [
-        { label: "Sign in", type: "auth", mode: "signin" },
-        { label: "Passwordless phone sign in", type: "auth", mode: "phoneLogin" },
+      { title: "Implementation Decision — Choose One", frames: [
+        { label: "Variation 1 — Email and Password", type: "auth", mode: "signin" },
+        { label: "Variation 2 — Passwordless Phone", type: "auth", mode: "phoneLogin" },
+      ] },
+      { title: "Variation 2 Supporting Step", frames: [
         { label: "Phone verification", type: "auth", mode: "phoneLoginVerify" },
+      ] },
+      { title: "Variation 1 Recovery", frames: [
         { label: "Forgot password", type: "auth", mode: "forgot" },
         { label: "Reset password", type: "auth", mode: "reset" },
+      ] },
+      { title: "Shared Feedback Requirements", frames: [
         { label: "Loading state", type: "auth", mode: "loading" },
         { label: "Error state", type: "auth", mode: "error" },
       ] },
@@ -720,6 +1088,16 @@ const flatDocViews = {
       ] },
     ],
   },
+  contact: {
+    title: "Contact Page",
+    description: "Support request form, topic selection, validation, and successful-submission confirmation.",
+    groups: [{ title: "Contact States", frames: [
+      { label: "Default Form", type: "contact", mode: "default" },
+      { label: "Topic Selector Open", type: "contact", mode: "topicOpen" },
+      { label: "Validation Errors", type: "contact", mode: "error" },
+      { label: "Message Sent", type: "contact", mode: "success" },
+    ] }],
+  },
   location: {
     title: "Location Unavailable Page",
     description: "The signed-out location eligibility state linked from the mobile navigation menu.",
@@ -727,11 +1105,37 @@ const flatDocViews = {
   },
   ranking: {
     title: "Ranking Page",
-    description: "Monthly competition header, reset timer, standalone leaderboard rows, current position, and result modal.",
-    groups: [{ title: "Leaderboard", frames: [{ label: "Monthly ranking", type: "ranking", mode: "default" }, { label: "Month selector", type: "ranking", mode: "months" }, { label: "Ranking result", type: "ranking", mode: "result" }] }],
+    description: "Authenticated and public monthly leaderboards, month selection, archived rankings, and every completed-competition result outcome.",
+    groups: [
+      { title: "Leaderboard States", frames: [
+        { label: "Signed Out", type: "ranking", mode: "signedOut" },
+        { label: "Signed-Out Month Selector", type: "ranking", mode: "signedOutMonths" },
+        { label: "Current Month", type: "ranking", mode: "current" },
+        { label: "Month Selector Open", type: "ranking", mode: "months" },
+        { label: "Historical Month Selected", type: "ranking", mode: "historical" },
+      ] },
+      { title: "Completed Competition Results", frames: [
+        { label: "Outside Top 10", type: "ranking", mode: "resultOutside" },
+        { label: "Inside Top 10", type: "ranking", mode: "resultWinner" },
+        { label: "Top 3", type: "ranking", mode: "resultTopThree" },
+      ] },
+    ],
+  },
+  rules: {
+    title: "Monthly Competition Rules Page",
+    description: "Official rules, legal notices, eligibility, prize schedule, verification, integrity, and administrative terms.",
+    groups: [{ title: "Published Rules", frames: [{ label: "Monthly Competition Rules", type: "rules", mode: "default" }] }],
   },
   drawer: flatDocs.drawer,
-  account: flatDocs.account,
+  account: { ...flatDocs.account, title: "Profile & Settings Page" },
+  access: {
+    title: "Access Gate Page",
+    description: "Internal private-preview passphrase gate. This is prototype access control, not production authentication.",
+    groups: [{ title: "Access States", frames: [
+      { label: "Enter Passphrase", type: "access", mode: "default" },
+      { label: "Incorrect Passphrase", type: "access", mode: "invalid" },
+    ] }],
+  },
 };
 const individualHomeView = {
   title: "Home",
@@ -757,6 +1161,18 @@ const individualHomeView = {
   ],
 };
 const individualPageDocumentation = {
+  waitlist: {
+    title: "Waitlist",
+    implementation: "<code>waitlist.html</code>, <code>waitlist.css</code>, <code>waitlist.js</code>",
+    purpose: "Acquire launch-interest emails on a public NFL-season landing page while explaining the product, markets, and monthly competition.",
+    states: "Default, invalid email, joining progress modal, and confirmed early-access modal.",
+    contract: ["Keep the page publicly accessible without the private-preview gate.", "Use one email field and preserve the same join action in the fixed header, hero, and final CTA.", "Show validation inline before any request; show progress while saving and confirmation only after success.", "The animated game card and confirmation effects must respect reduced-motion preferences."],
+    validation: "Confirm the production waitlist endpoint, consent/privacy copy, duplicate-email behavior, retry policy, launch season copy, and analytics events.",
+    guides: [
+      { title: "Page Anatomy", items: ["Fixed waitlist header with brand, Join Waitlist, and Home.", "Launch hero with NFL-season pill, email capture, and three trust benefits.", "Promise cards, interactive game-market preview, monthly-ranking preview, final CTA, and compact footer.", "Submission feedback is a page-level modal with joining and confirmed phases."] },
+      { title: "Submission Contract", items: ["Validate with the browser email rules before opening progress.", "Disable repeat submission and retain the submitted destination while the request is active.", "On success mark the form complete and expose Continue Exploring; on failure close progress, restore the form, and show a scoped retry message.", "Backdrop and Escape dismiss only after the request has resolved, never while the save is indeterminate."] },
+    ],
+  },
   welcome: {
     title: "Welcome",
     implementation: "<code>welcome.html</code>",
@@ -768,18 +1184,100 @@ const individualPageDocumentation = {
   game: {
     title: "Game",
     implementation: "<code>game.html</code>",
-    purpose: "Live scorecard, game status, GTL/TIE/KTL prices, open positions and market/game statistics.",
-    states: "Live, quarter time, final, recalculating, waiting for first lead, open position, pending order, stale data and service error.",
-    contract: ["Place NFL · Regular Season above the status line.", "Use equal status typography with green live, grey quarter-time and gold final states.", "View Bets scrolls to the scorecard; market prices open the buy drawer."],
-    validation: "Confirm the production feed values that map to live, quarter-time and final statuses.",
+    purpose: "Present one live game as a complete trading surface: navigation context, status and score, GTL/TIE/KTL prices, market statistics, game statistics, and any positions held in that game.",
+    states: "Open live market, scheduled countdown, waiting for first lead, transient price recalculation, final result, open game positions, Market Stats selected, Game Stats selected, and future licensed-logo references.",
+    contract: [
+      "Resolve the game from the id query parameter and fall back safely when the identifier is absent or unknown.",
+      "Render league and Regular Season above the status; derive Live, QTR Time, and Final from normalized feed fields rather than visual inference.",
+      "Treat GTL, TIE, and KTL as separate markets whose Yes/No values are complementary and whose interaction carries game, market, side, and prices into the trading drawer.",
+      "Use no-logo abbreviation marks with full team names for the current implementation. Licensed-logo references use NFL assets with initials beneath them.",
+      "On mobile/tablet expose one statistics panel through the equal-width toggle. On desktop hide the toggle and show Market Stats followed by Game Stats.",
+      "Keep paused, waiting, and final markets non-interactive; disabling the button must not remove the explanatory state or last meaningful context.",
+    ],
+    validation: "Before production integration, map provider statuses to countdown, active, quarter-time, recalculating, waiting-for-lead, and final explicitly; confirm settlement timing and licensed-logo availability independently.",
+    guides: [
+      {
+        title: "Page Anatomy",
+        items: [
+          "Floating global header, followed by a game-scoped back link whose label reflects Home or Portfolio when available.",
+          "Scorecard: league/season, normalized status, home and away identity, score, leader emphasis, and team-colour gradient.",
+          "Markets: Yes/Market/No header and fixed GTL, TIE, KTL row order, followed by contextual help or a blocking status.",
+          "Game positions: a mobile/tablet bottom-bar control and dismissible panel, or a persistent inline panel below markets on desktop.",
+          "Statistics: Market Book and Order Flow, then Score Worm and five league-specific comparison rows.",
+        ],
+      },
+      {
+        title: "Data Contract",
+        items: [
+          "Game identity: id, league, period/status, clock, and optional scheduled-start or pause metadata.",
+          "Each team: name, abbreviation, score, brand colour, and an optional licensed logo with an abbreviation fallback.",
+          "Each market: GTL, TIE, and KTL with integer-cent Yes/No prices; reject or flag payloads whose pair does not total 100.",
+          "Game Stats: ordered league-specific metrics plus numeric comparison values for bar scaling; possession retains display and numeric values.",
+        ],
+      },
+      {
+        title: "Responsive Contract",
+        items: [
+          "Mobile (390 reference): stacked scorecard, markets, equal-width stats toggle, and one visible stats panel with 20px content gutters.",
+          "Tablet (768 reference): same stacked information architecture, wider scorecard spacing, 704px content maximum, and single-column statistic cards.",
+          "Desktop (1180 reference): sticky 40% left trading column, flowing right statistics column, page-level team gradient, no stats toggle, and both panels visible.",
+          "The documentation frame must emulate these breakpoints explicitly because its host viewport is desktop-sized.",
+        ],
+      },
+      {
+        title: "Interaction and Accessibility",
+        items: [
+          "Price buttons need market and side context, a disabled state during blocking conditions, and a visible focus treatment when interactive.",
+          "Stats controls use role=tab, aria-selected, aria-controls, and matching panels; hidden panels must be removed from the accessibility tree.",
+          "Status colour is supplementary: text must always identify countdown, period, quarter time, recalculation, waiting, or final.",
+          "Charts require concise accessible names or equivalent textual values; team artwork uses empty image alt text because the surrounding mark supplies the name.",
+        ],
+      },
+      {
+        title: "State and Update Rules",
+        items: [
+          "Apply score, clock, status, and all three price pairs from one coherent feed snapshot to avoid mixed-state rendering.",
+          "During recalculation, preserve the last stable snapshot, disable trading, and replace prices atomically when the new snapshot arrives.",
+          "Do not locally promote waiting/countdown/final states from score or clock guesses; transition only from explicit normalized service state.",
+          "Preserve the selected statistics view across ordinary live updates, but initialize Market Stats when entering a game on mobile/tablet.",
+        ],
+      },
+      {
+        title: "Failure and Fallback Rules",
+        items: [
+          "Unknown or missing ids fall back to the first available game in the current prototype; production should use an explicit not-found strategy.",
+          "Logo failures fall back to abbreviation marks with no layout shift. Current production remains the no-logo treatment.",
+          "Stale or failed market data must disable trading and state why; never leave visually valid prices actionable after freshness expires.",
+          "If statistics are unavailable, retain score and market functionality and provide a scoped statistics empty/error state rather than failing the page.",
+        ],
+      },
+    ],
   },
   ranking: {
     title: "Ranking",
     implementation: "<code>ranking.html</code>",
-    purpose: "Monthly competition leaderboard, competition timing, month selection and the current player’s position.",
-    states: "Monthly ranking, month selector and completed-ranking result.",
-    contract: ["Keep leaderboard values tabular and retain the highlighted current-player row.", "Month selection updates the competition context without changing page structure.", "Completed competitions expose the result state without obscuring the ranking."],
-    validation: "Confirm how archived competition months and tied rankings are returned by the production service.",
+    purpose: "Present the public monthly competition, private customer position, archived month results, and the correct post-reset outcome for every prize tier.",
+    states: "Signed out, signed-out month selector, authenticated current month, authenticated month selector, historical month selected, outside-top-ten result, inside-top-ten winner, and top-three winner.",
+    contract: ["Render Rank, Player, Balance, and Prize as the four stable table columns with tabular numerals.", "Expose customer ranks only after authentication; an outside-top-ten customer uses the separate highlighted row, while a top-ten customer replaces the matching leaderboard row.", "Month selection must replace the complete result set atomically and preserve one selected option.", "Result dialogs are shown once after reset; the Close button is a standalone sibling at the bottom safe area, never nested inside the modal body."],
+    validation: "Confirm archived-month availability, tied-rank ordering, result-modal once-only persistence, and reward-fulfillment values against the production ranking service.",
+    guides: [
+      { title: "Page Anatomy", items: ["Floating global header above the gradient competition hero and reset countdown.", "Centered month selector and four-column top-ten leaderboard.", "Optional authenticated customer row below a divider when the rank is outside positions 1–10.", "Competition-summary rules and the Official Rules route below the leaderboard."] },
+      { title: "Month and Authentication Rules", items: ["Build available months from the current calendar month backwards and display them newest-first.", "Signed-out month options say ‘Sign in to view’ and never leak historical customer ranks.", "Selecting a month updates the label, selected option, top ten, and customer placement from the same archived result.", "Click-away and Escape close the selector without changing the active month."] },
+      { title: "Completed Result Rules", items: ["Outside Top 10: rank and next-month encouragement only; no prize, medal, or celebration.", "Positions 4–10: show the exact prize and celebration, without a podium medal.", "Positions 1–3: show prize, celebration, rank medal, and the top-three modal offset.", "The dimming backdrop, dialog, celebration layer, and bottom Close control are separate siblings with explicit stacking order."] },
+      { title: "Accessibility and Responsive Contract", items: ["Use table, row, columnheader, and cell semantics; label the highlighted row as the customer’s rank.", "Use a listbox with aria-expanded and exactly one aria-selected option for month selection.", "The result uses aria-modal and is dismissible with Close, backdrop click, or Escape; decorative celebration layers stay hidden from assistive technology.", "At narrow widths retain all four columns, compact typography and gutters, and keep the standalone Close button above the device safe area."] },
+    ],
+  },
+  rules: {
+    title: "Monthly Competition Rules",
+    implementation: "<code>rules.html</code>, <code>rules.css</code>",
+    purpose: "Publish the authoritative legal terms for the recurring GTL Monthly Prize Competition and its $5,000 prize schedule.",
+    states: "One published long-form rules document containing 13 numbered sections and the prize table.",
+    contract: ["Preserve the no-purchase notice, free-credit disclaimer, numbered section order, and full prize schedule.", "Use semantic headings, ordered lists, table headers, caption, and readable long-form line lengths.", "Back should honor valid same-origin history and otherwise return to Home.", "Legal placeholders must be resolved before publication; design documentation does not convert draft language into approved legal copy."],
+    validation: "Blocking legal review: replace every bracketed entity, state, URL, payment, email, and date placeholder; confirm Eligible States, dispute terms, tax language, and winner-list process.",
+    guides: [
+      { title: "Content Contract", items: ["The document covers Sponsor, period, eligibility, entry, winner determination, prizes, verification, conduct, integrity, publicity, privacy, general terms, and winners list.", "The prize table must total $5,000 and remain consistent with Ranking and result dialogs.", "Rules active at the start of a competition govern that competition; avoid silent mid-period replacement.", "Last-updated metadata and legal-entity ownership must be visible at the document end."] },
+      { title: "Responsive and Accessibility", items: ["Keep the reading column at approximately 760px on desktop and reduce number gutters on mobile.", "Allow the prize table to scroll horizontally without clipping rank or prize cells.", "Do not communicate legal emphasis by colour alone; retain strong text and semantic structure.", "Footer Official Rules is the current page and all in-product competition summaries route here."] },
+    ],
   },
   portfolio: {
     title: "Portfolio",
@@ -789,13 +1287,35 @@ const individualPageDocumentation = {
     contract: ["Use the current credit balance as the shared balance source.", "Buy More and Sell retain the originating game, market and side.", "Financial values use tabular numerals and explicit positive/negative styling."],
     validation: "Confirm whether pending and settled orders require pagination or server-side filtering.",
   },
+  fees: {
+    title: "Fees",
+    implementation: "<code>fees.html</code>, <code>fees.css</code>",
+    purpose: "Explain contract pricing, the 2% trading fee, potential payout, profit calculation, and automatic settlement.",
+    states: "Default standalone article and conditional Continue Bet return control when opened from an active order.",
+    contract: ["State the 2% fee and $0.01 minimum consistently with every Buy/Sell order summary.", "Explain the 1¢–99¢ contract range and $1.00/$0.00 settlement outcomes without implying guaranteed profit.", "Only show Continue Bet when valid serialized bet context exists.", "Returning to a bet must restore the originating game, market, side, price mode, and valid draft values."],
+    validation: "Confirm whether the fee applies independently to buys and sells, rounding order, fee caps, void/refund treatment, and whether the current 2% language is production-approved.",
+    guides: [{ title: "Continue Bet Contract", items: ["Persist only the minimum non-sensitive draft context needed to reconstruct the order.", "Validate game and market freshness before reopening the drawer.", "Hide the floating control when context is absent, expired, invalid, or belongs to a settled game.", "Team artwork is decorative; the visible Continue Bet label remains the accessible action name."] }],
+  },
   login: {
     title: "Login",
     implementation: "<code>login.html</code>, <code>login-v2.html</code>, <code>forgot.html</code>",
-    purpose: "Email/password and phone-verification authentication, including password recovery and feedback states.",
-    states: "Email sign in, phone sign in, phone verification, forgot password, reset password, loading and validation error.",
-    contract: ["Keep labels visible above inputs.", "Disable submission until the required credentials are present.", "Keep recovery and phone-verification steps explicit and independently recoverable."],
-    validation: "Confirm which authentication route is the production default and its recovery delivery channel.",
+    purpose: "Document the two competing login implementations accurately so product can select one production route and engineering can remove the rejected route.",
+    states: "Decision between variation 1 email/password and variation 2 passwordless phone; phone verification; password recovery; reset password; loading; and validation error.",
+    contract: ["Do not ship both first-party login variations or expose the prototype-switch links in production.", "Keep Google and Apple available in either variation unless provider scope changes independently.", "Disable submission until the selected route’s required input is valid and expose loading, field, service, expiry, and rate-limit feedback.", "If variation 1 is selected, retain Forgot Password and Reset Password. If variation 2 is selected, remove those password routes and retain phone verification, resend, expiry, and Back behavior."],
+    validation: "Blocking product decision: select variation 1 (email/password) or variation 2 (passwordless phone). Then delete the rejected page, its switch link, unreachable handlers, and route-specific recovery or verification states.",
+    decision: {
+      title: "Production Login Route Must Be Selected",
+      status: "Decision Required",
+      summary: "login.html and login-v2.html are alternative prototypes, not two login methods to expose together. Pick one implementation before development is considered complete.",
+      options: [
+        { title: "Variation 1 — Email and Password", source: "login.html", items: ["Email and password credentials plus Google and Apple.", "Requires Forgot Password, reset-link delivery, token validation, and new-password screens.", "Remove login-v2.html and all passwordless phone-login challenge handlers if selected."] },
+        { title: "Variation 2 — Passwordless Phone", source: "login-v2.html", items: ["Phone number, SMS challenge, eight-digit verification, Google, and Apple.", "Requires code expiry, resend throttling, attempt limits, paste handling, and SMS delivery errors.", "Remove password login, Forgot Password, Reset Password, and their handlers if selected."] },
+      ],
+    },
+    guides: [
+      { title: "Shared Page Contract", items: ["Close returns to the originating safe page; successful authentication returns to the preserved destination.", "Keep visible labels, autocomplete attributes, focus order, inline errors, and a single primary action.", "Social authentication is independent of the first-party credential decision and must surface cancellation and provider errors.", "Never retain passwords or verification codes after completion, cancellation, expiry, or route change."] },
+      { title: "Decision Cleanup", items: ["Delete the rejected HTML route rather than leaving a hidden prototype in production.", "Remove both prototype-switch links so customers cannot move between incompatible flows.", "Remove unreachable event handlers, storage keys, recovery or challenge endpoints, and automated tests belonging only to the rejected route.", "Update Login links across Home, account gates, registration, and recovery to target the selected route only."] },
+    ],
   },
   registration: {
     title: "Registration",
@@ -805,9 +1325,18 @@ const individualPageDocumentation = {
     contract: ["Phone verification precedes account completion.", "Use one date-of-birth field and require Terms acceptance.", "Username selection remains on the Welcome page."],
     validation: "Confirm the production registration route and social-provider behaviour.",
   },
+  contact: {
+    title: "Contact",
+    implementation: "<code>contact.html</code>, <code>contact.css</code>, contact handlers in <code>app.js</code>",
+    purpose: "Collect structured support and product-feedback requests and provide a traceable submission confirmation.",
+    states: "Default form, topic listbox open, field validation errors, and successful submission with reference number.",
+    contract: ["Collect name, email, one controlled topic, and a message of no more than 1,000 characters.", "Keep topic selection keyboard-operable as a combobox/listbox and expose the current character count.", "Show errors adjacent to fields and preserve valid input after failed validation or service errors.", "On success replace the form with destination email, reference number, and Send Another Message."],
+    validation: "Confirm the support delivery endpoint, service-error state, required/optional field policy, SLA copy, reference format, retention, spam protection, and privacy basis.",
+    guides: [{ title: "Submission and Accessibility", items: ["Topics are Account support, Gameplay or markets, Monthly competition, Product feedback, and Something else.", "Escape and click-away close the topic menu without clearing selection.", "Announce success through the status region and move focus to it after submission.", "Do not place customer-entered message content into analytics or client logs."] }],
+  },
   location: {
     title: "Location",
-    implementation: "<code>location.html</code>",
+    implementation: "<code>location-unavailable.html</code>",
     purpose: "Explain eligibility and availability when GTL cannot be used from the customer’s current location.",
     states: "Signed-out location unavailable.",
     contract: ["Keep the restriction explanation visible without requiring authentication.", "Provide a clear route back to the available signed-out experience.", "Do not imply that changing account settings can bypass location eligibility."],
@@ -822,51 +1351,67 @@ const individualPageDocumentation = {
     validation: "Confirm whether the transaction cap is calculated before or after fees.",
   },
   account: {
-    title: "Account",
+    title: "Profile & Settings",
     implementation: "<code>profile.html</code> and account-management views",
     purpose: "Profile and account management for password, Google and Apple accounts, username editing and protected actions.",
     states: "Password profile, edit username, Google profile, Apple profile, signed-out protection, betting controls and account deletion.",
     contract: ["Show provider-specific account details without exposing unavailable password actions.", "Require authentication before profile or account-management content is shown.", "Keep destructive account deletion visually and semantically distinct."],
     validation: "Confirm re-authentication and retention requirements for account deletion.",
   },
+  access: {
+    title: "Access Gate",
+    implementation: "<code>index.html</code> and local <code>gate.config.js</code>",
+    purpose: "Restrict casual access to the private prototype before routing an approved reviewer to Home.",
+    states: "Enter passphrase and incorrect passphrase.",
+    contract: ["Mark the page noindex/nofollow and keep the passphrase configuration out of source control.", "Successful entry sets the session gate and routes to Home; invalid entry clears the field, shows the inline error, and restores focus.", "Password visibility must update its accessible label.", "This client-side gate must never be represented as security for sensitive or production information."],
+    validation: "Decide whether the deployed prototype needs real server-side access control. If not, remove this page and every session-gate redirect before production launch.",
+  },
 };
-const flatDocOrder = ["home", "welcome", "game", "ranking", "portfolio", "login", "registration", "location", "drawer", "account"];
+const flatDocOrder = ["home", "waitlist", "welcome", "game", "ranking", "rules", "portfolio", "fees", "login", "registration", "contact", "location", "drawer", "account", "access"];
 const flatDocTabLabels = {
   home: "Home",
+  waitlist: "Waitlist",
   welcome: "Welcome",
   game: "Game",
   ranking: "Ranking",
+  rules: "Monthly Competition Rules",
   portfolio: "Portfolio",
+  fees: "Fees",
   login: "Login",
   registration: "Registration",
+  contact: "Contact",
   location: "Location",
   drawer: "Buy / Sell",
-  account: "Account",
+  account: "Profile & Settings",
+  access: "Access Gate",
 };
 let activeFlatDevice = "mobile";
 let activeFlatDoc = "home";
 
 function gameScoreboard(g, useLogos = false) {
   const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
-  const winner = lead ? g[lead] : null;
   const compactScore = String(g.home.score).length >= 3 || String(g.away.score).length >= 3;
+  const isFinal = Boolean(g.final) || /^(final|ft)$/i.test(String(g.period || "").trim());
+  const isQuarterTime = !isFinal && !g.clock;
+  const clockState = isFinal ? "is-final" : isQuarterTime ? "is-quarter-time" : "is-live";
+  const clockLabel = isFinal ? "Final" : isQuarterTime ? "QTR Time" : g.period;
   const team = (side) => {
     const current = g[side];
+    const leading = lead === side ? " is-leading" : "";
     const mark = useLogos
       ? `<span class="team-mark gb-logo" aria-label="${current.name}" style="--team-color:${current.color}"><img src="${current.logo}" alt=""><span class="team-mark-abbr">${current.abbr}</span></span>`
       : `<span class="team-mark gb-logo is-fallback" aria-label="${current.abbr}" style="--team-color:${current.color}"><span class="team-mark-abbr">${current.abbr}</span></span>`;
-    return `<div class="gb-team">${mark}<span class="gb-abbr">${useLogos ? current.abbr : current.name}</span></div>`;
+    return `<div class="gb-team${leading}">${mark}<span class="gb-abbr">${useLogos ? current.abbr : current.name}</span></div>`;
   };
-  return `<section class="gb${g.final ? " is-final" : ""}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <div class="gb-glow"></div>
+  return `<section class="gb${isFinal ? " is-final" : ""}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <div class="gb-glow" aria-hidden="true"></div>
     <div class="container gb-inner">
-      <div class="gb-topbar"><span class="gb-back"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back</span></div>
+      <div class="gb-topbar"><span class="gb-back"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Home</span></span></div>
       <div class="gb-score-stack">
-        <span class="live-badge game-clock-badge"><span class="game-period${g.final ? " is-final" : ""}${g.countdown ? " is-countdown" : ""}">${g.final ? "" : `<span class="${g.countdown ? "countdown-dot" : "live-dot"}"></span>`}${g.period}</span>${g.clock ? `<span class="game-clock tnum${g.countdown ? " is-countdown" : ""}">${g.clock}</span>` : ""}</span>
+        <p class="gb-league">${g.league.toUpperCase()} · Regular Season</p>
+        <span class="live-badge game-clock-badge ${clockState}"><span class="game-period${isFinal ? " is-final" : ""}${g.countdown ? " is-countdown" : ""}">${!isFinal && !isQuarterTime ? `<span class="${g.countdown ? "countdown-dot" : "live-dot"}"></span>` : ""}${clockLabel}</span>${!isFinal && !isQuarterTime && g.clock ? `<span class="game-clock tnum${g.countdown ? " is-countdown" : ""}">${g.clock}</span>` : ""}</span>
         <div class="gb-score${compactScore ? " is-compact-score" : ""}">${team("home")}<div class="gb-numbers"><span class="gb-num tnum${lead === "home" ? " is-leading" : ""}">${g.home.score}</span><span class="gb-dash">–</span><span class="gb-num tnum${lead === "away" ? " is-leading" : ""}">${g.away.score}</span></div>${team("away")}</div>
       </div>
-      <p class="gb-league">${g.league}</p>
-      ${g.final && winner ? `<p class="gb-result"><strong>${winner.abbr} won</strong><span>Final score</span></p>` : ""}
     </div>
   </section>`;
 }
@@ -881,12 +1426,12 @@ function gameMarkets(g) {
   return `<section class="container markets${g.recalc ? " is-recalc" : ""}${g.final ? " is-final" : ""}">
     ${g.message ? `<div class="game-recalc"><span class="pause-dot"></span><span>${g.message}</span></div>` : ""}
     <div class="mkt-grid"><div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>${row("GTL", "Get the Lead", "gtl")}${row("TIE", "", "tie")}${row("KTL", "Keep the Lead", "ktl")}</div>
-    <p class="bet-help">${g.final ? "Game final. Markets are settled." : "Tap a price to start your bet · Prices updated every 10 seconds"}</p>
+    <p class="bet-help">Tap a price to start your bet.</p>
   </section>`;
 }
 
-function gameMomentumPreview(g, useLogos = false) {
-  const stats = g.league === "NFL" ? [
+function gameMomentumPreview(g, useLogos = false, instance = "default") {
+  const stats = g.stats || (g.league === "NFL" ? [
     { label: "Total Team Yards", home: 318, away: 286 },
     { label: "Pass Yards", home: 224, away: 201 },
     { label: "Rush Yards", home: 94, away: 85 },
@@ -898,7 +1443,7 @@ function gameMomentumPreview(g, useLogos = false) {
     { label: "Assists", home: 19, away: 24 },
     { label: "3PT %", home: 34, away: 41 },
     { label: "Turnovers", home: 11, away: 8 },
-  ];
+  ]);
   const statRow = (s) => {
     const homeMetric = s.homeMetric ?? Number(s.home);
     const awayMetric = s.awayMetric ?? Number(s.away);
@@ -923,9 +1468,9 @@ function gameMomentumPreview(g, useLogos = false) {
         <div class="worm-axis" aria-hidden="true"><span>+8</span><span>0</span><span>-8</span></div>
         <span class="worm-mark" style="left:22%"></span><span class="worm-mark" style="left:47%"></span><span class="worm-mark" style="left:72%"></span>
         <svg class="worm-svg" viewBox="0 0 320 132" preserveAspectRatio="none" role="img" aria-label="Score margin over the game, 3 lead changes">
-          <defs><linearGradient id="ds-worm-${g.home.abbr}-${g.away.abbr}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="132"><stop offset="0" stop-color="${g.home.color}"></stop><stop offset="0.5" stop-color="${g.home.color}"></stop><stop offset="0.5" stop-color="${g.away.color}"></stop><stop offset="1" stop-color="${g.away.color}"></stop></linearGradient></defs>
+          <defs><linearGradient id="ds-worm-${instance}-${g.home.abbr}-${g.away.abbr}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="132"><stop offset="0" stop-color="${g.home.color}"></stop><stop offset="0.5" stop-color="${g.home.color}"></stop><stop offset="0.5" stop-color="${g.away.color}"></stop><stop offset="1" stop-color="${g.away.color}"></stop></linearGradient></defs>
           <line class="worm-zero" x1="0" y1="66" x2="320" y2="66"></line>
-          <path class="worm-line" d="M0 66 L35 58 L70 76 L110 70 L150 50 L190 44 L230 62 L270 82 L320 90" style="stroke:url(#ds-worm-${g.home.abbr}-${g.away.abbr})"></path>
+          <path class="worm-line" d="M0 66 L35 58 L70 76 L110 70 L150 50 L190 44 L230 62 L270 82 L320 90" style="stroke:url(#ds-worm-${instance}-${g.home.abbr}-${g.away.abbr})"></path>
         </svg>
       </div>
       <div class="worm-stats"><div class="worm-stat"><strong class="tnum">3</strong><span>Lead Changes</span></div><div class="worm-stat"><strong class="tnum">5</strong><span>Ties</span></div></div>
@@ -937,7 +1482,7 @@ function gameMomentumPreview(g, useLogos = false) {
   </div>`;
 }
 
-function gameStatsPreview(g, activePanel = "market", useLogos = false) {
+function gameStatsPreview(g, activePanel = "market", useLogos = false, instance = "default") {
   const waiting = !!g.waiting;
   const marketActive = activePanel !== "game";
   const gameActive = activePanel === "game";
@@ -974,10 +1519,13 @@ function gameStatsPreview(g, activePanel = "market", useLogos = false) {
     ["08:03", "GTL", "No", g.markets.gtl.no - 3, 300],
     ["06:37", "TIE", "Yes", g.markets.tie.yes + 1, 200],
   ];
+  const tabsId = `game-stats-tabs-${instance}`;
+  const marketPanelId = `game-market-panel-${instance}`;
+  const gamePanelId = `game-stats-panel-${instance}`;
   return `<section class="container stats-section" style="--home-color:${g.home.color};--away-color:${g.away.color}">
     <div class="section-head center stats-overall-head"><span class="eyebrow">Stats</span><h2>Inside the game</h2></div>
-    <div class="stats-tabs" role="tablist" aria-label="Game statistics views"><button class="stats-tab${marketActive ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(marketActive)}" tabindex="-1">Market Stats</button><button class="stats-tab${gameActive ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(gameActive)}" tabindex="-1">Game Stats</button></div>
-    <div class="stats-panel"${marketActive ? "" : " hidden"}>
+    <div class="stats-tabs" id="${tabsId}" role="tablist" aria-label="Game statistics views"><button class="stats-tab${marketActive ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(marketActive)}" aria-controls="${marketPanelId}" data-stats-tab="betting" tabindex="-1">Market Stats</button><button class="stats-tab${gameActive ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(gameActive)}" aria-controls="${gamePanelId}" data-stats-tab="game" tabindex="-1">Game Stats</button></div>
+    <div class="stats-panel" id="${marketPanelId}" data-stats-panel="betting"${marketActive ? "" : " hidden"}>
     <h3 class="stats-section-label">Market Stats</h3>
     <div class="chart-grid-wrap">
       <article class="chart-card">
@@ -1000,20 +1548,51 @@ function gameStatsPreview(g, activePanel = "market", useLogos = false) {
       </article>
     </div>
     </div>
-    <div class="stats-panel"${gameActive ? "" : " hidden"}>
+    <div class="stats-panel" id="${gamePanelId}" data-stats-panel="game"${gameActive ? "" : " hidden"}>
       <h3 class="stats-section-label">Game Stats</h3>
-      ${gameMomentumPreview(g, useLogos)}
+      ${gameMomentumPreview(g, useLogos, instance)}
     </div>
   </section>`;
 }
 
+function gameOpenPositionsPreview() {
+  const positions = [
+    { market: "Get the Lead", side: "yes", qty: 120, value: "$52.80", result: "+$7.20" },
+    { market: "Keep the Lead", side: "no", qty: 80, value: "$33.60", result: "−$8.00" },
+    { market: "Tie", side: "no", qty: 60, value: "$48.60", result: "+$4.20" },
+  ];
+  const cards = positions.map((position) => {
+    const up = !position.result.startsWith("−");
+    return `<article class="pos-card pos-card--b" style="--home-color:#00338D;--away-color:#008E97">
+      <div class="pos-info">
+        <div class="ocb-type">${position.market} · <span class="side-${position.side}">${position.side.toUpperCase()}</span></div>
+        <div class="ocb-stats">
+          <div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">${position.qty}</span></div>
+          <div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">${position.value}</span></div>
+          <div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl ${up ? "up" : "down"}">${position.result}</span></div>
+        </div>
+        <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
+      </div>
+    </article>`;
+  }).join("");
+  return `<div class="game-open-position is-preview-open" role="region" aria-label="Your open positions in this game">
+    <div class="gop-backdrop" aria-hidden="true"></div>
+    <div class="gop-pop"><p class="gop-heading">Game Open Positions</p><div class="hpos-list">${cards}</div></div>
+  </div>`;
+}
+
+function gameOpenPositionsBar() {
+  return `<div class="betbar is-visible ds-gop-betbar"><div class="container betbar-inner"><button class="btn btn-secondary gop-trigger" type="button" aria-expanded="true" tabindex="-1"><span class="gop-open-label">Hide</span><span class="gop-closed-label"><span class="gop-num">3</span> Game Positions</span></button><button class="btn btn-primary betbar-cta" type="button" tabindex="-1">View Bets</button></div></div>`;
+}
+
 function renderGameFrame(mode) {
-  if (mode === "live" || mode === "liveLogos" || mode === "gameStatsLogos" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "gameStatsNFL" || mode === "gameStatsNBA" || mode === "final") {
+  if (mode === "live" || mode === "liveLogos" || mode === "gameStatsLogos" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "openPositions" || mode === "gameStatsNFL" || mode === "final") {
     const useLogos = mode === "liveLogos" || mode === "gameStatsLogos";
-    const g = mode === "gameStatsNFL" ? gameFrameData.statsNfl : mode === "gameStatsNBA" || useLogos ? gameFrameData.live : gameFrameData[mode];
-    const statsPanel = mode === "gameStatsNFL" || mode === "gameStatsNBA" || mode === "gameStatsLogos" || mode === "final" ? "game" : "market";
+    const hasGamePositions = mode === "openPositions";
+    const g = mode === "gameStatsNFL" || useLogos ? gameFrameData.statsNfl : gameFrameData[mode];
+    const statsPanel = mode === "gameStatsNFL" || mode === "gameStatsLogos" ? "game" : "market";
     const gameColors = `--home-color:${g.home.color};--away-color:${g.away.color}`;
-    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(false)}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos)}</div></div></main>${homeFooter()}</div>`;
+    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(hasGamePositions, hasGamePositions)}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}${hasGamePositions ? gameOpenPositionsPreview() : ""}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter()}${hasGamePositions ? gameOpenPositionsBar() : ""}</div>`;
   }
   let banner = "";
   let markets = flatMarkets(mode === "pregame");
@@ -1411,9 +1990,32 @@ function titleCaseVariantLabel(value) {
   }).join("-")).join(" ");
 }
 
+function renderVariantDocumentation(frame) {
+  const documentation = ({ game: gameVariantDocumentation, ranking: rankingVariantDocumentation, auth: authVariantDocumentation }[frame.type] || standaloneVariantDocumentation[frame.type] || {})[frame.mode];
+  if (!documentation) return "";
+  const fields = [
+    ["Displayed When", documentation.trigger],
+    ["What Changes", documentation.changes],
+    ["Required Data", documentation.data],
+    ["Implementation Behavior", documentation.behavior],
+  ];
+  return `<details class="flat-frame-doc">
+    <summary>
+      <span class="flat-frame-doc-summary">${documentation.summary}</span>
+      <span class="flat-frame-doc-toggle" aria-hidden="true"><span class="is-collapsed">View Details</span><span class="is-expanded">Hide Details</span><svg viewBox="0 0 20 20" fill="none"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </summary>
+    <div class="flat-frame-doc-body"><dl>${fields.map(([term, description]) => `<div><dt>${term}</dt><dd>${description}</dd></div>`).join("")}</dl></div>
+  </details>`;
+}
+
 function renderFlatFrame(frame, useTitleCase = false) {
   const renderers = {
     auth: renderAuthFrame,
+    access: renderAccessFrame,
+    waitlist: renderWaitlistFrame,
+    contact: renderContactFrame,
+    fees: renderFeesFrame,
+    rules: renderRulesFrame,
     home: renderHomeFrame,
     welcome: renderWelcomeFrame,
     location: renderLocationFrame,
@@ -1425,7 +2027,7 @@ function renderFlatFrame(frame, useTitleCase = false) {
   };
   const screen = renderers[frame.type](frame.mode);
   const label = useTitleCase ? titleCaseVariantLabel(frame.label) : frame.label;
-  return `<article class="flat-frame-wrap flat-frame--${frame.type}"><div class="flat-frame-label">${label}</div><div class="flat-phone">${screen}</div></article>`;
+  return `<article class="flat-frame-wrap flat-frame--${frame.type} flat-frame--${frame.type}-${frame.mode}"><div class="flat-frame-label">${label}</div>${renderVariantDocumentation(frame)}<div class="flat-phone">${screen}</div></article>`;
 }
 
 function renderFlatDocSection(doc) {
@@ -1461,7 +2063,10 @@ function hydrateIndividualPageChrome(section) {
       <article><span class="ds-doc-label">Required states</span><p>${doc.states}</p></article>
       <article><span class="ds-doc-label">Implementation contract</span><ul>${doc.contract.map((item) => `<li>${item}</li>`).join("")}</ul></article>
       <article class="is-validation"><span class="ds-doc-label">Open validation</span><p>${doc.validation}</p></article>
-    </div></div>
+    </div>
+    ${doc.decision ? `<section class="ds-page-decision" aria-label="Implementation decision required"><header><span class="ds-decision-status">${doc.decision.status}</span><h3>${doc.decision.title}</h3><p>${doc.decision.summary}</p></header><div class="ds-page-decision-grid">${doc.decision.options.map((option) => `<article><div class="ds-decision-option-head"><h4>${option.title}</h4><code>${option.source}</code></div><ul>${option.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
+    ${doc.guides ? `<section class="ds-page-implementation"><header><span class="ds-doc-label">Developer Guide</span><h3>Implementation Details</h3><p>Use these contracts together with the state-specific notes below. The flat lays illustrate output; these rules define when and how that output is produced.</p></header><div class="ds-page-implementation-grid">${doc.guides.map((guide) => `<article><h4>${guide.title}</h4><ul>${guide.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
+    </div>
     <section class="ds-page-states flat-lay-canvas" data-individual-content data-flat-device="mobile" data-device="mobile" style="--page-zoom: 1;"></section>
   </article>`;
 }
@@ -1476,7 +2081,11 @@ function renderIndividualPageSection(section, device = "mobile") {
   const nextDevice = ["mobile", "tablet", "desktop"].includes(device) ? device : "mobile";
   const variantsDescription = docKey === "home"
     ? "All implemented, authenticated, unauthenticated, and edge-case variants for this page are grouped below."
-    : "All implemented default, alternate, and edge-case variants for this page are grouped below.";
+    : docKey === "game"
+      ? "Each state includes its trigger, visual delta, required data, and behavior contract so the flat lay can be implemented without inferring rules from the image."
+      : docKey === "login"
+        ? "The first group contains two mutually exclusive production candidates. Select one, remove the other, then retain only its supporting states plus the shared feedback requirements."
+      : "All implemented default, alternate, and edge-case variants for this page are grouped below.";
   content.dataset.flatDevice = nextDevice;
   content.dataset.device = nextDevice;
   content.innerHTML = `<header class="ds-page-states-head"><span class="ds-doc-label">Page Variants</span><h3>${title} Variants</h3><p>${variantsDescription}</p></header>

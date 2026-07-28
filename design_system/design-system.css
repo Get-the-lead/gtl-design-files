@@ -1309,6 +1309,113 @@
   padding: 9px var(--s4);
 }
 
+.design-system-page .flat-frame-doc {
+  background:
+    radial-gradient(120% 120% at 100% 0%, var(--green-soft), transparent 58%),
+    var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.design-system-page .flat-frame-doc[open] {
+  min-height: 430px;
+}
+
+.design-system-page .flat-frame-doc > summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: minmax(0, 1fr) auto;
+  list-style: none;
+  padding: var(--s5);
+}
+
+.design-system-page .flat-frame-doc > summary::-webkit-details-marker {
+  display: none;
+}
+
+.design-system-page .flat-frame-doc > summary:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: -3px;
+}
+
+.design-system-page .flat-frame-doc-toggle {
+  align-items: center;
+  color: var(--green);
+  display: inline-flex;
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+  gap: var(--s2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.design-system-page .flat-frame-doc-toggle svg {
+  height: 18px;
+  transition: transform 0.2s var(--ease);
+  width: 18px;
+}
+
+.design-system-page .flat-frame-doc-toggle .is-expanded {
+  display: none;
+}
+
+.design-system-page .flat-frame-doc[open] .flat-frame-doc-toggle .is-collapsed {
+  display: none;
+}
+
+.design-system-page .flat-frame-doc[open] .flat-frame-doc-toggle .is-expanded {
+  display: inline;
+}
+
+.design-system-page .flat-frame-doc[open] .flat-frame-doc-toggle svg {
+  transform: rotate(180deg);
+}
+
+.design-system-page .flat-frame-doc-body {
+  padding: 0 var(--s5) var(--s5);
+}
+
+.design-system-page .flat-frame-doc-summary {
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.design-system-page .flat-frame-doc dl {
+  display: grid;
+  gap: var(--s4);
+  margin: 0;
+}
+
+.design-system-page .flat-frame-doc dl > div {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: var(--s2);
+  padding-top: var(--s3);
+}
+
+.design-system-page .flat-frame-doc dt {
+  color: var(--green);
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.design-system-page .flat-frame-doc dd {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .design-system-page .flat-phone {
   background: var(--bg);
   border: 8px solid #151917;
@@ -1323,7 +1430,11 @@
 .design-system-page .flat-frame--home .flat-phone,
 .design-system-page .flat-frame--welcome .flat-phone,
 .design-system-page .flat-frame--location .flat-phone,
-.design-system-page .flat-frame--ranking .flat-phone {
+.design-system-page .flat-frame--ranking .flat-phone,
+.design-system-page .flat-frame--waitlist .flat-phone,
+.design-system-page .flat-frame--contact .flat-phone,
+.design-system-page .flat-frame--fees .flat-phone,
+.design-system-page .flat-frame--rules .flat-phone {
   height: auto;
   min-height: var(--flat-frame-h, 760px);
 }
@@ -1486,6 +1597,138 @@
   padding: 0;
   position: relative;
 }
+
+.design-system-page .flat-screen:is(.is-waitlist, .is-contact, .is-support) {
+  display: block;
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+.design-system-page .flat-screen:is(.is-contact, .is-support) .site-header {
+  inset: 0 0 auto;
+  position: absolute;
+}
+
+.design-system-page .flat-screen:is(.is-waitlist, .is-contact, .is-support) :is(a, button) {
+  pointer-events: none;
+}
+
+.design-system-page .flat-screen.is-contact .contact-page {
+  padding-inline: var(--s5);
+}
+
+.design-system-page .flat-screen.is-contact .combobox-menu {
+  position: absolute;
+}
+
+.design-system-page .flat-screen.is-support .support-page {
+  padding-inline: var(--s5);
+  padding-top: 112px;
+}
+
+.design-system-page .flat-screen.is-fees .bet-mini {
+  bottom: auto;
+  position: absolute;
+  top: calc(var(--flat-frame-h, 760px) - 84px);
+}
+
+.design-system-page .flat-screen.is-waitlist .waitlist-confirmation {
+  bottom: auto;
+  height: var(--flat-frame-h, 760px);
+  position: absolute;
+}
+
+.design-system-page .flat-screen.is-waitlist .confirmation-card {
+  max-height: calc(var(--flat-frame-h, 760px) - 48px);
+  overflow-y: auto;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-contact .contact-layout {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s10);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .brand-pill {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-right: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) :is(.brand-link, .header-nav, .header-left > .theme-switch) {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .brand-menu {
+  display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-contact .contact-name-row {
+  grid-template-columns: 1fr;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen.is-contact .contact-name-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-contact .contact-layout {
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-waitlist :is(.markets-layout, .ranking-layout) {
+  grid-template-columns: 1fr;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-waitlist :is(.game-card-fan, .competition-preview) {
+  justify-self: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .waitlist-shell {
+  width: min(calc(100% - 32px), 600px);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .waitlist-header {
+  padding: 18px 16px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .waitlist-brand {
+  width: 104px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .form-row,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist :is(.section-intro, .promise-grid) {
+  grid-template-columns: 1fr;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .join-button {
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .trust-row {
+  flex-wrap: wrap;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .competition-table-head,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .competition-row {
+  gap: var(--s2);
+  grid-template-columns: 30px minmax(0, 1fr) 68px 56px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .waitlist-footer {
+  flex-direction: column;
+  text-align: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-rules .support-item {
+  gap: var(--s3);
+  grid-template-columns: 24px minmax(0, 1fr);
+}
 .design-system-page .flat-screen.is-ranking .site-header { inset: 0 0 auto; position: absolute; }
 .design-system-page .flat-screen.is-ranking .brand-pill { background: transparent; border: 0; box-shadow: none; padding-right: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .design-system-page .flat-screen.is-ranking .brand-link,
@@ -1495,8 +1738,25 @@
 .design-system-page .flat-screen.is-ranking :is(a, button, .brand) { pointer-events: none; }
 .design-system-page .flat-screen.is-ranking .ranking-hero { padding-top: 96px; }
 .design-system-page .flat-screen.is-ranking .ranking-page { padding-inline: var(--s4); }
-.design-system-page .flat-screen.is-ranking .ranking-prize-backdrop { position: absolute; }
-.design-system-page .flat-screen.is-ranking .ranking-prize-gate { position: absolute; top: 380px; }
+.design-system-page .flat-screen.is-ranking .ranking-prize-backdrop {
+  bottom: auto;
+  height: var(--flat-frame-h, 760px);
+  position: absolute;
+}
+.design-system-page .flat-screen.is-ranking .ranking-celebration {
+  bottom: auto;
+  height: var(--flat-frame-h, 760px);
+  position: absolute;
+}
+.design-system-page .flat-screen.is-ranking .ranking-prize-gate {
+  position: absolute;
+  top: calc(var(--flat-frame-h, 760px) / 2);
+}
+.design-system-page .flat-screen.is-ranking .ranking-result-close {
+  bottom: auto;
+  position: absolute;
+  top: calc(var(--flat-frame-h, 760px) - 74px);
+}
 
 .design-system-page .flat-screen.is-location .location-main {
   min-height: var(--flat-frame-h, 760px);
@@ -2028,11 +2288,21 @@
   margin: var(--s10) 0 0 68px;
 }
 
-.design-system-page .flat-screen.is-game-countdown .game-period.is-countdown,
 .design-system-page .flat-screen.is-game-final .game-period.is-final {
   font-family: var(--font-ui);
   font-size: var(--fs-label);
   font-weight: 600;
+}
+
+.design-system-page .flat-screen.is-game-countdown .game-clock-badge {
+  color: var(--blue);
+}
+
+.design-system-page .flat-screen.is-game-countdown .game-period.is-countdown {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .design-system-page .flat-screen.is-home .ds-home-skeleton {
@@ -2395,7 +2665,16 @@
 }
 
 .design-system-page .flat-screen.is-game .gb {
-  padding-top: 96px;
+  padding-top: 108px;
+}
+
+.design-system-page .flat-screen.is-game .gb-glow {
+  z-index: 0;
+}
+
+.design-system-page .flat-screen.is-game .gb-inner {
+  position: relative;
+  z-index: 1;
 }
 
 .design-system-page .flat-screen.is-game .markets {
@@ -2454,13 +2733,13 @@
   isolation: isolate;
   min-height: 360px;
   overflow: hidden;
-  padding: 92px 0 var(--s8);
+  padding: 96px 0 var(--s8);
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-glow {
   inset: 0;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .gb-inner {
@@ -2531,15 +2810,15 @@
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .chart-grid-wrap,
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .momentum-grid {
   display: grid;
-  gap: var(--s4);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+  grid-template-columns: 1fr;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .chart-card,
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .momentum-card {
   border-radius: var(--r-lg);
   min-width: 0;
-  padding: var(--s4);
+  padding: var(--s5);
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .chart-head {
@@ -2552,7 +2831,7 @@
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .flow-bars {
-  height: 92px;
+  height: 104px;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game .bets-table {
@@ -5507,6 +5786,10 @@
   display: none;
 }
 
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .gb-glow {
+  display: block;
+}
+
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .game-col-left {
   display: block;
   height: auto;
@@ -5527,12 +5810,28 @@
   padding-top: 0;
 }
 
+/* The app's desktop layout removes container gutters inside both columns.
+   Reinstate the production mobile/tablet gutters inside simulated frames. */
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game :is(.game-col-left, .game-col-right) > .container,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game :is(.game-col-left, .game-col-right) .container {
+  margin-inline: auto;
+  max-width: var(--maxw);
+  padding-inline: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game :is(.game-col-left, .game-col-right) > .container,
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-game :is(.game-col-left, .game-col-right) .container {
+  margin-inline: auto;
+  max-width: 704px;
+  padding-inline: var(--s5);
+}
+
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-overall-head {
   display: flex;
 }
 
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-tabs {
-  display: flex;
+  display: grid;
 }
 
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-panel[hidden] {
@@ -5540,6 +5839,78 @@
 }
 
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-section-label {
+  display: none;
+}
+
+/* Open game positions are a bottom-bar disclosure on mobile/tablet. The host
+   viewport is desktop-sized, so explicitly restore the implemented overlay. */
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-frame--game-openPositions .flat-phone {
+  height: var(--flat-frame-h, 844px);
+  min-height: var(--flat-frame-h, 844px);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions {
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .game-open-position {
+  inset: 0;
+  margin: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 55;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-backdrop {
+  display: block;
+  inset: 0;
+  opacity: 1;
+  pointer-events: none;
+  position: absolute;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-pop {
+  bottom: 84px;
+  left: 0;
+  max-height: calc(100% - 156px);
+  opacity: 1;
+  overflow-y: auto;
+  padding: var(--s4);
+  pointer-events: auto;
+  position: absolute;
+  right: 0;
+  transform: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-pop .hpos-list {
+  margin-inline: auto;
+  max-width: 400px;
+  padding-inline: 0;
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-heading {
+  margin-bottom: var(--s3);
+  padding-inline: 0;
+  text-align: center;
+}
+
+.design-system-page .flat-screen.is-game-openPositions .ds-gop-betbar {
+  bottom: 0;
+  display: block;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 60;
+}
+
+.design-system-page .flat-screen.is-game-openPositions .ds-gop-betbar .betbar-cta {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game-openPositions .ds-gop-betbar {
   display: none;
 }
 
@@ -5555,20 +5926,33 @@
   position: relative;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .site-header {
+  padding-left: var(--s4);
+  padding-right: var(--s4);
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-layout::before {
   inset: -104px 0 0;
   position: absolute;
+  z-index: 0;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left {
   display: flex;
   flex-direction: column;
-  height: auto;
+  height: calc(var(--flat-frame-h, 900px) - 104px - var(--s6));
   justify-content: flex-start;
-  overflow: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--s5);
   position: relative;
+  scrollbar-width: none;
   top: auto;
+  z-index: 1;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left::-webkit-scrollbar {
+  display: none;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb {
@@ -5595,6 +5979,15 @@
   padding: 0 var(--s4);
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left :is(.mkt-head, .mkt-row) {
+  gap: var(--s4);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 0.9fr);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .price {
+  min-width: 0;
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-left .gb-score {
   gap: var(--s6);
   grid-template-columns: auto auto auto;
@@ -5608,6 +6001,8 @@
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right {
   min-width: 0;
   padding-top: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game .game-col-right .stats-section {
@@ -5717,6 +6112,135 @@
   max-width: 100%;
   min-width: 0;
   width: 100%;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-decision {
+  background:
+    radial-gradient(90% 140% at 100% 0%, var(--gold-dim), transparent 62%),
+    var(--surface);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r-xl);
+  display: grid;
+  gap: var(--s6);
+  margin-top: var(--s8);
+  padding: var(--s6);
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-decision > header h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  margin: var(--s3) 0 0;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-decision > header p {
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin: var(--s3) 0 0;
+  max-width: 82ch;
+}
+
+.design-system-page .ds-restored-page-doc .ds-decision-status {
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--r-pill);
+  color: var(--gold-text);
+  display: inline-flex;
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 7px var(--s3);
+  text-transform: uppercase;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-decision-grid {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-decision-grid > article {
+  background: rgba(7, 8, 9, 0.34);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  min-width: 0;
+  padding: var(--s5);
+}
+
+.design-system-page .ds-restored-page-doc .ds-decision-option-head {
+  align-items: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  justify-content: space-between;
+}
+
+.design-system-page .ds-restored-page-doc .ds-decision-option-head h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-lead);
+  margin: 0;
+}
+
+.design-system-page .ds-restored-page-doc .ds-decision-option-head code {
+  color: var(--gold-text);
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-decision-grid ul {
+  color: var(--ink-2);
+  display: grid;
+  gap: var(--s3);
+  line-height: 1.5;
+  margin: var(--s4) 0 0;
+  padding-left: var(--s4);
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: var(--s6);
+  padding: var(--s10) 0;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation > header h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  margin: var(--s2) 0 0;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation > header p {
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin: var(--s3) 0 0;
+  max-width: 78ch;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation-grid {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation-grid > article {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  min-width: 0;
+  padding: var(--s5);
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation-grid h4 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-lead);
+  margin: 0 0 var(--s4);
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-implementation-grid ul {
+  color: var(--ink-2);
+  display: grid;
+  gap: var(--s3);
+  line-height: 1.5;
+  margin: 0;
+  padding-left: var(--s4);
 }
 
 .design-system-page .ds-restored-page-doc .ds-page-doc-grid {
@@ -5829,9 +6353,25 @@
   --flat-frame-w: 768px;
 }
 
+.design-system-page .ds-restored-page-doc .ds-page-states[data-device="tablet"] .flat-frame-doc[open] {
+  min-height: 285px;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-states[data-device="tablet"] .flat-frame-doc dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .design-system-page .ds-restored-page-doc .ds-page-states[data-device="desktop"] {
   --flat-frame-h: 900px;
   --flat-frame-w: 1180px;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-states[data-device="desktop"] .flat-frame-doc[open] {
+  min-height: 190px;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-states[data-device="desktop"] .flat-frame-doc dl {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 @media (max-width: 620px) {

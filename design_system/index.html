@@ -19,7 +19,10 @@
     <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260724d">
     <link rel="stylesheet" href="../gtl-app/profile.css">
     <link rel="stylesheet" href="../gtl-app/contact.css">
-    <link rel="stylesheet" href="design-system.css?v=20260728-page-docs-4">
+    <link rel="stylesheet" href="../gtl-app/fees.css">
+    <link rel="stylesheet" href="../gtl-app/rules.css">
+    <link rel="stylesheet" href="../gtl-app/waitlist.css">
+    <link rel="stylesheet" href="design-system.css?v=20260728-page-docs-20">
   </head>
   <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
@@ -35,15 +38,20 @@
         <a href="#overview" class="is-active">Overview</a>
         <span class="side-nav-label">Pages</span>
         <a href="#page-home">Home</a>
+        <a href="#page-waitlist">Waitlist</a>
         <a href="#page-welcome">Welcome</a>
         <a href="#page-game">Game</a>
         <a href="#page-ranking">Ranking</a>
+        <a href="#page-rules">Monthly Competition Rules</a>
         <a href="#page-portfolio">Portfolio</a>
+        <a href="#page-fees">Fees</a>
         <a href="#page-login">Login</a>
         <a href="#page-registration">Registration</a>
+        <a href="#page-contact">Contact</a>
         <a href="#page-location">Location</a>
         <a href="#page-drawer">Buy / Sell</a>
-        <a href="#page-account">Account</a>
+        <a href="#page-account">Profile &amp; Settings</a>
+        <a href="#page-access">Access Gate</a>
         <span class="side-nav-label">Legacy Device Pages</span>
         <a href="#pages" data-flat-device="mobile" class="is-device-active" aria-selected="true">Mobile Pages</a>
         <a href="#pages" data-flat-device="tablet" aria-selected="false">Tablet Pages</a>
@@ -165,6 +173,8 @@
         </article>
       </section>
 
+      <section id="page-waitlist" class="section individual-page-doc" data-individual-page="waitlist"></section>
+
       <section id="page-game" class="section individual-page-doc" data-individual-page="game">
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
@@ -199,6 +209,8 @@
         </article>
       </section>
 
+      <section id="page-rules" class="section individual-page-doc" data-individual-page="rules"></section>
+
       <section id="page-portfolio" class="section individual-page-doc" data-individual-page="portfolio">
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
@@ -215,6 +227,8 @@
           <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
         </article>
       </section>
+
+      <section id="page-fees" class="section individual-page-doc" data-individual-page="fees"></section>
 
       <section id="page-login" class="section individual-page-doc" data-individual-page="login">
         <div class="individual-page-head">
@@ -250,12 +264,14 @@
         </article>
       </section>
 
+      <section id="page-contact" class="section individual-page-doc" data-individual-page="contact"></section>
+
       <section id="page-location" class="section individual-page-doc" data-individual-page="location">
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Location</h1>
           <p>The signed-out eligibility and availability state shown when GTL cannot be used from the customer’s current location.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>location.html</code></span><span>1 documented state</span><span>Mobile · Tablet · Desktop</span></div>
+          <div class="individual-page-meta"><span>Implementation: <code>location-unavailable.html</code></span><span>1 documented state</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Location screen sizes">
@@ -287,12 +303,12 @@
       <section id="page-account" class="section individual-page-doc" data-individual-page="account">
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
-          <h1>Account</h1>
+          <h1>Profile &amp; Settings</h1>
           <p>Password, Google, and Apple account profiles, username editing, signed-out protection, betting controls, and account deletion.</p>
           <div class="individual-page-meta"><span>Implementation: <code>profile.html</code> and account-management views</span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
-          <div class="individual-device-tabs" role="tablist" aria-label="Account screen sizes">
+          <div class="individual-device-tabs" role="tablist" aria-label="Profile and Settings screen sizes">
             <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
             <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
             <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
@@ -300,6 +316,8 @@
           <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
         </article>
       </section>
+
+      <section id="page-access" class="section individual-page-doc" data-individual-page="access"></section>
 
       <section id="pages" class="section">
         <div class="section-header">
@@ -1621,6 +1639,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260728-page-docs-6"></script>
+    <script src="script.js?v=20260728-page-docs-20"></script>
   </body>
 </html>
