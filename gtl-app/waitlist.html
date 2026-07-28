@@ -318,8 +318,19 @@
       <h2 id="confirmation-title" data-confirmation-title>Securing your place.</h2>
       <p id="confirmation-copy" data-confirmation-copy>Hold tight—we’re reserving your early-access spot.</p>
       <div class="confirmation-progress" aria-hidden="true"><span></span></div>
-      <button class="btn btn-primary confirmation-action" type="button" data-confirmation-close hidden>Continue Exploring</button>
+      <div class="confirmation-actions" data-confirmation-actions hidden>
+        <button class="btn btn-primary confirmation-action" type="button" data-confirmation-share>Share with Friends</button>
+      </div>
+      <div class="confirmation-share" data-confirmation-share-panel hidden>
+        <label class="sr-only" for="waitlist-share-link">Waitlist link</label>
+        <input class="confirmation-share-link" id="waitlist-share-link" type="text" readonly data-confirmation-share-link />
+        <div class="confirmation-actions">
+          <button class="btn btn-primary confirmation-action" type="button" data-confirmation-copy-link><span>Copy</span></button>
+        </div>
+        <p class="confirmation-copy-status" aria-live="polite" data-confirmation-copy-status></p>
+      </div>
     </section>
+    <button class="btn btn-secondary confirmation-screen-close" type="button" data-confirmation-close hidden>Close</button>
   </div>
 
   <footer class="waitlist-footer">
