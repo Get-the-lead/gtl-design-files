@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html class="design-system-root" lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +13,13 @@
     <link rel="stylesheet" href="../gtl-app/home.css">
     <link rel="stylesheet" href="../gtl-app/game.css">
     <link rel="stylesheet" href="../gtl-app/wallet.css">
-    <link rel="stylesheet" href="design-system.css">
+    <link rel="stylesheet" href="../gtl-app/auth.css">
+    <link rel="stylesheet" href="../gtl-app/welcome.css">
+    <link rel="stylesheet" href="../gtl-app/location.css">
+    <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260724d">
+    <link rel="stylesheet" href="../gtl-app/profile.css">
+    <link rel="stylesheet" href="../gtl-app/contact.css">
+    <link rel="stylesheet" href="design-system.css?v=20260728-page-docs-4">
   </head>
   <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
@@ -27,8 +33,22 @@
 
       <nav class="side-nav">
         <a href="#overview" class="is-active">Overview</a>
-        <a href="#pages">Pages</a>
-        <a href="#page-flat-lays">Page Flat Lays</a>
+        <span class="side-nav-label">Pages</span>
+        <a href="#page-home">Home</a>
+        <a href="#page-welcome">Welcome</a>
+        <a href="#page-game">Game</a>
+        <a href="#page-ranking">Ranking</a>
+        <a href="#page-portfolio">Portfolio</a>
+        <a href="#page-login">Login</a>
+        <a href="#page-registration">Registration</a>
+        <a href="#page-location">Location</a>
+        <a href="#page-drawer">Buy / Sell</a>
+        <a href="#page-account">Account</a>
+        <span class="side-nav-label">Legacy Device Pages</span>
+        <a href="#pages" data-flat-device="mobile" class="is-device-active" aria-selected="true">Mobile Pages</a>
+        <a href="#pages" data-flat-device="tablet" aria-selected="false">Tablet Pages</a>
+        <a href="#pages" data-flat-device="desktop" aria-selected="false">Desktop Pages</a>
+        <span class="side-nav-label">Primitives</span>
         <a href="#tokens">Colors</a>
         <a href="#spacing">Spacing</a>
         <a href="#radius">Radius</a>
@@ -36,6 +56,7 @@
         <a href="#borders">Borders</a>
         <a href="#effects">Effects / Runtime</a>
         <a href="#typography">Typography</a>
+        <span class="side-nav-label">Components</span>
         <a href="#buttons">Buttons</a>
         <a href="#pills">Pills</a>
         <a href="#forms">Forms</a>
@@ -96,75 +117,201 @@
         </div>
       </section>
 
-      <section id="pages" class="section">
-        <div class="section-header">
-          <h2>Pages</h2>
-          <p>Preview the active GTL app pages from one place. Variants with -b are excluded.</p>
-        </div>
-
-        <article class="panel ds-pages-panel">
+      <section id="page-home" class="section ds-restored-page-doc" data-individual-page="home">
+        <article class="panel ds-pages-panel ds-individual-page-panel">
           <div class="panel-header">
-            <h3 data-page-title>Home</h3>
+            <h2>Home</h2>
             <div class="ds-page-actions">
-              <div class="ds-page-zoom" aria-label="Page preview zoom controls">
-                <button class="ds-icon-btn" type="button" aria-label="Zoom out" data-page-zoom="out"><span class="material-symbols-outlined" aria-hidden="true">remove</span></button>
-                <button class="ds-page-zoom-value" type="button" data-page-zoom="reset" aria-label="Reset zoom">100%</button>
-                <button class="ds-icon-btn" type="button" aria-label="Zoom in" data-page-zoom="in"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
+              <div class="ds-device-toggle" role="group" aria-label="Home preview device">
+                <button class="is-active" type="button" data-individual-device="mobile" aria-pressed="true">Mobile</button>
+                <button type="button" data-individual-device="tablet" aria-pressed="false">Tablet</button>
+                <button type="button" data-individual-device="desktop" aria-pressed="false">Desktop</button>
+              </div>
+              <div class="ds-page-zoom" role="group" aria-label="Home preview zoom controls">
+                <button class="ds-icon-btn" type="button" aria-label="Zoom out" data-individual-zoom="out"><span class="material-symbols-outlined" aria-hidden="true">remove</span></button>
+                <button class="ds-page-zoom-value" type="button" data-individual-zoom="reset" aria-label="Reset zoom">100%</button>
+                <button class="ds-icon-btn" type="button" aria-label="Zoom in" data-individual-zoom="in"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
               </div>
             </div>
           </div>
 
-          <div class="ds-page-tabs" role="tablist" aria-label="GTL app pages">
-            <button class="is-active" type="button" role="tab" aria-selected="true" data-page-tab data-page-name="Home" data-page-src="../gtl-app/home.html" data-page-compare-auth="true">Home</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Game" data-page-src="../gtl-app/game.html" data-page-compare-game="true">Game</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Portfolio" data-page-src="../gtl-app/wallet.html" data-page-auth="logged">Portfolio</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Login" data-page-src="../gtl-app/login.html">Login</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Verification Login" data-page-src="../gtl-app/login-v2.html">Verification Login</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Password" data-page-src="../gtl-app/forgot.html">Password</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Register" data-page-src="../gtl-app/signup.html">Register</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Phone Signup" data-page-src="../gtl-app/signup-v2.html">Phone Signup</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Welcome" data-page-src="../gtl-app/welcome.html">Welcome</button>
-            <button type="button" role="tab" aria-selected="false" data-page-tab data-page-name="Fees" data-page-src="../gtl-app/fees.html">Fees</button>
-          </div>
-
-          <div class="ds-page-preview" data-page-preview style="--page-zoom: 1;">
-            <div class="ds-page-stage">
-              <div class="ds-page-canvas" data-page-canvas>
-                <div class="ds-page-frame-card" data-page-frame-card="guest">
-                  <div class="ds-page-frame-label"><span data-page-frame-label="guest">Guest</span><a href="../gtl-app/home.html" target="_blank" rel="noopener" data-page-frame-open="guest">Open page</a></div>
-                  <iframe title="Home guest preview" data-page-frame="guest"></iframe>
-                </div>
-                <div class="ds-page-frame-card" data-page-frame-card="auth">
-                  <div class="ds-page-frame-label"><span data-page-frame-label="auth">Logged in</span><a href="../gtl-app/home.html" target="_blank" rel="noopener" data-page-frame-open="auth">Open page</a></div>
-                  <iframe title="Home logged-in preview" data-page-frame="auth"></iframe>
-                </div>
-                <div class="ds-page-frame-card" data-page-frame-card="empty">
-                  <div class="ds-page-frame-label"><span data-page-frame-label="empty">No open positions</span><a href="../gtl-app/home.html" target="_blank" rel="noopener" data-page-frame-open="empty">Open page</a></div>
-                  <iframe title="Home no open positions preview" data-page-frame="empty"></iframe>
-                </div>
-              </div>
+          <div class="ds-page-docs">
+            <div class="ds-page-doc-grid">
+              <article><span class="ds-doc-label">Purpose</span><p>Primary entry point for live NFL markets, account context, open positions and NBA-interest capture.</p><code>home.html</code></article>
+              <article><span class="ds-doc-label">Required states</span><p>Guest, logged in, no open positions, no live games, market recalculation, NBA interested and NBA not-for-me.</p></article>
+              <article><span class="ds-doc-label">Implementation contract</span><ul><li>Preserve guest and authenticated header variants.</li><li>Show NBA as coming soon; do not describe NBA as currently tradable.</li><li>Market prices open the buy drawer and paused markets remain non-interactive.</li></ul></article>
+              <article class="is-validation"><span class="ds-doc-label">Open validation</span><p>Confirm whether the NBA-interest response needs persistence, analytics or account association.</p></article>
             </div>
           </div>
+
+          <section class="ds-page-states flat-lay-canvas" data-individual-content data-flat-device="mobile" data-device="mobile" style="--page-zoom: 1;"></section>
         </article>
       </section>
 
-      <section id="page-flat-lays" class="section flat-lays-section">
-        <div class="flat-lays-hero">
-          <h1>Page Flat Lays</h1>
-          <p>Mobile page-level documentation for designers, developers, and stakeholders. Each frame is a static full-screen variant for fast comparison, organized like a Figma canvas.</p>
+      <section id="page-welcome" class="section individual-page-doc" data-individual-page="welcome">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Welcome</h1>
+          <p>Post-verification username selection and the account celebration shown after successful registration.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>2 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Welcome screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-game" class="section individual-page-doc" data-individual-page="game">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Game</h1>
+          <p>Game-detail variants covering live play, countdown, final, pregame, paused trading, NFL and NBA statistics, and licensed-logo references.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Game screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-ranking" class="section individual-page-doc" data-individual-page="ranking">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Ranking</h1>
+          <p>Monthly leaderboard, month selection, current-player position, competition timing, and completed-ranking result states.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>ranking.html</code></span><span>3 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Ranking screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-portfolio" class="section individual-page-doc" data-individual-page="portfolio">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Portfolio</h1>
+          <p>Portfolio totals, current and pending orders, settled history, order details, empty content, loading, and error states.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>wallet.html</code></span><span>8 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Portfolio screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-login" class="section individual-page-doc" data-individual-page="login">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Login</h1>
+          <p>Email and password login, passwordless phone login, verification, password recovery, loading, and validation feedback.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>login-v2.html</code>, <code>forgot.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Login screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-registration" class="section individual-page-doc" data-individual-page="registration">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Registration</h1>
+          <p>Email-first and phone-first account creation, personal details, birthday eligibility, phone verification, password, and consent states.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code>, <code>signup-v2.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Registration screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-location" class="section individual-page-doc" data-individual-page="location">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Location</h1>
+          <p>The signed-out eligibility and availability state shown when GTL cannot be used from the customer’s current location.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>location.html</code></span><span>1 documented state</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Location screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-drawer" class="section individual-page-doc" data-individual-page="drawer">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Buy / Sell</h1>
+          <p>Market and limit order entry, contract selection, paused trading, validation, balance, confirmation, and error states.</p>
+          <div class="individual-page-meta"><span>Implementation: trading drawer in <code>game.html</code> and <code>wallet.html</code></span><span>10 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Buy and Sell screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-account" class="section individual-page-doc" data-individual-page="account">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Account</h1>
+          <p>Password, Google, and Apple account profiles, username editing, signed-out protection, betting controls, and account deletion.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>profile.html</code> and account-management views</span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Account screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="pages" class="section">
+        <div class="section-header">
+          <h2>Legacy Device Pages</h2>
+          <p>The original device-first flat lays remain available for comparison until the new individual page documentation is reviewed and approved.</p>
         </div>
 
-        <div class="flat-doc-tabs" role="tablist" aria-label="Page flat lay documentation">
-          <button class="is-active" type="button" data-flat-doc="auth" aria-selected="true">Authentication Screens</button>
-          <button type="button" data-flat-doc="home" aria-selected="false">Home Page</button>
-          <button type="button" data-flat-doc="game" aria-selected="false">Game Page</button>
-          <button type="button" data-flat-doc="drawer" aria-selected="false">Buy / Sell Drawer</button>
-          <button type="button" data-flat-doc="tracker" aria-selected="false">Tracker / Positions</button>
-          <button type="button" data-flat-doc="pending" aria-selected="false">Pending Orders</button>
-          <button type="button" data-flat-doc="account" aria-selected="false">Settled / Account</button>
-        </div>
+        <article class="panel ds-pages-panel flat-lays-section">
+          <div class="flat-doc-tabs" role="tablist" aria-label="Page type groups" data-flat-doc-tabs></div>
 
-        <div class="flat-lay-canvas" data-flat-lay-content></div>
+          <div class="flat-lay-canvas" data-flat-lay-content></div>
+        </article>
       </section>
 
       <section id="tokens" class="section">
@@ -203,8 +350,9 @@
               <div class="swatch"><span style="--swatch: var(--gold-text)"></span><strong>Spread Text</strong><code>--gold-text</code></div>
               <div class="swatch"><span style="--swatch: var(--gold-dim)"></span><strong>Spread Dim</strong><code>--gold-dim</code></div>
               <div class="swatch"><span style="--swatch: var(--score-text)"></span><strong>Score</strong><code>--score-text</code></div>
-              <div class="swatch"><span style="--swatch: var(--blue)"></span><strong>Info</strong><code>--blue</code></div>
-              <div class="swatch"><span style="--swatch: var(--blue-dim)"></span><strong>Info Dim</strong><code>--blue-dim</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue)"></span><strong>KTL / Volume</strong><code>--blue</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue-soft)"></span><strong>KTL Highlight</strong><code>--blue-soft</code></div>
+              <div class="swatch"><span style="--swatch: var(--blue-dim)"></span><strong>KTL Area Fill</strong><code>--blue-dim</code></div>
               <div class="swatch"><span style="--swatch: var(--sage)"></span><strong>Sage</strong><code>--sage</code></div>
             </div>
           </section>
@@ -247,10 +395,10 @@
             </div>
           </section>
 
-          <section class="color-token-group colorway-preview" data-colorway="wg" aria-labelledby="light-colorway-title">
+          <section class="color-token-group colorway-preview" data-theme-preview="light" aria-labelledby="light-colorway-title">
           <div class="panel-header">
             <h3 id="light-colorway-title">Light Colorway</h3>
-            <span class="tag">data-colorway="wg"</span>
+            <span class="tag">:root[data-theme="light"]</span>
           </div>
           <div class="swatch-grid">
             <div class="swatch"><span style="--swatch: var(--bg)"></span><strong>Background</strong><code>--bg</code></div>
@@ -269,6 +417,8 @@
             <div class="swatch"><span style="--swatch: var(--accent-dim)"></span><strong>Accent Dim</strong><code>--accent-dim</code></div>
             <div class="swatch"><span style="--swatch: var(--green)"></span><strong>Positive</strong><code>--green</code></div>
             <div class="swatch"><span style="--swatch: var(--green-dim)"></span><strong>Positive Dim</strong><code>--green-dim</code></div>
+            <div class="swatch"><span style="--swatch: var(--red)"></span><strong>No / Sell</strong><code>--red</code></div>
+            <div class="swatch"><span style="--swatch: var(--gold)"></span><strong>Spread</strong><code>--gold</code></div>
             <div class="swatch"><span style="--swatch: var(--sage)"></span><strong>Sage</strong><code>--sage</code></div>
             <div class="swatch"><span style="--swatch: var(--gold-text)"></span><strong>Gold Text</strong><code>--gold-text</code></div>
           </div>
@@ -282,9 +432,9 @@
           <div class="token-list">
             <div><code>--black-rgb</code><span>0, 0, 0</span></div>
             <div><code>--accent-rgb</code><span>74, 222, 128</span></div>
-            <div><code>--red-rgb</code><span>248, 113, 113</span></div>
-            <div><code>--gold-rgb</code><span>251, 191, 36</span></div>
-            <div><code>--blue-rgb</code><span>96, 165, 250</span></div>
+            <div><code>--red-rgb</code><span>255, 93, 114</span></div>
+            <div><code>--gold-rgb</code><span>255, 206, 77</span></div>
+            <div><code>--blue-rgb</code><span>143, 183, 255</span></div>
           </div>
           </section>
         </div>
@@ -302,15 +452,18 @@
             <span class="tag">Layout scale</span>
           </div>
           <div class="spacing-demo" aria-label="Spacing token examples">
-            <div><span style="--demo-space: var(--space-1)"></span><code>--space-1</code><strong>4px</strong></div>
-            <div><span style="--demo-space: var(--space-2)"></span><code>--space-2</code><strong>8px</strong></div>
-            <div><span style="--demo-space: var(--space-3)"></span><code>--space-3</code><strong>12px</strong></div>
-            <div><span style="--demo-space: var(--space-4)"></span><code>--space-4</code><strong>16px</strong></div>
-            <div><span style="--demo-space: var(--space-5)"></span><code>--space-5</code><strong>20px</strong></div>
-            <div><span style="--demo-space: var(--space-6)"></span><code>--space-6</code><strong>24px</strong></div>
-            <div><span style="--demo-space: var(--space-8)"></span><code>--space-8</code><strong>32px</strong></div>
-            <div><span style="--demo-space: var(--space-10)"></span><code>--space-10</code><strong>40px</strong></div>
-            <div><span style="--demo-space: var(--space-12)"></span><code>--space-12</code><strong>48px</strong></div>
+            <div><span style="--demo-space: var(--s1)"></span><code>--s1</code><strong>4px</strong></div>
+            <div><span style="--demo-space: var(--s2)"></span><code>--s2</code><strong>8px</strong></div>
+            <div><span style="--demo-space: var(--s3)"></span><code>--s3</code><strong>12px</strong></div>
+            <div><span style="--demo-space: var(--s4)"></span><code>--s4</code><strong>16px</strong></div>
+            <div><span style="--demo-space: var(--s5)"></span><code>--s5</code><strong>20px</strong></div>
+            <div><span style="--demo-space: var(--s6)"></span><code>--s6</code><strong>24px</strong></div>
+            <div><span style="--demo-space: var(--s8)"></span><code>--s8</code><strong>32px</strong></div>
+            <div><span style="--demo-space: var(--s10)"></span><code>--s10</code><strong>40px</strong></div>
+            <div><span style="--demo-space: var(--s12)"></span><code>--s12</code><strong>48px</strong></div>
+            <div><span style="--demo-space: var(--s16)"></span><code>--s16</code><strong>64px</strong></div>
+            <div><span style="--demo-space: var(--s20)"></span><code>--s20</code><strong>80px</strong></div>
+            <div><span style="--demo-space: var(--s24)"></span><code>--s24</code><strong>96px</strong></div>
           </div>
         </article>
       </section>
@@ -349,8 +502,8 @@
           </div>
           <div class="shadow-demo" aria-label="Shadow token examples">
             <div class="shadow-sample shadow-sample-sm"><code>--shadow-sm</code><span>Subtle edge</span></div>
-            <div class="shadow-sample shadow-sample-md"><code>--shadow-md</code><span>Overlay and elevated surfaces</span></div>
-            <div class="shadow-sample focus-ring-sample"><code>--focus-ring</code><span>Keyboard focus</span></div>
+            <div class="shadow-sample shadow-sample-md"><code>--shadow</code><span>Overlay and elevated surfaces</span></div>
+            <div class="shadow-sample focus-ring-sample"><code>focus-visible</code><span>2px solid var(--green)</span></div>
           </div>
         </article>
       </section>
@@ -390,8 +543,8 @@
               <div class="swatch"><span style="--swatch: var(--hairline)"></span><strong>Hairline</strong><code>--hairline</code></div>
               <div class="swatch"><span style="--swatch: var(--accent-border)"></span><strong>Accent Border</strong><code>--accent-border</code></div>
               <div class="swatch"><span style="--swatch: var(--live-game-card-border)"></span><strong>Live Card Border</strong><code>--live-game-card-border</code></div>
-              <div class="swatch"><span style="--swatch: var(--position-hairline)"></span><strong>Position Hairline</strong><code>--position-hairline</code></div>
-              <div class="swatch"><span style="--swatch: var(--position-edge-light)"></span><strong>Position Edge Light</strong><code>--position-edge-light</code></div>
+              <div class="swatch"><span style="--swatch: var(--line)"></span><strong>Position Hairline</strong><code>--line</code></div>
+              <div class="swatch"><span style="--swatch: var(--line-2)"></span><strong>Position Edge Light</strong><code>--line-2</code></div>
             </div>
           </article>
         </div>
@@ -411,6 +564,10 @@
             </div>
             <div class="swatch-grid">
               <div class="swatch"><span style="--swatch: var(--page-glow)"></span><strong>Page Glow</strong><code>--page-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--green-glow)"></span><strong>Live Pulse Glow</strong><code>--green-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--gold-glow)"></span><strong>Paused Pulse Glow</strong><code>--gold-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--hero-blue-glow)"></span><strong>Hero Blue Glow</strong><code>--hero-blue-glow</code></div>
+              <div class="swatch"><span style="--swatch: var(--hero-violet-glow)"></span><strong>Hero Violet Glow</strong><code>--hero-violet-glow</code></div>
               <div class="swatch"><span style="--swatch: var(--swatch-surface)"></span><strong>Swatch Surface</strong><code>--swatch-surface</code></div>
               <div class="swatch"><span style="--swatch: var(--overlay)"></span><strong>Overlay</strong><code>--overlay</code></div>
               <div class="swatch"><span style="--swatch: var(--transparent)"></span><strong>Transparent</strong><code>--transparent</code></div>
@@ -444,6 +601,7 @@
           <div class="token-list">
             <div><code>--font-display</code><span>Space Grotesk, headings and scores</span></div>
             <div><code>--font-ui</code><span>Inter, product UI and body text</span></div>
+            <div><code>--fs-eyebrow</code><span>Small uppercase labels, captions, timestamps</span></div>
             <div><code>--fs-label</code><span>Buttons, metadata, compact controls</span></div>
             <div><code>--fs-body</code><span>Default body and primary actions</span></div>
             <div><code>--fs-lead</code><span>Lead copy and emphasized UI text</span></div>
@@ -451,6 +609,7 @@
             <div><code>--fs-h2</code><span>Section headings</span></div>
             <div><code>--fs-hero</code><span>Hero heading</span></div>
             <div><code>--fs-score</code><span>Game-card scores</span></div>
+            <div><code>--fs-score-lg</code><span>Primary game-page scoreboard</span></div>
           </div>
         </article>
 
@@ -637,49 +796,7 @@
           <button type="button" data-drawer-view="desktop" aria-pressed="false">Desktop</button>
         </div>
 
-        <div class="ds-drawer-state" data-drawer-state="maximum-contracts-error">
-          <div class="section-header ds-subsection-header">
-            <h2>Maximum Contracts Error</h2>
-            <p>When more than 1,000 contracts are entered, preserve the entered value, format it with commas, show the error above the total-contracts line, and disable the primary action.</p>
-          </div>
-          <div class="grid two ds-drawer-grid">
-            <article class="panel ds-drawer-panel">
-              <div class="panel-header"><h3>Mobile</h3><span class="tag">Validation error</span></div>
-              <div class="ds-drawer-preview ds-drawer-mobile">
-                <div class="bet-sheet-backdrop is-open"></div>
-                <aside class="bet-sheet is-open" data-step="1" data-mode="buy" aria-hidden="false" aria-label="Maximum contracts validation error">
-                  <div class="bet-scoreboard" style="--home-color:#00338d;--away-color:#008e97"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div><div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div></div></div>
-                  <div class="bet-sheet-handle" aria-hidden="true"></div>
-                  <div class="bet-sheet-body"><div class="bet-step bet-step-1">
-                    <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input is-error" data-qty-input type="text" inputmode="numeric" value="1,100" aria-label="Number of contracts" aria-invalid="true"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit is-error" data-transaction-limit role="alert">The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total" data-qty-total>Total contracts after purchase — <strong>1,250</strong></p></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Order price</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div></div>
-                    <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$704.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$381.92</strong> after fees</p></div>
-                  </div></div>
-                  <footer class="bet-sheet-footer"><button class="bet-secondary" type="button">See Details</button><button class="btn btn-primary bet-primary" data-bet-primary type="button" disabled>Quick Bet</button></footer>
-                </aside>
-              </div>
-            </article>
-
-            <article class="panel ds-drawer-panel">
-              <div class="panel-header"><h3>Desktop</h3><span class="tag">Validation error</span></div>
-              <div class="ds-drawer-preview ds-drawer-desktop">
-                <div class="bet-sheet-backdrop is-open"></div>
-                <aside class="bet-sheet is-open" data-step="1" data-mode="buy" aria-hidden="false" aria-label="Maximum contracts validation error">
-                  <div class="bet-scoreboard" style="--home-color:#00338d;--away-color:#008e97"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div><div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div></div></div>
-                  <div class="bet-sheet-body"><div class="bet-step bet-step-1">
-                    <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input is-error" data-qty-input type="text" inputmode="numeric" value="1,100" aria-label="Number of contracts" aria-invalid="true"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit is-error" data-transaction-limit role="alert">The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total" data-qty-total>Total contracts after purchase — <strong>1,250</strong></p></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Order price</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div></div>
-                    <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$704.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$381.92</strong> after fees</p></div>
-                  </div></div>
-                  <footer class="bet-sheet-footer"><button class="bet-secondary" type="button">See Details</button><button class="btn btn-primary bet-primary" data-bet-primary type="button" disabled>Quick Bet</button></footer>
-                </aside>
-                <button class="btn btn-secondary bet-sheet-close ds-preview-close" type="button">Close</button>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="ds-drawer-state" data-drawer-state="default-buy">
+        <div class="ds-drawer-state">
           <div class="section-header ds-subsection-header">
             <h2>Default Buy</h2>
             <p>Standard quick-bet flow with contract quantity, market type, side selector and projected purchase price.</p>
@@ -727,7 +844,7 @@
                         <button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button>
                         <div class="limit-section" data-limit-section hidden>
                           <span class="bet-label">Max limit price</span>
-                          <div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div>
+                          <div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div>
                           <p class="limit-minmax" data-limit-minmax></p>
                         </div>
                       </div>
@@ -739,7 +856,7 @@
                       <div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$100.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$34.72</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$1.28</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$33.44</strong></div></div></div>
                     </div>
                   </div>
-                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Quick Bet</button></footer>
+                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Buy</button></footer>
                 </aside>
               </div>
             </article>
@@ -764,7 +881,7 @@
                       <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                       <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                       <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                      <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                      <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                       <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$64.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$34.72</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                       <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$37.63</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$15.12</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     </div>
@@ -773,13 +890,15 @@
                       <div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$100.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$34.72</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$1.28</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$33.44</strong></div></div></div>
                     </div>
                   </div>
-                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Quick Bet</button></footer>
+                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Buy</button></footer>
                 </aside>
                 <button class="btn btn-secondary bet-sheet-close ds-preview-close" type="button">Close</button>
               </div>
             </article>
           </div>
         </div>
+
+        <div data-drawer-state-mount="paused"></div>
 
         <div class="ds-drawer-state">
           <div class="section-header ds-subsection-header">
@@ -796,15 +915,15 @@
                   <div class="bet-sheet-handle" aria-hidden="true"></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>75 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 57&cent;</span><span aria-hidden="true">&middot;</span><span>Now 69&cent;</span></span></div>
-                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game — this bet takes the opposite side.</span></div>
+                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game, this bet takes the opposite side.</span></div>
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$15.50</span><p class="potential-win">Potential profit of <strong data-profit-big>$33.84</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$26.03</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$4.56</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>31&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>50</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$15.50</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.31</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$15.81</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$50.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$33.84</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.66</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$33.18</strong></div></div></div></div></div>
-                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Quick Bet</button></footer>
+                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Buy</button></footer>
                 </aside>
               </div>
             </article>
@@ -817,15 +936,15 @@
                   <div class="bet-scoreboard" data-bet-grab style="--home-color:#e31837;--away-color:#aa0000"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-kc.png" alt="Chiefs"><div class="bs-meta"><span class="bs-abbr">KC</span><span class="bs-score tnum">17</span></div></div><div class="bs-center"><span class="bs-period">Q2</span><span class="bs-clock tnum">08:42</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-sf.png" alt="49ers"><div class="bs-meta"><span class="bs-abbr">SF</span><span class="bs-score tnum">14</span></div></div></div></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>75 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 57&cent;</span><span aria-hidden="true">&middot;</span><span>Now 69&cent;</span></span></div>
-                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game — this bet takes the opposite side.</span></div>
+                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game, this bet takes the opposite side.</span></div>
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="no" role="group" aria-label="Side"><button class="bt-opt yes" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>69&cent;</span></button><button class="bt-opt no is-active" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>31&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$15.50</span><p class="potential-win">Potential profit of <strong data-profit-big>$33.84</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$26.03</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$4.56</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>31&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>50</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$15.50</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.31</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$15.81</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$50.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$33.84</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.66</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$33.18</strong></div></div></div></div></div>
-                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Quick Bet</button></footer>
+                  <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown type="button">See Details</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary type="button">Buy</button></footer>
                 </aside>
                 <button class="btn btn-secondary bet-sheet-close ds-preview-close" type="button">Close</button>
               </div>
@@ -852,7 +971,7 @@
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$64.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$34.72</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$37.63</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$15.12</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>64&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>60</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$38.40</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.77</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$37.63</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$60.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$15.12</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.77</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$37.63</strong></div></div></div></div></div>
@@ -873,7 +992,7 @@
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="100" aria-label="Number of contracts"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="is-active" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
-                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
+                    <div class="bet-field buy-only"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64&cent;</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36&cent;</span></button></div><button class="limit-toggle" data-limit-toggle type="button" aria-expanded="false">Set a Limit</button><div class="limit-section" data-limit-section hidden><span class="bet-label">Max limit price</span><div class="num-input-box limit-input-box"><input class="num-input" data-limit-input type="text" inputmode="numeric" aria-label="Limit price in cents"><span class="num-suffix">&cent;</span></div><p class="limit-minmax" data-limit-minmax></p></div></div>
                     <div class="bet-highlight buy-only"><span class="bet-label">Purchase price</span><span class="bet-total-big tnum" data-total-big>$64.00</span><p class="potential-win">Potential profit of <strong data-profit-big>$34.72</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                     <div class="bet-highlight sell-only"><span class="bet-label">You receive</span><span class="bet-total-big tnum" data-receive-big>$37.63</span><p class="potential-win" data-realized-line>Realised profit of <strong data-realized-big>$15.12</strong> <span>after <a href="#" class="fees-link" data-fees-link>fees</a></span></p></div>
                   </div><div class="bet-step bet-step-2"><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Contract price</span><strong data-s-price>64&cent;</strong></div><div class="summary-row"><span>Contracts</span><strong data-s-qty>60</strong></div><div class="summary-row"><span>Subtotal</span><strong data-s-subtotal>$38.40</strong></div><div class="summary-row"><span>Trading fee</span><strong data-s-fee>$0.77</strong></div><div class="summary-row total"><span>Total to pay</span><strong data-s-total>$37.63</strong></div></div></div><div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong data-g-payout>$60.00</strong></div><div class="summary-row"><span>Potential profit</span><strong data-g-profit>$15.12</strong></div><div class="summary-row"><span>Fees</span><strong data-g-fees>$0.77</strong></div><div class="summary-row total"><span>Net potential gain</span><strong data-g-net>$37.63</strong></div></div></div></div></div>
@@ -946,27 +1065,108 @@
                   <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                   <span class="toggle-label">See Bets</span>
                   <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                </button>                <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">
-                  <div class="mkt-grid">
-                    <div class="mkt-head"><span class="col-market">Markets</span><span class="col-yes">Yes</span><span class="col-no">No</span></div>
-                    <div class="mkt-row">
-                      <span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span>
-                      <button class="price yes" type="button" data-game="buf-mia" data-market="gtl" data-side="yes" aria-label="Get the Lead Yes 64 cents">64&cent;</button>
-                      <button class="price no" type="button" data-game="buf-mia" data-market="gtl" data-side="no" aria-label="Get the Lead No 36 cents">36&cent;</button>
-                    </div>
-                    <div class="mkt-row">
-                      <span class="mkt-name">TIE</span>
-                      <button class="price yes" type="button" data-game="buf-mia" data-market="tie" data-side="yes" aria-label="Tie Yes 18 cents">18&cent;</button>
-                      <button class="price no" type="button" data-game="buf-mia" data-market="tie" data-side="no" aria-label="Tie No 82 cents">82&cent;</button>
-                    </div>
-                    <div class="mkt-row">
-                      <span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span>
-                      <button class="price yes" type="button" data-game="buf-mia" data-market="ktl" data-side="yes" aria-label="Keep the Lead Yes 71 cents">71&cent;</button>
-                      <button class="price no" type="button" data-game="buf-mia" data-market="ktl" data-side="no" aria-label="Keep the Lead No 29 cents">29&cent;</button>
-                    </div>
+	                </button>
+	                <div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad">
+	                  <div class="mkt-grid">
+	                    <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
+	                    <div class="mkt-row">
+	                      <button class="price yes" type="button" data-game="buf-mia" data-market="gtl" data-side="yes" aria-label="Get the Lead Yes 64 cents">64&cent;</button>
+	                      <span class="mkt-name">GTL<small class="mkt-sub">Get the Lead</small></span>
+	                      <button class="price no" type="button" data-game="buf-mia" data-market="gtl" data-side="no" aria-label="Get the Lead No 36 cents">36&cent;</button>
+	                    </div>
+	                    <div class="mkt-row">
+	                      <button class="price yes" type="button" data-game="buf-mia" data-market="tie" data-side="yes" aria-label="Tie Yes 18 cents">18&cent;</button>
+	                      <span class="mkt-name">TIE</span>
+	                      <button class="price no" type="button" data-game="buf-mia" data-market="tie" data-side="no" aria-label="Tie No 82 cents">82&cent;</button>
+	                    </div>
+	                    <div class="mkt-row">
+	                      <button class="price yes" type="button" data-game="buf-mia" data-market="ktl" data-side="yes" aria-label="Keep the Lead Yes 71 cents">71&cent;</button>
+	                      <span class="mkt-name">KTL<small class="mkt-sub">Keep the Lead</small></span>
+	                      <button class="price no" type="button" data-game="buf-mia" data-market="ktl" data-side="no" aria-label="Keep the Lead No 29 cents">29&cent;</button>
+	                    </div>
                   </div>
                   <a class="view-game" href="javascript:void(0)">View Game</a>
                 </div></div></div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>No Team Logos</h3><span class="tag">Fallback</span></div>
+            <p class="ds-state-description">Live-game card fallback for missing team assets. Use the team abbreviation inside the logo slot while team artwork is unavailable.</p>
+            <article class="game-tile" data-league="nba" style="--home-color:#5b2bbf;--away-color:#d97706">
+              <a class="tile-main" href="javascript:void(0)" aria-label="Open Suns at Lakers">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <span class="team-mark team-logo is-fallback" aria-label="LA" style="--team-color:#5b2bbf"><span class="team-mark-abbr">LA</span></span>
+                    <div class="team-meta"><span class="team-abbr team-name">Lakers</span><span class="team-score tnum">92</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q4</span><span class="clock tnum">06:12</span></div>
+                  <div class="team team-away">
+                    <span class="team-mark team-logo is-fallback" aria-label="PHX" style="--team-color:#d97706"><span class="team-mark-abbr">PHX</span></span>
+                    <div class="team-meta"><span class="team-abbr team-name">Suns</span><span class="team-score tnum">88</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <button class="foot-toggle" type="button" data-expand aria-expanded="false">
+                  <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <span class="toggle-label">See Bets</span>
+                  <span class="chev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </button>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Countdown</h3><span class="tag">Pregame</span></div>
+            <p class="ds-state-description">Pregame countdown state. Use this before markets open when kickoff is close and the card should show a 10-minute countdown instead of betting controls.</p>
+            <article class="game-tile is-countdown" data-league="nfl" style="--home-color:#003594;--away-color:#004c54">
+              <a class="tile-main" href="javascript:void(0)" aria-label="Open PHI at DAL">
+                <div class="game-row">
+                  <div class="team team-home">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-dal.png" alt="Cowboys" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">DAL</span><span class="team-score tnum">0</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Pregame</span><span class="clock tnum">0:00</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-phi.png" alt="Eagles" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">PHI</span><span class="team-score tnum">0</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <div class="game-countdown" role="status">
+                  <span class="countdown-dot"></span>
+                  <span>Game starts in:</span>
+                  <strong class="countdown-time tnum"><span>09</span><span aria-hidden="true">:</span><span>59</span></strong>
+                </div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>Final Winner</h3><span class="tag">Final</span></div>
+            <p class="ds-state-description">Completed game state. Use this after the game has ended and one team is confirmed as the winner.</p>
+            <article class="game-tile is-final" data-league="nfl" style="--home-color:#00338d;--away-color:#008e97">
+              <a class="tile-main" href="javascript:void(0)" aria-label="Final MIA at BUF">
+                <div class="game-row">
+                  <div class="team team-home is-leading is-winner">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">BUF</span><span class="team-score tnum">31</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Final</span><span class="clock tnum">0:00</span></div>
+                  <div class="team team-away">
+                    <img class="team-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins" loading="lazy">
+                    <div class="team-meta"><span class="team-abbr">MIA</span><span class="team-score tnum">24</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="tile-foot">
+                <div class="game-final" role="status">
+                  <span class="final-dot"></span>
+                  <span>Game ended: <strong>BUF won</strong></span>
+                </div>
               </div>
             </article>
           </article>
@@ -1019,6 +1219,41 @@
         </div>
 
         <div class="section-header ds-subsection-header">
+          <h2>Game Stats Cards</h2>
+          <p>Head-to-head game statistics use team initials in coloured square tiles. Sport-specific variants keep the comparison relevant.</p>
+        </div>
+
+        <div class="card-grid ds-game-stats-card-grid">
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>NFL</h3><span class="tag">Team yards</span></div>
+            <div class="momentum-card stats-card" style="--home-color:#e31837;--away-color:#b3995d">
+              <div class="stats-teams"><span class="team-mark stats-logo is-fallback" aria-label="Chiefs" style="--team-color:#e31837"><span class="team-mark-abbr">KC</span></span><span class="stats-title">Game Stats</span><span class="team-mark stats-logo is-fallback" aria-label="49ers" style="--team-color:#b3995d"><span class="team-mark-abbr">SF</span></span></div>
+              <div class="stat-list">
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">214</span><span class="stat-label">Total Team Yards</span><span class="stat-val tnum">186</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:43.5%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">151</span><span class="stat-label">Pass Yards</span><span class="stat-val tnum">129</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:42.7%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">63</span><span class="stat-label">Rush Yards</span><span class="stat-val tnum">57</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:45.2%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">11:46</span><span class="stat-label">Possession Time</span><span class="stat-val tnum">09:32</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:40.5%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">0</span><span class="stat-label">Turnovers</span><span class="stat-val tnum">1</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:0%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel ds-card-frame">
+            <div class="panel-header"><h3>NBA</h3><span class="tag">Team performance</span></div>
+            <div class="momentum-card stats-card" style="--home-color:#f58426;--away-color:#007a33">
+              <div class="stats-teams"><span class="team-mark stats-logo is-fallback" aria-label="Knicks" style="--team-color:#f58426"><span class="team-mark-abbr">NYK</span></span><span class="stats-title">Game Stats</span><span class="team-mark stats-logo is-fallback" aria-label="Celtics" style="--team-color:#007a33"><span class="team-mark-abbr">BOS</span></span></div>
+              <div class="stat-list">
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">46</span><span class="stat-label">Field Goal %</span><span class="stat-val tnum">51</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:45.1%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">38</span><span class="stat-label">Rebounds</span><span class="stat-val tnum">35</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:46.1%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">19</span><span class="stat-label">Assists</span><span class="stat-val tnum">24</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:39.6%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">34</span><span class="stat-label">3PT %</span><span class="stat-val tnum">41</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:41.5%"></span><span class="stat-fill-a" style="width:50%"></span></div></div>
+                <div class="stat-block"><div class="stat-caption"><span class="stat-val tnum">11</span><span class="stat-label">Turnovers</span><span class="stat-val tnum">8</span></div><div class="stat-bar-c"><span class="stat-fill-h" style="width:50%"></span><span class="stat-fill-a" style="width:36.4%"></span></div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="section-header ds-subsection-header">
           <h2>Portfolio Stats</h2>
           <p>Portfolio status cards summarize total profit, total bets, win rate and current open value.</p>
         </div>
@@ -1059,11 +1294,46 @@
                 <div class="oc-summary">
                   <div class="oc-row">
                     <span class="oc-tag">Get the Lead</span>
-                    <span class="oc-vr-head">Value &amp; Return</span>
+                    <span class="oc-vr-head">Value: <span class="tnum">$76.80</span></span>
                   </div>
                   <div class="oc-row">
                     <span class="oc-sub"><span class="side-yes">YES</span> &middot; 120 contracts</span>
-                    <span class="oc-figures"><span class="tnum">$76.80</span> &middot; <span class="oc-pnl up tnum">+$19.20</span></span>
+                    <span class="oc-figures"><span class="oc-pnl up tnum">+$19.20</span></span>
+                  </div>
+                </div>
+                <div class="oc-actions">
+                  <button class="oc-buy" type="button">Buy More</button>
+                  <button class="oc-sell" type="button">Sell</button>
+                </div>
+              </div>
+            </article>
+          </article>
+
+          <article class="panel ds-card-frame ds-open-position-frame">
+            <div class="panel-header"><h3>No Team Logos</h3><span class="tag">Open</span></div>
+            <article class="pos-card pos-card--a" style="--home-color:#0f766e;--away-color:#be123c">
+              <a class="pos-media" href="javascript:void(0)" aria-label="Open Bears at Seahawks">
+                <div class="game-row">
+                  <div class="team team-home is-leading">
+                    <span class="team-mark team-logo is-fallback" aria-label="SEA" style="--team-color:#0f766e"><span class="team-mark-abbr">SEA</span></span>
+                    <div class="team-meta"><span class="team-abbr team-name">Seahawks</span><span class="team-score tnum">27</span></div>
+                  </div>
+                  <div class="game-center"><span class="period">Q3</span><span class="clock tnum">03:44</span></div>
+                  <div class="team team-away">
+                    <span class="team-mark team-logo is-fallback" aria-label="CHI" style="--team-color:#be123c"><span class="team-mark-abbr">CHI</span></span>
+                    <div class="team-meta"><span class="team-abbr team-name">Bears</span><span class="team-score tnum">21</span></div>
+                  </div>
+                </div>
+              </a>
+              <div class="pos-info">
+                <div class="oc-summary">
+                  <div class="oc-row">
+                    <span class="oc-tag">Get the Lead</span>
+                    <span class="oc-vr-head">Value: <span class="tnum">$84.00</span></span>
+                  </div>
+                  <div class="oc-row">
+                    <span class="oc-sub"><span class="side-yes">YES</span> &middot; 140 contracts</span>
+                    <span class="oc-figures"><span class="oc-pnl up tnum">+$14.00</span></span>
                   </div>
                 </div>
                 <div class="oc-actions">
@@ -1094,11 +1364,11 @@
                 <div class="oc-summary">
                   <div class="oc-row">
                     <span class="oc-tag">Keep the Lead</span>
-                    <span class="oc-vr-head">Value &amp; Return</span>
+                    <span class="oc-vr-head">Value: <span class="tnum">$32.80</span></span>
                   </div>
                   <div class="oc-row">
                     <span class="oc-sub"><span class="side-yes">YES</span> &middot; 80 contracts</span>
-                    <span class="oc-figures"><span class="tnum">$32.80</span> &middot; <span class="oc-pnl down tnum">-$23.20</span></span>
+                    <span class="oc-figures"><span class="oc-pnl down tnum">-$23.20</span></span>
                   </div>
                 </div>
                 <div class="oc-actions">
@@ -1129,11 +1399,11 @@
                 <div class="oc-summary">
                   <div class="oc-row">
                     <span class="oc-tag">Get the Lead</span>
-                    <span class="oc-vr-head">Value &amp; Return</span>
+                    <span class="oc-vr-head">Value: <span class="tnum">$45.90</span></span>
                   </div>
                   <div class="oc-row">
                     <span class="oc-sub"><span class="side-no">NO</span> &middot; 90 contracts</span>
-                    <span class="oc-figures"><span class="tnum">$45.90</span> &middot; <span class="oc-pnl up tnum">+$9.90</span></span>
+                    <span class="oc-figures"><span class="oc-pnl up tnum">+$9.90</span></span>
                   </div>
                 </div>
                 <div class="oc-actions">
@@ -1164,11 +1434,11 @@
                 <div class="oc-summary">
                   <div class="oc-row">
                     <span class="oc-tag">Keep the Lead</span>
-                    <span class="oc-vr-head">Value &amp; Return</span>
+                    <span class="oc-vr-head">Value: <span class="tnum">$18.60</span></span>
                   </div>
                   <div class="oc-row">
                     <span class="oc-sub"><span class="side-no">NO</span> &middot; 60 contracts</span>
-                    <span class="oc-figures"><span class="tnum">$18.60</span> &middot; <span class="oc-pnl down tnum">-$13.80</span></span>
+                    <span class="oc-figures"><span class="oc-pnl down tnum">-$13.80</span></span>
                   </div>
                 </div>
                 <div class="oc-actions">
@@ -1197,6 +1467,16 @@
           </article>
 
           <article class="panel ds-card-frame ds-order-row-frame">
+            <div class="panel-header"><h3>Pending No Logos</h3><span class="tag">Fallback</span></div>
+            <button class="order-row" type="button" style="--home-color:#7c3aed;--away-color:#ea580c">
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="LA" style="--team-color:#7c3aed"><span class="team-mark-abbr">LA</span></span><span class="team-mark or-logo is-fallback" aria-label="PHX" style="--team-color:#ea580c"><span class="team-mark-abbr">PHX</span></span></span>
+              <span class="or-main"><span class="or-type">Tie &middot; <span class="side-no">NO</span></span><span class="or-teams">Lakers &middot; Suns &middot; Jul 8</span></span>
+              <span class="or-value"><span class="or-amount tnum">$52.00</span><span class="or-status">Pending</span></span>
+              <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+          </article>
+
+          <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Current</h3><span class="tag">Open</span></div>
             <button class="order-row" type="button" style="--home-color:#00338d;--away-color:#008e97">
               <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-buf.png" alt=""><img src="../gtl-app/assets/logos/nfl-mia.png" alt=""></span>
@@ -1207,11 +1487,31 @@
           </article>
 
           <article class="panel ds-card-frame ds-order-row-frame">
+            <div class="panel-header"><h3>Current No Logos</h3><span class="tag">Fallback</span></div>
+            <button class="order-row" type="button" style="--home-color:#0f766e;--away-color:#be123c">
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="SEA" style="--team-color:#0f766e"><span class="team-mark-abbr">SEA</span></span><span class="team-mark or-logo is-fallback" aria-label="CHI" style="--team-color:#be123c"><span class="team-mark-abbr">CHI</span></span></span>
+              <span class="or-main"><span class="or-type">Get the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">Seahawks &middot; Bears &middot; Jul 8</span></span>
+              <span class="or-value"><span class="or-amount tnum">$84.00</span><span class="or-pnl up tnum">+$14.00</span></span>
+              <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+          </article>
+
+          <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Settled Won</h3><span class="tag">Result</span></div>
             <button class="order-row" type="button" style="--home-color:#007a33;--away-color:#f58426">
               <span class="or-logos"><img src="../gtl-app/assets/logos/nba-bos.png" alt=""><img src="../gtl-app/assets/logos/nba-ny.png" alt=""></span>
               <span class="or-main"><span class="or-type">Keep the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">BOS &middot; NYK &middot; Jul 5</span></span>
               <span class="or-value"><span class="or-pnl up tnum">+$54.10</span><span class="result-pill win">Won</span></span>
+              <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+          </article>
+
+          <article class="panel ds-card-frame ds-order-row-frame">
+            <div class="panel-header"><h3>Settled No Logos</h3><span class="tag">Fallback</span></div>
+            <button class="order-row" type="button" style="--home-color:#2563eb;--away-color:#c026d3">
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="DAL" style="--team-color:#2563eb"><span class="team-mark-abbr">DAL</span></span><span class="team-mark or-logo is-fallback" aria-label="ORL" style="--team-color:#c026d3"><span class="team-mark-abbr">ORL</span></span></span>
+              <span class="or-main"><span class="or-type">Keep the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">Mavericks &middot; Magic &middot; Jul 2</span></span>
+              <span class="or-value"><span class="or-pnl up tnum">+$41.60</span><span class="result-pill win">Won</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
           </article>
@@ -1321,6 +1621,6 @@
       </div>
     </dialog>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260728-page-docs-6"></script>
   </body>
 </html>
