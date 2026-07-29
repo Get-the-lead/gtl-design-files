@@ -105,14 +105,19 @@
 }
 .pos-card .pos-media { background: transparent; }
 .pos-card .pos-media::before { content: none; } /* card gradient handles the tint now */
-/* Light mode: the card belongs to the light UI — fade to white (not black) and keep the
-   team colours vivid. (Media text is flipped to dark ink in styles.css so it stays readable.) */
-:root[data-theme="light"] .pos-card { background: var(--surface); }
-:root[data-theme="light"] .pos-card::before {
+/* Light mode: use a solid card surface with the matchup gradient confined to the outline. */
+:root[data-theme="light"] .pos-card {
   background:
-    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
-    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.84));
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--home-color) 74%, var(--surface)),
+      color-mix(in srgb, var(--away-color) 74%, var(--surface))
+    ) border-box;
+  border-color: transparent;
+}
+:root[data-theme="light"] .pos-card::before {
+  content: none;
 }
 /* Desktop: size the cards so exactly three fit the row (no overflow → no dots) */
 @media (min-width: 1024px) {
@@ -130,7 +135,7 @@
 .oc-figures .oc-pnl { font-weight: 600; }
 .oc-sub .side-yes { color: var(--green); }
 .oc-sub .side-no { color: var(--no); }
-:root[data-theme="light"] .oc-sub .side-yes { color: #16a34a; }
+:root[data-theme="light"] .oc-sub .side-yes { color: var(--green-ink); }
 
 /* Position card variant B — bet-type headline + Contracts / Value / Return row, all centred */
 .ocb-type { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.01em; text-align: center; }
@@ -228,7 +233,7 @@
 .cs-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); margin-top: var(--s5); width: 100%; max-width: 440px; }
 .cs-actions .btn { --btn-h: 52px; width: 100%; }
 .cs-actions .btn.is-chosen { border-color: var(--green-line); background: var(--green-soft); color: var(--green); }
-:root[data-theme="light"] .cs-actions .btn.is-chosen { color: #15803d; }
+:root[data-theme="light"] .cs-actions .btn.is-chosen { color: var(--green-ink); }
 
 /* Game grid ---------------------------------------------------------- */
 .game-grid { display: grid; grid-template-columns: 1fr; gap: var(--s4); align-items: start; }
@@ -430,4 +435,42 @@
 
 /* Light-theme tweaks */
 :root[data-theme="light"] .hero-trading { background: rgba(10, 20, 25, 0.05); }
-:root[data-theme="light"] .hero-trading .tnum { color: #15803d; }
+:root[data-theme="light"] .hero-trading .tnum { color: var(--green-ink); }
+
+/* Light live-game cards keep team colour in the outline and team marks, not the body. */
+:root[data-theme="light"] .game-tile {
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--home-color) 74%, var(--surface)),
+      color-mix(in srgb, var(--away-color) 74%, var(--surface))
+    ) border-box;
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .game-tile::before { content: none; }
+:root[data-theme="light"] .game-tile:hover { border-color: transparent; }
+:root[data-theme="light"] .game-tile .team-abbr { color: var(--ink-2); }
+:root[data-theme="light"] .game-tile .team.is-leading .team-score { color: var(--ink); }
+:root[data-theme="light"] .game-tile .team:not(.is-leading) .team-score { color: var(--ink-3); }
+:root[data-theme="light"] .game-tile .game-center .period { color: var(--ink-3); }
+:root[data-theme="light"] .game-tile .game-center .clock { color: var(--ink); }
+:root[data-theme="light"] .game-tile .tile-divider { border-color: var(--line-2); }
+:root[data-theme="light"] .game-tile .foot-toggle,
+:root[data-theme="light"] .game-tile .foot-toggle .chev,
+:root[data-theme="light"] .game-tile .trade-pause { color: var(--ink-2); }
+:root[data-theme="light"] .game-tile .foot-toggle::before,
+:root[data-theme="light"] .game-tile .foot-toggle::after { background: var(--line-2); }
+:root[data-theme="light"] .game-tile .foot-toggle:hover,
+:root[data-theme="light"] .game-tile .foot-toggle:hover .chev { color: var(--ink); }
+:root[data-theme="light"] .game-tile .mkt-head span,
+:root[data-theme="light"] .game-tile .mkt-name { color: var(--ink); }
+:root[data-theme="light"] .game-tile .mkt-sub { color: var(--ink-3); }
+:root[data-theme="light"] .game-tile .mkt-row + .mkt-row { border-color: var(--line); }
+:root[data-theme="light"] .game-tile .view-game {
+  background: var(--surface-2);
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+:root[data-theme="light"] .game-tile .view-game:hover { background: var(--surface-3); }

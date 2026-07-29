@@ -392,7 +392,7 @@
 }
 .ranking-rules-link > span:last-child { transition: transform 0.18s var(--ease); }
 .ranking-rules-link:hover > span:last-child { transform: translateX(3px); }
-:root[data-theme="light"] .ranking-rules-link { color: #16a34a; }
+:root[data-theme="light"] .ranking-rules-link { color: var(--green-ink); }
 
 @media (max-width: 520px) {
   .ranking-table-head, .ranking-row { grid-template-columns: 30px minmax(0, 1fr) 68px 56px; gap: var(--s2); }
@@ -418,4 +418,4 @@
 :root[data-theme="light"] .ranking-prize-gate { background: rgba(255, 255, 255, 0.98); }
 :root[data-theme="light"] .ranking-month-menu { background: rgba(255, 255, 255, 0.98); }
 :root[data-theme="light"] .rank-prize,
-:root[data-theme="light"] .ranking-row.is-current :is(.rank-user, .rank-balance, .rank-prize) { color: #15803d; }
+:root[data-theme="light"] .ranking-row.is-current :is(.rank-user, .rank-balance, .rank-prize) { color: var(--green-ink); }

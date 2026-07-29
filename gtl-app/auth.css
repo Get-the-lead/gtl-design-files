@@ -164,7 +164,7 @@
 .field-row { display: flex; align-items: center; justify-content: flex-start; margin-top: var(--s4); }
 .link-green { color: var(--green); font-weight: 600; font-size: var(--fs-label); }
 .link-green:hover { text-decoration: underline; }
-:root[data-theme="light"] .link-green { color: #16a34a; }
+:root[data-theme="light"] .link-green { color: var(--green-ink); }
 
 .auth-alternate {
   align-self: center;
@@ -181,7 +181,7 @@
 .auth-foot { margin-top: var(--s6); text-align: center; color: var(--ink-2); font-size: var(--fs-body); }
 .auth-foot a { color: var(--green); font-weight: 600; }
 .auth-foot a:hover { text-decoration: underline; }
-:root[data-theme="light"] .auth-foot a { color: #16a34a; }
+:root[data-theme="light"] .auth-foot a { color: var(--green-ink); }
 
 .auth-fineprint { margin-top: var(--s6); text-align: center; color: var(--ink-3); font-size: var(--fs-eyebrow); line-height: 1.7; }
 .auth-fineprint a { color: var(--ink-2); text-decoration: underline; }

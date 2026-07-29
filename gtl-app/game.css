@@ -783,4 +783,4 @@ body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
 }
 
 /* Light-theme tweaks (markets/stats flip to light; green text needs deepening) */
-:root[data-theme="light"] .price.yes { color: #15803d; }
+:root[data-theme="light"] .price.yes { color: var(--green-ink); }
