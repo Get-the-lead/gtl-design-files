@@ -1332,14 +1332,6 @@
   text-decoration: underline;
 }
 
-.design-system-page .ds-page-stage iframe {
-  background: var(--bg);
-  border: 0;
-  display: block;
-  height: 100%;
-  width: 100%;
-}
-
 .design-system-page .flat-lays-section {
   background: #f4f5f1;
   border-radius: var(--r-lg);
@@ -1648,8 +1640,8 @@
   padding: var(--s8);
 }
 
-.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-waitlist):not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game),
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-waitlist):not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game) {
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen:not(.is-waitlist):not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game):not(.is-contact):not(.is-support),
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:not(.is-waitlist):not(.is-auth):not(.is-drawer):not(.is-home):not(.is-welcome):not(.is-location):not(.is-ranking):not(.is-wallet):not(.is-account):not(.is-game):not(.is-contact):not(.is-support) {
   display: grid;
   grid-template-columns: minmax(260px, 0.85fr) minmax(320px, 1.15fr);
   grid-auto-rows: max-content;
@@ -1826,6 +1818,15 @@
   padding-inline: var(--s5);
 }
 
+.design-system-page .flat-screen.is-contact textarea.contact-message {
+  border-radius: var(--r-md);
+  height: auto;
+  line-height: 1.55;
+  min-height: 156px;
+  padding-block: var(--s4);
+  resize: vertical;
+}
+
 .design-system-page .flat-screen.is-contact .combobox-menu {
   position: absolute;
 }
@@ -1836,9 +1837,13 @@
 }
 
 .design-system-page .flat-screen.is-fees .bet-mini {
-  bottom: auto;
+  bottom: var(--s4);
   position: absolute;
-  top: calc(var(--flat-frame-h, 760px) - 84px);
+  top: auto;
+}
+
+.design-system-page .flat-frame--fees-continueBet .flat-screen.is-fees .site-footer {
+  padding-bottom: calc(var(--s10) + 88px);
 }
 
 .design-system-page .flat-screen.is-waitlist .waitlist-confirmation {
@@ -1881,6 +1886,31 @@
 
 .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .brand-menu {
   display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .hpos-trigger {
+  background: var(--green);
+  border-color: var(--green);
+  color: #06210f;
+  height: 48px;
+  padding: 0;
+  width: 48px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .hpos-word,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .hpos-close {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-contact, .is-support) .hpos-num {
+  background: transparent;
+  color: inherit;
+  display: inline;
+  font-size: var(--fs-label);
+  height: auto;
+  width: auto;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-contact .contact-name-row {
@@ -2186,49 +2216,6 @@
   font-size: 4rem;
 }
 
-.design-system-page .flat-screen.is-welcome .site-header {
-  inset: 0 0 auto;
-  position: absolute;
-}
-
-.design-system-page .flat-screen.is-welcome .header-row {
-  justify-content: space-between;
-}
-
-.design-system-page .flat-screen.is-welcome .brand-pill {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  padding-right: 0;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-.design-system-page .flat-screen.is-welcome .brand-link,
-.design-system-page .flat-screen.is-welcome .header-nav,
-.design-system-page .flat-screen.is-welcome .header-left > .theme-switch {
-  display: none;
-}
-
-.design-system-page .flat-screen.is-welcome .brand-menu {
-  display: inline-flex;
-}
-
-.design-system-page .flat-screen.is-welcome .site-header .brand-mark {
-  background: var(--green);
-  border-radius: 50%;
-  color: #06210f;
-  display: grid;
-  height: 34px;
-  place-items: center;
-  width: 34px;
-}
-
-.design-system-page .flat-screen.is-welcome .site-header .brand-mark svg {
-  height: 20px;
-  width: 20px;
-}
-
 .design-system-page .flat-screen.is-welcome :is(a, button, .btn, .brand, .wallet-chip, .hpos-trigger) {
   pointer-events: none;
 }
@@ -2245,14 +2232,16 @@
 }
 
 .design-system-page .flat-screen.is-welcome .welcome-panel {
-  gap: var(--s6);
-  max-width: 520px;
+  max-width: 760px;
   min-width: 0;
   padding: var(--s8) var(--s5);
-  width: min(100%, 520px);
+  width: min(100%, 760px);
 }
 
-.design-system-page .flat-screen.is-welcome .welcome-copy {
+.design-system-page .flat-screen.is-welcome .welcome-copy,
+.design-system-page .flat-screen.is-welcome .welcome-name-row,
+.design-system-page .flat-screen.is-welcome .date-fields,
+.design-system-page .flat-screen.is-welcome .date-part {
   min-width: 0;
 }
 
@@ -2264,7 +2253,7 @@
 
 .design-system-page .flat-screen.is-welcome .welcome-copy h1 {
   font-size: 3rem;
-  max-width: min(15ch, 100%);
+  max-width: min(12ch, 100%);
   overflow-wrap: anywhere;
 }
 
@@ -2277,6 +2266,32 @@
 .design-system-page .flat-screen.is-welcome .ticket-value {
   font-size: 2.44rem;
   overflow-wrap: anywhere;
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-details .welcome-copy h1 {
+  max-width: min(12ch, 100%);
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-reward {
+  gap: var(--s6);
+  max-width: 520px;
+  width: min(100%, 520px);
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-reward .welcome-copy h1 {
+  max-width: min(15ch, 100%);
+}
+
+.design-system-page .flat-screen.is-welcome .field-input {
+  min-width: 0;
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-form > .btn {
+  text-align: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-welcome .welcome-name-row {
+  grid-template-columns: 1fr;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-welcome,
@@ -2298,11 +2313,14 @@
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-panel {
   padding: var(--s16) var(--s5);
-  width: min(100%, 520px);
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-copy h1 {
   font-size: 4.9rem;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-reward {
+  width: min(100%, 520px);
 }
 
 .design-system-page .flat-screen.is-welcome .welcome-reward .credit-ticket {
@@ -2759,7 +2777,7 @@
   position: absolute;
 }
 
-.design-system-page .flat-screen.is-wallet .brand-pill {
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .brand-pill {
   background: transparent;
   border: 0;
   box-shadow: none;
@@ -2768,14 +2786,39 @@
   backdrop-filter: none;
 }
 
-.design-system-page .flat-screen.is-wallet .brand-link,
-.design-system-page .flat-screen.is-wallet .header-nav,
-.design-system-page .flat-screen.is-wallet .header-left > .theme-switch {
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .brand-link,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .header-nav,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .header-left > .theme-switch {
   display: none;
 }
 
-.design-system-page .flat-screen.is-wallet .brand-menu {
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .brand-menu {
   display: inline-flex;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .hpos-trigger {
+  background: var(--green);
+  border-color: var(--green);
+  color: #06210f;
+  height: 48px;
+  padding: 0;
+  width: 48px;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .hpos-word,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .hpos-close {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-wallet .hpos-num {
+  background: transparent;
+  color: inherit;
+  display: inline;
+  font-size: var(--fs-label);
+  height: auto;
+  width: auto;
 }
 
 .design-system-page .flat-screen.is-wallet .site-header .brand-mark {
@@ -5466,6 +5509,10 @@
   max-width: 720px;
 }
 
+.design-system-page .ds-portfolio-summary .portfolio-stats {
+  margin-bottom: 0;
+}
+
 .design-system-page .ds-settled-card-frame {
   justify-self: start;
   max-width: 428px;
@@ -5477,6 +5524,12 @@
 }
 
 .design-system-page .ds-settings-card-frame {
+  max-width: 760px;
+  width: 100%;
+}
+
+.design-system-page .ds-settings-card-grid > .ds-card-frame {
+  grid-column: 1 / -1;
   max-width: 760px;
   width: 100%;
 }
@@ -6254,18 +6307,22 @@
 
 /* Open game positions are a bottom-bar disclosure on mobile/tablet. The host
    viewport is desktop-sized, so explicitly restore the implemented overlay. */
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-frame--game-openPositions .flat-phone {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-frame--game-positionsPanelOpen .flat-phone {
   height: var(--flat-frame-h, 844px);
   min-height: var(--flat-frame-h, 844px);
 }
 
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen {
   height: 100%;
   min-height: 100%;
   overflow: hidden;
 }
 
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .game-open-position {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .game-open-position {
   inset: 0;
   margin: 0;
   pointer-events: none;
@@ -6273,7 +6330,7 @@
   z-index: 55;
 }
 
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-backdrop {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-backdrop {
   display: block;
   inset: 0;
   opacity: 1;
@@ -6281,7 +6338,7 @@
   position: absolute;
 }
 
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-pop {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-pop {
   bottom: 84px;
   left: 0;
   max-height: calc(100% - 156px);
@@ -6294,34 +6351,74 @@
   transform: none;
 }
 
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-pop .hpos-list {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-pop .hpos-list {
   margin-inline: auto;
   max-width: 400px;
   padding-inline: 0;
   width: 100%;
 }
 
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .gop-heading {
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-heading {
   margin-bottom: var(--s3);
   padding-inline: 0;
   text-align: center;
 }
 
-.design-system-page .flat-screen.is-game-openPositions .ds-gop-betbar {
+.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar {
   bottom: 0;
   display: block;
   left: 0;
+  opacity: 1;
   position: absolute;
   right: 0;
+  transform: none;
   z-index: 60;
 }
 
-.design-system-page .flat-screen.is-game-openPositions .ds-gop-betbar .betbar-cta {
+.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar .betbar-cta {
   display: none;
 }
 
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-game-openPositions .ds-gop-betbar {
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar {
   display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  display: block;
+  flex-shrink: 0;
+  margin-top: var(--s16);
+  pointer-events: auto;
+  position: static;
+  z-index: auto;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-backdrop {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-pop {
+  bottom: auto;
+  left: auto;
+  max-height: none;
+  opacity: 1;
+  overflow: visible;
+  padding: 0;
+  pointer-events: auto;
+  position: static;
+  right: auto;
+  transform: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-pop .hpos-list {
+  margin-inline: 0;
+  max-width: none;
+  padding-inline: var(--s5);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-heading {
+  margin-bottom: var(--s3);
+  padding-inline: var(--s5);
+  text-align: left;
 }
 
 /* Desktop live games mirror the app's current sticky two-column page. */

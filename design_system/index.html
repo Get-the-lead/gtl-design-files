@@ -21,8 +21,8 @@
     <link rel="stylesheet" href="../gtl-app/contact.css">
     <link rel="stylesheet" href="../gtl-app/fees.css">
     <link rel="stylesheet" href="../gtl-app/rules.css">
-    <link rel="stylesheet" href="../gtl-app/waitlist.css">
-    <link rel="stylesheet" href="design-system.css?v=20260729-page-docs-26">
+    <link rel="stylesheet" href="../gtl-app/waitlist.css?v=20260729-card-scope-1">
+    <link rel="stylesheet" href="design-system.css?v=20260729-page-docs-45">
   </head>
   <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
@@ -51,7 +51,6 @@
         <a href="#page-location">Location</a>
         <a href="#page-drawer">Buy / Sell</a>
         <a href="#page-account">Profile &amp; Settings</a>
-        <a href="#page-access">Access Gate</a>
         <span class="side-nav-label">Legacy Device Pages</span>
         <a href="#pages" data-flat-device="mobile" class="is-device-active" aria-selected="true">Mobile Pages</a>
         <a href="#pages" data-flat-device="tablet" aria-selected="false">Tablet Pages</a>
@@ -168,8 +167,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Welcome</h1>
-          <p>Post-verification username selection and the account celebration shown after successful registration.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>2 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>Post-registration onboarding covering the account-setup transition, personal details, age eligibility, username selection, and welcome credits.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Welcome screen sizes">
@@ -187,8 +186,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Game</h1>
-          <p>Game-detail variants covering live play, countdown, final, pregame, paused trading, NFL and NBA statistics, and licensed-logo references.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>Game-detail variants covering live play, countdown, final, unavailable and paused markets, closed and expanded game positions, statistics, and licensed-logo references.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>10 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Game screen sizes">
@@ -242,8 +241,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Login</h1>
-          <p>Email and password login, passwordless phone login, verification, password recovery, loading, and validation feedback.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>login-v2.html</code>, <code>forgot.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>The unified email-or-phone login flow, six-digit verification, password alternative, recovery, and inline validation.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>forgot.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Login screen sizes">
@@ -259,8 +258,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Registration</h1>
-          <p>Email-first and phone-first account creation, personal details, birthday eligibility, phone verification, password, and consent states.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code>, <code>signup-v2.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>The unified email-or-social account creation flow, phone verification, password creation, and inline validation.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code></span><span>8 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Registration screen sizes">
@@ -324,8 +323,6 @@
           <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
         </article>
       </section>
-
-      <section id="page-access" class="section individual-page-doc" data-individual-page="access"></section>
 
       <section id="pages" class="section">
         <div class="section-header">
@@ -1647,6 +1644,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260729-page-docs-26"></script>
+    <script src="script.js?v=20260729-page-docs-45"></script>
   </body>
 </html>
