@@ -164,13 +164,24 @@
 .field-row { display: flex; align-items: center; justify-content: flex-start; margin-top: var(--s4); }
 .link-green { color: var(--green); font-weight: 600; font-size: var(--fs-label); }
 .link-green:hover { text-decoration: underline; }
-:root[data-theme="light"] .link-green { color: #16a34a; }
+:root[data-theme="light"] .link-green { color: var(--green-ink); }
+
+.auth-alternate {
+  align-self: center;
+  margin: var(--s5) auto 0;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+.auth-alternate:hover { text-decoration: underline; }
 
 .auth-submit { margin-top: var(--s6); --btn-h: 54px; width: 100%; font-size: var(--fs-body); font-weight: 600; }
 .auth-foot { margin-top: var(--s6); text-align: center; color: var(--ink-2); font-size: var(--fs-body); }
 .auth-foot a { color: var(--green); font-weight: 600; }
 .auth-foot a:hover { text-decoration: underline; }
-:root[data-theme="light"] .auth-foot a { color: #16a34a; }
+:root[data-theme="light"] .auth-foot a { color: var(--green-ink); }
 
 .auth-fineprint { margin-top: var(--s6); text-align: center; color: var(--ink-3); font-size: var(--fs-eyebrow); line-height: 1.7; }
 .auth-fineprint a { color: var(--ink-2); text-decoration: underline; }
@@ -183,71 +194,6 @@
 .auth-steps[data-step="4"] .auth-step[data-step="4"],
 .auth-steps[data-step="5"] .auth-step[data-step="5"] { display: flex; }
 @keyframes step-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
-
-.signup-name-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s4);
-}
-.signup-name-row .field + .field { margin-top: 0; }
-.signup-birthday-field { min-width: 0; margin: var(--s5) 0 0; padding: 0; border: 0; }
-.signup-birthday-field legend { margin-bottom: var(--s2); }
-.date-fields { display: grid; grid-template-columns: 1.25fr 0.8fr 1fr; gap: var(--s2); }
-.date-part { min-width: 0; }
-.date-part .field-input { min-width: 0; padding-left: var(--s4); }
-.birthday-error { margin-top: 0; }
-
-@media (max-width: 440px) {
-  .signup-name-row { grid-template-columns: 1fr; }
-}
-
-.terms-check {
-  display: grid;
-  grid-template-columns: 22px 1fr;
-  align-items: start;
-  gap: 14px;
-  margin-top: var(--s8);
-  color: var(--ink-2);
-  font-size: var(--fs-label);
-  line-height: 1.55;
-  cursor: pointer;
-}
-.terms-check input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 22px;
-  height: 22px;
-  display: grid;
-  place-content: center;
-  margin: 1px 0 0;
-  border: 1px solid var(--line-2);
-  border-radius: 6px;
-  background: var(--surface);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
-  cursor: pointer;
-  transition: background 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), transform 0.15s var(--ease);
-}
-.terms-check input::before {
-  content: "";
-  width: 6px;
-  height: 10px;
-  border: solid #06210f;
-  border-width: 0 2px 2px 0;
-  transform: translateY(-1px) rotate(45deg) scale(0);
-  transition: transform 0.16s var(--ease-out);
-}
-.terms-check:hover input { border-color: var(--green-line); background: var(--surface-2); }
-.terms-check input:checked {
-  border-color: var(--green);
-  background: var(--green);
-  box-shadow: 0 0 0 3px var(--green-soft);
-}
-.terms-check input:checked::before { transform: translateY(-1px) rotate(45deg) scale(1); }
-.terms-check input:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
-.terms-check input:active { transform: scale(0.94); }
-.terms-check a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-.terms-error { margin: var(--s2) 0 0 36px; color: var(--no); font-size: var(--fs-label); font-weight: 600; }
-.terms-check + .terms-error + .auth-submit { margin-top: var(--s8); }
 
 .step-back {
   align-self: flex-start;
@@ -265,7 +211,7 @@
 .code-box {
   flex: 1 1 0; min-width: 0; padding: 0;
   height: 60px; text-align: center;
-  border-radius: var(--r-md);
+  border-radius: 16px;
   background: var(--surface); border: 1px solid var(--line-2);
   color: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: 1.6rem;
   font-variant-numeric: tabular-nums;
@@ -281,7 +227,7 @@
 @media (max-width: 440px) {
   .code-input { gap: var(--s1); }
   .code-dash { width: 8px; margin-inline: 2px; }
-  .code-box { height: 52px; border-radius: var(--r-sm); font-size: 1.35rem; }
+  .code-box { height: 52px; border-radius: 16px; font-size: 1.35rem; }
 }
 
 /* Forgot-password sent confirmation */

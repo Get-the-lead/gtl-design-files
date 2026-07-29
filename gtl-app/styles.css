@@ -79,7 +79,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .support-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s6); }
 .support-item { display: grid; grid-template-columns: auto 1fr; gap: var(--s4); align-items: start; }
 .support-num { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-label); color: var(--green); padding-top: 3px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
-:root[data-theme="light"] .support-num { color: #16a34a; }
+:root[data-theme="light"] .support-num { color: var(--green-ink); }
 .support-item h3 { font-size: var(--fs-h3); margin: 0 0 var(--s2); }
 .support-item p { color: var(--ink-2); font-size: var(--fs-body); line-height: 1.6; margin: 0; }
 .support-item p strong { color: var(--ink); font-weight: 700; }
@@ -111,7 +111,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   .flow-step { padding-left: 0; padding-top: 68px; }
   .flow-marker { left: 50%; transform: translateX(-50%); }
 }
-:root[data-theme="light"] .flow-marker { background: var(--surface); border-color: rgba(22, 163, 74, 0.4); color: #16a34a; }
+:root[data-theme="light"] .flow-marker { background: var(--surface); border-color: color-mix(in srgb, var(--green-ink) 40%, transparent); color: var(--green-ink); }
 
 /* Live price glow (shared by home tiles + game page) */
 .price.yes.flash { animation: glow-yes 1s var(--ease); }
@@ -151,6 +151,16 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 
 .btn-primary { background: var(--green); color: #06210f; }
 .btn-primary:hover { background: var(--green-strong); }
+.btn:disabled,
+.btn:disabled:hover,
+.btn:disabled:active {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--ink-3);
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+}
 
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-2); }
 .btn-ghost:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--line-2); }
@@ -516,13 +526,19 @@ body.menu-open #headerAuth { display: none; }
 }
 .hpos-list .pos-card .pos-media { background: transparent; }
 .hpos-list .pos-card .pos-media::before { content: none; }
-/* Light mode: match the home carousel — fade the dropdown card to white, not black */
-:root[data-theme="light"] .hpos-list .pos-card { background: var(--surface); }
-:root[data-theme="light"] .hpos-list .pos-card::before {
+/* Light mode: match the home carousel's solid surface and matchup-gradient outline. */
+:root[data-theme="light"] .hpos-list .pos-card {
   background:
-    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
-    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.84));
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--home-color) 74%, var(--surface)),
+      color-mix(in srgb, var(--away-color) 74%, var(--surface))
+    ) border-box;
+  border-color: transparent;
+}
+:root[data-theme="light"] .hpos-list .pos-card::before {
+  content: none;
 }
 
 /* Light mode: on a white position card the scoreboard text flips to dark ink so it stays
@@ -777,6 +793,17 @@ body.sheet-open { overflow: hidden; }
   filter: none;
 }
 .team-mark.is-fallback .team-mark-abbr { display: block; }
+
+:root[data-theme="light"] :is(.game-tile, .pos-card, .settled-card) .team-mark.is-fallback {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--team-color) 82%, #fff 18%),
+      color-mix(in srgb, var(--team-color) 64%, #111 36%)
+    );
+  border-color: color-mix(in srgb, var(--team-color) 72%, var(--surface));
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--team-color) 22%, transparent);
+}
 
 .bs-logo { width: 40px; height: 40px; flex: 0 0 auto; filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4)); }
 .bs-logo .team-mark-abbr { font-size: 0.78rem; }
@@ -1086,7 +1113,7 @@ body.sheet-open { overflow: hidden; }
 /* Light-theme component overrides (glass surfaces need light fills) */
 :root[data-theme="light"] .seg button.is-active,
 :root[data-theme="light"] .bt-opt.yes.is-active,
-:root[data-theme="light"] .qty-quick button.is-active { color: #15803d; }
+:root[data-theme="light"] .qty-quick button.is-active { color: var(--green-ink); }
 :root[data-theme="light"] .floating-btn { background: rgba(255, 255, 255, 0.72); }
 :root[data-theme="light"] .floating-btn:hover { background: rgba(255, 255, 255, 0.92); }
 :root[data-theme="light"] .theme-switch-track { background: rgba(10, 20, 25, 0.08); }
@@ -1112,7 +1139,7 @@ body.sheet-open { overflow: hidden; }
 }
 .wallet-chip .wallet-ico { width: 18px; height: 18px; color: var(--green); }
 .wallet-chip .wallet-amount { color: var(--ink); }
-:root[data-theme="light"] .wallet-chip .wallet-ico { color: #16a34a; }
+:root[data-theme="light"] .wallet-chip .wallet-ico { color: var(--green-ink); }
 /* Settled win landing in the wallet — soft green pulse + count-up + floating "+$x" */
 .wallet-chip.wallet-credit { animation: wallet-credit 0.85s var(--ease-out); }
 @keyframes wallet-credit {
@@ -1121,6 +1148,13 @@ body.sheet-open { overflow: hidden; }
 }
 .wallet-chip.wallet-credit .wallet-amount { animation: wallet-amt 1.1s var(--ease); }
 @keyframes wallet-amt { 0%, 55% { color: var(--green); } 100% { color: var(--ink); } }
+.wallet-chip.wallet-welcome-credit { animation: wallet-welcome-credit 1.8s var(--ease-out); }
+.wallet-chip.wallet-welcome-credit .wallet-amount { color: var(--green); text-shadow: 0 0 16px var(--green-glow); }
+@keyframes wallet-welcome-credit {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 48%, transparent); }
+  42% { transform: scale(1.045); box-shadow: 0 0 0 9px color-mix(in srgb, var(--green) 12%, transparent); }
+  100% { transform: scale(1); box-shadow: 0 0 0 16px color-mix(in srgb, var(--green) 0%, transparent); }
+}
 .wallet-pop {
   position: absolute; right: var(--s4); top: 1px; z-index: 1;
   color: var(--green); font-weight: 700; font-size: var(--fs-label);
@@ -1138,7 +1172,7 @@ body.sheet-open { overflow: hidden; }
 /* P&L colour helper -------------------------------------------------- */
 .pnl.up, .oc-pnl.up { color: var(--green); }
 .pnl.down, .oc-pnl.down { color: var(--no); }
-:root[data-theme="light"] .pnl.up, :root[data-theme="light"] .oc-pnl.up { color: #16a34a; }
+:root[data-theme="light"] .pnl.up, :root[data-theme="light"] .oc-pnl.up { color: var(--green-ink); }
 
 /* Position / order card (authed home + wallet) ----------------------- */
 .order-card {
@@ -1170,19 +1204,56 @@ body.sheet-open { overflow: hidden; }
 .oc-tag { font-weight: 700; font-size: var(--fs-label); }
 .oc-tag .side-yes { color: var(--green); }
 .oc-tag .side-no { color: var(--no); }
-:root[data-theme="light"] .oc-tag .side-yes { color: #16a34a; }
+:root[data-theme="light"] .oc-tag .side-yes { color: var(--green-ink); }
 .oc-sub { font-size: var(--fs-eyebrow); color: var(--ink-2); font-weight: 600; letter-spacing: 0.04em; }
 .oc-val { text-align: right; display: flex; flex-direction: column; gap: 2px; }
 .oc-amount { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1; font-variant-numeric: tabular-nums; }
 .oc-pnl { font-size: var(--fs-label); font-weight: 600; font-variant-numeric: tabular-nums; }
 
 .oc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); }
-.oc-actions button { height: 46px; border-radius: var(--r-pill); border: 1px solid; font-weight: 600; font-size: var(--fs-label); transition: background 0.18s var(--ease); }
+.oc-actions button { height: 46px; border-radius: var(--r-pill); border: 1px solid; font-weight: 600; font-size: var(--fs-label); transition: background 0.18s var(--ease), border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), filter 0.18s var(--ease), transform 0.18s var(--ease); }
 .oc-buy { background: var(--green-soft); border-color: var(--green-line); color: var(--green); }
 .oc-buy:hover { background: rgba(74, 222, 128, 0.22); }
-:root[data-theme="light"] .oc-buy { color: #16a34a; }
 .oc-sell { background: var(--no-soft); border-color: var(--no-line); color: var(--no); }
 .oc-sell:hover { background: rgba(255, 93, 114, 0.22); }
+
+:root[data-theme="light"] .oc-buy,
+:root[data-theme="light"] .oc-sell {
+  color: #06210f;
+}
+:root[data-theme="light"] .oc-buy {
+  background: linear-gradient(
+    145deg,
+    var(--green),
+    var(--green-strong)
+  );
+  border-color: color-mix(in srgb, var(--green-strong) 76%, #fff 24%);
+  box-shadow:
+    0 5px 14px color-mix(in srgb, var(--green-strong) 18%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.2);
+}
+:root[data-theme="light"] .oc-sell {
+  background: linear-gradient(
+    145deg,
+    #ff7183,
+    #e6455b
+  );
+  border-color: color-mix(in srgb, #e6455b 76%, #fff 24%);
+  color: #25070c;
+  box-shadow:
+    0 5px 14px color-mix(in srgb, #e6455b 17%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.2);
+}
+:root[data-theme="light"] :is(.oc-buy, .oc-sell):hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+:root[data-theme="light"] :is(.oc-buy, .oc-sell):active {
+  filter: brightness(0.96);
+  transform: translateY(0);
+}
+:root[data-theme="light"] .oc-buy:focus-visible { outline: 3px solid color-mix(in srgb, var(--green-ink) 30%, transparent); outline-offset: 2px; }
+:root[data-theme="light"] .oc-sell:focus-visible { outline: 3px solid color-mix(in srgb, var(--no-ink) 30%, transparent); outline-offset: 2px; }
 
 /* Settled variant — result pill instead of actions */
 .order-card.settled::before { opacity: 0.3; }
@@ -1191,7 +1262,7 @@ body.sheet-open { overflow: hidden; }
 .result-pill { display: inline-flex; flex: 0 0 auto; align-items: center; gap: var(--s1); margin-left: auto; padding: 5px var(--s3); border-radius: var(--r-pill); font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .result-pill.win { background: var(--green-soft); color: var(--green); }
 .result-pill.loss { background: var(--no-soft); color: var(--no); }
-:root[data-theme="light"] .result-pill.win { color: #16a34a; }
+:root[data-theme="light"] .result-pill.win { color: var(--green-ink); }
 .oc-settled-pnl { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
 
 /* Live-game media header (tiles, position cards, settled banner) ----- */
@@ -1215,7 +1286,7 @@ body.sheet-open { overflow: hidden; }
 .pos-media { position: relative; overflow: hidden; isolation: isolate; padding: var(--s5) var(--s5) var(--s4); background: var(--bg-2); }
 a.pos-media { display: block; color: inherit; cursor: pointer; }
 .pos-media .team-score { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem); }
-.pos-media .sc-won { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; color: var(--green); }
+.pos-media .sc-won { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.04em; color: var(--green-ink); }
 .pos-media::before {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background:
@@ -1224,16 +1295,32 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
     linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.84));
 }
 
-/* Settled — dark media card, shown as a slide-down banner on any page */
+/* Settled — slide-down result card shown on any page. */
 .settled-card { position: relative; background: #08090c; border: 1px solid var(--green-line); border-radius: var(--r-lg); overflow: hidden; }
 .settled-progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--green); transform-origin: left; transform: scaleX(0); }
 .settled-toast.is-open .settled-progress { animation: cancel-fill 10s linear forwards; }
 .settled-card .pos-media { background: transparent; }
 .settled-body { padding: var(--s1) var(--s5) var(--s5); background: transparent; display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--s3); }
-.settled-profit { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3rem); line-height: 1; color: var(--green); }
-:root[data-theme="light"] .settled-profit { color: #15803d; }
+.settled-profit { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3rem); line-height: 1; color: var(--green-ink); }
 .settled-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); width: 100%; margin-top: var(--s2); }
 .settled-actions .btn { --btn-h: 44px; width: 100%; }
+
+:root[data-theme="light"] .settled-card {
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--home-color) 74%, var(--surface)),
+      color-mix(in srgb, var(--away-color) 74%, var(--surface))
+    ) border-box;
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .settled-card .pos-media::before { content: none; }
+:root[data-theme="light"] .settled-card .team-abbr { color: var(--ink-2); }
+:root[data-theme="light"] .settled-card .team.is-leading .team-score { color: var(--ink); }
+:root[data-theme="light"] .settled-card .team:not(.is-leading) .team-score { color: var(--ink-3); }
+:root[data-theme="light"] .settled-card .game-center .period { color: var(--ink-3); }
 
 .settled-toast {
   position: fixed; inset: 0 0 auto 0; z-index: 80;
@@ -1258,7 +1345,7 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 .sell-readout .sell-tag { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h3); }
 .sell-readout .sell-tag .side-yes { color: var(--green); }
 .sell-readout .sell-tag .side-no { color: var(--no); }
-:root[data-theme="light"] .sell-readout .sell-tag .side-yes { color: #16a34a; }
+:root[data-theme="light"] .sell-readout .sell-tag .side-yes { color: var(--green-ink); }
 .sell-readout .sell-sub { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: var(--ink-2); font-size: var(--fs-label); }
 .qty-quick.q3 { grid-template-columns: repeat(3, 1fr); }
 /* Sell footer — single full-width action */
@@ -1290,7 +1377,7 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 .toast-success .toast-ico { background: var(--green-soft); color: var(--green); }
 .toast-error { border-color: var(--no-line); }
 .toast-error .toast-ico { background: var(--no-soft); color: var(--no); }
-:root[data-theme="light"] .toast-success .toast-ico { color: #16a34a; }
+:root[data-theme="light"] .toast-success .toast-ico { color: var(--green-ink); }
 @keyframes toast-in { from { opacity: 0; transform: translateY(-12px) scale(0.98); } to { opacity: 1; transform: none; } }
 @keyframes toast-out { to { opacity: 0; transform: translateY(-8px); } }
 

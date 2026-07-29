@@ -91,7 +91,7 @@
 }
 
 :root[data-theme="light"] .rules-sublist li::marker {
-  color: #16a34a;
+  color: var(--green-ink);
 }
 
 .rules-table-wrap {

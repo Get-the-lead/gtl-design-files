@@ -86,7 +86,7 @@
 }
 
 :root[data-theme="light"] .contact-note-icon,
-:root[data-theme="light"] .contact-success-icon { color: #16a34a; }
+:root[data-theme="light"] .contact-success-icon { color: var(--green-ink); }
 
 @media (prefers-reduced-motion: reduce) {
   .contact-success { scroll-behavior: auto; }

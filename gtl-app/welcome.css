@@ -65,7 +65,7 @@
     var(--bg);
   background-size: auto, auto, 96px 96px, 96px 96px, auto;
 }
-.welcome-main[data-welcome-state="reward"] > .welcome-celebration-bg { display: block; }
+.welcome-main[data-welcome-state="intro"] > .welcome-celebration-bg { display: block; }
 .welcome-celebration-bg::after {
   content: "";
   position: absolute;
@@ -191,6 +191,24 @@
   text-wrap: pretty;
 }
 
+.welcome-transition {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+.welcome-transition span {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--line-2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: welcome-spin .8s linear infinite;
+}
+@keyframes welcome-spin { to { transform: rotate(360deg); } }
+
 .credit-ticket {
   width: min(100%, 430px);
   display: grid;
@@ -262,11 +280,16 @@
 .welcome-birthday-field legend { margin-bottom: var(--s2); }
 .date-fields {
   display: grid;
-  grid-template-columns: 1.25fr 0.8fr 1fr;
+  grid-template-columns: 1.2fr 1fr 1fr;
   gap: var(--s2);
 }
 .date-part { min-width: 0; }
-.date-part .field-input { min-width: 0; padding-left: var(--s4); }
+.date-part .field-input {
+  min-width: 0;
+  width: 100%;
+  padding: 0 42px 0 var(--s4);
+  line-height: normal;
+}
 .birthday-error { margin-top: 0; }
 .welcome-form .btn { width: 100%; margin-top: var(--s3); }
 
@@ -275,8 +298,7 @@
 }
 
 .welcome-main[data-welcome-state="details"] .welcome-details,
-.welcome-main[data-welcome-state="username"] .welcome-username,
-.welcome-main[data-welcome-state="reward"] .welcome-reward {
+.welcome-main[data-welcome-state="username"] .welcome-username {
   animation: details-in 0.42s var(--ease-out) both;
 }
 
@@ -352,8 +374,7 @@
 @media (prefers-reduced-motion: reduce) {
   .welcome-main.is-transitioning .welcome-intro,
   .welcome-main[data-welcome-state="details"] .welcome-details,
-  .welcome-main[data-welcome-state="username"] .welcome-username,
-  .welcome-main[data-welcome-state="reward"] .welcome-reward { animation: none; }
+  .welcome-main[data-welcome-state="username"] .welcome-username { animation: none; }
   .celebration-glow { opacity: .5; transform: translate(-50%, -50%); }
   .celebration-ring,
   .confetti-burst,
