@@ -408,8 +408,171 @@
 }
 
 .design-system-page #overview {
-  margin-inline: 40px;
-  max-width: none;
+  margin-inline: 0;
+  max-width: 1120px;
+}
+
+/* Overview uses the approved flat editorial hierarchy: sections and rules, not nested cards. */
+.design-system-page .ds-overview {
+  display: block;
+  width: 100%;
+}
+
+.design-system-page .ds-overview-intro {
+  max-width: 820px;
+  padding: var(--s16) 0 var(--s10);
+}
+
+.design-system-page .ds-kicker {
+  color: var(--green);
+  display: block;
+  font: 800 var(--fs-eyebrow) / 1 var(--font-ui);
+  letter-spacing: 0.12em;
+  margin-bottom: var(--s5);
+  text-transform: uppercase;
+}
+
+.design-system-page .ds-overview-intro h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.75rem, 3rem + 3vw, 6.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin: 0;
+}
+
+.design-system-page .ds-overview-intro > p {
+  color: var(--ink-2);
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  margin: var(--s6) 0 0;
+  max-width: 62ch;
+}
+
+.design-system-page .ds-overview-metrics {
+  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+}
+
+.design-system-page .ds-overview-metrics > div {
+  align-items: baseline;
+  display: flex;
+  gap: var(--s4);
+  padding: var(--s5) 0;
+}
+
+.design-system-page .ds-overview-metrics > div + div {
+  border-left: 1px solid var(--line);
+  padding-left: var(--s6);
+}
+
+.design-system-page .ds-overview-metrics dt {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .ds-overview-metrics dd {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  margin: 0;
+}
+
+.design-system-page .ds-overview-section {
+  border-bottom: 1px solid var(--line);
+  padding: var(--s12) 0;
+}
+
+.design-system-page .ds-overview-heading {
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: 44px minmax(0, 1fr);
+  margin-bottom: var(--s8);
+}
+
+.design-system-page .ds-overview-heading > span {
+  color: var(--green);
+  font: 800 var(--fs-eyebrow) / 1 var(--font-ui);
+  padding-top: 7px;
+}
+
+.design-system-page .ds-overview-heading h2 {
+  font-size: var(--fs-h2);
+  margin: 0;
+}
+
+.design-system-page .ds-overview-heading p,
+.design-system-page .ds-overview-steps p,
+.design-system-page .ds-overview-table p,
+.design-system-page .ds-decision-list p {
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin: var(--s1) 0 0;
+}
+
+.design-system-page .ds-overview-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.design-system-page .ds-overview-steps li {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: 44px minmax(0, 1fr);
+  padding: var(--s4) 0;
+}
+
+.design-system-page .ds-overview-steps li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.design-system-page .ds-overview-steps li > span,
+.design-system-page .ds-overview-table [role="row"] > span {
+  color: var(--ink-3);
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+}
+
+.design-system-page .ds-overview-table,
+.design-system-page .ds-decision-list {
+  border-top: 1px solid var(--line);
+}
+
+.design-system-page .ds-overview-table [role="row"] {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: 44px minmax(180px, 0.7fr) minmax(0, 1.3fr);
+  padding: var(--s4) 0;
+}
+
+.design-system-page .ds-overview-table p {
+  margin: 0;
+}
+
+.design-system-page .ds-decision-list {
+  display: grid;
+  gap: 0;
+}
+
+.design-system-page .ds-decision-list > article {
+  align-items: start;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  gap: var(--s5);
+  grid-template-columns: 76px minmax(0, 1fr);
+  padding: var(--s5) 0;
+}
+
+.design-system-page .ds-decision-id {
+  color: var(--gold);
+  font: 800 var(--fs-eyebrow) / 1.2 var(--font-ui);
+  letter-spacing: 0.04em;
+  padding-top: 3px;
 }
 
 .design-system-page #pages {
@@ -6622,6 +6785,27 @@
 }
 
 @media (max-width: 620px) {
+  .design-system-page .ds-overview-intro {
+    padding-top: var(--s10);
+  }
+
+  .design-system-page .ds-overview-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .design-system-page .ds-overview-metrics > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+  }
+
+  .design-system-page .ds-overview-heading,
+  .design-system-page .ds-overview-steps li,
+  .design-system-page .ds-overview-table [role="row"],
+  .design-system-page .ds-decision-list > article {
+    grid-template-columns: 1fr;
+  }
+
   .design-system-page .ds-restored-page-doc .ds-page-doc-grid > article {
     grid-template-columns: 1fr;
   }
