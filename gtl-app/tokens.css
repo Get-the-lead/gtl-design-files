@@ -26,7 +26,6 @@
 
   /* Semantic */
   --yes: var(--green);
-  --yes-soft: var(--green-soft);
   --no: #ff5d72;
   --no-soft: rgba(255, 93, 114, 0.14);
   --no-line: rgba(255, 93, 114, 0.32);

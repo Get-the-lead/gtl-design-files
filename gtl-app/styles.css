@@ -1131,6 +1131,13 @@ body.sheet-open { overflow: hidden; }
 }
 .wallet-chip.wallet-credit .wallet-amount { animation: wallet-amt 1.1s var(--ease); }
 @keyframes wallet-amt { 0%, 55% { color: var(--green); } 100% { color: var(--ink); } }
+.wallet-chip.wallet-welcome-credit { animation: wallet-welcome-credit 1.8s var(--ease-out); }
+.wallet-chip.wallet-welcome-credit .wallet-amount { color: var(--green); text-shadow: 0 0 16px var(--green-glow); }
+@keyframes wallet-welcome-credit {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 48%, transparent); }
+  42% { transform: scale(1.045); box-shadow: 0 0 0 9px color-mix(in srgb, var(--green) 12%, transparent); }
+  100% { transform: scale(1); box-shadow: 0 0 0 16px color-mix(in srgb, var(--green) 0%, transparent); }
+}
 .wallet-pop {
   position: absolute; right: var(--s4); top: 1px; z-index: 1;
   color: var(--green); font-weight: 700; font-size: var(--fs-label);
