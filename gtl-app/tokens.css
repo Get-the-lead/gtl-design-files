@@ -5,6 +5,7 @@
 :root {
   /* Brand green — the one carry-over, used sparingly */
   --green: #4ade80;
+  --green-ink: var(--green);
   --green-strong: #22c55e;
   --green-soft: rgba(74, 222, 128, 0.14);
   --green-line: rgba(74, 222, 128, 0.30);
@@ -27,6 +28,7 @@
   /* Semantic */
   --yes: var(--green);
   --no: #ff5d72;
+  --no-ink: var(--no);
   --no-soft: rgba(255, 93, 114, 0.14);
   --no-line: rgba(255, 93, 114, 0.32);
   --gold: #ffce4d;
@@ -79,6 +81,8 @@
 /* Light theme — only neutrals flip; brand green is unchanged.
    The game tiles and game-page scoreboard stay dark in both themes (media cards). */
 :root[data-theme="light"] {
+  --green-ink: #167c3f;
+  --no-ink: #b4233d;
   --bg: #f4f6f8;
   --bg-2: #eceff3;
   --surface: #ffffff;

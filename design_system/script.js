@@ -24,6 +24,96 @@ const flatDocTabs = document.querySelector("[data-flat-doc-tabs]");
 const flatLayContent = document.querySelector("[data-flat-lay-content]");
 const individualPageSections = document.querySelectorAll("[data-individual-page]");
 let pageZoom = 1;
+const designSystemThemeStorageKey = "gtl-theme";
+const standardThemeSectionIds = [
+  "pages",
+  "tokens",
+  "spacing",
+  "radius",
+  "shadows",
+  "borders",
+  "effects",
+  "typography",
+  "buttons",
+  "pills",
+  "forms",
+  "drawers",
+  "navigation",
+  "cards",
+  "tables",
+  "feedback",
+  "dialogs",
+];
+
+function normalizeDesignSystemTheme(value) {
+  return value === "light" ? "light" : "dark";
+}
+
+function designSystemThemeToggle(label) {
+  return `<div class="ds-theme-toggle" role="group" aria-label="${label} color theme">
+    <button type="button" data-ds-theme="dark" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span><span>Dark</span></button>
+    <button type="button" data-ds-theme="light" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">light_mode</span><span>Light</span></button>
+  </div>`;
+}
+
+function currentDesignSystemTheme() {
+  return normalizeDesignSystemTheme(document.documentElement.dataset.theme);
+}
+
+function syncDesignSystemThemeToggles() {
+  const theme = currentDesignSystemTheme();
+  document.querySelectorAll("[data-ds-theme]").forEach((button) => {
+    const active = button.dataset.dsTheme === theme;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+}
+
+function setDesignSystemTheme(theme, { persist = true } = {}) {
+  const nextTheme = normalizeDesignSystemTheme(theme);
+  document.documentElement.dataset.theme = nextTheme;
+  document.documentElement.style.colorScheme = nextTheme;
+  if (persist) {
+    try { localStorage.setItem(designSystemThemeStorageKey, nextTheme); } catch (error) { /* Storage can be unavailable in private browsing. */ }
+  }
+  syncDesignSystemThemeToggles();
+}
+
+function installDesignSystemThemeToggles() {
+  const overviewIntro = document.querySelector("#overview > .ds-overview-intro");
+  if (overviewIntro && !overviewIntro.querySelector(".ds-theme-toggle")) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = designSystemThemeToggle("Overview");
+    overviewIntro.append(wrapper.firstElementChild);
+  }
+
+  individualPageSections.forEach((section) => {
+    const actions = section.querySelector(".ds-page-actions");
+    if (!actions || actions.querySelector(".ds-theme-toggle")) return;
+    const docKey = section.dataset.individualPage;
+    const title = individualPageDocumentation[docKey]?.title || flatDocViews[docKey]?.title || "Page";
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = designSystemThemeToggle(title);
+    actions.insertBefore(wrapper.firstElementChild, actions.querySelector(".ds-page-zoom"));
+  });
+
+  standardThemeSectionIds.forEach((id) => {
+    const section = document.getElementById(id);
+    const header = section?.querySelector(":scope > .section-header");
+    if (!header || header.querySelector(".ds-theme-toggle")) return;
+    const title = header.querySelector("h2")?.textContent?.trim() || "Components";
+    const copy = document.createElement("div");
+    copy.className = "ds-section-heading-copy";
+    while (header.firstChild) copy.append(header.firstChild);
+    header.classList.add("ds-theme-header");
+    header.append(copy);
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = designSystemThemeToggle(title);
+    header.append(wrapper.firstElementChild);
+  });
+
+  syncDesignSystemThemeToggles();
+}
 
 function toHex(value) {
   const hex = Math.max(0, Math.min(255, Number(value))).toString(16).padStart(2, "0");
@@ -3138,6 +3228,17 @@ flatDocTabs?.addEventListener("click", (event) => {
   renderFlatDevice(activeFlatDevice, button.dataset.flatDoc);
 });
 
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-ds-theme]");
+  if (!button) return;
+  setDesignSystemTheme(button.dataset.dsTheme);
+});
+
+window.addEventListener("storage", (event) => {
+  if (event.key !== designSystemThemeStorageKey || !event.newValue) return;
+  setDesignSystemTheme(event.newValue, { persist: false });
+});
+
 function componentSectionHeader(title, copy) {
   return `<div class="section-header"><h2>${title}</h2><p>${copy}</p></div>`;
 }
@@ -3518,7 +3619,9 @@ window.addEventListener("hashchange", () => {
   showSection(sectionFromHash(), { instant: true });
 });
 
+setDesignSystemTheme(currentDesignSystemTheme(), { persist: false });
 syncAppComponentSections();
+installDesignSystemThemeToggles();
 startConfirmationTimers();
 renderDrawerComponentStates();
 setDrawerView(drawerSection?.dataset.drawerViewMode);
