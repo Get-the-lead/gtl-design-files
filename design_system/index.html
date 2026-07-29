@@ -19,7 +19,10 @@
     <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260724d">
     <link rel="stylesheet" href="../gtl-app/profile.css">
     <link rel="stylesheet" href="../gtl-app/contact.css">
-    <link rel="stylesheet" href="design-system.css?v=20260724y">
+    <link rel="stylesheet" href="../gtl-app/fees.css">
+    <link rel="stylesheet" href="../gtl-app/rules.css">
+    <link rel="stylesheet" href="../gtl-app/waitlist.css">
+    <link rel="stylesheet" href="design-system.css?v=20260729-page-docs-26">
   </head>
   <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
@@ -34,6 +37,22 @@
       <nav class="side-nav">
         <a href="#overview" class="is-active">Overview</a>
         <span class="side-nav-label">Pages</span>
+        <a href="#page-home">Home</a>
+        <a href="#page-waitlist">Waitlist</a>
+        <a href="#page-welcome">Welcome</a>
+        <a href="#page-game">Game</a>
+        <a href="#page-ranking">Ranking</a>
+        <a href="#page-rules">Monthly Competition Rules</a>
+        <a href="#page-portfolio">Portfolio</a>
+        <a href="#page-fees">Fees</a>
+        <a href="#page-login">Login</a>
+        <a href="#page-registration">Registration</a>
+        <a href="#page-contact">Contact</a>
+        <a href="#page-location">Location</a>
+        <a href="#page-drawer">Buy / Sell</a>
+        <a href="#page-account">Profile &amp; Settings</a>
+        <a href="#page-access">Access Gate</a>
+        <span class="side-nav-label">Legacy Device Pages</span>
         <a href="#pages" data-flat-device="mobile" class="is-device-active" aria-selected="true">Mobile Pages</a>
         <a href="#pages" data-flat-device="tablet" aria-selected="false">Tablet Pages</a>
         <a href="#pages" data-flat-device="desktop" aria-selected="false">Desktop Pages</a>
@@ -69,47 +88,249 @@
     </header>
 
     <main class="page-shell">
-      <section id="overview" class="hero section">
-        <div class="hero-copy">
+      <section id="overview" class="section ds-overview">
+        <header class="ds-overview-intro">
+          <span class="ds-kicker">Implementation reference</span>
           <h1>GTL Design System</h1>
-          <p class="lede">A practical reference for building pages with mint-on-black foundations, data-heavy components, and reusable plain HTML, CSS, and JavaScript patterns.</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#tokens">View Colors</a>
-            <a class="button button-secondary" href="#cards">Live Cards</a>
+          <p>The shared reference for production foundations, reusable patterns, complete page states, and unresolved product decisions.</p>
+        </header>
+
+        <dl class="ds-overview-metrics" aria-label="Design system snapshot">
+          <div><dt>Pages</dt><dd>15</dd></div>
+          <div><dt>Production tokens</dt><dd>55</dd></div>
+          <div><dt>Open decisions</dt><dd>5</dd></div>
+        </dl>
+
+        <section class="ds-overview-section" aria-labelledby="overview-use-title">
+          <div class="ds-overview-heading"><span>01</span><div><h2 id="overview-use-title">How to use it</h2><p>Follow this order when implementing or reviewing a feature.</p></div></div>
+          <ol class="ds-overview-steps">
+            <li><span>01</span><div><strong>Open the relevant Page.</strong><p>Review the implementation, its contract, required states, and open validation together.</p></div></li>
+            <li><span>02</span><div><strong>Use documented states as the coverage checklist.</strong><p>Every default, loading, empty, error, validation, and responsive state sits on its owning Page.</p></div></li>
+            <li><span>03</span><div><strong>Build with production primitives and patterns.</strong><p>Use only tokens listed here and reuse the closest documented component variant.</p></div></li>
+            <li><span>04</span><div><strong>Escalate unresolved behaviour.</strong><p>Do not turn a prototype alternative into production behaviour until its decision is resolved.</p></div></li>
+          </ol>
+        </section>
+
+        <section class="ds-overview-section" aria-labelledby="overview-source-title">
+          <div class="ds-overview-heading"><span>02</span><div><h2 id="overview-source-title">Source of truth</h2><p>When references disagree, use the highest applicable source below.</p></div></div>
+          <div class="ds-overview-table" role="table" aria-label="Source of truth precedence">
+            <div role="row"><span role="cell">1</span><strong role="cell">Product decisions</strong><p role="cell">Approved flow, validation, and copy decisions documented here.</p></div>
+            <div role="row"><span role="cell">2</span><strong role="cell">Production tokens</strong><p role="cell"><code>gtl-app/tokens.css</code> for shared visual foundations.</p></div>
+            <div role="row"><span role="cell">3</span><strong role="cell">Production patterns</strong><p role="cell"><code>gtl-app/*.css</code> and <code>gtl-app/app.js</code> for implemented behaviour.</p></div>
+            <div role="row"><span role="cell">4</span><strong role="cell">Documented page states</strong><p role="cell">Coverage and intent for every implemented page variant across mobile, tablet, and desktop.</p></div>
           </div>
-        </div>
-        <div class="hero-panel" aria-label="Design system snapshot">
-          <div class="metric-row">
-            <article>
-              <span>CSS classes</span>
-              <strong>295</strong>
-            </article>
-            <article>
-              <span>Tokens</span>
-              <strong>99</strong>
-            </article>
+        </section>
+
+        <section class="ds-overview-section" aria-labelledby="overview-decisions-title">
+          <div class="ds-overview-heading"><span>03</span><div><h2 id="overview-decisions-title">Open decisions</h2><p>These items require product or engineering validation before production release.</p></div></div>
+          <div class="ds-decision-list">
+            <article><span class="ds-decision-id">AUTH-01</span><div><strong>Select the production sign-in flow</strong><p>Version A uses email and password. Version B uses Apple, Google, or a phone number followed by a verification code.</p></div></article>
+            <article><span class="ds-decision-id">AUTH-02</span><div><strong>Select the production account-creation flow</strong><p>The current flow verifies phone before the final password step. The alternate flow starts with Apple, Google, or phone, then phone verification, name, date of birth, terms, and the welcome username step.</p></div></article>
+            <article><span class="ds-decision-id">BET-01</span><div><strong>Confirm the 1,000-credit cap calculation</strong><p>The current prototype applies the limit to the displayed credit price including the 2% fee. Confirm this matches the production transaction rule.</p></div></article>
+            <article><span class="ds-decision-id">BET-02</span><div><strong>Implement available-balance enforcement</strong><p>The insufficient-credit state is documented, but the running bet drawer does not yet block purchases above the user’s available balance.</p></div></article>
+            <article><span class="ds-decision-id">GAME-01</span><div><strong>Confirm live-data status mapping</strong><p>Engineering needs the definitive feed values for active play, quarter time, and final.</p></div></article>
           </div>
-          <div class="mini-window">
-            <div class="window-bar">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="window-content">
-              <div class="skeleton skeleton-title"></div>
-              <div class="skeleton"></div>
-              <div class="skeleton skeleton-short"></div>
-              <div class="window-controls">
-                <span class="pill pill-success">Ready</span>
-                <button class="button button-small button-primary" type="button">Apply</button>
+        </section>
+      </section>
+
+      <section id="page-home" class="section ds-restored-page-doc" data-individual-page="home">
+        <article class="panel ds-pages-panel ds-individual-page-panel">
+          <div class="panel-header">
+            <h2>Home</h2>
+            <div class="ds-page-actions">
+              <div class="ds-device-toggle" role="group" aria-label="Home preview device">
+                <button class="is-active" type="button" data-individual-device="mobile" aria-pressed="true">Mobile</button>
+                <button type="button" data-individual-device="tablet" aria-pressed="false">Tablet</button>
+                <button type="button" data-individual-device="desktop" aria-pressed="false">Desktop</button>
+              </div>
+              <div class="ds-page-zoom" role="group" aria-label="Home preview zoom controls">
+                <button class="ds-icon-btn" type="button" aria-label="Zoom out" data-individual-zoom="out"><span class="material-symbols-outlined" aria-hidden="true">remove</span></button>
+                <button class="ds-page-zoom-value" type="button" data-individual-zoom="reset" aria-label="Reset zoom">100%</button>
+                <button class="ds-icon-btn" type="button" aria-label="Zoom in" data-individual-zoom="in"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
               </div>
             </div>
           </div>
-        </div>
+
+          <div class="ds-page-docs">
+            <div class="ds-page-doc-grid">
+              <article><span class="ds-doc-label">Purpose</span><p>Primary entry point for live NFL markets, account context, open positions and NBA-interest capture.</p><code>home.html</code></article>
+              <article><span class="ds-doc-label">Required states</span><p>Guest, logged in, no open positions, no live games, market recalculation, NBA interested and NBA not-for-me.</p></article>
+              <article><span class="ds-doc-label">Implementation contract</span><ul><li>Preserve guest and authenticated header variants.</li><li>Show NBA as coming soon; do not describe NBA as currently tradable.</li><li>Market prices open the buy drawer and paused markets remain non-interactive.</li></ul></article>
+              <article class="is-validation"><span class="ds-doc-label">Open validation</span><p>Confirm whether the NBA-interest response needs persistence, analytics or account association.</p></article>
+            </div>
+          </div>
+
+          <section class="ds-page-states flat-lay-canvas" data-individual-content data-flat-device="mobile" data-device="mobile" style="--page-zoom: 1;"></section>
+        </article>
       </section>
+
+      <section id="page-welcome" class="section individual-page-doc" data-individual-page="welcome">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Welcome</h1>
+          <p>Post-verification username selection and the account celebration shown after successful registration.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>2 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Welcome screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-waitlist" class="section individual-page-doc" data-individual-page="waitlist"></section>
+
+      <section id="page-game" class="section individual-page-doc" data-individual-page="game">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Game</h1>
+          <p>Game-detail variants covering live play, countdown, final, pregame, paused trading, NFL and NBA statistics, and licensed-logo references.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Game screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-ranking" class="section individual-page-doc" data-individual-page="ranking">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Ranking</h1>
+          <p>Monthly leaderboard, month selection, current-player position, competition timing, and completed-ranking result states.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>ranking.html</code></span><span>3 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Ranking screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-rules" class="section individual-page-doc" data-individual-page="rules"></section>
+
+      <section id="page-portfolio" class="section individual-page-doc" data-individual-page="portfolio">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Portfolio</h1>
+          <p>Portfolio totals, current and pending orders, settled history, order details, empty content, loading, and error states.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>wallet.html</code></span><span>8 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Portfolio screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-fees" class="section individual-page-doc" data-individual-page="fees"></section>
+
+      <section id="page-login" class="section individual-page-doc" data-individual-page="login">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Login</h1>
+          <p>Email and password login, passwordless phone login, verification, password recovery, loading, and validation feedback.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>login-v2.html</code>, <code>forgot.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Login screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-registration" class="section individual-page-doc" data-individual-page="registration">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Registration</h1>
+          <p>Email-first and phone-first account creation, personal details, birthday eligibility, phone verification, password, and consent states.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code>, <code>signup-v2.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Registration screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-contact" class="section individual-page-doc" data-individual-page="contact"></section>
+
+      <section id="page-location" class="section individual-page-doc" data-individual-page="location">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Location</h1>
+          <p>The signed-out eligibility and availability state shown when GTL cannot be used from the customer’s current location.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>location-unavailable.html</code></span><span>1 documented state</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Location screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-drawer" class="section individual-page-doc" data-individual-page="drawer">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Buy / Sell</h1>
+          <p>Market and limit order entry, contract selection, paused trading, validation, balance, confirmation, and error states.</p>
+          <div class="individual-page-meta"><span>Implementation: trading drawer in <code>game.html</code> and <code>wallet.html</code></span><span>10 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Buy and Sell screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-account" class="section individual-page-doc" data-individual-page="account">
+        <div class="individual-page-head">
+          <span class="eyebrow">Page documentation</span>
+          <h1>Profile &amp; Settings</h1>
+          <p>Password, Google, and Apple account profiles, username editing, signed-out protection, betting controls, and account deletion.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>profile.html</code> and account-management views</span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+        </div>
+        <article class="panel individual-page-panel">
+          <div class="individual-device-tabs" role="tablist" aria-label="Profile and Settings screen sizes">
+            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
+            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
+          </div>
+          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
+        </article>
+      </section>
+
+      <section id="page-access" class="section individual-page-doc" data-individual-page="access"></section>
 
       <section id="pages" class="section">
         <div class="section-header">
-          <h2>Pages</h2>
-          <p>Flat lay overview of every page state, organized by device, page, and state group.</p>
+          <h2>Legacy Device Pages</h2>
+          <p>The original device-first flat lays remain available for comparison until the new individual page documentation is reviewed and approved.</p>
         </div>
 
         <article class="panel ds-pages-panel flat-lays-section">
@@ -1426,6 +1647,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260724l"></script>
+    <script src="script.js?v=20260729-page-docs-26"></script>
   </body>
 </html>
