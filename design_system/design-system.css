@@ -1905,7 +1905,7 @@
   top: auto;
 }
 
-.design-system-page .flat-frame--fees-continueBet .flat-screen.is-fees .site-footer {
+.design-system-page :is(.flat-frame--fees-continueBet, .flat-frame--fees-continueBetLogos) .flat-screen.is-fees .site-footer {
   padding-bottom: calc(var(--s10) + 88px);
 }
 

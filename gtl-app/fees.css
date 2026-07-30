@@ -8,30 +8,34 @@
   padding-bottom: calc(var(--s10) + 88px + env(safe-area-inset-bottom, 0px));
 }
 
-/* Continue Bet — the in-progress drawer minimised into one floating return target.
+/* Continue Bet uses the design-system secondary surface with a team-gradient border.
    Shown only when arriving mid-bet; tapping it reopens the drawer on the game page. */
 .bet-mini {
-  position: fixed; left: var(--s4); right: var(--s4); z-index: 60;
+  position: fixed; left: var(--s4); right: var(--s4); z-index: 50;
   bottom: calc(var(--s4) + env(safe-area-inset-bottom, 0));
   display: flex; align-items: center; justify-content: center; gap: var(--s4);
   max-width: 480px; margin-inline: auto;
   padding: var(--s4) var(--s6);
-  color: #fff;
+  color: var(--ink);
   border: 1px solid transparent;
   border-radius: var(--r-pill);
-  box-shadow: var(--shadow);
-  text-decoration: none;
   background:
     linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
-    linear-gradient(
-      100deg,
-      color-mix(in srgb, var(--home-color, var(--green)) 58%, transparent),
-      color-mix(in srgb, var(--line-2) 70%, transparent) 50%,
-      color-mix(in srgb, var(--away-color, var(--green)) 58%, transparent)
-    ) border-box;
+    linear-gradient(100deg, color-mix(in srgb, var(--home-color, var(--green)) 72%, var(--line)), var(--line-2), color-mix(in srgb, var(--away-color, var(--green)) 72%, var(--line))) border-box;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  transition: transform .15s var(--ease), background .2s var(--ease);
 }
+body.menu-open .bet-mini { pointer-events: none; }
+.bet-mini:hover {
+  background:
+    linear-gradient(var(--surface-3), var(--surface-3)) padding-box,
+    linear-gradient(100deg, color-mix(in srgb, var(--home-color, var(--green)) 72%, var(--line)), var(--line-2), color-mix(in srgb, var(--away-color, var(--green)) 72%, var(--line))) border-box;
+}
+.bet-mini:active { transform: scale(.98); }
 .bet-mini[hidden] { display: none; }
 .bet-mini-teams { display: inline-flex; align-items: center; gap: var(--s1); }
 .bet-mini-logo { width: 32px; height: 32px; object-fit: contain; flex: 0 0 auto; }
-.bet-mini-v { color: rgba(255, 255, 255, 0.5); font-weight: 600; font-size: var(--fs-label); }
+.bet-mini-logo .team-mark-abbr { font-size: .64rem; }
+.bet-mini-v { color: color-mix(in srgb, currentColor 55%, transparent); font-weight: 600; font-size: var(--fs-label); }
 .bet-mini-label { font-weight: 700; font-size: var(--fs-body); }
