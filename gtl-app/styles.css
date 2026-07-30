@@ -755,7 +755,7 @@ body.sheet-open { overflow: hidden; }
   }
 }
 
-/* Tinted scoreboard header (dark media style in both themes; swipe down to close) */
+/* Scoreboard header (dark media treatment by default; light surface in light mode) */
 .bet-scoreboard { position: relative; overflow: hidden; isolation: isolate; background: #070809; padding: var(--s8) var(--s5) var(--s5); cursor: grab; touch-action: none; }
 .bet-scoreboard:active { cursor: grabbing; }
 .bs-glow { position: absolute; inset: 0; z-index: -1; background:
@@ -794,7 +794,7 @@ body.sheet-open { overflow: hidden; }
 }
 .team-mark.is-fallback .team-mark-abbr { display: block; }
 
-:root[data-theme="light"] :is(.game-tile, .pos-card, .settled-card) .team-mark.is-fallback {
+:root[data-theme="light"] :is(.game-tile, .pos-card, .settled-card, .bet-scoreboard) .team-mark.is-fallback {
   background:
     linear-gradient(
       145deg,
@@ -847,7 +847,7 @@ body.sheet-open { overflow: hidden; }
 
 /* Compact Buy / Buy More drawer */
 .bet-sheet[data-mode="buy"] .bet-step-1 { gap: var(--s5); }
-.drawer-trade-pause {
+.bet-sheet .drawer-trade-pause {
   width: 100%;
   display: flex;
   align-items: center;
@@ -859,7 +859,7 @@ body.sheet-open { overflow: hidden; }
   font-weight: 700;
   letter-spacing: 0.02em;
 }
-.drawer-trade-pause .pause-dot {
+.bet-sheet .drawer-trade-pause .pause-dot {
   flex: none;
   width: 9px;
   height: 9px;
@@ -868,7 +868,7 @@ body.sheet-open { overflow: hidden; }
   box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36);
   animation: pause-pulse 1.2s var(--ease) infinite;
 }
-.drawer-trade-pause[hidden],
+.bet-sheet .drawer-trade-pause[hidden],
 .bet-sheet [data-buy-main][hidden] { display: none; }
 .drawer-bet-heading { display: flex; flex-direction: column; align-items: center; gap: var(--s1); text-align: center; }
 .drawer-bet-heading strong { color: var(--ink); font-family: var(--font-display); font-size: var(--fs-h3); }
@@ -1111,9 +1111,47 @@ body.sheet-open { overflow: hidden; }
 @keyframes success-ring { 0% { box-shadow: 0 0 0 0 var(--green-glow); } 100% { box-shadow: 0 0 0 24px rgba(74, 222, 128, 0); } }
 
 /* Light-theme component overrides (glass surfaces need light fills) */
-:root[data-theme="light"] .seg button.is-active,
-:root[data-theme="light"] .bt-opt.yes.is-active,
-:root[data-theme="light"] .qty-quick button.is-active { color: var(--green-ink); }
+:root[data-theme="light"] .bet-sheet { background: var(--surface); }
+:root[data-theme="light"] .bet-success { background: var(--surface); }
+:root[data-theme="light"] .bet-scoreboard { background: var(--surface); }
+:root[data-theme="light"] .bet-scoreboard .bs-glow { display: none; }
+:root[data-theme="light"] .bet-sheet-handle { background: var(--line-2); }
+:root[data-theme="light"] .bet-scoreboard .bs-abbr { color: var(--ink-2); }
+:root[data-theme="light"] .bet-scoreboard .bs-score { color: var(--ink); }
+:root[data-theme="light"] .bet-scoreboard .bs-team:not(.is-leading) .bs-score { color: var(--ink-3); }
+:root[data-theme="light"] .bet-scoreboard .bs-period { color: var(--ink-3); }
+:root[data-theme="light"] .bet-scoreboard .bs-clock { color: var(--ink); }
+:root[data-theme="light"] :is(.seg button.is-active, .qty-quick button.is-active, .drawer-price-option.is-active) {
+  background: color-mix(in srgb, var(--green-ink) 10%, var(--surface));
+  color: var(--green-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green-ink) 42%, transparent);
+}
+:root[data-theme="light"] .bt-opt.yes.is-active {
+  background: color-mix(in srgb, var(--green-ink) 10%, var(--surface));
+  color: var(--green-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green-ink) 42%, transparent);
+}
+:root[data-theme="light"] .bt-opt.no.is-active {
+  background: color-mix(in srgb, var(--no-ink) 9%, var(--surface));
+  color: var(--no-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--no-ink) 40%, transparent);
+}
+:root[data-theme="light"] :is(.drawer-price-option.is-error, .num-input.is-error) {
+  color: var(--no-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--no-ink) 40%, transparent);
+}
+:root[data-theme="light"] .drawer-price-option.is-active.is-error {
+  background: color-mix(in srgb, var(--no-ink) 9%, var(--surface));
+  color: var(--no-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--no-ink) 40%, transparent);
+}
+:root[data-theme="light"] .drawer-price-option.is-active.is-error input { caret-color: var(--no-ink); }
+:root[data-theme="light"] :is(.limit-minmax.is-error, .potential-win.is-loss strong) { color: var(--no-ink); }
+:root[data-theme="light"] :is(.limit-toggle, .potential-win strong) { color: var(--green-ink); }
+:root[data-theme="light"] :is(.bet-success-check, .bet-countdown-clock) { color: var(--green-ink); }
+:root[data-theme="light"] .bet-countdown-clock::before { background: color-mix(in srgb, var(--surface) 92%, var(--green-ink)); }
+:root[data-theme="light"] :is(.contracts-field .num-input, .num-input-box):focus,
+:root[data-theme="light"] .num-input-box:focus-within { border-color: var(--green-ink); }
 :root[data-theme="light"] .floating-btn { background: rgba(255, 255, 255, 0.72); }
 :root[data-theme="light"] .floating-btn:hover { background: rgba(255, 255, 255, 0.92); }
 :root[data-theme="light"] .theme-switch-track { background: rgba(10, 20, 25, 0.08); }
@@ -1346,6 +1384,7 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 .sell-readout .sell-tag .side-yes { color: var(--green); }
 .sell-readout .sell-tag .side-no { color: var(--no); }
 :root[data-theme="light"] .sell-readout .sell-tag .side-yes { color: var(--green-ink); }
+:root[data-theme="light"] .sell-readout .sell-tag .side-no { color: var(--no-ink); }
 .sell-readout .sell-sub { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: var(--ink-2); font-size: var(--fs-label); }
 .qty-quick.q3 { grid-template-columns: repeat(3, 1fr); }
 /* Sell footer — single full-width action */

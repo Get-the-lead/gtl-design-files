@@ -605,11 +605,6 @@
   padding-top: 3px;
 }
 
-.design-system-page #pages {
-  margin-inline: 40px;
-  max-width: none;
-}
-
 .design-system-page .section[hidden] {
   display: none;
 }
@@ -1234,7 +1229,6 @@
   #shadows > .panel,
   #borders .panel,
   #effects .panel,
-  #pages > .panel,
   #typography > .panel,
   #buttons > .panel,
   #pills > .panel,
@@ -1257,7 +1251,6 @@
   #shadows > .panel,
   #borders .panel,
   #effects .panel,
-  #pages > .panel,
   #typography > .panel,
   #buttons > .panel,
   #pills > .panel,
@@ -1282,7 +1275,6 @@
 }
 
 .design-system-page :is(
-  #pages .panel,
   #typography > .panel,
   #forms .panel
 ) + :is(.panel, .ds-form-card) {
@@ -1437,45 +1429,6 @@
 
 .design-system-page .ds-page-frame-label a:hover {
   text-decoration: underline;
-}
-
-.design-system-page .flat-lays-section {
-  background: #f4f5f1;
-  border-radius: var(--r-lg);
-  color: #151917;
-  max-width: none;
-  overflow: visible;
-  padding: var(--s6);
-}
-
-.design-system-page .flat-doc-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--s2);
-  margin: 0 0 calc(var(--s8) + 32px);
-}
-
-.design-system-page .flat-doc-tabs button {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: var(--r-pill);
-  color: rgba(255, 255, 255, 0.64);
-  cursor: pointer;
-  font: 800 var(--fs-label) / 1 var(--font-ui);
-  min-height: 40px;
-  padding: 0 var(--s4);
-}
-
-.design-system-page .flat-doc-tabs button:hover {
-  background: transparent;
-  border-color: rgba(255, 255, 255, 0.6);
-  color: #f7fff9;
-}
-
-.design-system-page .flat-doc-tabs button.is-active {
-  background: #f7fff9;
-  border-color: #f7fff9;
-  color: #151917;
 }
 
 .design-system-page .flat-lay-canvas {
@@ -4993,10 +4946,6 @@
 }
 
 @media (max-width: 980px) {
-  .design-system-page .flat-lays-section {
-    padding: var(--s4);
-  }
-
   .design-system-page .flat-lay-canvas[data-flat-device="tablet"],
   .design-system-page .flat-lay-canvas[data-flat-device="desktop"] {
     --flat-frame-w: calc(100vw - var(--s12));
@@ -7018,4 +6967,70 @@
   .design-system-page .ds-restored-page-doc .ds-doc-source {
     grid-column: 1;
   }
+}
+
+/* Device flatlays otherwise reassert the legacy dark scoreboard after game.css loads. */
+.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas .flat-screen.is-game {
+  background: var(--surface);
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas .flat-screen.is-game .gb {
+  background: var(--surface);
+  border: 0;
+  box-shadow: none;
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas .flat-screen.is-game .gb-glow {
+  display: none;
+}
+
+/* Mobile game previews must follow the app's compact authenticated header even
+   though the design-system host itself is rendered at a desktop breakpoint. */
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .hpos-trigger {
+  background: var(--green);
+  border-color: var(--green);
+  color: #06210f;
+  height: 48px;
+  padding: 0;
+  width: 48px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .hpos-word,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .hpos-close {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .hpos-num {
+  background: transparent;
+  color: inherit;
+  display: inline;
+  height: auto;
+  width: auto;
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-backdrop {
+  background: rgba(20, 30, 40, 0.18);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen .site-header .floating-btn {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+/* Keep the shared app header treatment intact after device-preview rules have
+   simulated tablet and desktop breakpoints. */
+.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen .brand-pill,
+.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .flat-screen .hpos-trigger {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+
+/* The component catalogue uses wide data tables, but the legal prize schedule
+   is a responsive two-column content table and must fit inside mobile flatlays. */
+.design-system-page .flat-screen.is-rules .rules-table {
+  min-width: 0;
+  table-layout: fixed;
+  width: 100%;
 }

@@ -19,14 +19,10 @@ const pageFrameOpenLinks = document.querySelectorAll("[data-page-frame-open]");
 const pagePreview = document.querySelector("[data-page-preview]");
 const pageZoomButtons = document.querySelectorAll("[data-page-zoom]");
 const pageZoomValue = document.querySelector("[data-page-zoom='reset']");
-const flatDeviceTabs = document.querySelectorAll(".side-nav a[data-flat-device]");
-const flatDocTabs = document.querySelector("[data-flat-doc-tabs]");
-const flatLayContent = document.querySelector("[data-flat-lay-content]");
 const individualPageSections = document.querySelectorAll("[data-individual-page]");
 let pageZoom = 1;
 const designSystemThemeStorageKey = "gtl-theme";
 const standardThemeSectionIds = [
-  "pages",
   "tokens",
   "spacing",
   "radius",
@@ -1636,26 +1632,6 @@ const individualPageDocumentation = {
     validation: "Confirm re-authentication and retention requirements for account deletion.",
   },
 };
-const flatDocOrder = ["home", "waitlist", "welcome", "game", "ranking", "rules", "portfolio", "fees", "login", "registration", "contact", "location", "drawer", "account"];
-const flatDocTabLabels = {
-  home: "Home",
-  waitlist: "Waitlist",
-  welcome: "Welcome",
-  game: "Game",
-  ranking: "Ranking",
-  rules: "Monthly Competition Rules",
-  portfolio: "Portfolio",
-  fees: "Fees",
-  login: "Login",
-  registration: "Registration",
-  contact: "Contact",
-  location: "Location",
-  drawer: "Buy / Sell",
-  account: "Profile & Settings",
-};
-let activeFlatDevice = "mobile";
-let activeFlatDoc = "home";
-
 function gameScoreboard(g, useLogos = false) {
   const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
   const compactScore = String(g.home.score).length >= 3 || String(g.away.score).length >= 3;
@@ -2349,11 +2325,6 @@ function renderFlatFrame(frame, useTitleCase = false) {
   return `<article class="flat-frame-wrap flat-frame--${frame.type} flat-frame--${frame.type}-${frame.mode}">${renderVariantDocumentation(frame, label)}<div class="flat-phone">${screen}</div></article>`;
 }
 
-function renderFlatDocSection(doc) {
-  return `<section class="flat-page-group"><div class="flat-doc-head"><h2>${doc.title}</h2><p>${doc.description}</p></div>
-    ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${group.title}</h3></div><div class="flat-frame-row">${group.frames.map(renderFlatFrame).join("")}</div></section>`).join("")}</section>`;
-}
-
 function hydrateIndividualPageChrome(section) {
   const docKey = section.dataset.individualPage;
   const doc = individualPageDocumentation[docKey];
@@ -2446,37 +2417,6 @@ individualPageSections.forEach((section) => {
   renderIndividualPageSection(section, "mobile");
 });
 
-function renderFlatDocTabs() {
-  if (!flatDocTabs) return;
-  flatDocTabs.innerHTML = flatDocOrder
-    .filter((key) => flatDocViews[key])
-    .map((key) => {
-      const active = key === activeFlatDoc;
-      return `<button class="${active ? "is-active" : ""}" type="button" data-flat-doc="${key}" role="tab" aria-selected="${String(active)}">${flatDocTabLabels[key] || flatDocViews[key].title}</button>`;
-    })
-    .join("");
-}
-
-function syncFlatDeviceTabs() {
-  const pagesActive = document.getElementById("pages")?.classList.contains("is-active-section");
-  flatDeviceTabs.forEach((button) => {
-    const active = button.dataset.flatDevice === activeFlatDevice;
-    button.classList.toggle("is-device-active", active);
-    button.classList.toggle("is-active", Boolean(pagesActive && active));
-    button.setAttribute("aria-selected", String(active));
-  });
-}
-
-function renderFlatDevice(device = activeFlatDevice, docKey = activeFlatDoc) {
-  if (!flatLayContent) return;
-  activeFlatDevice = ["mobile", "tablet", "desktop"].includes(device) ? device : "mobile";
-  activeFlatDoc = flatDocViews[docKey] ? docKey : flatDocOrder.find((key) => flatDocViews[key]) || Object.keys(flatDocViews)[0];
-  flatLayContent.dataset.flatDevice = activeFlatDevice;
-  flatLayContent.innerHTML = renderFlatDocSection(flatDocViews[activeFlatDoc]);
-  renderFlatDocTabs();
-  syncFlatDeviceTabs();
-}
-
 function closeNavigation() {
   body.classList.remove("nav-open");
 }
@@ -2543,11 +2483,7 @@ function showSection(sectionId, options = {}) {
   });
 
   navLinks.forEach((link) => {
-    if (link.dataset.flatDevice) {
-      link.classList.toggle("is-active", nextId === "pages" && link.dataset.flatDevice === activeFlatDevice);
-    } else {
-      link.classList.toggle("is-active", link.getAttribute("href") === `#${nextId}`);
-    }
+    link.classList.toggle("is-active", link.getAttribute("href") === `#${nextId}`);
   });
 
   if (options.updateHash && window.location.hash !== `#${nextId}`) {
@@ -3216,18 +3152,6 @@ pageZoomButtons.forEach((button) => {
   });
 });
 
-flatDeviceTabs.forEach((button) => {
-  button.addEventListener("click", () => {
-    renderFlatDevice(button.dataset.flatDevice, activeFlatDoc);
-  });
-});
-
-flatDocTabs?.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-flat-doc]");
-  if (!button) return;
-  renderFlatDevice(activeFlatDevice, button.dataset.flatDoc);
-});
-
 document.addEventListener("click", (event) => {
   const button = event.target.closest("[data-ds-theme]");
   if (!button) return;
@@ -3628,7 +3552,6 @@ setDrawerView(drawerSection?.dataset.drawerViewMode);
 drawerSection?.querySelectorAll(".bet-sheet").forEach(updateDrawerPreview);
 setPageZoom(pageZoom);
 if (pageTabs.length) loadPagePreview(document.querySelector("[data-page-tab].is-active") || pageTabs[0]);
-renderFlatDevice(document.querySelector(".side-nav a[data-flat-device].is-device-active")?.dataset.flatDevice || "mobile", activeFlatDoc);
 showSection(sectionFromHash(), { instant: true });
 describeColorSwatches();
 
