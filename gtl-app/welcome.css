@@ -293,6 +293,59 @@
 .birthday-error { margin-top: 0; }
 .welcome-form .btn { width: 100%; margin-top: var(--s3); }
 
+/* Light mode keeps the celebration airy: white canvas, restrained colour and
+   no dark vignette around the viewport. */
+:root[data-theme="light"] :is(.welcome-body, .flat-screen.is-welcome) { background: var(--surface); }
+:root[data-theme="light"] .welcome-celebration-bg {
+  background:
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--green-ink) 9%, transparent), transparent 34%),
+    radial-gradient(circle at 24% 76%, rgba(96, 140, 250, 0.07), transparent 36%),
+    radial-gradient(circle at 78% 72%, rgba(255, 206, 77, 0.06), transparent 36%),
+    linear-gradient(rgba(13, 20, 17, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 20, 17, 0.018) 1px, transparent 1px),
+    var(--surface);
+  background-size: auto, auto, auto, 96px 96px, 96px 96px, auto;
+}
+:root[data-theme="light"] .welcome-celebration-bg::after {
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(244, 246, 248, 0.28) 100%);
+}
+:root[data-theme="light"] .welcome-panel::before {
+  background:
+    radial-gradient(45% 60% at 50% 28%, color-mix(in srgb, var(--green-ink) 11%, transparent), transparent 70%),
+    radial-gradient(42% 48% at 25% 70%, rgba(96, 140, 250, 0.07), transparent 70%),
+    radial-gradient(42% 48% at 78% 72%, rgba(255, 206, 77, 0.06), transparent 70%);
+  filter: blur(18px);
+}
+:root[data-theme="light"] .celebration-glow {
+  background: radial-gradient(circle, color-mix(in srgb, var(--green-ink) 10%, transparent), color-mix(in srgb, var(--green-ink) 3%, transparent) 40%, transparent 70%);
+}
+:root[data-theme="light"] .celebration-ring { border-color: color-mix(in srgb, var(--green-ink) 25%, transparent); }
+:root[data-theme="light"] .celebration-ring.ring-two { border-color: var(--line-2); }
+:root[data-theme="light"] .celebration-stars i {
+  background: color-mix(in srgb, var(--green-ink) 34%, transparent);
+  box-shadow: 0 0 16px 4px color-mix(in srgb, var(--green-ink) 10%, transparent);
+}
+:root[data-theme="light"] .welcome-copy h1 span { color: var(--green-ink); }
+:root[data-theme="light"] .welcome-transition { color: var(--ink-2); }
+:root[data-theme="light"] .welcome-transition span { border-top-color: var(--green-ink); }
+:root[data-theme="light"] .credit-ticket {
+  border-color: color-mix(in srgb, var(--green-ink) 28%, transparent);
+  background: var(--surface);
+  box-shadow: 0 12px 32px rgba(20, 30, 40, 0.1);
+}
+
+:root[data-theme="light"] .credit-ticket .ticket-label {
+  color: var(--green-ink);
+}
+
+:root[data-theme="light"] .credit-ticket .ticket-value {
+  color: var(--ink);
+}
+
+:root[data-theme="light"] .credit-ticket .ticket-note {
+  color: var(--ink-2);
+}
+
 .welcome-main.is-transitioning .welcome-intro {
   animation: welcome-out 0.28s var(--ease) both;
 }

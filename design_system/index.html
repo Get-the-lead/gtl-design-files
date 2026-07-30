@@ -4,25 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GTL Design System</title>
+    <script>try{var t=localStorage.getItem('gtl-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../gtl-app/tokens.css">
-    <link rel="stylesheet" href="../gtl-app/styles.css">
-    <link rel="stylesheet" href="../gtl-app/home.css">
-    <link rel="stylesheet" href="../gtl-app/game.css">
+    <link rel="stylesheet" href="../gtl-app/tokens.css?v=20260729-light-theme-3">
+    <link rel="stylesheet" href="../gtl-app/styles.css?v=20260730-light-drawer-3">
+    <link rel="stylesheet" href="../gtl-app/home.css?v=20260729-light-theme-2">
+    <link rel="stylesheet" href="../gtl-app/game.css?v=20260730-light-game-page-6">
     <link rel="stylesheet" href="../gtl-app/wallet.css">
-    <link rel="stylesheet" href="../gtl-app/auth.css">
-    <link rel="stylesheet" href="../gtl-app/welcome.css">
+    <link rel="stylesheet" href="../gtl-app/auth.css?v=20260729-light-theme-2">
+    <link rel="stylesheet" href="../gtl-app/welcome.css?v=20260730-light-theme-2">
     <link rel="stylesheet" href="../gtl-app/location.css">
-    <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260724d">
+    <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260730-light-theme-1">
     <link rel="stylesheet" href="../gtl-app/profile.css">
-    <link rel="stylesheet" href="../gtl-app/contact.css">
+    <link rel="stylesheet" href="../gtl-app/contact.css?v=20260729-light-theme-2">
     <link rel="stylesheet" href="../gtl-app/fees.css">
-    <link rel="stylesheet" href="../gtl-app/rules.css">
-    <link rel="stylesheet" href="../gtl-app/waitlist.css">
-    <link rel="stylesheet" href="design-system.css?v=20260728-page-docs-20">
+    <link rel="stylesheet" href="../gtl-app/rules.css?v=20260730-mobile-table-1">
+    <link rel="stylesheet" href="../gtl-app/waitlist.css?v=20260730-dark-only-1">
+    <link rel="stylesheet" href="design-system.css?v=20260730-remove-legacy-pages-1">
   </head>
   <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
@@ -51,11 +52,6 @@
         <a href="#page-location">Location</a>
         <a href="#page-drawer">Buy / Sell</a>
         <a href="#page-account">Profile &amp; Settings</a>
-        <a href="#page-access">Access Gate</a>
-        <span class="side-nav-label">Legacy Device Pages</span>
-        <a href="#pages" data-flat-device="mobile" class="is-device-active" aria-selected="true">Mobile Pages</a>
-        <a href="#pages" data-flat-device="tablet" aria-selected="false">Tablet Pages</a>
-        <a href="#pages" data-flat-device="desktop" aria-selected="false">Desktop Pages</a>
         <span class="side-nav-label">Primitives</span>
         <a href="#tokens">Colors</a>
         <a href="#spacing">Spacing</a>
@@ -88,41 +84,49 @@
     </header>
 
     <main class="page-shell">
-      <section id="overview" class="hero section">
-        <div class="hero-copy">
+      <section id="overview" class="section ds-overview">
+        <header class="ds-overview-intro">
+          <span class="ds-kicker">Implementation reference</span>
           <h1>GTL Design System</h1>
-          <p class="lede">A practical reference for building pages with mint-on-black foundations, data-heavy components, and reusable plain HTML, CSS, and JavaScript patterns.</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#tokens">View Colors</a>
-            <a class="button button-secondary" href="#cards">Live Cards</a>
+          <p>The shared reference for production foundations, reusable patterns, complete page states, and unresolved product decisions.</p>
+        </header>
+
+        <dl class="ds-overview-metrics" aria-label="Design system snapshot">
+          <div><dt>Pages</dt><dd>15</dd></div>
+          <div><dt>Production tokens</dt><dd>55</dd></div>
+          <div><dt>Open decisions</dt><dd>5</dd></div>
+        </dl>
+
+        <section class="ds-overview-section" aria-labelledby="overview-use-title">
+          <div class="ds-overview-heading"><span>01</span><div><h2 id="overview-use-title">How to use it</h2><p>Follow this order when implementing or reviewing a feature.</p></div></div>
+          <ol class="ds-overview-steps">
+            <li><span>01</span><div><strong>Open the relevant Page.</strong><p>Review the implementation, its contract, required states, and open validation together.</p></div></li>
+            <li><span>02</span><div><strong>Use documented states as the coverage checklist.</strong><p>Every default, loading, empty, error, validation, and responsive state sits on its owning Page.</p></div></li>
+            <li><span>03</span><div><strong>Build with production primitives and patterns.</strong><p>Use only tokens listed here and reuse the closest documented component variant.</p></div></li>
+            <li><span>04</span><div><strong>Escalate unresolved behaviour.</strong><p>Do not turn a prototype alternative into production behaviour until its decision is resolved.</p></div></li>
+          </ol>
+        </section>
+
+        <section class="ds-overview-section" aria-labelledby="overview-source-title">
+          <div class="ds-overview-heading"><span>02</span><div><h2 id="overview-source-title">Source of truth</h2><p>When references disagree, use the highest applicable source below.</p></div></div>
+          <div class="ds-overview-table" role="table" aria-label="Source of truth precedence">
+            <div role="row"><span role="cell">1</span><strong role="cell">Product decisions</strong><p role="cell">Approved flow, validation, and copy decisions documented here.</p></div>
+            <div role="row"><span role="cell">2</span><strong role="cell">Production tokens</strong><p role="cell"><code>gtl-app/tokens.css</code> for shared visual foundations.</p></div>
+            <div role="row"><span role="cell">3</span><strong role="cell">Production patterns</strong><p role="cell"><code>gtl-app/*.css</code> and <code>gtl-app/app.js</code> for implemented behaviour.</p></div>
+            <div role="row"><span role="cell">4</span><strong role="cell">Documented page states</strong><p role="cell">Coverage and intent for every implemented page variant across mobile, tablet, and desktop.</p></div>
           </div>
-        </div>
-        <div class="hero-panel" aria-label="Design system snapshot">
-          <div class="metric-row">
-            <article>
-              <span>CSS classes</span>
-              <strong>295</strong>
-            </article>
-            <article>
-              <span>Tokens</span>
-              <strong>99</strong>
-            </article>
+        </section>
+
+        <section class="ds-overview-section" aria-labelledby="overview-decisions-title">
+          <div class="ds-overview-heading"><span>03</span><div><h2 id="overview-decisions-title">Open decisions</h2><p>These items require product or engineering validation before production release.</p></div></div>
+          <div class="ds-decision-list">
+            <article><span class="ds-decision-id">AUTH-01</span><div><strong>Select the production sign-in flow</strong><p>Version A uses email and password. Version B uses Apple, Google, or a phone number followed by a verification code.</p></div></article>
+            <article><span class="ds-decision-id">AUTH-02</span><div><strong>Select the production account-creation flow</strong><p>The current flow verifies phone before the final password step. The alternate flow starts with Apple, Google, or phone, then phone verification, name, date of birth, terms, and the welcome username step.</p></div></article>
+            <article><span class="ds-decision-id">BET-01</span><div><strong>Confirm the 1,000-credit cap calculation</strong><p>The current prototype applies the limit to the displayed credit price including the 2% fee. Confirm this matches the production transaction rule.</p></div></article>
+            <article><span class="ds-decision-id">BET-02</span><div><strong>Implement available-balance enforcement</strong><p>The insufficient-credit state is documented, but the running bet drawer does not yet block purchases above the user’s available balance.</p></div></article>
+            <article><span class="ds-decision-id">GAME-01</span><div><strong>Confirm live-data status mapping</strong><p>Engineering needs the definitive feed values for active play, quarter time, and final.</p></div></article>
           </div>
-          <div class="mini-window">
-            <div class="window-bar">
-              <span></span><span></span><span></span>
-            </div>
-            <div class="window-content">
-              <div class="skeleton skeleton-title"></div>
-              <div class="skeleton"></div>
-              <div class="skeleton skeleton-short"></div>
-              <div class="window-controls">
-                <span class="pill pill-success">Ready</span>
-                <button class="button button-small button-primary" type="button">Apply</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
       </section>
 
       <section id="page-home" class="section ds-restored-page-doc" data-individual-page="home">
@@ -160,8 +164,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Welcome</h1>
-          <p>Post-verification username selection and the account celebration shown after successful registration.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>2 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>Post-registration onboarding covering the account-setup transition, personal details, age eligibility, username selection, and welcome credits.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Welcome screen sizes">
@@ -179,8 +183,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Game</h1>
-          <p>Game-detail variants covering live play, countdown, final, pregame, paused trading, NFL and NBA statistics, and licensed-logo references.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>Game-detail variants covering live play, countdown, final, unavailable and paused markets, closed and expanded game positions, statistics, and licensed-logo references.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>10 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Game screen sizes">
@@ -234,8 +238,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Login</h1>
-          <p>Email and password login, passwordless phone login, verification, password recovery, loading, and validation feedback.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>login-v2.html</code>, <code>forgot.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>The unified email-or-phone login flow, six-digit verification, password alternative, recovery, and inline validation.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>forgot.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Login screen sizes">
@@ -251,8 +255,8 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Registration</h1>
-          <p>Email-first and phone-first account creation, personal details, birthday eligibility, phone verification, password, and consent states.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code>, <code>signup-v2.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
+          <p>The unified email-or-social account creation flow, phone verification, password creation, and inline validation.</p>
+          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code></span><span>8 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
           <div class="individual-device-tabs" role="tablist" aria-label="Registration screen sizes">
@@ -314,21 +318,6 @@
             <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
           </div>
           <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
-        </article>
-      </section>
-
-      <section id="page-access" class="section individual-page-doc" data-individual-page="access"></section>
-
-      <section id="pages" class="section">
-        <div class="section-header">
-          <h2>Legacy Device Pages</h2>
-          <p>The original device-first flat lays remain available for comparison until the new individual page documentation is reviewed and approved.</p>
-        </div>
-
-        <article class="panel ds-pages-panel flat-lays-section">
-          <div class="flat-doc-tabs" role="tablist" aria-label="Page type groups" data-flat-doc-tabs></div>
-
-          <div class="flat-lay-canvas" data-flat-lay-content></div>
         </article>
       </section>
 
@@ -1639,6 +1628,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260728-page-docs-20"></script>
+    <script src="script.js?v=20260730-remove-legacy-pages-1"></script>
   </body>
 </html>

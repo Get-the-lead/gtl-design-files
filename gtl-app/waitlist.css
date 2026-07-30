@@ -1,6 +1,55 @@
-/* GTL public waitlist — focused launch page */
+/* GTL public waitlist — focused launch page. This experience is intentionally
+   dark-only, including when embedded in the themeable design-system catalogue. */
 
-.waitlist-page { min-height: 100%; background: #070809; color: #f5f7f8; }
+.waitlist-page {
+  --green-ink: var(--green);
+  --no-ink: var(--no);
+  --bg: #070809;
+  --bg-2: #0b0d0f;
+  --surface: #121417;
+  --surface-2: #181b20;
+  --surface-3: #20242a;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.14);
+  --ink: #f5f7f8;
+  --ink-2: #a7afb6;
+  --ink-3: #6c747b;
+  --shadow-sm: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  color-scheme: dark;
+}
+:root[data-theme="light"] .waitlist-page .btn-glass {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink);
+}
+:root[data-theme="light"] .waitlist-page .btn-glass:hover { background: rgba(255, 255, 255, 0.16); }
+:root[data-theme="light"] .waitlist-page .game-tile {
+  background: var(--bg-2);
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+}
+:root[data-theme="light"] .waitlist-page .game-tile::before { content: ""; }
+:root[data-theme="light"] .waitlist-page .game-tile:hover { border-color: var(--line-2); }
+:root[data-theme="light"] .waitlist-page .game-tile :is(.foot-toggle, .foot-toggle .chev) { color: rgba(255, 255, 255, 0.92); }
+:root[data-theme="light"] .waitlist-page .game-tile .foot-toggle::before,
+:root[data-theme="light"] .waitlist-page .game-tile .foot-toggle::after { background: rgba(255, 255, 255, 0.16); }
+:root[data-theme="light"] .waitlist-page .game-tile .mkt-head span { color: rgba(255, 255, 255, 0.92); }
+:root[data-theme="light"] .waitlist-page .game-tile .mkt-name { color: rgba(255, 255, 255, 0.95); }
+:root[data-theme="light"] .waitlist-page .game-tile .mkt-sub { color: rgba(255, 255, 255, 0.5); }
+:root[data-theme="light"] .waitlist-page .game-tile .mkt-row + .mkt-row { border-color: rgba(255, 255, 255, 0.07); }
+:root[data-theme="light"] .waitlist-page .game-tile .team-mark.is-fallback {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--team-color) 72%, #111 28%),
+      color-mix(in srgb, var(--team-color) 42%, #050608 58%)
+    );
+  border-color: color-mix(in srgb, var(--team-color) 66%, rgba(255, 255, 255, 0.22));
+  box-shadow: none;
+}
 .waitlist-page::selection { background: var(--green); color: #06210f; }
 .waitlist-page .eyebrow { color: var(--green); }
 .waitlist-shell { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }

@@ -630,6 +630,14 @@ body.pos-open .betbar { display: none; }
   opacity: 0; pointer-events: none; transition: opacity 0.28s var(--ease);
 }
 body.gop-open .gop-backdrop { opacity: 1; pointer-events: auto; }
+:root[data-theme="light"] .gop-backdrop {
+  background: rgba(20, 30, 40, 0.18);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+:root[data-theme="light"] body.gop-open .site-header .floating-btn {
+  background: rgba(255, 255, 255, 0.94);
+}
 @media (max-width: 1023px) { body.gop-open { overflow: hidden; } }
 
 /* Pop-up panel of position cards — sits just above the bottom bar, slides up on open */
@@ -782,5 +790,101 @@ body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
   .betbar-cta { grid-column: 2; justify-self: center; width: auto; }
 }
 
-/* Light-theme tweaks (markets/stats flip to light; green text needs deepening) */
-:root[data-theme="light"] .price.yes { color: var(--green-ink); }
+/* Light theme — the page itself supplies the surface, while team marks carry
+   the matchup colour. Unlike the compact card, the full-page scorecard has no outline. */
+:root[data-theme="light"] body.game-body { background: var(--surface); }
+:root[data-theme="light"] .gb {
+  background: var(--surface);
+  border: 0;
+  box-shadow: none;
+}
+:root[data-theme="light"] .gb-glow { display: none; }
+:root[data-theme="light"] .gb-back { color: var(--ink-2); }
+:root[data-theme="light"] .gb-back:hover { color: var(--ink); }
+:root[data-theme="light"] .gb-score-stack .game-clock-badge { color: var(--green-ink); }
+:root[data-theme="light"] .gb-score-stack .game-clock-badge.is-quarter-time { color: var(--ink-2); }
+:root[data-theme="light"] .gb-league { color: var(--ink-3); }
+:root[data-theme="light"] .gb-abbr { color: var(--ink-2); }
+:root[data-theme="light"] .gb-num { color: var(--ink-3); }
+:root[data-theme="light"] .gb-num.is-leading { color: var(--ink); }
+:root[data-theme="light"] .gb-dash { color: var(--line-2); }
+:root[data-theme="light"] .gb-result { color: var(--ink-2); }
+:root[data-theme="light"] .gb-result strong { color: var(--ink); }
+:root[data-theme="light"] .gb-result span { color: var(--ink-3); }
+:root[data-theme="light"] .gb-logo.team-mark.is-fallback {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--team-color) 82%, #fff 18%),
+      color-mix(in srgb, var(--team-color) 64%, #111 36%)
+    );
+  border-color: color-mix(in srgb, var(--team-color) 72%, var(--surface));
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--team-color) 22%, transparent);
+}
+:root[data-theme="light"] .stats-tab.is-active {
+  background: color-mix(in srgb, var(--green-ink) 10%, var(--surface));
+  color: var(--green-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green-ink) 42%, transparent);
+}
+:root[data-theme="light"] .price.yes {
+  background: color-mix(in srgb, var(--green-ink) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--green-ink) 34%, transparent);
+  color: var(--green-ink);
+}
+:root[data-theme="light"] .price.no {
+  background: color-mix(in srgb, var(--no-ink) 9%, var(--surface));
+  border-color: color-mix(in srgb, var(--no-ink) 32%, transparent);
+  color: var(--no-ink);
+}
+:root[data-theme="light"] .price.yes:hover { background: color-mix(in srgb, var(--green-ink) 15%, var(--surface)); }
+:root[data-theme="light"] .price.no:hover { background: color-mix(in srgb, var(--no-ink) 14%, var(--surface)); }
+
+/* Betting-data semantics need the same deeper inks as the price controls on white. */
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) :is(.chart-line.bid, .chart-line.up) {
+  stroke: var(--green-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) :is(.chart-line.ask, .chart-line.down) {
+  stroke: var(--no-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) :is(.chart-legend .bid::before, .prob-legend .gtl) {
+  background: var(--green-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .chart-legend .ask::before {
+  background: var(--no-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .prob-seg.gtl {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--green-ink) 58%, #fff), var(--green-ink));
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .prob-col.gtl .prob-fill {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--green-ink) 58%, #fff), var(--green-ink));
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .prob-col.gtl .prob-key {
+  color: var(--green-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .trend-pill.up {
+  background: color-mix(in srgb, var(--green-ink) 10%, var(--surface));
+  color: var(--green-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .trend-pill.down {
+  background: color-mix(in srgb, var(--no-ink) 9%, var(--surface));
+  color: var(--no-ink);
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .book-bid .book-depth-fill { background: var(--green-ink); }
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .book-ask .book-depth-fill { background: var(--no-ink); }
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .book-bid .book-price { color: var(--green-ink); }
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .book-ask .book-price { color: var(--no-ink); }
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .flow-bar {
+  background: linear-gradient(180deg, var(--green-ink), color-mix(in srgb, var(--green-ink) 34%, transparent));
+}
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .bets-table .side-yes { color: var(--green-ink); }
+:root[data-theme="light"] :is(body.game-body, .flat-screen.is-game) .bets-table .side-no { color: var(--no-ink); }
+
+@media (min-width: 1024px) {
+  :root[data-theme="light"] .game-layout::before { content: none; }
+  :root[data-theme="light"] .game-col-left .gb {
+    border-radius: 0;
+    overflow: hidden;
+  }
+  :root[data-theme="light"] .gb-back-right { color: var(--ink-2); }
+  :root[data-theme="light"] .gb-back-right:hover { color: var(--ink); }
+}

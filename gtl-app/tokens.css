@@ -79,7 +79,7 @@
 }
 
 /* Light theme — only neutrals flip; brand green is unchanged.
-   The game tiles and game-page scoreboard stay dark in both themes (media cards). */
+   Live-game cards use team-colour outlines; game-page scoreboards use a clean light surface. */
 :root[data-theme="light"] {
   --green-ink: #167c3f;
   --no-ink: #b4233d;
