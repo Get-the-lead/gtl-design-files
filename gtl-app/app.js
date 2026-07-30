@@ -114,7 +114,7 @@ const gamePageHref = (g) => `game.html?id=${g.id}`;
 const RECALC_DEMO_GAME_ID = "kc-sf";
 // BUF/MIA's detail page demos existing open positions: simplified position cards float at the
 // bottom of the page in a horizontal scroller, each collapsing to a Buy More / Sell toggle; the
-// "View Bets" bar rises from behind the dock when it appears.
+// "View Contracts" rises into the dock when the markets leave the viewport.
 const OPEN_POSITION_DEMO_GAME_ID = "buf-mia";
 const openPositionDemos = [
   { gameId: "buf-mia", market: "gtl", side: "yes", qty: 120, avg: 38 },
@@ -1012,6 +1012,7 @@ function renderGamePage() {
   if (!main) return;
   const id = new URL(location.href).searchParams.get("id") || GAMES[0].id;
   const g = GAMES.find((x) => x.id === id) || GAMES[0];
+  const gamePositions = positionsInGame(g.id);
   document.title = `${g.away.abbr} @ ${g.home.abbr} — GTL`;
   const lead = leaderOf(g);
   const compactScore = String(g.home.score).length >= 3 || String(g.away.score).length >= 3;
@@ -1091,9 +1092,9 @@ function renderGamePage() {
       ${isMarketWaiting(g) ? `<div class="game-recalc"><span class="pause-dot"></span><span>Markets open when a team takes the lead.</span></div>` : ""}
       ${marketsHTML}
     </section>
-    ${g.id === OPEN_POSITION_DEMO_GAME_ID ? gameOpenPositionHTML(openPositionDemos) : ""}
     </div>
     <div class="game-col-right">
+    ${gamePositions.length ? gamePositionsHTML(gamePositions) : ""}
     ${statsHTML}
     </div>
     </div>`;
@@ -1101,104 +1102,181 @@ function renderGamePage() {
   initStickyBet();
   initStatsTabs();
   initGameRecalc();
-  if (g.id === OPEN_POSITION_DEMO_GAME_ID) initGameOpenPosition(openPositionDemos);
+  if (gamePositions.length) initGamePositions(gamePositions);
 }
 
 // The Open Positions card set for the header dropdown uses one consistent layout.
 const openPositionCards = (list) => list.map((p, i) => positionCardA(p, i)).join("");
 
-// The game pop-up's own card: the variant-B body (bet type centred, then Contracts / Value /
-// Return as three columns) but WITHOUT the scoreboard — redundant on the game's own page.
-// The tinted card background is kept.
-function gopPositionCard(p, i) {
+// A compact game-position card. It keeps the game-page position treatment while using the
+// horizontal home-page carousel layout. The team chip makes the desired outcome explicit.
+function positionOutcome(p, g) {
+  if (p.market === "tie") return { label: "Tie", teams: [g.home, g.away], colors: [g.home.color, g.away.color] };
+  const leadingSide = leaderOf(g) || "home";
+  const trailingSide = leadingSide === "home" ? "away" : "home";
+  const targetSide = p.market === "gtl"
+    ? (p.side === "yes" ? trailingSide : leadingSide)
+    : (p.side === "yes" ? leadingSide : trailingSide);
+  const team = g[targetSide];
+  return { label: team.name, teams: [team], colors: [team.color] };
+}
+
+function positionOutcomeChipHTML(p, g) {
+  const outcome = positionOutcome(p, g);
+  const marks = outcome.teams.map((team) => teamAbbrMarkHTML(team, "position-outcome-mark")).join("");
+  return `<span class="position-outcome-chip" style="--outcome-color:${outcome.colors[0]};--outcome-color-2:${outcome.colors[1] || outcome.colors[0]}">
+    <span class="position-outcome-marks">${marks}</span>
+  </span>`;
+}
+
+function gopPositionCard(p, i, { actions = true } = {}) {
   const { g, value, pnl } = posFigures(p);
+  const outcome = positionOutcome(p, g);
   const up = pnl >= 0;
-  const betType = `${MARKET_LABELS[p.market]} · <span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
-  return `<article class="pos-card pos-card--b" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+  const sideTag = `<span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
+  return `<article class="game-position-card pos-card--a${outcome.teams.length > 1 ? " is-tie-outcome" : ""}" style="--outcome-color:${outcome.colors[0]};--outcome-color-2:${outcome.colors[1] || outcome.colors[0]}">
     <div class="pos-info">
-      <div class="ocb-type">${betType}</div>
-      <div class="ocb-stats">
-        <div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">${p.qty}</span></div>
-        <div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">${money(value)}</span></div>
-        <div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl ${up ? "up" : "down"}">${signed(pnl)}</span></div>
+      <div class="oc-summary">
+        <div class="oc-row">
+          <span class="oc-position-title">${positionOutcomeChipHTML(p, g)}<span class="oc-tag">${MARKET_LABELS[p.market]}</span></span>
+          <span class="oc-vr-head">Value: <span class="tnum">${money(value)}</span></span>
+        </div>
+        <div class="oc-row">
+          <span class="oc-sub">${sideTag} · ${p.qty} contracts</span>
+          <span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
+        </div>
       </div>
-      ${posActions(i)}
+      ${actions ? posActions(i) : ""}
     </div>
   </article>`;
 }
 
-function gameOpenPositionHTML(list) {
-  // The dock is a single "N Game Positions" button injected into the bottom bar
-  // (see initGameOpenPosition). This markup is the pop-up panel that button reveals,
-  // plus its dim/blur backdrop. On desktop the panel sits inline in the left column.
+function gamePositionsHTML(list) {
   return `
-    <div class="game-open-position" id="gameOpenPosition" role="region" aria-label="Your open positions in this game">
-      <div class="gop-backdrop" data-gop-backdrop></div>
-      <div class="gop-pop" id="gopPop">
-        <p class="gop-heading">Game Open Positions</p>
-        <div class="hpos-list">${list.map((p, i) => gopPositionCard(p, i)).join("")}</div>
+    <section class="game-open-position container" id="gamePositionsSection" aria-labelledby="gamePositionsTitle">
+      <div class="game-positions-head">
+        <span class="eyebrow">Your game</span>
+        <h2 id="gamePositionsTitle">My Positions</h2>
       </div>
-    </div>`;
+      <div class="game-position-carousel" data-game-position-list>${list.map((p, i) => gopPositionCard(p, i)).join("")}</div>
+      <div class="game-position-dots" data-game-position-dots aria-label="Position carousel pagination" hidden></div>
+    </section>`;
 }
 
-function initGameOpenPosition(list) {
-  const wrap = $("#gameOpenPosition");
+function syncGamePositionCarousel(wrap) {
+  const carousel = $("[data-game-position-list]", wrap);
+  const dots = $("[data-game-position-dots]", wrap);
+  if (!carousel || !dots) return;
+
+  const renderDots = () => {
+    const cards = $$(".game-position-card", carousel);
+    dots.hidden = cards.length < 2;
+    dots.innerHTML = cards.length > 1
+      ? cards.map((_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" data-game-position-dot="${index}" aria-label="Go to position ${index + 1}"></button>`).join("")
+      : "";
+  };
+
+  if (!carousel.dataset.paginationBound) {
+    carousel.dataset.paginationBound = "true";
+    let frame = null;
+    carousel.addEventListener("scroll", () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        const cards = $$(".game-position-card", carousel);
+        const center = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
+        let active = 0;
+        let distance = Infinity;
+        cards.forEach((card, index) => {
+          const rect = card.getBoundingClientRect();
+          const nextDistance = Math.abs(rect.left + rect.width / 2 - center);
+          if (nextDistance < distance) { distance = nextDistance; active = index; }
+        });
+        $$(".game-position-dot", dots).forEach((dot, index) => dot.classList.toggle("is-active", index === active));
+      });
+    }, { passive: true });
+    dots.addEventListener("click", (event) => {
+      const dot = event.target.closest("[data-game-position-dot]");
+      if (!dot) return;
+      const card = $$(".game-position-card", carousel)[Number(dot.dataset.gamePositionDot)];
+      card?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    });
+  }
+  renderDots();
+}
+
+function initGamePositions(list) {
+  const wrap = $("#gamePositionsSection");
   if (!wrap) return;
   document.body.classList.add("has-open-position");
+  syncGamePositionCarousel(wrap);
 
-  // Inject the "N Game Positions" toggle into the bottom bar so it shares the row with
-  // "View Bets" (same primary-button style). CSS drops the word "Game" to "N Positions"
-  // when View Bets slides in (keyed off .betbar.is-visible).
+  // Keep positions available in the sticky dock. When Contracts animates in, the compact
+  // labels keep both actions legible on narrow screens.
   const barInner = $("#betBar .betbar-inner");
-  let trigger = barInner ? barInner.querySelector(".gop-trigger") : null;
+  let trigger = barInner ? barInner.querySelector(".game-positions-trigger") : null;
   if (barInner && !trigger) {
     trigger = document.createElement("button");
     trigger.type = "button";
-    trigger.className = "btn btn-primary gop-trigger";
-    trigger.setAttribute("data-gop-toggle", "");
-    trigger.setAttribute("aria-expanded", "false");
-    trigger.setAttribute("aria-controls", "gopPop");
-    trigger.innerHTML = `<span class="gop-open-label">Hide</span><span class="gop-closed-label"><span class="gop-num">${list.length}</span><span class="gop-game"> Game</span> Positions</span>`;
+    trigger.className = "btn btn-primary game-positions-trigger";
+    trigger.setAttribute("aria-controls", "gamePositionsSection");
+    trigger.innerHTML = `<span class="game-positions-full-label">${list.length} Game Position${list.length === 1 ? "" : "s"}</span><span class="game-positions-compact-label">Positions</span>`;
     barInner.insertBefore(trigger, barInner.firstChild);
   }
 
-  const setOpen = (open) => {
-    document.body.classList.toggle("gop-open", open);
-    if (trigger) trigger.setAttribute("aria-expanded", open ? "true" : "false");
-  };
-  const closeGop = () => setOpen(false);
+  trigger?.addEventListener("click", () => wrap.scrollIntoView({ behavior: "smooth", block: "start" }));
 
-  // Toggle the popup; dismiss on a tap outside it (backdrop / dimmed page) or Escape.
-  document.addEventListener("click", (e) => {
-    if (e.target.closest("[data-gop-toggle]")) {
-      setOpen(!document.body.classList.contains("gop-open"));
-    } else if (document.body.classList.contains("gop-open") && !e.target.closest("#gopPop") && !e.target.closest("#betBar")) {
-      closeGop();
-    }
-  });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeGop(); });
+  // Mirror the Contracts behaviour: hide the Positions action whenever its target
+  // section is already visible, then animate it back in once the section leaves view.
+  const bar = $("#betBar");
+  if ("IntersectionObserver" in window && bar) {
+    const bounds = wrap.getBoundingClientRect();
+    bar.classList.toggle("are-positions-visible", bounds.bottom > 0 && bounds.top < window.innerHeight);
+    const positionsObserver = new IntersectionObserver(
+      ([entry]) => bar.classList.toggle("are-positions-visible", entry.isIntersecting),
+      { threshold: 0 }
+    );
+    positionsObserver.observe(wrap);
+  }
 
-  // Buy More / Sell inside a card open the drawer for that game position (data-buy/-sell
-  // index into this game's positions, not USER.positions — so we bind here, not bindPositionActions).
-  const pop = $("#gopPop");
-  if (pop) pop.addEventListener("click", (e) => {
+  wrap.addEventListener("click", (e) => {
     const buy = e.target.closest("[data-buy]");
     const sell = e.target.closest("[data-sell]");
-    if (buy) { closeGop(); openBuy(list[Number(buy.dataset.buy)]); }
-    else if (sell) { closeGop(); openSell(list[Number(sell.dataset.sell)]); }
+    const gameId = new URL(location.href).searchParams.get("id") || GAMES[0].id;
+    const currentList = positionsInGame(gameId);
+    if (buy) openBuy(currentList[Number(buy.dataset.buy)]);
+    else if (sell) openSell(currentList[Number(sell.dataset.sell)]);
   });
 
   // Publish the bar height so the popup sits just above it (updates if it reflows).
-  const bar = $("#betBar");
   const syncBar = () => { if (bar) document.documentElement.style.setProperty("--gop-bar-h", `${bar.offsetHeight}px`); };
   syncBar();
   if ("ResizeObserver" in window && bar) new ResizeObserver(syncBar).observe(bar);
   window.addEventListener("resize", syncBar);
 }
-// Rebuild the game's position cards (e.g. after Buy More adds contracts).
-function refreshGameOpenPosition() {
-  const listEl = $("#gopPop .hpos-list");
-  if (listEl) listEl.innerHTML = openPositionDemos.map((p, i) => gopPositionCard(p, i)).join("");
+// Rebuild the current game's position cards after a buy or sell.
+function refreshGamePositions() {
+  const listEl = $("[data-game-position-list]");
+  const gameId = new URL(location.href).searchParams.get("id") || GAMES[0].id;
+  const list = positionsInGame(gameId);
+  const section = $("#gamePositionsSection");
+  const trigger = $(".game-positions-trigger");
+  if (!list.length) {
+    section?.remove();
+    trigger?.remove();
+    document.body.classList.remove("has-open-position");
+    return;
+  }
+  if (!section) {
+    const stats = $(".game-col-right .stats-section");
+    stats?.insertAdjacentHTML("beforebegin", gamePositionsHTML(list));
+    initGamePositions(list);
+    return;
+  }
+  if (listEl) listEl.innerHTML = list.map((p, i) => gopPositionCard(p, i)).join("");
+  syncGamePositionCarousel(section);
+  const fullLabel = trigger?.querySelector(".game-positions-full-label");
+  if (fullLabel) fullLabel.textContent = `${list.length} Game Position${list.length === 1 ? "" : "s"}`;
 }
 
 // Game 1's detail page: every ~9s the market "recalculates" — the recalculating
@@ -1615,7 +1693,7 @@ function updateBetSheet() {
   if (conflictEl) {
     const clash = betState.mode === "buy" && betState.game && betState.editPending == null ? conflictingPosition(betState.game.id, betState.market, betState.contract) : null;
     conflictEl.hidden = !clash;
-    if (clash) conflictEl.innerHTML = `${WARNING_ICON}<span>You already hold <strong>${MARKET_LABELS[clash.market]} · ${clash.side.toUpperCase()}</strong> in this game — this bet takes the opposite side.</span>`;
+    if (clash) conflictEl.innerHTML = `${WARNING_ICON}<span>Your current <strong>${MARKET_LABELS[clash.market]} · ${clash.side.toUpperCase()}</strong> position conflicts with this contract. Only one can win.</span>`;
   }
 
   // Market / limit price control
@@ -1763,14 +1841,21 @@ function openBetSheet(gameId, market, side, markets, opts = {}) {
 
 const marketsFromGame = (g) => ({ gtl: { ...g.markets.gtl }, tie: { ...g.markets.tie }, ktl: { ...g.markets.ktl } });
 
-// Positions the user holds in a game (BUF/MIA's are the floating game-page demo set).
+// Positions the user holds in a game. BUF/MIA retains its additional prototype holdings,
+// while every game page renders whatever the user actually holds for that game.
 function positionsInGame(gameId) {
   const held = USER.positions.filter((p) => p.gameId === gameId);
   return gameId === OPEN_POSITION_DEMO_GAME_ID ? held.concat(openPositionDemos) : held;
 }
-// A held position that conflicts with betting (market, side): same market, opposite side.
+function positionsConflict(existing, market, side) {
+  if (existing.market === market) return existing.side !== side;
+  // GTL / Tie / KTL are mutually exclusive winning outcomes. Two YES positions across
+  // different outcomes cannot both win; combinations involving NO can.
+  return existing.side === "yes" && side === "yes";
+}
+// Return the actual held position that conflicts with the proposed contract.
 function conflictingPosition(gameId, market, side) {
-  return positionsInGame(gameId).find((p) => p.market === market && p.side !== side) || null;
+  return positionsInGame(gameId).find((p) => positionsConflict(p, market, side)) || null;
 }
 
 // Buy more of an existing position — the standard buy drawer, prefilled
@@ -1809,7 +1894,7 @@ function openSell(pos) {
   Object.assign(betState, {
     game: g, mode: "sell", market: pos.market, contract: pos.side, draftMarket: pos.market, draftContract: pos.side, markets: marketsFromGame(g),
     holding: pos.qty, avg: pos.avg, sellQty: pos.qty,
-    position: null, existingQty: 0, committed: false, prevPos: null, editPending: null, confirming: null,
+    position: pos, existingQty: 0, committed: false, prevPos: null, editPending: null, confirming: null,
     quantity: 100, step: 1, typeOpen: false, limit: null, limitOpen: false,
     priceUpdating: false, pendingYes: null,
   });
@@ -1884,7 +1969,7 @@ function refreshPositionSurfaces() {
   applyAuthChrome();          // header Open Positions dropdown
   renderAuthedHome();         // home hero carousel
   initWallet();               // wallet portfolio list
-  refreshGameOpenPosition();  // floating game-page position card (demo: BUF/MIA)
+  refreshGamePositions();     // inline game-specific position carousel
 }
 
 // Cancel the pending order before the five-second confirmation window closes.
@@ -1919,19 +2004,47 @@ function commitConfirmedOrder() {
   const action = betState.confirming;
   if (!action) return;
   stopCancelTimer();
+  const balanceFrom = USER.balance;
 
   if (action === "buy") {
-    const { priceCents, qty } = computeBet();
+    const { priceCents, qty, total } = computeBet();
     const pos = betState.position;
     if (pos) {
       betState.prevPos = { qty: pos.qty, avg: pos.avg };
       const newQty = pos.qty + qty;
       pos.avg = Math.round((pos.qty * pos.avg + qty * priceCents) / newQty);
       pos.qty = newQty;
-      betState.committed = true;
-      refreshPositionSurfaces();
+    } else {
+      USER.positions.unshift({
+        gameId: betState.game.id,
+        market: betState.market,
+        side: betState.contract,
+        qty,
+        avg: priceCents,
+        date: new Date().toISOString().slice(0, 10),
+      });
     }
+    USER.balance = Math.max(0, USER.balance - total);
+    betState.committed = true;
+  } else if (action === "sell") {
+    const sale = computeSell();
+    const pos = betState.position;
+    if (pos) {
+      pos.qty = Math.max(0, pos.qty - sale.qty);
+      if (!pos.qty) {
+        const portfolioIndex = USER.positions.indexOf(pos);
+        const demoIndex = openPositionDemos.indexOf(pos);
+        if (portfolioIndex >= 0) USER.positions.splice(portfolioIndex, 1);
+        if (demoIndex >= 0) openPositionDemos.splice(demoIndex, 1);
+      }
+    }
+    USER.balance += sale.proceeds;
   }
+
+  const auth = getAuth();
+  if (auth) setAuth({ ...auth, balance: USER.balance });
+  refreshPositionSurfaces();
+  animateWalletBalance(balanceFrom, USER.balance);
 
   betState.confirming = null;
   closeBetSheet();
@@ -2054,8 +2167,9 @@ function ensurePositionGate() {
     <div class="gate-backdrop" id="posGateBackdrop"></div>
     <div class="auth-gate pos-gate" id="posGate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="posGateTitle">
       <div class="gate-body">
-        <h3 class="gate-title" id="posGateTitle">You already have a position in this game</h3>
-        <p class="gate-desc">Only one position can win. Do you want to continue?</p>
+        <h3 class="gate-title" id="posGateTitle">These Positions Conflict</h3>
+        <p class="gate-desc">Only one of these outcomes can win. You can still continue.</p>
+        <div class="pos-gate-current" id="posGateCurrent"></div>
         <div class="gate-actions">
           <button class="btn btn-secondary" type="button" id="posGateCancel">Cancel</button>
           <button class="btn btn-primary" type="button" id="posGateContinue">Continue</button>
@@ -2074,9 +2188,14 @@ function ensurePositionGate() {
   });
   return gate;
 }
-function openPositionGate(gameId, onContinue) {
-  if (!positionsInGame(gameId).length) { onContinue(); return; }
+function openPositionGate(position, onContinue) {
+  if (!position) { onContinue(); return; }
   const gate = ensurePositionGate();
+  const g = GAMES.find((game) => game.id === position.gameId);
+  const current = $("#posGateCurrent");
+  if (current && g) {
+    current.innerHTML = `<span class="pos-gate-current-label">Your Current Position</span>${gopPositionCard(position, 0, { actions: false })}`;
+  }
   $("#posGateHide").checked = false;
   posGateContinueFn = onContinue;
   $("#posGateBackdrop").classList.add("is-open");
@@ -2115,9 +2234,10 @@ function initBetSheet() {
     // Topping up a bet they already hold (same market + side) → straight to the buy-more drawer.
     const same = held.find((p) => p.market === price.dataset.market && p.side === price.dataset.side);
     if (same) { openBuy(same); return; }
-    // A competing position in the same game → warn first, open the drawer on Continue.
-    if (!hidePositionWarning && held.length) {
-      openPositionGate(price.dataset.game, () => openBetFromPrice(price));
+    // Only a genuinely conflicting outcome warns; non-conflicting positions proceed normally.
+    const clash = conflictingPosition(price.dataset.game, price.dataset.market, price.dataset.side);
+    if (!hidePositionWarning && clash) {
+      openPositionGate(clash, () => openBetFromPrice(price));
       return;
     }
     openBetFromPrice(price);
@@ -2158,10 +2278,8 @@ function initFeesPage() {
   const market = p.get("market") || "gtl";
   mini.style.setProperty("--home-color", g.home.color);
   mini.style.setProperty("--away-color", g.away.color);
-  mini.querySelector("[data-mini-home]").src = g.home.logo;
-  mini.querySelector("[data-mini-home]").alt = g.home.name;
-  mini.querySelector("[data-mini-away]").src = g.away.logo;
-  mini.querySelector("[data-mini-away]").alt = g.away.name;
+  const teams = $("[data-mini-teams]", mini);
+  if (teams) teams.innerHTML = `${teamAbbrMarkHTML(g.home, "bet-mini-logo")}<span class="bet-mini-v">v</span>${teamAbbrMarkHTML(g.away, "bet-mini-logo")}`;
   const back = new URLSearchParams({ id: g.id, bet: "1", market, side: p.get("side") || "yes", qty: p.get("qty") || "100" });
   if (p.get("limit")) back.set("limit", p.get("limit"));
   mini.href = "game.html?" + back.toString();
@@ -2172,6 +2290,7 @@ function initFeesPage() {
 function initStickyBet() {
   const bar = $("#betBar");
   const scorecard = $("#scorecardSection");
+  const markets = $("#marketsSection");
   const hero = $(".markets .mkt-row"); // first row = Get the Lead
   if (!bar || !hero || !scorecard) return;
   if ("IntersectionObserver" in window) {
@@ -2182,7 +2301,7 @@ function initStickyBet() {
     io.observe(hero);
   }
   bar.querySelector(".betbar-cta").addEventListener("click", () => {
-    scorecard.scrollIntoView({ behavior: "smooth", block: "start" });
+    (markets || scorecard).scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -2846,6 +2965,47 @@ function animateWalletCredit(amount) {
     amtEl.textContent = money(from + (to - from) * eased);
     if (t < 1) requestAnimationFrame(step);
     else { amtEl.textContent = money(to); setTimeout(() => chip.classList.remove("wallet-credit"), 500); }
+  };
+  requestAnimationFrame(step);
+}
+
+// Animate confirmed trading activity in either direction. The wallet is recreated by
+// refreshPositionSurfaces first, then reset to the previous amount for a smooth count.
+function animateWalletBalance(from, to) {
+  if (from === to) return;
+  const chip = $("#headerWallet .wallet-chip");
+  const amountEl = $("#headerWallet .wallet-amount");
+  if (!chip || !amountEl) return;
+  const down = to < from;
+  const delta = Math.abs(to - from);
+  const motionClass = down ? "wallet-debit" : "wallet-credit";
+  chip.classList.remove("wallet-credit", "wallet-debit");
+  void chip.offsetWidth;
+  chip.classList.add(motionClass);
+  amountEl.textContent = money(from);
+  const pop = document.createElement("span");
+  pop.className = `wallet-pop ${down ? "is-debit" : "is-credit"} tnum`;
+  pop.textContent = `${down ? "−" : "+"}${money(delta)}`;
+  chip.appendChild(pop);
+  setTimeout(() => pop.remove(), 1600);
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    amountEl.textContent = money(to);
+    chip.classList.remove(motionClass);
+    return;
+  }
+  let startedAt = null;
+  const duration = 900;
+  const step = (now) => {
+    if (startedAt === null) startedAt = now;
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    amountEl.textContent = money(from + (to - from) * eased);
+    if (progress < 1) requestAnimationFrame(step);
+    else {
+      amountEl.textContent = money(to);
+      setTimeout(() => chip.classList.remove(motionClass), 450);
+    }
   };
   requestAnimationFrame(step);
 }

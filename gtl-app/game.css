@@ -591,11 +591,9 @@
 }
 .betbar.is-visible { transform: none; }
 
-/* With game positions present, the bottom bar is ALWAYS on screen — it carries the
-   "N Game Positions" toggle (injected into .betbar-inner) alongside "View Bets". */
+/* When positions exist, both dock actions ride in together after the market leaves view. */
 .has-open-position .betbar {
   z-index: 60; bottom: 0;
-  transform: none; opacity: 1;
 }
 .betbar-inner {
   display: flex;
@@ -605,60 +603,150 @@
   padding-block: var(--s5);
 }
 .betbar-cta { pointer-events: auto; width: 100%; --btn-h: 52px; padding-inline: var(--s10); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
-/* "View Bets" stays hidden until the markets scroll out of view, then joins the row inline */
-.has-open-position .betbar-cta { display: none; width: auto; flex: 1; padding-inline: var(--s6); }
-.has-open-position .betbar.is-visible .betbar-cta { display: inline-flex; }
-body.gop-open .betbar-cta { display: none !important; } /* focus the popup while it's open */
+.contracts-compact-label { display: none; }
+.has-open-position .betbar-cta {
+  display: inline-flex;
+  width: auto;
+  flex: 1 1 0;
+  max-width: 360px;
+  padding-inline: var(--s6);
+  opacity: 1;
+  transform: none;
+  white-space: nowrap;
+}
+.has-open-position .betbar.is-visible:not(.are-positions-visible) .contracts-full-label { display: none; }
+.has-open-position .betbar.is-visible:not(.are-positions-visible) .contracts-compact-label { display: inline; }
 /* When the HEADER Open Positions dropdown is open, the game bar must not sit over it */
 body.pos-open .betbar { display: none; }
 
-/* The "N Game Positions" toggle — same primary style as View Bets */
-.gop-trigger { pointer-events: auto; --btn-h: 52px; flex: 1; padding-inline: var(--s6); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
-.gop-open-label { display: none; }
-.gop-trigger[aria-expanded="true"] .gop-open-label { display: inline; }
-.gop-trigger[aria-expanded="true"] .gop-closed-label { display: none; }
-/* Open state ("Hide") is a secondary button, not the primary green */
-.gop-trigger[aria-expanded="true"] { background: var(--surface-2); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
-.gop-trigger[aria-expanded="true"]:hover { background: var(--surface-3); }
-.has-open-position .betbar.is-visible .gop-game { display: none; } /* "N Game Positions" → "N Positions" */
+/* The positions action uses a detailed label by itself and the compact label when
+   Contracts joins it. */
+.game-positions-trigger {
+  pointer-events: auto;
+  --btn-h: 52px;
+  flex: 1 1 0;
+  max-width: 360px;
+  padding-inline: var(--s6);
+  overflow: hidden;
+  opacity: 1;
+  transform: none;
+  transition: max-width .24s ease, padding .24s ease, opacity .18s ease, transform .24s ease;
+  box-shadow: var(--shadow), 0 0 0 4px var(--green-soft);
+}
+.betbar.are-positions-visible .game-positions-trigger {
+  pointer-events: none;
+  flex-basis: 0;
+  max-width: 0;
+  padding-inline: 0;
+  opacity: 0;
+  transform: translateY(10px) scale(.96);
+}
+.has-open-position .betbar.are-positions-visible:not(.is-visible) {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(120%);
+}
+.game-positions-compact-label { display: none; }
+.has-open-position .betbar.is-visible:not(.are-positions-visible) .game-positions-full-label { display: none; }
+.has-open-position .betbar.is-visible:not(.are-positions-visible) .game-positions-compact-label { display: inline; }
 
-/* Dim + blur backdrop behind the popup (mobile/tablet; the page locks) */
-.gop-backdrop {
-  position: fixed; inset: 0; z-index: 55;
-  background: rgba(0, 0, 0, 0.5);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  opacity: 0; pointer-events: none; transition: opacity 0.28s var(--ease);
+/* My Positions uses the game-position card, arranged as the compact horizontal
+   carousel used by Open Positions on the authenticated home page. */
+.game-open-position { padding-top: var(--s10); padding-bottom: var(--s8); scroll-margin-top: 92px; overflow: hidden; }
+.game-positions-head { text-align: center; }
+.game-positions-head .eyebrow { display: block; margin-bottom: var(--s2); }
+.game-positions-head h2 { font-size: var(--fs-h2); }
+.game-position-carousel {
+  display: flex;
+  align-items: stretch;
+  gap: var(--s4);
+  margin-top: var(--s5);
+  margin-inline: calc(-1 * var(--s5));
+  padding: 0 var(--s5) var(--s2);
+  overflow-x: auto;
+  scroll-padding-inline: var(--s5);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
-body.gop-open .gop-backdrop { opacity: 1; pointer-events: auto; }
-:root[data-theme="light"] .gop-backdrop {
-  background: rgba(20, 30, 40, 0.18);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+.game-position-carousel::-webkit-scrollbar { display: none; }
+.game-position-dots { display: flex; justify-content: center; gap: var(--s2); margin-top: var(--s3); }
+.game-position-dots[hidden] { display: none; }
+.game-position-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: var(--line-2); transition: background .2s var(--ease), transform .2s var(--ease); }
+.game-position-dot.is-active { background: var(--green); transform: scale(1.25); }
+.game-position-card {
+  position: relative;
+  isolation: isolate;
+  flex: 0 0 clamp(286px, 88vw, 356px);
+  scroll-snap-align: start;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: #08090c;
 }
-:root[data-theme="light"] body.gop-open .site-header .floating-btn {
-  background: rgba(255, 255, 255, 0.94);
+.game-position-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(145% 145% at 18% 18%, color-mix(in srgb, var(--outcome-color) 62%, transparent), transparent 62%),
+    linear-gradient(180deg, rgba(8, 10, 12, .38), rgba(8, 9, 11, .9));
 }
-@media (max-width: 1023px) { body.gop-open { overflow: hidden; } }
-
-/* Pop-up panel of position cards — sits just above the bottom bar, slides up on open */
-.gop-pop {
-  position: fixed; left: 0; right: 0; bottom: var(--gop-bar-h, 84px); z-index: 59;
-  display: flex; flex-direction: column; gap: var(--s3);
-  padding: var(--s4);
-  max-height: calc(100dvh - var(--gop-bar-h, 84px) - 72px);
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-  opacity: 0; transform: translateY(12px); pointer-events: none;
-  transition: opacity 0.28s var(--ease-out), transform 0.28s var(--ease-out);
+.game-position-card.is-tie-outcome::before {
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--outcome-color) 50%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--outcome-color-2) 50%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, .38), rgba(8, 9, 11, .9));
 }
-body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
-/* Cards reuse the header dropdown's .hpos-list styling; just size the list here */
-.gop-pop .hpos-list { max-width: 400px; margin-inline: auto; width: 100%; }
-/* No scoreboard on these cards, so the bet type gets even top padding */
-.gop-pop .pos-card--b .pos-info { padding-top: var(--s5); }
-.gop-heading {
-  margin: 0 0 var(--s2); text-align: center;
-  font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2);
+.game-position-card .pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s3); }
+.game-position-card .oc-summary { display: flex; flex-direction: column; gap: 4px; }
+.game-position-card .oc-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
+.game-position-card .oc-row > span { white-space: nowrap; }
+.game-position-card .oc-position-title { display: inline-flex; align-items: center; gap: var(--s2); min-width: 0; }
+.game-position-card .oc-vr-head { color: var(--ink); font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: .04em; }
+.game-position-card .oc-figures { color: var(--ink); font-size: var(--fs-label); font-weight: 700; }
+.game-position-card .oc-figures .oc-pnl { font-weight: 600; }
+.game-position-card .oc-sub .side-yes { color: var(--green); }
+.game-position-card .oc-sub .side-no { color: var(--no); }
+.game-position-card .oc-actions { margin-top: var(--s1); }
+.position-outcome-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 700;
 }
+.position-outcome-marks { display: inline-flex; align-items: center; }
+.position-outcome-mark { width: 28px; height: 28px; font-size: .58rem; }
+.position-outcome-mark + .position-outcome-mark { margin-left: -6px; }
+.pos-gate-current {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s2);
+}
+.pos-gate-current-label { color: var(--ink-3); font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.pos-gate-current .game-position-card { width: 100%; flex: none; text-align: left; }
+:root[data-theme="light"] .game-position-card {
+  background:
+    radial-gradient(145% 145% at 18% 18%, color-mix(in srgb, var(--outcome-color) 24%, transparent), transparent 62%),
+    var(--surface);
+  border-color: color-mix(in srgb, var(--outcome-color) 28%, var(--line));
+}
+:root[data-theme="light"] .game-position-card.is-tie-outcome {
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--outcome-color) 20%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--outcome-color-2) 20%, transparent), transparent 58%),
+    var(--surface);
+}
+:root[data-theme="light"] .game-position-card::before { content: none; }
 
 /* Room to scroll clear of the bottom bar */
 .game-body.has-open-position { padding-bottom: calc(var(--gop-bar-h, 84px) + var(--s4)); }
@@ -668,12 +756,10 @@ body.gop-open .gop-pop { opacity: 1; transform: none; pointer-events: auto; }
   .betbar-inner { max-width: 760px; }
 }
 @media (min-width: 1024px) {
-  /* Desktop: the panel flows inline in the left column (no bottom bar, no popup) */
-  .game-open-position { position: static; z-index: auto; pointer-events: auto; flex-shrink: 0; margin-top: var(--s16); }
-  .gop-backdrop { display: none; }
-  .gop-pop { position: static; opacity: 1; transform: none; pointer-events: auto; max-height: none; overflow: visible; padding: 0; }
-  .gop-pop .hpos-list { max-width: none; margin-inline: 0; padding-inline: var(--s5); }
-  .gop-heading { text-align: left; padding-inline: var(--s5); margin-bottom: var(--s3); }
+  .game-open-position { max-width: none; padding: 0 0 var(--s10); overflow: hidden; }
+  .game-positions-head { text-align: left; }
+  .game-position-carousel { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+  .game-position-card { flex-basis: min(340px, 78%); }
   .game-body.has-open-position { padding-bottom: 0; }
 }
 

@@ -794,7 +794,7 @@ body.sheet-open { overflow: hidden; }
 }
 .team-mark.is-fallback .team-mark-abbr { display: block; }
 
-:root[data-theme="light"] :is(.game-tile, .pos-card, .settled-card, .bet-scoreboard) .team-mark.is-fallback {
+:root[data-theme="light"] :is(.game-tile, .pos-card, .game-position-card, .settled-card, .bet-scoreboard) .team-mark.is-fallback {
   background:
     linear-gradient(
       145deg,
@@ -915,6 +915,9 @@ body.sheet-open { overflow: hidden; }
 .drawer-limit-entry { display: inline-flex; align-items: center; justify-content: center; gap: 2px; }
 .drawer-limit-entry[hidden] { display: none; }
 .drawer-limit-entry input { width: 2.5ch; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; text-align: right; }
+.drawer-price-toggle [data-market-price],
+.drawer-limit-entry input,
+.drawer-limit-entry > span { font-size: 16px; line-height: 1; }
 .limit-minmax.is-error { color: var(--no); }
 .bet-sheet[data-mode="buy"].is-updating-price :is(.drawer-price-mode, .drawer-purchase) { opacity: 0.5; }
 .bet-sheet[data-mode="buy"].is-updating-price :is(.bt-opt, .bet-primary)::before { display: none; }
@@ -1180,12 +1183,19 @@ body.sheet-open { overflow: hidden; }
 :root[data-theme="light"] .wallet-chip .wallet-ico { color: var(--green-ink); }
 /* Settled win landing in the wallet — soft green pulse + count-up + floating "+$x" */
 .wallet-chip.wallet-credit { animation: wallet-credit 0.85s var(--ease-out); }
+.wallet-chip.wallet-debit { animation: wallet-debit 0.85s var(--ease-out); }
 @keyframes wallet-credit {
   0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 55%, transparent); }
   100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--green) 0%, transparent); }
 }
+@keyframes wallet-debit {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--no) 45%, transparent); }
+  100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--no) 0%, transparent); }
+}
 .wallet-chip.wallet-credit .wallet-amount { animation: wallet-amt 1.1s var(--ease); }
+.wallet-chip.wallet-debit .wallet-amount { animation: wallet-amt-debit 1.1s var(--ease); }
 @keyframes wallet-amt { 0%, 55% { color: var(--green); } 100% { color: var(--ink); } }
+@keyframes wallet-amt-debit { 0%, 55% { color: var(--no); } 100% { color: var(--ink); } }
 .wallet-chip.wallet-welcome-credit { animation: wallet-welcome-credit 1.8s var(--ease-out); }
 .wallet-chip.wallet-welcome-credit .wallet-amount { color: var(--green); text-shadow: 0 0 16px var(--green-glow); }
 @keyframes wallet-welcome-credit {
@@ -1199,6 +1209,7 @@ body.sheet-open { overflow: hidden; }
   pointer-events: none;
   animation: wallet-pop 1.5s var(--ease-out) forwards;
 }
+.wallet-pop.is-debit { color: var(--no); }
 @keyframes wallet-pop {
   0% { opacity: 0; transform: translateY(6px); }
   18% { opacity: 1; }
@@ -1394,11 +1405,11 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 
 /* Toast notifications (success / error) ------------------------------ */
 .toast-stack {
-  /* In line with the header (sits on top of it via z-index), not below it */
-  position: fixed; top: calc(var(--s4) + env(safe-area-inset-top, 0)); left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: calc(var(--s4) + env(safe-area-inset-bottom, 0)); left: 50%; transform: translateX(-50%);
   z-index: 300; display: flex; flex-direction: column; align-items: center; gap: var(--s2);
   width: min(440px, calc(100% - var(--s8))); pointer-events: none;
 }
+.game-body .toast-stack { bottom: calc(var(--gop-bar-h, 72px) + var(--s4) + env(safe-area-inset-bottom, 0)); }
 .toast {
   pointer-events: auto; display: flex; align-items: center; gap: var(--s3);
   max-width: 100%; padding: var(--s3) var(--s5) var(--s3) var(--s3);
@@ -1417,8 +1428,8 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 .toast-error { border-color: var(--no-line); }
 .toast-error .toast-ico { background: var(--no-soft); color: var(--no); }
 :root[data-theme="light"] .toast-success .toast-ico { color: var(--green-ink); }
-@keyframes toast-in { from { opacity: 0; transform: translateY(-12px) scale(0.98); } to { opacity: 1; transform: none; } }
-@keyframes toast-out { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(8px); } }
 
 /* Auth gate — centred modal shown when a guest tries to bet --------- */
 .gate-backdrop {
