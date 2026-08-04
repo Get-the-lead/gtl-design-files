@@ -17,10 +17,7 @@ const pageFrameLabels = document.querySelectorAll("[data-page-frame-label]");
 const pageTitle = document.querySelector("[data-page-title]");
 const pageFrameOpenLinks = document.querySelectorAll("[data-page-frame-open]");
 const pagePreview = document.querySelector("[data-page-preview]");
-const pageZoomButtons = document.querySelectorAll("[data-page-zoom]");
-const pageZoomValue = document.querySelector("[data-page-zoom='reset']");
 const individualPageSections = document.querySelectorAll("[data-individual-page]");
-let pageZoom = 1;
 const designSystemThemeStorageKey = "gtl-theme";
 const standardThemeSectionIds = [
   "tokens",
@@ -47,8 +44,8 @@ function normalizeDesignSystemTheme(value) {
 
 function designSystemThemeToggle(label) {
   return `<div class="ds-theme-toggle" role="group" aria-label="${label} color theme">
-    <button type="button" data-ds-theme="dark" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span><span>Dark</span></button>
-    <button type="button" data-ds-theme="light" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">light_mode</span><span>Light</span></button>
+    <button type="button" data-ds-theme="dark" aria-label="Dark mode" title="Dark mode" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
+    <button type="button" data-ds-theme="light" aria-label="Light mode" title="Light mode" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">light_mode</span></button>
   </div>`;
 }
 
@@ -76,12 +73,15 @@ function setDesignSystemTheme(theme, { persist = true } = {}) {
 }
 
 function installDesignSystemThemeToggles() {
-  const overviewIntro = document.querySelector("#overview > .ds-overview-intro");
-  if (overviewIntro && !overviewIntro.querySelector(".ds-theme-toggle")) {
+  [
+    [document.querySelector("#overview > .ds-overview-intro"), "Overview"],
+    [document.querySelector("#update-log > .ds-update-log-intro"), "Update Log"],
+  ].forEach(([intro, label]) => {
+    if (!intro || intro.querySelector(".ds-theme-toggle")) return;
     const wrapper = document.createElement("div");
-    wrapper.innerHTML = designSystemThemeToggle("Overview");
-    overviewIntro.append(wrapper.firstElementChild);
-  }
+    wrapper.innerHTML = designSystemThemeToggle(label);
+    intro.append(wrapper.firstElementChild);
+  });
 
   individualPageSections.forEach((section) => {
     const actions = section.querySelector(".ds-page-actions");
@@ -90,7 +90,7 @@ function installDesignSystemThemeToggles() {
     const title = individualPageDocumentation[docKey]?.title || flatDocViews[docKey]?.title || "Page";
     const wrapper = document.createElement("div");
     wrapper.innerHTML = designSystemThemeToggle(title);
-    actions.insertBefore(wrapper.firstElementChild, actions.querySelector(".ds-page-zoom"));
+    actions.append(wrapper.firstElementChild);
   });
 
   standardThemeSectionIds.forEach((id) => {
@@ -204,7 +204,8 @@ const flatDocs = {
       ] },
       { title: "Authenticated", frames: [
         { label: "No open trades", type: "home", mode: "logged" },
-        { label: "With open trades", type: "home", mode: "positions" },
+        { label: "Open trades — multiple games", type: "tradeLayout", mode: "homeAll" },
+        { label: "Open trades — one game", type: "tradeLayout", mode: "homeSingle" },
       ] },
     ],
   },
@@ -238,13 +239,9 @@ const flatDocs = {
         { label: "NFL game stats selected", type: "game", mode: "gameStatsNFL" },
       ] },
       { title: "Open Trades", frames: [
-        { label: "Trades displayed on the Game page", type: "game", mode: "openPositions" },
-        { label: "Current menu — one trade per game", type: "game", mode: "positionsPanelOpen" },
-        { label: "Option 1 — current menu with two trades", type: "game", mode: "positionsMenuTwoTrades" },
-        { label: "Option 2 — combined card with shared actions", type: "game", mode: "positionsMenuCombined" },
-        { label: "Option 3 — combined card with trade carousel", type: "game", mode: "positionsMenuCombinedCarousel" },
-        { label: "Option 4 — grouped horizontal trade cards", type: "game", mode: "positionsMenuGroupedCarousel" },
-        { label: "Option 5 — compact trade overview", type: "game", mode: "positionsMenuCompactOverview" },
+        { label: "My Game Trades", type: "tradeLayout", mode: "liveGame" },
+        { label: "Open Trades Menu — all games", type: "tradeLayout", mode: "menuAll" },
+        { label: "Open Trades Menu — selected game", type: "tradeLayout", mode: "menuGame" },
       ] },
       { title: "Logo reference — future use", frames: [
         { label: "Live NFL game with licensed team logos", type: "game", mode: "liveLogos" },
@@ -346,55 +343,6 @@ const gameVariantDocumentation = {
     changes: "Show the recalculation banner, retain the current score and last prices for context, and disable all market-price controls until replacement prices arrive.",
     data: "The last stable game/market snapshot plus a clearing pause reason are required. The implementation demo clears after roughly 1.6 seconds.",
     behavior: "Keep statistics available, prevent drawer entry and submissions, then atomically replace all complementary prices before re-enabling interaction.",
-  },
-  openPositions: {
-    summary: "The signed-in Game page with the customer’s matching trades displayed in the page content.",
-    trigger: "Use when the authenticated portfolio contains trades whose gameId matches the active Game page.",
-    changes: "Add the My Game Trades section above game statistics, using compact horizontally scrollable trade cards on every breakpoint and a circular count badge.",
-    data: "For each matching trade provide market, side, quantity, average entry price, current price, current value, and unrealized return; retain the active game/team context.",
-    behavior: "Buy More and Sell open prefilled order drawers. When the section is off screen, the sticky Trades action scrolls the customer back to it.",
-  },
-  positionsPanelOpen: {
-    summary: "The global Open Trades menu opened from the authenticated header while the customer is on a Game page.",
-    trigger: "Use after the customer selects the Open Trades count in the header.",
-    changes: "Replace the count with a close icon and show all portfolio trades grouped under their game matchup. Mobile centres the heading and cards over a dimmed, blurred page; larger layouts anchor the list below the header control.",
-    data: "All currently open portfolio trades are required, grouped by game and ordered consistently within each matchup.",
-    behavior: "Buy More and Sell open prefilled drawers. The close control, mobile backdrop, or Escape closes the menu and returns focus to its header trigger.",
-  },
-  positionsMenuTwoTrades: {
-    summary: "The current grouped menu treatment with two separate cards for trades in the same game.",
-    trigger: "Use as a direct comparison against the current one-trade-per-game menu.",
-    changes: "Keep game headings and full trade cards, stacking both SF @ KC trades within the same group.",
-    data: "All open trades grouped by game, including every distinct market and side held in that matchup.",
-    behavior: "Each card retains its own Buy More and Sell actions; the menu itself scrolls vertically when required.",
-  },
-  positionsMenuCombined: {
-    summary: "A game-level card that combines multiple trades and removes the separate game headings.",
-    trigger: "Use when reducing repeated matchup chrome is more important than exposing every action simultaneously.",
-    changes: "Place the matchup once at the top of each card, show selectable trade rows beneath it, and provide one shared action area for the selected trade.",
-    data: "Game context plus market, side, contracts, current value, and return for each trade.",
-    behavior: "Selecting a trade row updates the Buy More and Sell context shown at the bottom of that game card.",
-  },
-  positionsMenuCombinedCarousel: {
-    summary: "A combined game card with horizontally scrollable trade panels and actions retained inside every panel.",
-    trigger: "Use when each trade needs permanently associated actions but repeated game scoreboards should be avoided.",
-    changes: "Keep one matchup header, then present full-width trade panels in an inner horizontal carousel.",
-    data: "The same per-trade values as the current menu plus stable ordering within each game.",
-    behavior: "Horizontal scrolling switches between trades; each slide retains independent Buy More and Sell actions.",
-  },
-  positionsMenuGroupedCarousel: {
-    summary: "The current game sections with multiple full trade cards arranged horizontally within each group.",
-    trigger: "Use when preserving the existing information hierarchy is the priority.",
-    changes: "Retain the game headings and current trade-card design, but make each game group a horizontal carousel when it has multiple trades.",
-    data: "All grouped open trades and their full game context.",
-    behavior: "Customers scroll horizontally within a game and vertically between games; every trade keeps its own actions.",
-  },
-  positionsMenuCompactOverview: {
-    summary: "A compact, non-nested-scrolling overview that shows every trade for a game at once.",
-    trigger: "Use when fast portfolio scanning and direct price comparison matter most.",
-    changes: "Show the matchup once, then use compact trade rows with side, contracts, bought price, current value, return, and small per-trade actions.",
-    data: "Market, side, quantity, average entry price, current price or value, and unrealized return for every trade.",
-    behavior: "All trades remain visible without horizontal scrolling; row-level Buy and Sell controls preserve direct action context.",
   },
   gameStatsNFL: {
     summary: "The standard live NFL Game page with the Game Stats tab selected.",
@@ -1351,20 +1299,6 @@ const gameFrameData = {
 
 const flatDocViews = {
   home: flatDocs.home,
-  trades: {
-    title: "Trades & Trade Cards",
-    description: "Alternative filtering and card layouts for the authenticated Home page, Live Game page, and global Open Trades menu.",
-    groups: [
-      { title: "Home Page", frames: [
-        { label: "Multiple Games — All Selected", type: "tradeLayout", mode: "homeAll" },
-        { label: "One Game — No All Option", type: "tradeLayout", mode: "homeSingle" },
-      ] },
-      { title: "Live Game Page & Open Trades Menu", frames: [
-        { label: "Live Game — My Game Trades", type: "tradeLayout", mode: "liveGame" },
-        { label: "Open Trades Menu — All Games", type: "tradeLayout", mode: "menuAll" },
-      ] },
-    ],
-  },
   waitlist: {
     title: "Waitlist Page",
     description: "Public launch landing page, email validation, submission progress, and confirmed early-access states.",
@@ -1489,7 +1423,8 @@ const individualHomeView = {
       { label: "Logged out default", type: "home", mode: "guest" },
     ] },
     { title: "Authenticated variants", frames: [
-      { label: "With open trades", type: "home", mode: "positions" },
+      { label: "Open trades — multiple games", type: "tradeLayout", mode: "homeAll" },
+      { label: "Open trades — one game", type: "tradeLayout", mode: "homeSingle" },
       { label: "No open trades", type: "home", mode: "logged" },
     ] },
     { title: "NBA variants", frames: [
@@ -1505,21 +1440,26 @@ const individualHomeView = {
   ],
 };
 const individualPageDocumentation = {
-  trades: {
-    title: "Trades & Trade Cards",
-    implementation: "Exploration for <code>home.html</code>, <code>game.html</code>, and the shared Open Trades menu",
-    purpose: "Explore one consistent way to filter open trades by game while retaining score context in the All view and reducing repeated scoreboards in a game-specific view.",
-    states: "Multiple-game All view, multiple-game selected view, single-game view without All, Live Game My Trades, Open Trades menu All view, and Open Trades menu selected-game view.",
-    contract: [
-      "Show All only when trades belong to more than one game; with one game, render only that matchup option.",
-      "Keep one shared scorecard fixed above the trade carousel in both All and game-specific views.",
-      "In All, keep trades from the same game adjacent and update the shared scorecard as the focused card changes game.",
-      "Use the same filter order, selected state, trade values, and responsive behavior on Home and in the global Open Trades menu.",
+  home: {
+    title: "Home",
+    implementation: "<code>home.html</code>",
+    purpose: "Primary entry point for live NFL markets, account context, open trades, and NBA-interest capture.",
+    states: [
+      "Public guest and authenticated customer experiences.",
+      "Authenticated customers with no open trades, trades in one game, or trades across multiple games.",
+      "Live-game availability states, including no live games, loading, service failure, and temporary market recalculation.",
+      "NBA coming-soon states for no response, interested, and not-for-me selections.",
     ],
-    validation: "Confirm whether game filters should preserve their selection between Home and the Open Trades menu, and how settled or postponed games should be ordered alongside live games.",
-    guides: [
-      { title: "Filter Rules", items: ["Order All first, followed by games with the most recently active game first.", "Use compact matchup labels such as KC v SF; preserve a full accessible label containing both team names.", "If only one game has open trades, omit All and do not present a redundant disabled choice.", "Changing filters updates the score and cards together as one state change."] },
-      { title: "Card Rules", items: ["All and selected-game views use the same persistent scorecard and trade-card structure.", "Animate only the scorecard content when the focused trade changes game; do not move the scorecard container.", "Keep Buy More and Sell attached to the individual trade in both treatments.", "Multiple trades for one game remain adjacent and horizontally scroll only when the viewport cannot display them together."] },
+    contract: [
+      "When open trades belong to one game, show that matchup as the only game pill and omit All.",
+      "When open trades span multiple games, show All followed by every matchup pill. All is selected by default when the customer enters Home and lists every open trade in game order.",
+      "Keep one shared live score above the trade cards. Carousel controls and indicators move one card at a time into the left focus position, while trades from the same game remain adjacent.",
+      "When commercially approved team logos are available, use the logo treatment consistently across live-game cards, trade cards, league controls, and scorecards; otherwise use the team-initial fallback.",
+      "When an authenticated customer has no open trades, move Live Games directly beneath the greeting so the active markets become the primary focus.",
+      "NBA remains a coming-soon experience and must not be presented as currently tradable.",
+    ],
+    validation: [
+      "Confirm whether the NBA-interest response requires persistence, analytics, or account association.",
     ],
   },
   waitlist: {
@@ -1550,11 +1490,13 @@ const individualPageDocumentation = {
     title: "Game",
     implementation: "<code>game.html</code>",
     purpose: "Present one live game as a complete trading surface: navigation context, status and score, GTL/TIE/KTL prices, market statistics, game statistics, and any trades held in that game.",
-    states: "Open live market, scheduled countdown, waiting for first lead, transient price recalculation, final result, game trades available, game trades panel open, Market Stats selected, Game Stats selected, and future licensed-logo references.",
+    states: "Open live market, scheduled countdown, waiting for first lead, transient price recalculation, final result, My Game Trades, the global Open Trades menu in All and selected-game views, Market Stats selected, Game Stats selected, and future licensed-logo references.",
     contract: [
       "Resolve the game from the id query parameter and fall back safely when the identifier is absent or unknown.",
       "Render league and Regular Season above the status; derive Live, QTR Time, and Final from normalized feed fields rather than visual inference.",
       "Treat GTL, TIE, and KTL as separate markets whose Yes/No values are complementary and whose interaction carries game, market, side, and prices into the trading drawer.",
+      "Show matching My Game Trades inline above statistics as card-indexed horizontal cards, without repeating the page scorecard.",
+      "The global Open Trades menu reuses the approved game filter, live score context, trade-card hierarchy, and All/selected-game behavior from Home.",
       "Use no-logo abbreviation marks with full team names for the current implementation. Licensed-logo references use NFL assets with initials beneath them.",
       "On mobile/tablet expose one statistics panel through the equal-width toggle. On desktop hide the toggle and show Market Stats followed by Game Stats.",
       "Keep paused, waiting, and final markets non-interactive; disabling the button must not remove the explanatory state or last meaningful context.",
@@ -1567,7 +1509,8 @@ const individualPageDocumentation = {
           "Floating global header, followed by a game-scoped back link whose label reflects Home or Portfolio when available.",
           "Scorecard: league/season, normalized status, home and away identity, score, leader emphasis, and team-colour gradient.",
           "Markets: Yes/Market/No header and fixed GTL, TIE, KTL row order, followed by contextual help or a blocking status.",
-          "Game trades: document the closed mobile/tablet bottom-bar control separately from its expanded dismissible panel; desktop keeps the same cards persistently inline below markets.",
+          "Game trades: show My Game Trades inline above statistics at every breakpoint; use card-indexed carousel navigation only when the row overflows.",
+          "Global trades: the authenticated header opens a dismissible menu with All and matchup filters, grouped game context in All, and one shared score above the selected-game list.",
           "Statistics: Market Book and Order Flow, then Score Worm and five league-specific comparison rows.",
         ],
       },
@@ -1593,6 +1536,8 @@ const individualPageDocumentation = {
         title: "Interaction and Accessibility",
         items: [
           "Price buttons need market and side context, a disabled state during blocking conditions, and a visible focus treatment when interactive.",
+          "Trade carousel arrows and indicators move exactly one card into the left focus position; Buy More and Sell remain attached to that trade.",
+          "The only sticky game action is View Contracts. Open Trades remains a header-menu action and must not add a second animated bottom action.",
           "Stats controls use role=tab, aria-selected, aria-controls, and matching panels; hidden panels must be removed from the accessibility tree.",
           "Status colour is supplementary: text must always identify countdown, period, quarter time, recalculation, waiting, or final.",
           "Charts require concise accessible names or equivalent textual values; team artwork uses empty image alt text because the surrounding mark supplies the name.",
@@ -1952,42 +1897,6 @@ function tradeMarketCode(market) {
   return market === "Get the Lead" ? "GTL" : market === "Keep the Lead" ? "KTL" : "TIE";
 }
 
-function gamePositionCardPreview({ market, side, qty, value, result, bought, now, teams }) {
-  const marks = teams.map((team) => gamePositionMark(team.abbr, team.name, team.color)).join("");
-  const colors = teams.map((team) => team.color);
-  const compactValue = value.replace(/\.00$/, "");
-  const up = !result.startsWith("-");
-  const teamName = teams[0]?.name || "team";
-  const winCopy = market === "Tie"
-    ? `You win if the game is ${side === "yes" ? "tied" : "not tied"}`
-    : `You win if the ${teamName} ${market === "Get the Lead" ? (side === "yes" ? "get" : "do not get") : (side === "yes" ? "keep" : "do not keep")} the lead`;
-  return `<article class="game-position-card pos-card--a${teams.length > 1 ? " is-tie-outcome" : ""}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
-    <div class="pos-info">
-      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><div class="trade-type-line"><span>${tradeMarketCode(market)}</span><i>•</i><strong class="side-${side}">${side.toUpperCase()}</strong></div></div>
-      <p class="trade-current-condition">${winCopy}</p>
-      <div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${result}</strong></span></div>
-      <div class="trade-option-inline-meta"><span>${qty} Contracts</span><i>•</i><span>Bought ${bought}</span><i>•</i><span>Now ${now}</span></div>
-      <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
-    </div>
-  </article>`;
-}
-
-function gameOpenPositionsPreview(instance = "default") {
-  const buf = { abbr: "BUF", name: "Bills", color: "#00338D" };
-  const mia = { abbr: "MIA", name: "Dolphins", color: "#008E97" };
-  const positions = [
-    { market: "Get the Lead", side: "yes", qty: 120, value: "$45.60", result: "+$8.40", bought: "31¢", now: "38¢", teams: [mia] },
-    { market: "Keep the Lead", side: "no", qty: 80, value: "$49.60", result: "+$5.60", bought: "55¢", now: "62¢", teams: [mia] },
-    { market: "Tie", side: "no", qty: 60, value: "$46.80", result: "+$3.60", bought: "74¢", now: "78¢", teams: [buf, mia] },
-  ];
-  const titleId = `gamePositionsPreviewTitle-${instance}`;
-  return `<section class="game-open-position container" aria-labelledby="${titleId}">
-    <div class="game-positions-head"><h2 id="${titleId}">My Game Trades</h2><span class="game-trade-count" aria-label="${positions.length} open trades in this game">${positions.length}</span></div>
-    <div class="game-position-carousel">${positions.map(gamePositionCardPreview).join("")}</div>
-    <div class="game-position-navigation"><button class="game-position-nav-button" type="button" tabindex="-1" aria-label="Previous trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="game-position-dots"><button class="game-position-dot is-active" type="button" tabindex="-1" aria-label="Trades page 1"></button><button class="game-position-dot" type="button" tabindex="-1" aria-label="Trades page 2"></button><button class="game-position-dot ds-desktop-extra-page" type="button" tabindex="-1" aria-label="Trades page 3"></button></div><button class="game-position-nav-button" type="button" tabindex="-1" aria-label="Next trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
-  </section>`;
-}
-
 const menuPositionPreviewGames = {
   kc: {
     label: "SF @ KC",
@@ -2009,73 +1918,6 @@ const menuPositionPreviewGames = {
     trades: [{ market: "Keep the Lead", side: "yes", qty: 100, value: "$63.00", pnl: "-$7.00", bought: "70¢", now: "63¢" }],
   },
 };
-
-function menuNoLogoTeamBlock(g, side) {
-  const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
-  const team = g[side];
-  return `<div class="team team-${side}${lead === side ? " is-leading" : ""}">${gamePositionMark(team.abbr, team.name, team.color).replace("position-outcome-mark", "team-logo")}<div class="team-meta"><span class="team-abbr">${team.abbr}</span><span class="team-score tnum">${team.score}</span></div></div>`;
-}
-
-function menuNoLogoGameMedia(g) {
-  return `<div class="game-row">${menuNoLogoTeamBlock(g, "home")}<div class="game-center"><span class="period">${g.period}</span><span class="clock tnum">${g.clock}</span></div>${menuNoLogoTeamBlock(g, "away")}</div>`;
-}
-
-function menuTradeActions(compact = false) {
-  return `<div class="oc-actions${compact ? " ds-compact-actions" : ""}"><button class="oc-buy" type="button" tabindex="-1">${compact ? "Buy" : "Buy More"}</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>`;
-}
-
-function menuPositionCard(gameKey, tradeIndex = 0) {
-  const entry = menuPositionPreviewGames[gameKey];
-  const trade = entry.trades[tradeIndex] || entry.trades[0];
-  const up = !trade.pnl.startsWith("-");
-  const compactValue = trade.value.replace(/\.00$/, "");
-  return `<article class="pos-card pos-card--a ds-menu-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info"><div class="trade-current-topline"><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div><div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} Contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>${menuTradeActions()}</div></article>`;
-}
-
-function menuTradeSummary(trade, selected = false) {
-  const up = !trade.pnl.startsWith("-");
-  return `<div class="ds-trade-summary${selected ? " is-selected" : ""}"><div><strong>${trade.market}</strong><span><span class="side-${trade.side}">${trade.side.toUpperCase()}</span> · ${trade.qty} contracts</span></div><div class="ds-trade-values"><strong class="tnum">${trade.value}</strong><span class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</span></div></div>`;
-}
-
-function menuCombinedCard(gameKey, carousel = false) {
-  const entry = menuPositionPreviewGames[gameKey];
-  const trades = entry.trades;
-  const content = carousel
-    ? `<div class="ds-trade-carousel">${trades.map((trade) => `<article class="ds-trade-slide">${menuTradeSummary(trade)}${menuTradeActions()}</article>`).join("")}</div>${trades.length > 1 ? `<div class="ds-inner-dots"><span class="is-active"></span><span></span></div>` : ""}`
-    : `<div class="ds-combined-trades">${trades.map((trade, index) => menuTradeSummary(trade, index === 0)).join("")}</div><p class="ds-action-context">Actions for ${trades[0].market} · ${trades[0].side.toUpperCase()}</p>${menuTradeActions()}`;
-  return `<article class="pos-card ds-combined-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info">${content}</div></article>`;
-}
-
-function menuCompactOverviewCard(gameKey) {
-  const entry = menuPositionPreviewGames[gameKey];
-  const rows = entry.trades.map((trade) => {
-    const up = !trade.pnl.startsWith("-");
-    return `<article class="ds-compact-trade"><div class="ds-compact-trade-head"><strong>${trade.market}</strong><span class="side-${trade.side}">${trade.side.toUpperCase()}</span></div><div class="ds-compact-metrics"><span><small>Contracts</small><strong class="tnum">${trade.qty}</strong></span><span><small>Bought at</small><strong class="tnum">${trade.bought}</strong></span><span><small>Value now</small><strong class="tnum">${trade.value}</strong></span><span><small>Return</small><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div>${menuTradeActions(true)}</article>`;
-  }).join("");
-  return `<article class="pos-card ds-compact-overview-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info">${rows}</div></article>`;
-}
-
-function groupedMenuSections(twoTrades = false, horizontal = false) {
-  return Object.keys(menuPositionPreviewGames).map((gameKey) => {
-    const entry = menuPositionPreviewGames[gameKey];
-    const count = twoTrades && gameKey === "kc" ? entry.trades.length : 1;
-    const cards = Array.from({ length: count }, (_, index) => menuPositionCard(gameKey, index)).join("");
-    return `<section class="hpos-game-group" aria-label="${entry.label}"><p class="hpos-game-heading">${entry.label}</p><div class="${horizontal ? "ds-group-trade-carousel" : "ds-group-trade-stack"}">${cards}</div></section>`;
-  }).join("");
-}
-
-function gameHeaderPositionsMenuPreview(mode = "positionsPanelOpen") {
-  let list = groupedMenuSections(false, false);
-  if (mode === "positionsMenuTwoTrades") list = groupedMenuSections(true, false);
-  if (mode === "positionsMenuCombined") list = Object.keys(menuPositionPreviewGames).map((key) => menuCombinedCard(key)).join("");
-  if (mode === "positionsMenuCombinedCarousel") list = Object.keys(menuPositionPreviewGames).map((key) => menuCombinedCard(key, true)).join("");
-  if (mode === "positionsMenuGroupedCarousel") list = groupedMenuSections(true, true);
-  if (mode === "positionsMenuCompactOverview") list = Object.keys(menuPositionPreviewGames).map((key) => menuCompactOverviewCard(key)).join("");
-  return `<div class="hpos-backdrop is-open" aria-hidden="true"></div><div class="hpos-panel ds-hpos-panel ds-hpos-${mode}" role="dialog" aria-label="All open trades">
-    <p class="hpos-heading">All Open Trades</p>
-    <div class="hpos-list">${list}</div>
-  </div>`;
-}
 
 const tradeLayoutVariantDocumentation = {
   homeAll: {
@@ -2411,16 +2253,12 @@ function hydrateTradeLayoutExperiences(root) {
 }
 
 function renderGameFrame(mode) {
-  const positionsMenuModes = ["positionsPanelOpen", "positionsMenuTwoTrades", "positionsMenuCombined", "positionsMenuCombinedCarousel", "positionsMenuGroupedCarousel", "positionsMenuCompactOverview"];
-  if (mode === "live" || mode === "liveLogos" || mode === "gameStatsLogos" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "openPositions" || positionsMenuModes.includes(mode) || mode === "gameStatsNFL" || mode === "final") {
+  if (mode === "live" || mode === "liveLogos" || mode === "gameStatsLogos" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "gameStatsNFL" || mode === "final") {
     const useLogos = mode === "liveLogos" || mode === "gameStatsLogos";
-    const positionsMenuOpen = positionsMenuModes.includes(mode);
-    const hasGamePositions = mode === "openPositions" || positionsMenuOpen;
-    const positionCount = positionsMenuOpen && mode !== "positionsPanelOpen" ? 4 : 3;
-    const g = mode === "gameStatsNFL" || useLogos ? gameFrameData.statsNfl : hasGamePositions ? gameFrameData.openPositions : gameFrameData[mode];
+    const g = mode === "gameStatsNFL" || useLogos ? gameFrameData.statsNfl : gameFrameData[mode];
     const statsPanel = mode === "gameStatsNFL" || mode === "gameStatsLogos" ? "game" : "market";
     const gameColors = `--home-color:${g.home.color};--away-color:${g.away.color}`;
-    return `<div class="flat-screen is-game is-game-${mode}${positionsMenuOpen ? " is-game-positionsPanelOpen" : ""}">${homeHeader(hasGamePositions, hasGamePositions, positionsMenuOpen, positionCount)}${positionsMenuOpen ? gameHeaderPositionsMenuPreview(mode) : ""}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${hasGamePositions ? gameOpenPositionsPreview(mode) : ""}${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter()}</div>`;
+    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader()}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter()}</div>`;
   }
   let banner = "";
   let markets = flatMarkets(mode === "pregame");
@@ -2887,37 +2725,36 @@ function renderFlatFrame(frame, useTitleCase = false) {
   return `<article class="flat-frame-wrap flat-frame--${frame.type} flat-frame--${frame.type}-${frame.mode}">${renderVariantDocumentation(frame, label)}<div class="flat-phone">${screen}</div></article>`;
 }
 
+function documentationList(value) {
+  const items = Array.isArray(value) ? value : [value];
+  return `<ul>${items.filter(Boolean).map((item) => `<li>${item}</li>`).join("")}</ul>`;
+}
+
 function hydrateIndividualPageChrome(section) {
   const docKey = section.dataset.individualPage;
   const doc = individualPageDocumentation[docKey];
-  if (!doc || docKey === "home") return;
+  if (!doc) return;
 
   section.classList.remove("individual-page-doc");
   section.classList.add("ds-restored-page-doc");
   section.innerHTML = `<article class="panel ds-pages-panel ds-individual-page-panel">
     <div class="panel-header">
-      <h2>${doc.title}</h2>
+      <div class="ds-page-heading"><h2>${doc.title}</h2><p>${doc.purpose}</p><span class="ds-doc-source">${doc.implementation}</span></div>
       <div class="ds-page-actions">
         <div class="ds-device-toggle" role="group" aria-label="${doc.title} preview device">
-          <button class="is-active" type="button" data-individual-device="mobile" aria-pressed="true">Mobile</button>
-          <button type="button" data-individual-device="tablet" aria-pressed="false">Tablet</button>
-          <button type="button" data-individual-device="desktop" aria-pressed="false">Desktop</button>
-        </div>
-        <div class="ds-page-zoom" role="group" aria-label="${doc.title} preview zoom controls">
-          <button class="ds-icon-btn" type="button" aria-label="Zoom out" data-individual-zoom="out"><span class="material-symbols-outlined" aria-hidden="true">remove</span></button>
-          <button class="ds-page-zoom-value" type="button" data-individual-zoom="reset" aria-label="Reset zoom">100%</button>
-          <button class="ds-icon-btn" type="button" aria-label="Zoom in" data-individual-zoom="in"><span class="material-symbols-outlined" aria-hidden="true">add</span></button>
+          <button class="is-active" type="button" data-individual-device="mobile" aria-label="Mobile preview" title="Mobile preview" aria-pressed="true"><span class="material-symbols-outlined" aria-hidden="true">smartphone</span></button>
+          <button type="button" data-individual-device="tablet" aria-label="Tablet preview" title="Tablet preview" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">tablet_mac</span></button>
+          <button type="button" data-individual-device="desktop" aria-label="Desktop preview" title="Desktop preview" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">desktop_windows</span></button>
         </div>
       </div>
     </div>
     <div class="ds-page-docs"><div class="ds-page-doc-grid">
-      <article><span class="ds-doc-label">Purpose</span><p>${doc.purpose}</p><span class="ds-doc-source">${doc.implementation}</span></article>
-      <article><span class="ds-doc-label">Required states</span><p>${doc.states}</p></article>
-      <article><span class="ds-doc-label">Implementation contract</span><ul>${doc.contract.map((item) => `<li>${item}</li>`).join("")}</ul></article>
-      <article class="is-validation"><span class="ds-doc-label">Open validation</span><p>${doc.validation}</p></article>
+      <article><span class="ds-doc-label">Required states</span>${documentationList(doc.states)}</article>
+      <article><span class="ds-doc-label">Key implementation notes</span>${documentationList(doc.contract)}</article>
+      <article class="is-validation"><span class="ds-doc-label">Open validation</span>${documentationList(doc.validation)}</article>
     </div>
     ${doc.decision ? `<section class="ds-page-decision" aria-label="Implementation decision required"><header><span class="ds-decision-status">${doc.decision.status}</span><h3>${doc.decision.title}</h3><p>${doc.decision.summary}</p></header><div class="ds-page-decision-grid">${doc.decision.options.map((option) => `<article><div class="ds-decision-option-head"><h4>${option.title}</h4><code>${option.source}</code></div><ul>${option.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
-    ${doc.guides ? `<section class="ds-page-implementation"><header><span class="ds-doc-label">Developer Guide</span><h3>Implementation Details</h3><p>Use these contracts together with the state-specific notes below. The flat lays illustrate output; these rules define when and how that output is produced.</p></header><div class="ds-page-implementation-grid">${doc.guides.map((guide) => `<article><h4>${guide.title}</h4><ul>${guide.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
+    ${doc.guides ? `<section class="ds-page-implementation"><header><span class="ds-doc-label">Developer Guide</span><h3>Implementation Details</h3><p>Use these key notes together with the state-specific guidance below. The flat lays illustrate output; these rules define when and how that output is produced.</p></header><div class="ds-page-implementation-grid">${doc.guides.map((guide) => `<article><h4>${guide.title}</h4><ul>${guide.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
     </div>
     <section class="ds-page-states flat-lay-canvas" data-individual-content data-flat-device="mobile" data-device="mobile" style="--page-zoom: 1;"></section>
   </article>`;
@@ -2958,23 +2795,6 @@ individualPageSections.forEach((section) => {
   section.querySelectorAll("[data-individual-device]").forEach((button) => {
     button.addEventListener("click", () => {
       renderIndividualPageSection(section, button.dataset.individualDevice);
-    });
-  });
-  section.querySelectorAll("[data-individual-zoom]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const action = button.dataset.individualZoom;
-      const currentZoom = Number(section.dataset.individualZoom || 1);
-      const nextZoom = action === "reset"
-        ? 1
-        : Math.max(0.5, Math.min(1.5, currentZoom + (action === "in" ? 0.1 : -0.1)));
-      section.dataset.individualZoom = String(nextZoom);
-      section.querySelector("[data-individual-content]")?.style.setProperty("--page-zoom", String(nextZoom));
-      const value = section.querySelector("[data-individual-zoom='reset']");
-      if (value) value.textContent = `${Math.round(nextZoom * 100)}%`;
-      section.querySelectorAll("[data-individual-zoom]").forEach((control) => {
-        const controlAction = control.dataset.individualZoom;
-        control.disabled = (controlAction === "out" && nextZoom <= 0.5) || (controlAction === "in" && nextZoom >= 1.5);
-      });
     });
   });
   renderIndividualPageSection(section, "mobile");
@@ -3058,17 +2878,6 @@ function showSection(sectionId, options = {}) {
 
 function sectionFromHash() {
   return window.location.hash.replace("#", "") || "overview";
-}
-
-function setPageZoom(nextZoom) {
-  pageZoom = Math.max(0.5, Math.min(1.5, Math.round(nextZoom * 100) / 100));
-  pagePreview?.style.setProperty("--page-zoom", String(pageZoom));
-  if (pageZoomValue) pageZoomValue.textContent = `${Math.round(pageZoom * 100)}%`;
-
-  pageZoomButtons.forEach((button) => {
-    const action = button.dataset.pageZoom;
-    button.disabled = (action === "out" && pageZoom <= 0.5) || (action === "in" && pageZoom >= 1.5);
-  });
 }
 
 function pagePreviewSrc(src, authState, params = {}) {
@@ -3722,15 +3531,6 @@ pageTabs.forEach((button) => {
   });
 });
 
-pageZoomButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const action = button.dataset.pageZoom;
-    if (action === "in") setPageZoom(pageZoom + 0.1);
-    if (action === "out") setPageZoom(pageZoom - 0.1);
-    if (action === "reset") setPageZoom(1);
-  });
-});
-
 document.addEventListener("click", (event) => {
   const button = event.target.closest("[data-ds-theme]");
   if (!button) return;
@@ -4129,7 +3929,6 @@ startConfirmationTimers();
 renderDrawerComponentStates();
 setDrawerView(drawerSection?.dataset.drawerViewMode);
 drawerSection?.querySelectorAll(".bet-sheet").forEach(updateDrawerPreview);
-setPageZoom(pageZoom);
 if (pageTabs.length) loadPagePreview(document.querySelector("[data-page-tab].is-active") || pageTabs[0]);
 showSection(sectionFromHash(), { instant: true });
 describeColorSwatches();

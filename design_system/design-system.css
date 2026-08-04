@@ -75,6 +75,10 @@
   --swatch-surface: color-mix(in srgb, var(--ds-surface-2) 82%, #000);
   --page-glow: radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.08), transparent 46%);
   background: var(--page-glow), var(--ds-bg);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 100% 760px;
+  min-height: 100vh;
 }
 
 .design-system-root[data-theme="light"] .design-system-page {
@@ -93,6 +97,14 @@
   --position-surface-base: #ffffff;
   --swatch-surface: color-mix(in srgb, var(--ds-surface-2) 94%, #000);
   --page-glow: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.08), transparent 46%);
+}
+
+.design-system-page:has(.individual-page-doc.is-active-section) {
+  --page-glow: radial-gradient(circle at 50% 0%, rgba(74, 222, 128, 0.05), transparent 46%);
+}
+
+.design-system-root[data-theme="light"] .design-system-page:has(.individual-page-doc.is-active-section) {
+  --page-glow: radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.05), transparent 46%);
 }
 
 /* Design-system chrome scrollbars mirror the app's floating overlay treatment. */
@@ -435,6 +447,11 @@
   max-width: 1120px;
 }
 
+.design-system-page #update-log {
+  margin-inline: 0;
+  max-width: 1120px;
+}
+
 /* Overview uses the approved flat editorial hierarchy: sections and rules, not nested cards. */
 .design-system-page .ds-overview {
   display: block;
@@ -518,17 +535,20 @@
   padding: var(--s12) 0;
 }
 
+.design-system-page .ds-overview-section:last-child {
+  border-bottom: 0;
+}
+
 .design-system-page .ds-overview-heading {
-  display: grid;
-  gap: var(--s5);
-  grid-template-columns: 44px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
   margin-bottom: var(--s8);
 }
 
 .design-system-page .ds-overview-heading > span {
   color: var(--green);
   font: 800 var(--fs-eyebrow) / 1 var(--font-ui);
-  padding-top: 7px;
 }
 
 .design-system-page .ds-overview-heading h2 {
@@ -552,15 +572,10 @@
 }
 
 .design-system-page .ds-overview-steps li {
-  border-top: 1px solid var(--line);
   display: grid;
   gap: var(--s5);
   grid-template-columns: 44px minmax(0, 1fr);
   padding: var(--s4) 0;
-}
-
-.design-system-page .ds-overview-steps li:last-child {
-  border-bottom: 1px solid var(--line);
 }
 
 .design-system-page .ds-overview-steps li > span,
@@ -570,13 +585,7 @@
   font-weight: 800;
 }
 
-.design-system-page .ds-overview-table,
-.design-system-page .ds-decision-list {
-  border-top: 1px solid var(--line);
-}
-
 .design-system-page .ds-overview-table [role="row"] {
-  border-bottom: 1px solid var(--line);
   display: grid;
   gap: var(--s5);
   grid-template-columns: 44px minmax(180px, 0.7fr) minmax(0, 1.3fr);
@@ -594,11 +603,170 @@
 
 .design-system-page .ds-decision-list > article {
   align-items: start;
-  border-bottom: 1px solid var(--line);
   display: grid;
   gap: var(--s5);
   grid-template-columns: 76px minmax(0, 1fr);
   padding: var(--s5) 0;
+}
+
+.design-system-page .ds-no-open-decisions {
+  align-items: center;
+  color: var(--ink-2);
+  display: inline-flex;
+  gap: var(--s2);
+  margin: 0;
+}
+
+.design-system-page .ds-no-open-decisions .material-symbols-outlined {
+  color: var(--green);
+  font-size: 20px;
+}
+
+.design-system-page .ds-update-log-intro {
+  border-bottom: 1px solid var(--line);
+  padding: var(--s16) 0 var(--s10);
+  position: relative;
+}
+
+.design-system-page .ds-update-log-intro > .ds-theme-toggle {
+  position: absolute;
+  right: 0;
+  top: var(--s16);
+}
+
+.design-system-page .ds-update-log-intro h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.25rem, 2.75rem + 2.5vw, 5.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.design-system-page .ds-update-log-intro > p {
+  color: var(--ink-2);
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  margin: var(--s6) 0 0;
+  max-width: 68ch;
+}
+
+.design-system-page .ds-update-list {
+  display: grid;
+  gap: var(--s5);
+  padding-top: var(--s10);
+}
+
+.design-system-page .ds-update-card {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  width: 100%;
+}
+
+.design-system-page .ds-update-card > summary {
+  align-items: center;
+  cursor: pointer;
+  display: grid;
+  gap: var(--s6);
+  grid-template-columns: minmax(0, 1fr) 32px;
+  list-style: none;
+  padding: var(--s6);
+}
+
+.design-system-page .ds-update-card > summary::-webkit-details-marker {
+  display: none;
+}
+
+.design-system-page .ds-update-card > summary:hover {
+  background: color-mix(in srgb, var(--green-ink) 4%, transparent);
+}
+
+.design-system-page .ds-update-summary {
+  display: grid;
+  gap: var(--s1);
+}
+
+.design-system-page .ds-update-summary strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+}
+
+.design-system-page .ds-update-meta {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .ds-update-chevron {
+  color: var(--ink-2);
+  transition: transform 180ms ease;
+}
+
+.design-system-page .ds-update-card[open] .ds-update-chevron {
+  transform: rotate(180deg);
+}
+
+.design-system-page .ds-update-content {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 56px;
+  padding: var(--s8) var(--s6);
+}
+
+.design-system-page .ds-update-content section {
+  display: grid;
+  gap: var(--s4);
+}
+
+.design-system-page .ds-update-content h2 {
+  font-size: var(--fs-h3);
+  margin: 0;
+}
+
+.design-system-page .ds-update-content ul {
+  color: var(--ink-2);
+  display: grid;
+  gap: var(--s3);
+  line-height: 1.55;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.design-system-page .ds-update-content li::marker {
+  color: var(--green-ink);
+}
+
+.design-system-page .ds-update-handoff p {
+  color: var(--ink-2);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 82ch;
+}
+
+.design-system-page .ds-update-commits {
+  align-items: center;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  padding-top: var(--s5);
+}
+
+.design-system-page .ds-update-commits > span {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  margin-right: var(--s1);
+}
+
+.design-system-page .ds-update-commits code {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  padding: 6px 9px;
 }
 
 .design-system-page .ds-decision-id {
@@ -1140,10 +1308,11 @@
   cursor: pointer;
   display: inline-flex;
   font: 700 var(--fs-label) / 1 var(--font-ui);
-  gap: 6px;
   justify-content: center;
+  height: 36px;
   min-height: 34px;
-  padding: 0 var(--s3);
+  padding: 0;
+  width: 36px;
 }
 
 .design-system-page .ds-theme-toggle button:hover {
@@ -1151,8 +1320,9 @@
 }
 
 .design-system-page .ds-theme-toggle button.is-active {
-  background: var(--green);
-  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--green-ink) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green-ink) 34%, transparent);
+  color: var(--green-ink);
 }
 
 .design-system-page .ds-theme-toggle .material-symbols-outlined {
@@ -1300,41 +1470,6 @@
   flex-wrap: wrap;
   gap: var(--s2);
   justify-content: flex-end;
-}
-
-.design-system-page .ds-page-zoom {
-  align-items: center;
-  background: color-mix(in srgb, var(--surface-2) 82%, transparent);
-  border: 1px solid var(--line);
-  border-radius: var(--r-pill);
-  display: inline-flex;
-  gap: 4px;
-  padding: 4px;
-}
-
-.design-system-page .ds-page-zoom .ds-icon-btn {
-  height: 34px;
-  width: 34px;
-}
-
-.design-system-page .ds-page-zoom .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.design-system-page .ds-page-zoom-value {
-  background: transparent;
-  border: 0;
-  border-radius: var(--r-pill);
-  color: var(--ink);
-  cursor: pointer;
-  font: 700 var(--fs-label) / 1 var(--font-ui);
-  min-height: 34px;
-  min-width: 58px;
-  padding: 0 var(--s3);
-}
-
-.design-system-page .ds-page-zoom-value:hover {
-  background: rgba(255, 255, 255, 0.07);
 }
 
 .design-system-page .ds-page-tabs {
@@ -1664,23 +1799,6 @@
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-phone {
   border: 1px solid var(--ds-frame-border);
   border-radius: 12px;
-}
-
-.design-system-page .flat-phone::before {
-  background: var(--ds-frame-bezel);
-  border-radius: 0 0 14px 14px;
-  content: "";
-  height: 18px;
-  left: 50%;
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  width: 112px;
-  z-index: 4;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-phone::before {
-  display: none;
 }
 
 .design-system-page .flat-screen {
@@ -5182,9 +5300,6 @@
     justify-content: stretch;
   }
 
-  .design-system-page .ds-page-zoom {
-    justify-content: space-between;
-  }
 }
 
 /* Current app component reference sections -------------------------- */
@@ -5743,10 +5858,6 @@
 .design-system-page .ds-dialog-phone .flat-phone {
   height: var(--flat-frame-h);
   min-height: 0;
-}
-
-.design-system-page .ds-dialog-phone .flat-phone::before {
-  z-index: 501;
 }
 
 .design-system-page .ds-dialog-phone .flat-screen {
@@ -6526,10 +6637,10 @@
 }
 
 .design-system-page .ds-restored-page-doc > .ds-individual-page-panel > .panel-header {
-  align-items: center;
+  align-items: start;
   border-bottom: 1px solid var(--line);
   margin-bottom: 0;
-  padding-bottom: var(--s6);
+  padding-bottom: var(--s8);
 }
 
 .design-system-page .ds-restored-page-doc > .ds-individual-page-panel > .panel-header h2 {
@@ -6540,10 +6651,28 @@
   margin: 0;
 }
 
+.design-system-page .ds-restored-page-doc .ds-page-heading {
+  display: grid;
+  gap: var(--s3);
+  min-width: 0;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-heading p {
+  color: var(--ink-2);
+  font-size: var(--fs-lead);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 68ch;
+}
+
+.design-system-page .ds-restored-page-doc .ds-page-heading .ds-doc-source {
+  justify-self: start;
+}
+
 .design-system-page .ds-restored-page-doc .ds-page-actions {
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--s2);
   justify-content: flex-end;
 }
@@ -6559,14 +6688,23 @@
 }
 
 .design-system-page .ds-restored-page-doc .ds-device-toggle button {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: var(--r-pill);
   color: var(--ink-2);
   cursor: pointer;
+  display: inline-flex;
   font: 700 var(--fs-label) / 1 var(--font-ui);
+  height: 36px;
+  justify-content: center;
   min-height: 34px;
-  padding: 0 var(--s3);
+  padding: 0;
+  width: 36px;
+}
+
+.design-system-page .ds-restored-page-doc .ds-device-toggle .material-symbols-outlined {
+  font-size: 18px;
 }
 
 .design-system-page .ds-restored-page-doc .ds-device-toggle button:hover {
@@ -6574,8 +6712,9 @@
 }
 
 .design-system-page .ds-restored-page-doc .ds-device-toggle button.is-active {
-  background: var(--green);
-  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--green-ink) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green-ink) 34%, transparent);
+  color: var(--green-ink);
 }
 
 .design-system-page .ds-restored-page-doc .ds-page-docs {
@@ -6715,17 +6854,17 @@
 
 .design-system-page .ds-restored-page-doc .ds-page-doc-grid {
   display: grid;
-  gap: 0;
+  gap: 56px;
   grid-template-columns: 1fr;
+  padding-block: var(--s8);
 }
 
 .design-system-page .ds-restored-page-doc .ds-page-doc-grid > article {
-  border-bottom: 1px solid var(--line);
   display: grid;
   gap: var(--s5);
   grid-template-columns: 180px minmax(0, 1fr);
   min-width: 0;
-  padding: var(--s5) 0;
+  padding: 0;
 }
 
 .design-system-page .ds-restored-page-doc .ds-doc-label {
@@ -6751,7 +6890,7 @@
 }
 
 .design-system-page .ds-restored-page-doc .ds-page-doc-grid > article > code,
-.design-system-page .ds-restored-page-doc .ds-doc-source {
+.design-system-page .ds-restored-page-doc .ds-page-doc-grid > article > .ds-doc-source {
   grid-column: 2;
   justify-self: start;
 }
@@ -6849,6 +6988,35 @@
     padding-top: var(--s10);
   }
 
+  .design-system-page .ds-update-log-intro {
+    padding-top: var(--s10);
+  }
+
+  .design-system-page .ds-update-log-intro > .ds-theme-toggle {
+    position: static;
+    width: max-content;
+  }
+
+  .design-system-page .ds-update-card > summary {
+    gap: var(--s3);
+    grid-template-columns: minmax(0, 1fr) 28px;
+    padding: var(--s5);
+  }
+
+  .design-system-page .ds-update-summary {
+    grid-column: 1;
+  }
+
+  .design-system-page .ds-update-chevron {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .design-system-page .ds-update-content {
+    gap: var(--s10);
+    padding: var(--s6) var(--s5);
+  }
+
   .design-system-page .ds-overview-metrics {
     grid-template-columns: 1fr;
   }
@@ -6871,7 +7039,7 @@
   }
 
   .design-system-page .ds-restored-page-doc .ds-page-doc-grid > article > code,
-  .design-system-page .ds-restored-page-doc .ds-doc-source {
+  .design-system-page .ds-restored-page-doc .ds-page-doc-grid > article > .ds-doc-source {
     grid-column: 1;
   }
 }
@@ -7280,7 +7448,7 @@
   width: 100%;
 }
 
-/* Trades & Trade Cards exploration ---------------------------------------- */
+/* Approved open-trade layouts shared by the Home and Game page references. */
 .design-system-page .flat-frame--tradeLayout .flat-phone {
   height: auto;
   min-height: var(--flat-frame-h, 760px);
@@ -7294,11 +7462,6 @@
   min-height: var(--flat-frame-h, 760px);
   overflow: hidden;
   position: relative;
-}
-
-.design-system-page .flat-screen.is-trade-layout-home > .site-header {
-  position: relative;
-  z-index: 4;
 }
 
 .design-system-page .flat-screen.is-trade-layout-menu > .site-header {
@@ -7578,15 +7741,23 @@
   width: 100%;
 }
 
+.design-system-page .flat-screen.is-home.is-home-positions.is-trade-layout-home .trade-layout-hero {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .design-system-page .trade-layout-hero .hero-grid {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 8%, #000 34%, #000 100%);
-  mask-image: linear-gradient(to bottom, transparent 8%, #000 34%, #000 100%);
-  opacity: .14;
-  perspective-origin: 50% 28%;
+  display: block;
+  opacity: .1;
+  perspective-origin: 50% 42%;
+  visibility: visible;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 34%, #000 60%);
+  mask-image: linear-gradient(to bottom, transparent 34%, #000 60%);
 }
 
 .design-system-page .trade-layout-hero .hero-grid-plane {
-  top: 28%;
+  animation: grid-toward 6s linear infinite;
+  top: 42%;
 }
 
 .design-system-page .trade-layout-home-panel .positions-head {
