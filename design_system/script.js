@@ -1351,6 +1351,20 @@ const gameFrameData = {
 
 const flatDocViews = {
   home: flatDocs.home,
+  trades: {
+    title: "Trades & Trade Cards",
+    description: "Alternative filtering and card layouts for the authenticated Home page, Live Game page, and global Open Trades menu.",
+    groups: [
+      { title: "Home Page", frames: [
+        { label: "Multiple Games — All Selected", type: "tradeLayout", mode: "homeAll" },
+        { label: "One Game — No All Option", type: "tradeLayout", mode: "homeSingle" },
+      ] },
+      { title: "Live Game Page & Open Trades Menu", frames: [
+        { label: "Live Game — My Game Trades", type: "tradeLayout", mode: "liveGame" },
+        { label: "Open Trades Menu — All Games", type: "tradeLayout", mode: "menuAll" },
+      ] },
+    ],
+  },
   waitlist: {
     title: "Waitlist Page",
     description: "Public launch landing page, email validation, submission progress, and confirmed early-access states.",
@@ -1491,6 +1505,23 @@ const individualHomeView = {
   ],
 };
 const individualPageDocumentation = {
+  trades: {
+    title: "Trades & Trade Cards",
+    implementation: "Exploration for <code>home.html</code>, <code>game.html</code>, and the shared Open Trades menu",
+    purpose: "Explore one consistent way to filter open trades by game while retaining score context in the All view and reducing repeated scoreboards in a game-specific view.",
+    states: "Multiple-game All view, multiple-game selected view, single-game view without All, Live Game My Trades, Open Trades menu All view, and Open Trades menu selected-game view.",
+    contract: [
+      "Show All only when trades belong to more than one game; with one game, render only that matchup option.",
+      "Keep one shared scorecard fixed above the trade carousel in both All and game-specific views.",
+      "In All, keep trades from the same game adjacent and update the shared scorecard as the focused card changes game.",
+      "Use the same filter order, selected state, trade values, and responsive behavior on Home and in the global Open Trades menu.",
+    ],
+    validation: "Confirm whether game filters should preserve their selection between Home and the Open Trades menu, and how settled or postponed games should be ordered alongside live games.",
+    guides: [
+      { title: "Filter Rules", items: ["Order All first, followed by games with the most recently active game first.", "Use compact matchup labels such as KC v SF; preserve a full accessible label containing both team names.", "If only one game has open trades, omit All and do not present a redundant disabled choice.", "Changing filters updates the score and cards together as one state change."] },
+      { title: "Card Rules", items: ["All and selected-game views use the same persistent scorecard and trade-card structure.", "Animate only the scorecard content when the focused trade changes game; do not move the scorecard container.", "Keep Buy More and Sell attached to the individual trade in both treatments.", "Multiple trades for one game remain adjacent and horizontally scroll only when the viewport cannot display them together."] },
+    ],
+  },
   waitlist: {
     title: "Waitlist",
     implementation: "<code>waitlist.html</code>, <code>waitlist.css</code>, <code>waitlist.js</code>",
@@ -1920,14 +1951,17 @@ function gamePositionMark(abbr, name, color) {
 function gamePositionCardPreview({ market, side, qty, value, result, bought, now, teams }) {
   const marks = teams.map((team) => gamePositionMark(team.abbr, team.name, team.color)).join("");
   const colors = teams.map((team) => team.color);
+  const compactValue = value.replace(/\.00$/, "");
   const up = !result.startsWith("-");
+  const teamName = teams[0]?.name || "team";
+  const winCopy = market === "Tie"
+    ? `You win if the game is ${side === "yes" ? "tied" : "not tied"}.`
+    : `You win if the ${teamName} ${market === "Get the Lead" ? (side === "yes" ? "get" : "do not get") : (side === "yes" ? "keep" : "do not keep")} the lead.`;
   return `<article class="game-position-card pos-card--a${teams.length > 1 ? " is-tie-outcome" : ""}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
     <div class="pos-info">
-      <div class="oc-summary">
-        <div class="oc-row"><span class="oc-position-title"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><span class="oc-tag">${market}</span></span><span class="oc-vr-head">Value: <span class="tnum">${value}</span></span></div>
-        <div class="oc-row"><span class="oc-sub"><span class="side-${side}">${side.toUpperCase()}</span> · ${qty} contracts</span><span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${result}</span></span></div>
-      </div>
-      <div class="game-position-pricing" aria-label="Trade price movement"><span>Bought <strong class="tnum">${bought}</strong></span><span>Now <strong class="tnum">${now}</strong></span></div>
+      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><p class="trade-current-condition">${winCopy}</p></div>
+      <div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${result}</strong></span></div>
+      <div class="trade-option-inline-meta"><span>${qty} contracts</span><i>•</i><span>Bought ${bought}</span><i>•</i><span>Now ${now}</span></div>
       <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
     </div>
   </article>`;
@@ -1956,6 +1990,7 @@ const menuPositionPreviewGames = {
     trades: [
       { market: "Get the Lead", side: "yes", qty: 150, value: "$57.00", pnl: "+$10.50", bought: "31¢", now: "38¢" },
       { market: "Tie", side: "no", qty: 60, value: "$46.80", pnl: "+$2.40", bought: "74¢", now: "78¢" },
+      { market: "Keep the Lead", side: "yes", qty: 100, value: "$40.00", pnl: "+$0.00", bought: "40¢", now: "40¢" },
     ],
   },
   den: {
@@ -1988,7 +2023,8 @@ function menuPositionCard(gameKey, tradeIndex = 0) {
   const entry = menuPositionPreviewGames[gameKey];
   const trade = entry.trades[tradeIndex] || entry.trades[0];
   const up = !trade.pnl.startsWith("-");
-  return `<article class="pos-card pos-card--a ds-menu-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">${trade.market}</span><span class="oc-vr-head">Value: <span class="tnum">${trade.value}</span></span></div><div class="oc-row"><span class="oc-sub"><span class="side-${trade.side}">${trade.side.toUpperCase()}</span> · ${trade.qty} contracts</span><span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</span></span></div></div>${menuTradeActions()}</div></article>`;
+  const compactValue = trade.value.replace(/\.00$/, "");
+  return `<article class="pos-card pos-card--a ds-menu-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info"><div class="trade-current-topline"><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div><div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>${menuTradeActions()}</div></article>`;
 }
 
 function menuTradeSummary(trade, selected = false) {
@@ -2034,6 +2070,338 @@ function gameHeaderPositionsMenuPreview(mode = "positionsPanelOpen") {
     <p class="hpos-heading">All Open Trades</p>
     <div class="hpos-list">${list}</div>
   </div>`;
+}
+
+const tradeLayoutVariantDocumentation = {
+  homeAll: {
+    summary: "The authenticated Home-page trade area when open trades span several games and All is selected.",
+    trigger: "Use when the customer has open trades in two or more games and has not narrowed the view.",
+    changes: "Add the game filter above one persistent scorecard and a trade carousel grouped by matchup.",
+    data: "All open trades, their game identity, live score and clock, market, side, contracts, value, and return.",
+    behavior: "Scrolling to a trade from another game transitions the fixed scorecard content; selecting a game scrolls in that game's cards beneath the same scorecard.",
+  },
+  homeGame: {
+    summary: "The authenticated Home-page trade area narrowed to one game from a multi-game portfolio.",
+    trigger: "Use after the customer selects a matchup from the multi-game filter.",
+    changes: "Show the selected game's live score once, then display its My Trades cards horizontally beneath it.",
+    data: "The selected game plus every open trade belonging to it.",
+    behavior: "All restores the grouped portfolio view; another matchup replaces both the scorecard and trade row.",
+  },
+  homeSingle: {
+    summary: "The Home-page trade area when every open trade belongs to one game.",
+    trigger: "Use when the customer has one or more trades, all sharing the same game id.",
+    changes: "Render only the matchup filter option; omit All because there is no second game to aggregate.",
+    data: "The single game and all of its open trades.",
+    behavior: "The sole matchup remains selected and the shared score plus My Trades row are displayed directly below it.",
+  },
+  liveGame: {
+    summary: "The Live Game page with trades belonging to the current game shown above the statistics.",
+    trigger: "Use when the authenticated customer holds one or more trades whose game id matches the page.",
+    changes: "Keep the page score and markets unchanged, then show My Game Trades as horizontal cards without repeating the score.",
+    data: "Current game data and only the customer's matching open trades.",
+    behavior: "Cards keep their individual Buy More and Sell actions and use pagination only when the visible set overflows.",
+  },
+  menuAll: {
+    summary: "The global Open Trades menu with multiple games and All selected.",
+    trigger: "Use when the menu opens and the customer has trades in two or more games.",
+    changes: "Use the implemented header trigger, backdrop and floating panel, then place the shared game filter above vertical game sections, each with its own live scoreboard and trade cards.",
+    data: "The complete open-trade portfolio and current game snapshots.",
+    behavior: "The menu itself scrolls vertically and matchup section breaks remain in All; selecting a matchup reveals that game's shared scoreboard and ungrouped trade list.",
+  },
+  menuGame: {
+    summary: "The global Open Trades menu narrowed to a selected game.",
+    trigger: "Use after a matchup is selected from the menu filter.",
+    changes: "Keep one shared live score above a vertical trade list and remove matchup section headings from the selected-game view.",
+    data: "The selected game and every matching trade.",
+    behavior: "Buy More and Sell remain scoped to each trade; All returns to the grouped menu.",
+  },
+};
+
+function tradeLayoutFilter(active = "all", singleGame = false) {
+  const games = singleGame ? ["kc"] : ["kc", "den", "ny"];
+  const options = [
+    ...(singleGame ? [] : [{ key: "all", label: "All", accessible: "All games" }]),
+    ...games.map((key) => {
+      const game = menuPositionPreviewGames[key].game;
+      return { key, label: `${game.home.abbr} v ${game.away.abbr}`, accessible: `${game.home.name} versus ${game.away.name}` };
+    }),
+  ];
+  return `<div class="trade-game-strip" role="tablist" aria-label="Filter open trades by game">${options.map((option) => {
+    const entry = option.key === "all" ? null : menuPositionPreviewGames[option.key];
+    const icon = option.key === "all"
+      ? `<span class="trade-game-all-content" aria-hidden="true"><strong>All</strong></span>`
+      : `<span class="trade-game-compact-mark" aria-hidden="true"><span class="trade-game-compact-label"><strong>${entry.game.home.abbr}</strong><b>/</b><strong>${entry.game.away.abbr}</strong></span></span>`;
+    const colors = entry ? `--filter-home:${entry.game.home.color};--filter-away:${entry.game.away.color}` : `--filter-home:var(--green);--filter-away:#8fb7ff`;
+    return `<button class="trade-game-pill${option.key === active ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(option.key === active)}" aria-label="${option.accessible}" data-trade-filter="${option.key}"><span class="trade-game-icon${option.key === "all" ? " is-all" : ""}" style="${colors}">${icon}</span></button>`;
+  }).join("")}</div>`;
+}
+
+function tradeLayoutNavigation(count) {
+  if (count < 2) return "";
+  const dots = Array.from({ length: count }, (_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" aria-label="Trades page ${index + 1}" data-trade-page="${index}"></button>`).join("");
+  return `<div class="game-position-navigation"><button class="game-position-nav-button" type="button" aria-label="Previous trades page" data-trade-nav="prev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="game-position-dots">${dots}</div><button class="game-position-nav-button" type="button" aria-label="Next trades page" data-trade-nav="next"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`;
+}
+
+function tradeLayoutAllCards() {
+  const tradeCards = Object.entries(menuPositionPreviewGames).flatMap(([gameKey, entry]) => entry.trades.map((trade) => tradeLayoutCurrentGameCard(gameKey, trade, "compact")));
+  return `<section class="trade-layout-my-trades is-all-games" aria-label="All open trades, ordered by game"><div class="game-position-carousel">${tradeCards.join("")}</div>${tradeLayoutNavigation(tradeCards.length)}</section>`;
+}
+
+function tradeLayoutMenuAllCards() {
+  const groups = Object.entries(menuPositionPreviewGames).map(([gameKey, entry]) => `<section class="trade-layout-menu-group" aria-label="${entry.game.home.name} versus ${entry.game.away.name}"><div class="trade-layout-scorecard trade-layout-group-score">${tradeLayoutGameScoreboard(gameKey)}</div>${entry.trades.map((trade) => tradeLayoutCurrentGameCard(gameKey, trade, "compact")).join("")}</section>`).join("");
+  return `<section class="trade-layout-my-trades is-menu-vertical is-all-games" aria-label="All open trades, ordered by game"><div class="trade-layout-menu-list">${groups}</div></section>`;
+}
+
+function tradeLayoutGameData(gameKey) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const league = gameKey === "kc" ? "NFL" : "NBA";
+  return { ...entry.game, league, markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 40, no: 60 } } };
+}
+
+function tradeLayoutGameScoreboard(gameKey) {
+  return gameScoreboard(tradeLayoutGameData(gameKey));
+}
+
+function tradeLayoutOutcomeTeams(gameKey, trade) {
+  const game = menuPositionPreviewGames[gameKey].game;
+  if (trade.market === "Tie") return [game.home, game.away];
+  const leader = game.home.score >= game.away.score ? game.home : game.away;
+  const trailer = leader === game.home ? game.away : game.home;
+  if (trade.market === "Get the Lead") return [trade.side === "yes" ? trailer : leader];
+  return [trade.side === "yes" ? leader : trailer];
+}
+
+function tradeLayoutCurrentGameCopy(gameKey, trade) {
+  const team = menuPositionPreviewGames[gameKey].game.home;
+  if (trade.market === "Get the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "get" : "do not get"} the lead.`;
+  if (trade.market === "Keep the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "keep" : "do not keep"} the lead.`;
+  return `You win if the game ${trade.side === "yes" ? "is tied" : "doesn't end tied"}.`;
+}
+
+function tradeLayoutCurrentGameCard(gameKey, trade, variant = "table") {
+  const teams = tradeLayoutOutcomeTeams(gameKey, trade);
+  const marks = teams.map((team) => gamePositionMark(team.abbr, team.name, team.color)).join("");
+  const colors = teams.map((team) => team.color);
+  const up = !trade.pnl.startsWith("-");
+  const compactValue = trade.value.replace(/\.00$/, "");
+  const earningsClass = `oc-pnl ${up ? "up" : "down"} tnum`;
+  const details = variant === "compact"
+    ? `<div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
+    : variant === "value"
+      ? `<div class="trade-option-value-focus"><span><small>Current Value</small><strong class="tnum">${compactValue}</strong></span><span><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
+    : variant === "movement"
+      ? `<div class="trade-option-price-flow"><span><small>Bought At</small><strong class="tnum">${trade.bought}</strong></span><b aria-hidden="true">→</b><span><small>Now</small><strong class="tnum">${trade.now}</strong></span></div><div class="trade-option-price-summary"><span>${trade.qty} contracts</span><span>Value <strong class="tnum">${compactValue}</strong></span><strong class="${earningsClass}">${trade.pnl} earnings</strong></div>`
+      : `<div class="trade-option-table" role="table" aria-label="Trade details"><div class="trade-option-table-row is-labels" role="row"><span role="columnheader">Contracts</span><span role="columnheader">Bought At</span><span role="columnheader">Now</span></div><div class="trade-option-table-row is-values" role="row"><strong class="tnum" role="cell">${trade.qty}</strong><strong class="tnum" role="cell">${trade.bought}</strong><strong class="tnum" role="cell">${trade.now}</strong></div></div><div class="trade-option-table-result"><span>Value <strong class="tnum">${compactValue}</strong></span><span>Earnings <strong class="${earningsClass}">${trade.pnl}</strong></span></div>`;
+  return `<article class="game-position-card pos-card--a trade-layout-current-card is-${variant}${teams.length > 1 ? " is-tie-outcome" : ""}" data-trade-game="${gameKey}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
+    <div class="pos-info">
+      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div>
+      ${details}
+      <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
+    </div>
+  </article>`;
+}
+
+function tradeLayoutGameTrades(gameKey, instance, cardVariant = "table", vertical = false) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const cards = entry.trades.map((trade) => tradeLayoutCurrentGameCard(gameKey, trade, cardVariant)).join("");
+  const count = entry.trades.length;
+  if (vertical) return `<section class="trade-layout-my-trades is-menu-vertical" aria-label="Trades for ${entry.game.home.name} versus ${entry.game.away.name}"><div class="trade-layout-menu-list">${cards}</div></section>`;
+  return `<section class="trade-layout-my-trades" aria-label="Trades for ${entry.game.home.name} versus ${entry.game.away.name}"><div class="game-position-carousel">${cards}</div>${tradeLayoutNavigation(count)}</section>`;
+}
+
+function tradeLayoutSelectedGame(gameKey, instance, cardVariant = "table", showAll = false, verticalMenu = false) {
+  const trades = showAll ? (verticalMenu ? tradeLayoutMenuAllCards() : tradeLayoutAllCards()) : tradeLayoutGameTrades(gameKey, instance, cardVariant, verticalMenu);
+  return `<div class="trade-layout-selected-game" data-trade-layout-stage data-score-game="${gameKey}"><div class="trade-layout-scorecard" data-trade-scorecard>${tradeLayoutGameScoreboard(gameKey)}</div>${trades}</div>`;
+}
+
+function tradeLayoutBody({ active = "all", singleGame = false, instance = "default", cardVariant = "table" } = {}) {
+  const scoreGame = active === "all" ? "kc" : active;
+  const verticalMenu = instance.startsWith("menu");
+  return `<div class="trade-layout-experience" data-trade-layout-experience data-trade-instance="${instance}" data-trade-card-variant="${cardVariant}" data-trade-active="${active}" data-trade-vertical="${String(verticalMenu)}">${tradeLayoutFilter(active, singleGame)}${tradeLayoutSelectedGame(scoreGame, instance, cardVariant, active === "all", verticalMenu)}</div>`;
+}
+
+function tradeLayoutHomeHero(body) {
+  return `<section class="hero trade-layout-hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey Alex</h1></div><div class="authed-stack"><div class="positions-block trade-layout-home-panel"><div class="positions-head"><span class="eyebrow">Open Trades</span></div>${body}</div><span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
+}
+
+function tradeLayoutLiveGameData() {
+  return {
+    ...tradeLayoutGameData("kc"),
+    variant: 3,
+    stats: gameFrameData.openPositions.stats,
+  };
+}
+
+function tradeLayoutLiveGameTrades(instance = "liveGame") {
+  const count = menuPositionPreviewGames.kc.trades.length;
+  const titleId = `tradeLayoutLiveGameTitle-${instance}`;
+  return `<section class="game-open-position container" aria-labelledby="${titleId}">
+    <div class="game-positions-head"><h2 id="${titleId}">My Game Trades</h2><span class="game-trade-count" aria-label="${count} open trades in this game">${count}</span></div>
+    <div class="trade-layout-experience" data-trade-layout-experience data-trade-instance="liveGame" data-trade-card-variant="compact" data-trade-active="kc" data-trade-vertical="false">${tradeLayoutGameTrades("kc", "liveGame", "compact")}</div>
+  </section>`;
+}
+
+function renderTradeLayoutLiveGame(menuBody = "") {
+  const game = tradeLayoutLiveGameData();
+  const gameColors = `--home-color:${game.home.color};--away-color:${game.away.color}`;
+  const menuOpen = Boolean(menuBody);
+  const portfolioCount = Object.values(menuPositionPreviewGames).reduce((total, entry) => total + entry.trades.length, 0);
+  const menu = menuOpen
+    ? `<div class="hpos-backdrop is-open" aria-hidden="true"></div><aside class="hpos-panel ds-hpos-panel trade-layout-actual-menu" role="dialog" aria-label="Open Trades"><p class="hpos-heading">Open Trades</p>${menuBody}</aside>`
+    : "";
+  const instance = menuOpen ? "menuAll" : "liveGame";
+  return `<div class="flat-screen is-game is-game-openPositions${menuOpen ? " is-game-positionsPanelOpen is-trade-layout-menu" : " is-trade-layout-live-game"}">${homeHeader(true, true, menuOpen, portfolioCount)}${menu}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(game)}${gameMarkets(game)}</div><div class="game-col-right">${tradeLayoutLiveGameTrades(instance)}${gameStatsPreview(game, "market", false, instance)}</div></div></main>${homeFooter()}</div>`;
+}
+
+function renderTradeLayoutFrame(mode) {
+  if (mode === "liveGame") return renderTradeLayoutLiveGame();
+  const selected = ["homeGame", "homeGameTable", "homeGameValue", "homeGameMovement", "menuGame", "homeSingle"].includes(mode);
+  const singleGame = mode === "homeSingle";
+  const cardVariant = mode === "homeGameTable" ? "table" : mode === "homeGameValue" ? "value" : mode === "homeGameMovement" ? "movement" : "compact";
+  const body = tradeLayoutBody({ active: selected ? "kc" : "all", singleGame, instance: mode, cardVariant });
+  if (mode === "menuAll" || mode === "menuGame") {
+    return renderTradeLayoutLiveGame(body);
+  }
+  return `<div class="flat-screen is-home is-home-positions is-trade-layout-home">${homeHeader(true, true, false, 4)}${tradeLayoutHomeHero(body)}${homeLiveSection("positions")}${homeHowSection()}${homeFooter()}</div>`;
+}
+
+function transitionTradeLayoutScorecard(experience, gameKey) {
+  const stage = experience.querySelector("[data-trade-layout-stage]");
+  const scorecard = experience.querySelector("[data-trade-scorecard]");
+  if (!stage || !scorecard || stage.dataset.scoreGame === gameKey) return;
+  const transitionId = `${Date.now()}-${gameKey}`;
+  scorecard.dataset.transitionId = transitionId;
+  scorecard.classList.add("is-changing");
+  window.setTimeout(() => {
+    if (scorecard.dataset.transitionId !== transitionId) return;
+    scorecard.innerHTML = tradeLayoutGameScoreboard(gameKey);
+    stage.dataset.scoreGame = gameKey;
+    scorecard.classList.remove("is-changing");
+    scorecard.classList.add("is-entering");
+    window.setTimeout(() => scorecard.classList.remove("is-entering"), 240);
+  }, 140);
+}
+
+function syncTradeLayoutCarousel(experience, index, smooth = true) {
+  const carousel = experience.querySelector(".trade-layout-my-trades .game-position-carousel");
+  if (!carousel) return;
+  const cards = [...carousel.querySelectorAll("[data-trade-game]")];
+  if (!cards.length) return;
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, index));
+  experience.dataset.tradeCardIndex = String(nextIndex);
+  const target = cards[nextIndex];
+  const firstCardOffset = cards[0].offsetLeft;
+  carousel.scrollTo({ left: target.offsetLeft - firstCardOffset, behavior: smooth ? "smooth" : "auto" });
+  cards.forEach((card, cardIndex) => card.setAttribute("aria-hidden", String(cardIndex !== nextIndex)));
+  experience.querySelectorAll("[data-trade-page]").forEach((dot) => dot.classList.toggle("is-active", Number(dot.dataset.tradePage) === nextIndex));
+  const previous = experience.querySelector("[data-trade-nav='prev']");
+  const next = experience.querySelector("[data-trade-nav='next']");
+  if (previous) previous.disabled = nextIndex === 0;
+  if (next) next.disabled = nextIndex === cards.length - 1;
+  transitionTradeLayoutScorecard(experience, target.dataset.tradeGame);
+}
+
+function bindTradeLayoutCarousel(experience) {
+  const carousel = experience.querySelector(".trade-layout-my-trades .game-position-carousel");
+  if (!carousel || carousel.dataset.tradeBound === "true") return;
+  carousel.dataset.tradeBound = "true";
+  let scrollTimer;
+  carousel.addEventListener("scroll", () => {
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      const cards = [...carousel.querySelectorAll("[data-trade-game]")];
+      if (!cards.length) return;
+      const firstCardOffset = cards[0].offsetLeft;
+      const index = cards.reduce((closest, card, cardIndex) => Math.abs(card.offsetLeft - firstCardOffset - carousel.scrollLeft) < Math.abs(cards[closest].offsetLeft - firstCardOffset - carousel.scrollLeft) ? cardIndex : closest, 0);
+      syncTradeLayoutCarousel(experience, index, false);
+    }, 90);
+  }, { passive: true });
+  syncTradeLayoutCarousel(experience, 0, false);
+}
+
+function bindTradeLayoutVerticalList(experience) {
+  const panel = experience.closest(".trade-layout-menu-panel, .trade-layout-actual-menu");
+  if (!experience.querySelector(".trade-layout-my-trades.is-menu-vertical") || !panel || experience.dataset.tradeVerticalBound === "true") return;
+  experience.dataset.tradeVerticalBound = "true";
+  let scrollTimer;
+  panel.addEventListener("scroll", () => {
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      const list = experience.querySelector(".trade-layout-my-trades.is-menu-vertical");
+      if (!list) return;
+      const cards = [...list.querySelectorAll("[data-trade-game]")];
+      if (!cards.length) return;
+      const anchor = panel.getBoundingClientRect().top + panel.clientHeight * .42;
+      const activeCard = cards.reduce((closest, card) => Math.abs(card.getBoundingClientRect().top - anchor) < Math.abs(closest.getBoundingClientRect().top - anchor) ? card : closest, cards[0]);
+      transitionTradeLayoutScorecard(experience, activeCard.dataset.tradeGame);
+    }, 70);
+  }, { passive: true });
+  const list = experience.querySelector(".trade-layout-my-trades.is-menu-vertical");
+  const firstCard = list.querySelector("[data-trade-game]");
+  if (firstCard) transitionTradeLayoutScorecard(experience, firstCard.dataset.tradeGame);
+}
+
+function bindTradeLayoutCards(experience) {
+  bindTradeLayoutCarousel(experience);
+  bindTradeLayoutVerticalList(experience);
+}
+
+function changeTradeLayoutFilter(experience, filterKey) {
+  if (!menuPositionPreviewGames[filterKey] && filterKey !== "all") return;
+  const instance = experience.dataset.tradeInstance || "interactive";
+  const cardVariant = experience.dataset.tradeCardVariant || "compact";
+  const verticalMenu = experience.dataset.tradeVertical === "true";
+  const nextGame = filterKey === "all" ? "kc" : filterKey;
+  experience.dataset.tradeActive = filterKey;
+  experience.dataset.tradeCardIndex = "0";
+  experience.querySelectorAll("[data-trade-filter]").forEach((button) => {
+    const active = button.dataset.tradeFilter === filterKey;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+  transitionTradeLayoutScorecard(experience, nextGame);
+  const currentCards = experience.querySelector(".trade-layout-my-trades");
+  const nextCards = filterKey === "all" ? (verticalMenu ? tradeLayoutMenuAllCards() : tradeLayoutAllCards()) : tradeLayoutGameTrades(filterKey, instance, cardVariant, verticalMenu);
+  currentCards?.classList.add("is-leaving");
+  window.setTimeout(() => {
+    currentCards?.insertAdjacentHTML("afterend", nextCards);
+    currentCards?.remove();
+    const incoming = experience.querySelector(".trade-layout-my-trades");
+    incoming?.classList.add("is-entering");
+    bindTradeLayoutCards(experience);
+    window.setTimeout(() => incoming?.classList.remove("is-entering"), 300);
+  }, 130);
+}
+
+function hydrateTradeLayoutExperiences(root) {
+  root.querySelectorAll("[data-trade-layout-experience]").forEach((experience) => {
+    if (experience.dataset.tradeHydrated === "true") return;
+    experience.dataset.tradeHydrated = "true";
+    experience.addEventListener("click", (event) => {
+      const filter = event.target.closest("[data-trade-filter]");
+      if (filter) {
+        event.preventDefault();
+        event.stopPropagation();
+        changeTradeLayoutFilter(experience, filter.dataset.tradeFilter);
+        return;
+      }
+      const page = event.target.closest("[data-trade-page]");
+      if (page) {
+        event.preventDefault();
+        event.stopPropagation();
+        syncTradeLayoutCarousel(experience, Number(page.dataset.tradePage));
+        return;
+      }
+      const navigation = event.target.closest("[data-trade-nav]");
+      if (navigation) {
+        event.preventDefault();
+        event.stopPropagation();
+        const current = Number(experience.dataset.tradeCardIndex || 0);
+        syncTradeLayoutCarousel(experience, current + (navigation.dataset.tradeNav === "next" ? 1 : -1));
+      }
+    });
+    bindTradeLayoutCards(experience);
+  });
 }
 
 function renderGameFrame(mode) {
@@ -2474,7 +2842,7 @@ function titleCaseVariantLabel(value) {
 }
 
 function renderVariantDocumentation(frame, label) {
-  const documentation = ({ game: gameVariantDocumentation, ranking: rankingVariantDocumentation, auth: authVariantDocumentation }[frame.type] || standaloneVariantDocumentation[frame.type] || {})[frame.mode];
+  const documentation = ({ game: gameVariantDocumentation, ranking: rankingVariantDocumentation, auth: authVariantDocumentation, tradeLayout: tradeLayoutVariantDocumentation }[frame.type] || standaloneVariantDocumentation[frame.type] || {})[frame.mode];
   if (!documentation) return `<div class="flat-frame-label">${label}</div>`;
   const fields = [
     ["Displayed When", documentation.trigger],
@@ -2503,6 +2871,7 @@ function renderFlatFrame(frame, useTitleCase = false) {
     location: renderLocationFrame,
     ranking: renderRankingFrame,
     game: renderGameFrame,
+    tradeLayout: renderTradeLayoutFrame,
     drawer: renderDrawerFrame,
     tracker: renderTrackerFrame,
     account: renderAccountFrame,
@@ -2567,6 +2936,7 @@ function renderIndividualPageSection(section, device = "mobile") {
   content.dataset.device = nextDevice;
   content.innerHTML = `<header class="ds-page-states-head"><span class="ds-doc-label">Page Variants</span><h3>${title} Variants</h3><p>${variantsDescription}</p></header>
     ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${titleCaseVariantLabel(group.title)}</h3></div><div class="flat-frame-row">${group.frames.map((frame) => renderFlatFrame(frame, true)).join("")}</div></section>`).join("")}`;
+  hydrateTradeLayoutExperiences(content);
 
   section.querySelectorAll("[data-individual-device]").forEach((button) => {
     const active = button.dataset.individualDevice === nextDevice;

@@ -1199,24 +1199,13 @@ function positionOutcomeChipHTML(p, g) {
 function gopPositionCard(p, i, { actions = true } = {}) {
   const { g, cur, value, pnl } = posFigures(p);
   const outcome = positionOutcome(p, g);
+  const compactValue = money(value).replace(/\.00$/, "");
   const up = pnl >= 0;
-  const sideTag = `<span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
   return `<article class="game-position-card pos-card--a${outcome.teams.length > 1 ? " is-tie-outcome" : ""}" style="--outcome-color:${outcome.colors[0]};--outcome-color-2:${outcome.colors[1] || outcome.colors[0]}">
     <div class="pos-info">
-      <div class="oc-summary">
-        <div class="oc-row">
-          <span class="oc-position-title">${positionOutcomeChipHTML(p, g)}<span class="oc-tag">${MARKET_LABELS[p.market]}</span></span>
-          <span class="oc-vr-head">Value: <span class="tnum">${money(value)}</span></span>
-        </div>
-        <div class="oc-row">
-          <span class="oc-sub">${sideTag} · ${p.qty} contracts</span>
-          <span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
-        </div>
-        <div class="game-position-pricing" aria-label="Trade price movement">
-          <span>Bought <strong class="tnum">${p.avg}¢</strong></span>
-          <span>Now <strong class="tnum">${cur}¢</strong></span>
-        </div>
-      </div>
+      <div class="trade-current-topline">${positionOutcomeChipHTML(p, g)}<p class="trade-current-condition">${drawerWinHeading(g, p.market, p.side)}</p></div>
+      <div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</strong></span></div>
+      <div class="trade-option-inline-meta"><span>${p.qty} contracts</span><i>•</i><span>Bought ${p.avg}¢</span><i>•</i><span>Now ${cur}¢</span></div>
       ${actions ? posActions(i) : ""}
     </div>
   </article>`;

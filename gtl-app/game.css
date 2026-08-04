@@ -738,6 +738,23 @@ body.pos-open .betbar { display: none; }
 .game-position-pricing { display: flex; align-items: center; gap: var(--s4); color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
 .game-position-pricing strong { color: var(--ink); }
 .game-position-card .oc-actions { margin-top: var(--s1); }
+.game-position-card .trade-current-topline { display: flex; align-items: center; gap: var(--s3); }
+.game-position-card .trade-current-condition { margin: 0; color: var(--ink); font-size: var(--fs-label); font-weight: 700; line-height: 1.35; }
+.game-position-card .trade-current-total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
+.game-position-card .trade-current-total-item { display: inline-flex; align-items: baseline; gap: var(--s2); }
+.game-position-card .trade-current-total strong { color: var(--ink); font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; line-height: 1; }
+.game-position-card .trade-current-total small { color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-card .trade-current-total .oc-pnl.up { color: var(--green-ink); }
+.game-position-card .trade-current-total .oc-pnl.down { color: var(--no-ink); }
+.game-position-card .trade-option-value-focus { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+.game-position-card .trade-option-value-focus > span { display: flex; flex-direction: column; gap: 3px; }
+.game-position-card .trade-option-value-focus > span:last-child { align-items: flex-end; text-align: right; }
+.game-position-card .trade-option-value-focus small { color: var(--ink-2); font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.game-position-card .trade-option-value-focus strong { color: var(--ink); font-family: var(--font-display); font-size: 1.55rem; font-weight: 700; line-height: 1; }
+.game-position-card .trade-option-value-focus .oc-pnl.up { color: var(--green-ink); }
+.game-position-card .trade-option-value-focus .oc-pnl.down { color: var(--no-ink); }
+.game-position-card .trade-option-inline-meta { display: flex; align-items: center; gap: var(--s2); color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-card .trade-option-inline-meta i { color: var(--ink-3); font-style: normal; }
 .position-outcome-chip {
   display: inline-flex;
   align-items: center;
