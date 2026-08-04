@@ -10,12 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../gtl-app/tokens.css?v=20260729-light-theme-3">
-    <link rel="stylesheet" href="../gtl-app/styles.css?v=20260730-light-drawer-3">
-    <link rel="stylesheet" href="../gtl-app/home.css?v=20260729-light-theme-2">
-    <link rel="stylesheet" href="../gtl-app/game.css?v=20260730-light-game-page-6">
-    <link rel="stylesheet" href="../gtl-app/wallet.css">
-    <link rel="stylesheet" href="../gtl-app/auth.css?v=20260729-light-theme-2">
-    <link rel="stylesheet" href="../gtl-app/welcome.css?v=20260730-light-theme-2">
+    <link rel="stylesheet" href="../gtl-app/styles.css?v=20260804-drawer-heading-restore-1">
+    <link rel="stylesheet" href="../gtl-app/home.css?v=20260804-checkpoint2-1">
+    <link rel="stylesheet" href="../gtl-app/game.css?v=20260804-current-trade-card-option2-3">
+    <link rel="stylesheet" href="../gtl-app/wallet.css?v=20260804-order-condition-spacing-1">
+    <link rel="stylesheet" href="../gtl-app/auth.css?v=20260804-auth-flow-update-1">
+    <link rel="stylesheet" href="../gtl-app/welcome.css?v=20260804-auth-flow-update-1">
     <link rel="stylesheet" href="../gtl-app/location.css">
     <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260730-light-theme-1">
     <link rel="stylesheet" href="../gtl-app/profile.css">
@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="../gtl-app/fees.css">
     <link rel="stylesheet" href="../gtl-app/rules.css?v=20260730-mobile-table-1">
     <link rel="stylesheet" href="../gtl-app/waitlist.css?v=20260730-dark-only-1">
-    <link rel="stylesheet" href="design-system.css?v=20260730-overview-width-1">
+  <link rel="stylesheet" href="design-system.css?v=20260804-trade-layouts-52">
+    <script src="../gtl-app/brand.js?v=20260804-1" defer></script>
   </head>
   <body class="design-system-page">
     <aside class="sidebar" aria-label="Design system navigation">
@@ -37,6 +38,7 @@
 
       <nav class="side-nav">
         <a href="#overview" class="is-active">Overview</a>
+        <a href="#trades-trade-cards">Trades &amp; Trade Cards</a>
         <span class="side-nav-label">Pages</span>
         <a href="#page-home">Home</a>
         <a href="#page-waitlist">Waitlist</a>
@@ -129,6 +131,8 @@
         </section>
       </section>
 
+      <section id="trades-trade-cards" class="section individual-page-doc" data-individual-page="trades"></section>
+
       <section id="page-home" class="section ds-restored-page-doc" data-individual-page="home">
         <article class="panel ds-pages-panel ds-individual-page-panel">
           <div class="panel-header">
@@ -149,8 +153,8 @@
 
           <div class="ds-page-docs">
             <div class="ds-page-doc-grid">
-              <article><span class="ds-doc-label">Purpose</span><p>Primary entry point for live NFL markets, account context, open positions and NBA-interest capture.</p><code>home.html</code></article>
-              <article><span class="ds-doc-label">Required states</span><p>Guest, logged in, no open positions, no live games, market recalculation, NBA interested and NBA not-for-me.</p></article>
+              <article><span class="ds-doc-label">Purpose</span><p>Primary entry point for live NFL markets, account context, open trades and NBA-interest capture.</p><code>home.html</code></article>
+              <article><span class="ds-doc-label">Required states</span><p>Guest, logged in, no open trades, no live games, market recalculation, NBA interested and NBA not-for-me.</p></article>
               <article><span class="ds-doc-label">Implementation contract</span><ul><li>Preserve guest and authenticated header variants.</li><li>Show NBA as coming soon; do not describe NBA as currently tradable.</li><li>Market prices open the buy drawer and paused markets remain non-interactive.</li></ul></article>
               <article class="is-validation"><span class="ds-doc-label">Open validation</span><p>Confirm whether the NBA-interest response needs persistence, analytics or account association.</p></article>
             </div>
@@ -183,7 +187,7 @@
         <div class="individual-page-head">
           <span class="eyebrow">Page documentation</span>
           <h1>Game</h1>
-          <p>Game-detail variants covering live play, countdown, final, unavailable and paused markets, closed and expanded game positions, statistics, and licensed-logo references.</p>
+          <p>Game-detail variants covering live play, countdown, final, unavailable and paused markets, closed and expanded game trades, statistics, and licensed-logo references.</p>
           <div class="individual-page-meta"><span>Implementation: <code>game.html</code></span><span>10 documented states</span><span>Mobile · Tablet · Desktop</span></div>
         </div>
         <article class="panel individual-page-panel">
@@ -384,7 +388,7 @@
 
           <section class="color-token-group open-positions" aria-labelledby="position-colors-title">
             <div class="panel-header">
-              <h3 id="position-colors-title">Position Colors</h3>
+              <h3 id="position-colors-title">Trade Colors</h3>
               <span class="tag">Scoped tokens</span>
             </div>
             <div class="swatch-grid">
@@ -550,8 +554,8 @@
               <div class="swatch"><span style="--swatch: var(--hairline)"></span><strong>Hairline</strong><code>--hairline</code></div>
               <div class="swatch"><span style="--swatch: var(--accent-border)"></span><strong>Accent Border</strong><code>--accent-border</code></div>
               <div class="swatch"><span style="--swatch: var(--live-game-card-border)"></span><strong>Live Card Border</strong><code>--live-game-card-border</code></div>
-              <div class="swatch"><span style="--swatch: var(--line)"></span><strong>Position Hairline</strong><code>--line</code></div>
-              <div class="swatch"><span style="--swatch: var(--line-2)"></span><strong>Position Edge Light</strong><code>--line-2</code></div>
+              <div class="swatch"><span style="--swatch: var(--line)"></span><strong>Trade Hairline</strong><code>--line</code></div>
+              <div class="swatch"><span style="--swatch: var(--line-2)"></span><strong>Trade Edge Light</strong><code>--line-2</code></div>
             </div>
           </article>
         </div>
@@ -909,8 +913,8 @@
 
         <div class="ds-drawer-state">
           <div class="section-header ds-subsection-header">
-            <h2>Existing Position Warning</h2>
-            <p>Shows when a buy would take the opposite side of a position already held in the same game.</p>
+            <h2>Existing Trade Warning</h2>
+            <p>Shows when a buy would take the opposite side of a trade already held in the same game.</p>
           </div>
           <div class="grid two ds-drawer-grid">
             <article class="panel ds-drawer-panel">
@@ -922,7 +926,7 @@
                   <div class="bet-sheet-handle" aria-hidden="true"></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>75 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 57&cent;</span><span aria-hidden="true">&middot;</span><span>Now 69&cent;</span></span></div>
-                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game, this bet takes the opposite side.</span></div>
+                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><span>Conflicts with your <strong>Get the Lead &middot; YES</strong> trade. Only one can win.</span></div>
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
@@ -943,7 +947,7 @@
                   <div class="bet-scoreboard" data-bet-grab style="--home-color:#e31837;--away-color:#aa0000"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-kc.png" alt="Chiefs"><div class="bs-meta"><span class="bs-abbr">KC</span><span class="bs-score tnum">17</span></div></div><div class="bs-center"><span class="bs-period">Q2</span><span class="bs-clock tnum">08:42</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-sf.png" alt="49ers"><div class="bs-meta"><span class="bs-abbr">SF</span><span class="bs-score tnum">14</span></div></div></div></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>75 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 57&cent;</span><span aria-hidden="true">&middot;</span><span>Now 69&cent;</span></span></div>
-                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><svg class="warn-ico" viewBox="0 0 24 24" fill="none"><path d="M12 4 21 20H3L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v5M12 17h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>You already hold <strong>Get the Lead &middot; YES</strong> in this game, this bet takes the opposite side.</span></div>
+                    <div class="bet-conflict buy-only" data-conflict-warning role="alert"><span>Conflicts with your <strong>Get the Lead &middot; YES</strong> trade. Only one can win.</span></div>
                     <div class="bet-field contracts-field buy-only"><span class="bet-label">Select number of contracts</span><input class="num-input" data-qty-input type="text" inputmode="numeric" value="50" aria-label="Number of contracts"><div class="qty-quick"><button class="is-active" data-qty-set="50" type="button">50</button><button data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1000</button></div><p class="qty-total" data-qty-total hidden></p></div>
                     <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="38" aria-label="Contracts to sell"><div class="qty-quick q3" data-sell-quick><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
                     <div class="bet-field buy-only"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
@@ -961,15 +965,15 @@
 
         <div class="ds-drawer-state">
           <div class="section-header ds-subsection-header">
-            <h2>Sell Position</h2>
-            <p>Sell mode replaces buy controls with held-position context, percentage shortcuts and realised profit.</p>
+            <h2>Sell Trade</h2>
+            <p>Sell mode replaces buy controls with held-trade context, percentage shortcuts and realised profit.</p>
           </div>
           <div class="grid two ds-drawer-grid">
             <article class="panel ds-drawer-panel">
               <div class="panel-header"><h3>Mobile</h3><span class="tag">Bottom sheet</span></div>
               <div class="ds-drawer-preview ds-drawer-mobile">
                 <div class="bet-sheet-backdrop is-open"></div>
-                <aside class="bet-sheet is-open" data-step="1" data-mode="sell" aria-hidden="false" aria-label="Sell position">
+                <aside class="bet-sheet is-open" data-step="1" data-mode="sell" aria-hidden="false" aria-label="Sell trade">
                   <div class="bet-scoreboard" data-bet-grab style="--home-color:#00338d;--away-color:#008e97"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div><div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div></div></div>
                   <div class="bet-sheet-handle" aria-hidden="true"></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
@@ -991,7 +995,7 @@
               <div class="panel-header"><h3>Desktop</h3><span class="tag">Modal</span></div>
               <div class="ds-drawer-preview ds-drawer-desktop">
                 <div class="bet-sheet-backdrop is-open"></div>
-                <aside class="bet-sheet is-open" data-step="1" data-mode="sell" aria-hidden="false" aria-label="Sell position">
+                <aside class="bet-sheet is-open" data-step="1" data-mode="sell" aria-hidden="false" aria-label="Sell trade">
                   <div class="bet-scoreboard" data-bet-grab style="--home-color:#00338d;--away-color:#008e97"><div class="bs-glow" aria-hidden="true"></div><div class="bs-row"><div class="bs-team bs-home is-leading"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-buf.png" alt="Bills"><div class="bs-meta"><span class="bs-abbr">BUF</span><span class="bs-score tnum">24</span></div></div><div class="bs-center"><span class="bs-period">Q3</span><span class="bs-clock tnum">11:05</span></div><div class="bs-team bs-away"><img class="bs-logo" src="../gtl-app/assets/logos/nfl-mia.png" alt="Dolphins"><div class="bs-meta"><span class="bs-abbr">MIA</span><span class="bs-score tnum">20</span></div></div></div></div>
                   <div class="bet-sheet-body"><div class="bet-step bet-step-1">
                     <div class="sell-only sell-readout"><span class="sell-tag" data-sell-tag>Get the Lead &middot; <span class="side-yes">YES</span></span><span class="sell-sub" data-sell-sub><span>120 Held</span><span aria-hidden="true">&middot;</span><span>Bought at 38&cent;</span><span aria-hidden="true">&middot;</span><span>Now 64&cent;</span></span></div>
@@ -1276,7 +1280,7 @@
         </article>
 
         <div class="section-header ds-subsection-header">
-          <h2>Open Position Cards</h2>
+          <h2>Open Trade Cards</h2>
           <p>Home portfolio cards show the live game, contract side, held quantity, current value and unrealized return.</p>
         </div>
 
@@ -1466,7 +1470,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Pending</h3><span class="tag">Limit order</span></div>
             <button class="order-row" type="button" style="--home-color:#e31837;--away-color:#aa0000">
-              <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-kc.png" alt=""><img src="../gtl-app/assets/logos/nfl-sf.png" alt=""></span>
+              <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-kc.png" alt=""><span class="or-v" aria-hidden="true">v</span><img src="../gtl-app/assets/logos/nfl-sf.png" alt=""></span>
               <span class="or-main"><span class="or-type">Tie &middot; <span class="side-no">NO</span></span><span class="or-teams">KC &middot; SF &middot; Jul 7</span></span>
               <span class="or-value"><span class="or-amount tnum">$44.00</span><span class="or-status">Pending</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1476,7 +1480,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Pending No Logos</h3><span class="tag">Fallback</span></div>
             <button class="order-row" type="button" style="--home-color:#7c3aed;--away-color:#ea580c">
-              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="LA" style="--team-color:#7c3aed"><span class="team-mark-abbr">LA</span></span><span class="team-mark or-logo is-fallback" aria-label="PHX" style="--team-color:#ea580c"><span class="team-mark-abbr">PHX</span></span></span>
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="LA" style="--team-color:#7c3aed"><span class="team-mark-abbr">LA</span></span><span class="or-v" aria-hidden="true">v</span><span class="team-mark or-logo is-fallback" aria-label="PHX" style="--team-color:#ea580c"><span class="team-mark-abbr">PHX</span></span></span>
               <span class="or-main"><span class="or-type">Tie &middot; <span class="side-no">NO</span></span><span class="or-teams">Lakers &middot; Suns &middot; Jul 8</span></span>
               <span class="or-value"><span class="or-amount tnum">$52.00</span><span class="or-status">Pending</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1486,7 +1490,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Current</h3><span class="tag">Open</span></div>
             <button class="order-row" type="button" style="--home-color:#00338d;--away-color:#008e97">
-              <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-buf.png" alt=""><img src="../gtl-app/assets/logos/nfl-mia.png" alt=""></span>
+              <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-buf.png" alt=""><span class="or-v" aria-hidden="true">v</span><img src="../gtl-app/assets/logos/nfl-mia.png" alt=""></span>
               <span class="or-main"><span class="or-type">Get the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">BUF &middot; MIA &middot; Jul 6</span></span>
               <span class="or-value"><span class="or-amount tnum">$76.80</span><span class="or-pnl up tnum">+$19.20</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1496,7 +1500,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Current No Logos</h3><span class="tag">Fallback</span></div>
             <button class="order-row" type="button" style="--home-color:#0f766e;--away-color:#be123c">
-              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="SEA" style="--team-color:#0f766e"><span class="team-mark-abbr">SEA</span></span><span class="team-mark or-logo is-fallback" aria-label="CHI" style="--team-color:#be123c"><span class="team-mark-abbr">CHI</span></span></span>
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="SEA" style="--team-color:#0f766e"><span class="team-mark-abbr">SEA</span></span><span class="or-v" aria-hidden="true">v</span><span class="team-mark or-logo is-fallback" aria-label="CHI" style="--team-color:#be123c"><span class="team-mark-abbr">CHI</span></span></span>
               <span class="or-main"><span class="or-type">Get the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">Seahawks &middot; Bears &middot; Jul 8</span></span>
               <span class="or-value"><span class="or-amount tnum">$84.00</span><span class="or-pnl up tnum">+$14.00</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1506,7 +1510,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Settled Won</h3><span class="tag">Result</span></div>
             <button class="order-row" type="button" style="--home-color:#007a33;--away-color:#f58426">
-              <span class="or-logos"><img src="../gtl-app/assets/logos/nba-bos.png" alt=""><img src="../gtl-app/assets/logos/nba-ny.png" alt=""></span>
+              <span class="or-logos"><img src="../gtl-app/assets/logos/nba-bos.png" alt=""><span class="or-v" aria-hidden="true">v</span><img src="../gtl-app/assets/logos/nba-ny.png" alt=""></span>
               <span class="or-main"><span class="or-type">Keep the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">BOS &middot; NYK &middot; Jul 5</span></span>
               <span class="or-value"><span class="or-pnl up tnum">+$54.10</span><span class="result-pill win">Won</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1516,7 +1520,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Settled No Logos</h3><span class="tag">Fallback</span></div>
             <button class="order-row" type="button" style="--home-color:#2563eb;--away-color:#c026d3">
-              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="DAL" style="--team-color:#2563eb"><span class="team-mark-abbr">DAL</span></span><span class="team-mark or-logo is-fallback" aria-label="ORL" style="--team-color:#c026d3"><span class="team-mark-abbr">ORL</span></span></span>
+              <span class="or-logos"><span class="team-mark or-logo is-fallback" aria-label="DAL" style="--team-color:#2563eb"><span class="team-mark-abbr">DAL</span></span><span class="or-v" aria-hidden="true">v</span><span class="team-mark or-logo is-fallback" aria-label="ORL" style="--team-color:#c026d3"><span class="team-mark-abbr">ORL</span></span></span>
               <span class="or-main"><span class="or-type">Keep the Lead &middot; <span class="side-yes">YES</span></span><span class="or-teams">Mavericks &middot; Magic &middot; Jul 2</span></span>
               <span class="or-value"><span class="or-pnl up tnum">+$41.60</span><span class="result-pill win">Won</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1526,7 +1530,7 @@
           <article class="panel ds-card-frame ds-order-row-frame">
             <div class="panel-header"><h3>Settled Lost</h3><span class="tag">Result</span></div>
             <button class="order-row" type="button" style="--home-color:#e31837;--away-color:#aa0000">
-              <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-kc.png" alt=""><img src="../gtl-app/assets/logos/nfl-sf.png" alt=""></span>
+              <span class="or-logos"><img src="../gtl-app/assets/logos/nfl-kc.png" alt=""><span class="or-v" aria-hidden="true">v</span><img src="../gtl-app/assets/logos/nfl-sf.png" alt=""></span>
               <span class="or-main"><span class="or-type">Get the Lead &middot; <span class="side-no">NO</span></span><span class="or-teams">KC &middot; SF &middot; Jul 4</span></span>
               <span class="or-value"><span class="or-pnl down tnum">-$33.00</span><span class="result-pill loss">Lost</span></span>
               <span class="or-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -1628,6 +1632,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260730-remove-legacy-pages-1"></script>
+    <script src="script.js?v=20260804-trade-layouts-52"></script>
   </body>
 </html>

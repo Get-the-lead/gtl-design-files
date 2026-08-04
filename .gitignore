@@ -6,7 +6,7 @@
 **/.impeccable/
 PRODUCT.md
 
-# Local gate passphrase — keep out of git
+# Local gate passphrase - keep out of git
 gate.config.js
 **/gate.config.js
 
@@ -16,3 +16,4 @@ supabase/.temp/
 # macOS
 .DS_Store
 **/.DS_Store
+gtl-app-sam/

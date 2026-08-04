@@ -105,9 +105,16 @@
   gap: var(--s4);
   margin-bottom: 0;
 }
-.gb-team { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 0; }
-.gb-logo { width: clamp(58px, 16vw, 88px); height: clamp(58px, 16vw, 88px); max-width: 100%; filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)); }
-.gb-logo.is-fallback { width: clamp(46px, 12vw, 60px); height: clamp(46px, 12vw, 60px); }
+.gb-team { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0; min-width: 48px; }
+.gb-logo {
+  width: clamp(58px, 16vw, 88px);
+  min-width: 48px;
+  height: auto;
+  aspect-ratio: 1;
+  max-width: 100%;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
+}
+.gb-logo.is-fallback { width: clamp(46px, 12vw, 60px); min-width: 44px; }
 .gb-logo .team-mark-abbr { font-size: clamp(0.9rem, 2.8vw, 1.2rem); }
 .gb-abbr {
   position: absolute;
@@ -139,9 +146,7 @@
 .gb-dash { color: rgba(255, 255, 255, 0.35); font-size: var(--fs-score); font-family: var(--font-display); }
 
 @media (max-width: 520px) {
-  .gb-score.is-compact-score {
-    gap: var(--s2);
-  }
+  .gb-score.is-compact-score { gap: var(--s2); }
   .gb-score.is-compact-score .gb-logo {
     width: 48px;
     height: 48px;
@@ -200,7 +205,7 @@
    while the market is about to update (game 1 only; driven by initGameRecalc).
    Replicates the home live-card's paused message; theme-adaptive text since it
    sits on the page background here (home.css's .trade-pause isn't loaded). */
-.game-recalc { width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--s2); padding: 10px 0; margin-bottom: var(--s6); color: var(--ink); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.02em; }
+.game-recalc { width: 100%; display: flex; align-items: center; justify-content: center; gap: var(--s2); padding: 10px 0; margin-top: var(--s3); color: var(--ink); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.02em; }
 .game-recalc[hidden] { display: none; }
 .game-recalc .pause-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); animation: pause-pulse 1.2s var(--ease) infinite; }
 @keyframes pause-pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 206, 77, 0.36); } 100% { box-shadow: 0 0 0 10px rgba(255, 206, 77, 0); } }
@@ -650,16 +655,16 @@ body.pos-open .betbar { display: none; }
 .has-open-position .betbar.is-visible:not(.are-positions-visible) .game-positions-full-label { display: none; }
 .has-open-position .betbar.is-visible:not(.are-positions-visible) .game-positions-compact-label { display: inline; }
 
-/* My Positions uses the game-position card, arranged as the compact horizontal
-   carousel used by Open Positions on the authenticated home page. */
-.game-open-position { padding-top: var(--s10); padding-bottom: var(--s8); scroll-margin-top: 92px; overflow: hidden; }
-.game-positions-head { text-align: center; }
-.game-positions-head .eyebrow { display: block; margin-bottom: var(--s2); }
-.game-positions-head h2 { font-size: var(--fs-h2); }
+/* My Game Trades uses the game-position card, arranged as the compact horizontal
+   carousel used by Open Trades on the authenticated home page. */
+.game-open-position { padding-top: calc(var(--s10) + 12px); padding-bottom: var(--s8); scroll-margin-top: 92px; overflow: hidden; }
+.game-positions-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); text-align: left; }
+.game-positions-head h2 { font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 700; }
+.game-trade-count { flex: 0 0 auto; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line-2); border-radius: 50%; background: transparent; color: var(--ink); font-size: var(--fs-label); font-weight: 700; }
 .game-position-carousel {
   display: flex;
   align-items: stretch;
-  gap: var(--s4);
+  gap: var(--s3);
   margin-top: var(--s5);
   margin-inline: calc(-1 * var(--s5));
   padding: 0 var(--s5) var(--s2);
@@ -670,10 +675,31 @@ body.pos-open .betbar { display: none; }
   -webkit-overflow-scrolling: touch;
 }
 .game-position-carousel::-webkit-scrollbar { display: none; }
-.game-position-dots { display: flex; justify-content: center; gap: var(--s2); margin-top: var(--s3); }
-.game-position-dots[hidden] { display: none; }
+.game-position-carousel.has-page-tail::after {
+  content: "";
+  flex: 0 0 var(--carousel-page-tail, 0px);
+}
+.game-position-carousel.is-centered { justify-content: center; scroll-snap-type: none; }
+.game-position-navigation { display: grid; width: 100%; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s3); margin-top: var(--s3); }
+.game-position-navigation[hidden] { display: none; }
+.game-position-dots { display: flex; justify-content: center; gap: var(--s2); }
+.game-position-navigation > .game-position-nav-button:first-child { justify-self: start; }
+.game-position-navigation > .game-position-nav-button:last-child { justify-self: end; }
 .game-position-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: var(--line-2); transition: background .2s var(--ease), transform .2s var(--ease); }
 .game-position-dot.is-active { background: var(--green); transform: scale(1.25); }
+.game-position-nav-button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.game-position-nav-button svg { width: 17px; height: 17px; }
+.game-position-nav-button:disabled { opacity: .35; cursor: default; }
 .game-position-card {
   position: relative;
   isolation: isolate;
@@ -709,7 +735,26 @@ body.pos-open .betbar { display: none; }
 .game-position-card .oc-figures .oc-pnl { font-weight: 600; }
 .game-position-card .oc-sub .side-yes { color: var(--green); }
 .game-position-card .oc-sub .side-no { color: var(--no); }
+.game-position-pricing { display: flex; align-items: center; gap: var(--s4); color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-pricing strong { color: var(--ink); }
 .game-position-card .oc-actions { margin-top: var(--s1); }
+.game-position-card .trade-current-topline { display: flex; align-items: center; gap: var(--s3); }
+.game-position-card .trade-current-condition { margin: 0; color: var(--ink); font-size: var(--fs-label); font-weight: 700; line-height: 1.35; }
+.game-position-card .trade-current-total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
+.game-position-card .trade-current-total-item { display: inline-flex; align-items: baseline; gap: var(--s2); }
+.game-position-card .trade-current-total strong { color: var(--ink); font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; line-height: 1; }
+.game-position-card .trade-current-total small { color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-card .trade-current-total .oc-pnl.up { color: var(--green-ink); }
+.game-position-card .trade-current-total .oc-pnl.down { color: var(--no-ink); }
+.game-position-card .trade-option-value-focus { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+.game-position-card .trade-option-value-focus > span { display: flex; flex-direction: column; gap: 3px; }
+.game-position-card .trade-option-value-focus > span:last-child { align-items: flex-end; text-align: right; }
+.game-position-card .trade-option-value-focus small { color: var(--ink-2); font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.game-position-card .trade-option-value-focus strong { color: var(--ink); font-family: var(--font-display); font-size: 1.55rem; font-weight: 700; line-height: 1; }
+.game-position-card .trade-option-value-focus .oc-pnl.up { color: var(--green-ink); }
+.game-position-card .trade-option-value-focus .oc-pnl.down { color: var(--no-ink); }
+.game-position-card .trade-option-inline-meta { display: flex; align-items: center; gap: var(--s2); color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-card .trade-option-inline-meta i { color: var(--ink-3); font-style: normal; }
 .position-outcome-chip {
   display: inline-flex;
   align-items: center;
@@ -755,10 +800,30 @@ body.pos-open .betbar { display: none; }
   .markets, .stats-section { max-width: 760px; }
   .betbar-inner { max-width: 760px; }
 }
+@media (min-width: 768px) and (max-width: 1023px) {
+  .game-open-position {
+    max-width: 760px;
+    overflow: visible;
+  }
+  /* Start on the shared content line, but keep the scroll viewport running to the
+     browser edge so the next trade can still be partially revealed. */
+  .game-position-carousel {
+    margin-left: calc(-1 * var(--s5));
+    margin-right: calc(360px - 50vw);
+  }
+}
 @media (min-width: 1024px) {
-  .game-open-position { max-width: none; padding: 0 0 var(--s10); overflow: hidden; }
-  .game-positions-head { text-align: left; }
-  .game-position-carousel { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+  .game-open-position { max-width: none; padding: 0 0 var(--s10); overflow: visible; }
+  .game-positions-head { display: flex; }
+  /* Carry the carousel viewport through the layout's right gutter so partial cards
+     are clipped by the browser edge, not by the content section. */
+  .game-position-carousel {
+    margin-left: 0;
+    margin-right: calc(-1 * (var(--s4) + 40px));
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+  }
+  .game-position-carousel.is-centered { justify-content: flex-start; }
   .game-position-card { flex-basis: min(340px, 78%); }
   .game-body.has-open-position { padding-bottom: 0; }
 }
@@ -805,6 +870,7 @@ body.pos-open .betbar { display: none; }
      top-aligned so the scoreboard sits at the top and positions flow below the bet rows. */
   .game-col-left {
     position: sticky;
+    container-type: inline-size;
     top: 104px;                               /* pinned just under the floating header */
     height: calc(100vh - 104px - var(--s6));  /* fills the height left below the header */
     overflow-y: auto;                         /* internal scroll ONLY when content won't fit */
@@ -822,7 +888,11 @@ body.pos-open .betbar { display: none; }
   .game-col-left .gb-inner { width: 100%; }
   .game-col-left .gb-glow { display: none; } /* the fade lives on .game-col-left now */
   /* centre the scorecard elements as a group rather than spreading them to the card edges */
-  .game-col-left .gb-score { grid-template-columns: auto auto auto; justify-content: center; gap: var(--s6); }
+  .game-col-left .gb-score {
+    grid-template-columns: minmax(48px, auto) minmax(0, auto) minmax(48px, auto);
+    justify-content: center;
+    gap: clamp(var(--s2), 2vw, var(--s6));
+  }
   .game-col-left .gb-topbar { display: none; } /* back button lives in the right column */
   .game-col-left .markets { margin-top: var(--s6); padding-top: 0; } /* betting sits under the scoreboard */
   .game-col-left .bet-help { text-align: center; } /* "tap a price to start" centred */
@@ -850,7 +920,7 @@ body.pos-open .betbar { display: none; }
   /* back link pinned to the top-left of the left panel (bigger + white) */
   .gb-back-right {
     position: absolute;
-    top: var(--s5);
+    top: 0;
     left: var(--s6);
     z-index: 2;
     display: inline-flex;
@@ -862,6 +932,39 @@ body.pos-open .betbar { display: none; }
   .gb-back-right:hover { color: rgba(255, 255, 255, 0.78); }
 
   .betbar { display: none; } /* betting is always visible on the left — no floating Bet Now on desktop */
+}
+
+/* The desktop score panel can become narrower than a phone viewport because it shares
+   the page with stats. When that column is constrained, use the same compact team row. */
+@container (max-width: 520px) {
+  .game-col-left .gb-score {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "score score" "home away";
+    column-gap: var(--s4);
+    row-gap: var(--s3);
+  }
+  .game-col-left .gb-score > .gb-team:first-child { grid-area: home; }
+  .game-col-left .gb-score > .gb-team:last-child { grid-area: away; }
+  .game-col-left .gb-team {
+    min-width: 0;
+    flex-direction: row;
+    justify-self: center;
+    gap: var(--s2);
+  }
+  .game-col-left .gb-logo,
+  .game-col-left .gb-logo.is-fallback {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+  }
+  .game-col-left .gb-logo .team-mark-abbr { font-size: .72rem; }
+  .game-col-left .gb-abbr {
+    position: static;
+    width: auto;
+    max-width: 110px;
+    transform: none;
+  }
+  .game-col-left .gb-numbers { grid-area: score; justify-self: center; }
 }
 
 /* Desktop — float the Bet Now button centred under the right (markets) column, matching the layout grid */

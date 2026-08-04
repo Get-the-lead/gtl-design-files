@@ -1,7 +1,12 @@
 /* GTL v2 — Pricing & fees (uses the shared .support-page template in styles.css) */
 
-/* Extra bottom room so content clears the floating Continue Bet pill */
-.fees-body .support-page { padding-bottom: 140px; }
+/* Keep the article/footer rhythm consistent with the other long-form pages.
+   When Continue Bet is present, its reserved footer space prevents overlap at
+   the bottom of the document while the control remains fixed to the viewport. */
+.fees-body .support-page { padding-bottom: var(--s16); }
+.fees-body:has(.bet-mini:not([hidden])) .site-footer {
+  padding-bottom: calc(var(--s10) + 88px + env(safe-area-inset-bottom, 0px));
+}
 
 /* Continue Bet uses the design-system secondary surface with a team-gradient border.
    Shown only when arriving mid-bet; tapping it reopens the drawer on the game page. */

@@ -13,9 +13,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="tokens.css" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="auth.css" />
-  <link rel="stylesheet" href="contact.css" />
+  <link rel="stylesheet" href="styles.css?v=20260804-drawer-heading-restore-1" />
+  <link rel="stylesheet" href="auth.css?v=20260804-auth-flow-update-1" />
+  <link rel="stylesheet" href="contact.css?v=20260804-contact-cleanup-1" />
+  <script src="brand.js?v=20260804-1" defer></script>
 </head>
 <body class="contact-body">
 
@@ -29,19 +30,8 @@
 
     <div class="contact-layout">
       <section class="contact-intro" aria-labelledby="contactTitle">
-        <span class="eyebrow">Contact GTL</span>
         <h1 id="contactTitle">How can we help?</h1>
-        <p>Send us a message and the GTL team will get back to you as soon as possible.</p>
-
-        <div class="contact-note">
-          <span class="contact-note-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16v11H4z" stroke="currentColor" stroke-width="1.8"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <div>
-            <strong>We usually reply within 1–2 business days.</strong>
-            <span>For account questions, use the email linked to your GTL account.</span>
-          </div>
-        </div>
+        <p>Send us a message and we’ll get back to you as soon as possible, usually within one to two business days.</p>
       </section>
 
       <section class="contact-card" aria-label="Contact request form">
@@ -49,18 +39,18 @@
           <div class="contact-name-row">
             <div class="field">
               <label for="contactName">Name</label>
-              <input class="field-input" id="contactName" name="name" type="text" autocomplete="name" placeholder="Your name" />
+              <input class="field-input" id="contactName" name="name" type="text" autocomplete="name" placeholder="Your name" required />
             </div>
             <div class="field">
               <label for="contactEmail">Email</label>
-              <input class="field-input" id="contactEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" />
+              <input class="field-input" id="contactEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required />
             </div>
           </div>
 
           <div class="field">
             <label for="contactTopic">What can we help with?</label>
             <div class="field-combobox" data-contact-topic>
-              <input class="field-input" id="contactTopic" name="topic" type="text" placeholder="Choose a topic" role="combobox" aria-autocomplete="none" aria-controls="contactTopicOptions" aria-expanded="false" readonly />
+              <input class="field-input" id="contactTopic" name="topic" type="text" placeholder="Choose a topic" role="combobox" aria-autocomplete="none" aria-controls="contactTopicOptions" aria-expanded="false" required readonly />
               <button class="combobox-toggle" type="button" data-contact-topic-toggle aria-label="Show contact topics" tabindex="-1">
                 <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 8 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
@@ -76,12 +66,11 @@
 
           <div class="field">
             <label for="contactMessage">Message</label>
-            <textarea class="field-input contact-message" id="contactMessage" name="message" rows="6" maxlength="1000" placeholder="Tell us what happened or what you need help with"></textarea>
+            <textarea class="field-input contact-message" id="contactMessage" name="message" rows="6" minlength="10" maxlength="1000" placeholder="Tell us what happened or what you need help with" required></textarea>
             <span class="field-hint"><span data-message-count>0</span>/1000 characters</span>
           </div>
 
-          <button class="btn btn-primary btn-block contact-submit" type="submit">Send Message</button>
-          <p class="contact-privacy">We’ll only use your details to respond to this request.</p>
+          <button class="btn btn-primary btn-block contact-submit" type="submit" data-contact-submit disabled>Send Message</button>
         </form>
 
         <div class="contact-success" data-contact-success role="status" tabindex="-1" hidden>
@@ -103,7 +92,7 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <a class="footer-logo-link" href="home.html" aria-label="GTL home">
-            <img class="footer-logo" src="assets/gtl-footer-logo.png" alt="Get the Lead" />
+            <gtl-logo class="gtl-logo footer-logo" aria-hidden="true"></gtl-logo>
           </a>
           <p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p>
         </div>
@@ -135,6 +124,6 @@
     </div>
   </footer>
 
-  <script src="app.js" defer></script>
+  <script src="app.js?v=20260804-update-bet-label-1" defer></script>
 </body>
 </html>

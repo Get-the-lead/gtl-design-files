@@ -154,7 +154,8 @@
 .celebration-stars i:nth-child(4) { right: 18%; top: 24%; }
 .celebration-stars i:nth-child(5) { right: 28%; top: 69%; }
 .celebration-stars i:nth-child(6) { right: 39%; top: 13%; }
-.welcome-reward .welcome-copy h1 { max-width: 15ch; font-size: clamp(3rem, 8vw, 4.9rem); }
+.welcome-reward .welcome-copy h1 { max-width: none; font-size: clamp(2.5rem, 7vw, 4rem); }
+.welcome-reward .welcome-copy h1 span { white-space: nowrap; }
 .welcome-reward .welcome-copy p:last-child { max-width: 46ch; }
 .welcome-reward .welcome-actions { width: auto; }
 .welcome-reward .welcome-actions .btn { min-width: 220px; border-radius: var(--r-pill); }

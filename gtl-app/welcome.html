@@ -11,9 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="tokens.css" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="auth.css" />
-  <link rel="stylesheet" href="welcome.css" />
+  <link rel="stylesheet" href="styles.css?v=20260804-drawer-heading-restore-1" />
+  <link rel="stylesheet" href="auth.css?v=20260804-auth-flow-update-1" />
+  <link rel="stylesheet" href="welcome.css?v=20260804-auth-flow-update-1" />
+  <script src="brand.js?v=20260804-1" defer></script>
 </head>
 <body class="welcome-body">
   <main class="welcome-main container" id="welcomeMain" data-welcome-state="intro">
@@ -41,16 +42,16 @@
       <form class="welcome-form" data-details-form novalidate>
         <div class="welcome-name-row">
           <div class="field">
-            <label for="firstName">First name</label>
+            <label for="firstName">First Name</label>
             <input class="field-input" id="firstName" type="text" autocomplete="given-name" placeholder="Alex" required />
           </div>
           <div class="field">
-            <label for="lastName">Last name</label>
+            <label for="lastName">Last Name</label>
             <input class="field-input" id="lastName" type="text" autocomplete="family-name" placeholder="Morgan" required />
           </div>
         </div>
         <fieldset class="field welcome-birthday-field" data-birthday-field>
-          <legend>Date of birth</legend>
+          <legend>Date of Birth</legend>
           <div class="date-fields">
             <div class="date-part">
               <div class="field-combobox" data-date-combobox="month">
@@ -83,9 +84,8 @@
 
     <section class="welcome-panel welcome-username welcome-reward" aria-labelledby="usernameTitle" data-welcome-username hidden>
       <div class="welcome-copy">
-        <p class="welcome-kicker">One last step</p>
-        <h1 id="usernameTitle">Claim your <span>welcome credits.</span></h1>
-        <p>Choose the username you’ll use across GTL and in the rankings.</p>
+        <h1 id="usernameTitle">Claim Your<br><span>Welcome Credits</span></h1>
+        <p>Choose a username to claim your credits and join the rankings.</p>
       </div>
       <div class="credit-ticket">
         <span class="ticket-label">Welcome credits</span>
@@ -103,6 +103,6 @@
 
   </main>
 
-  <script src="app.js?v=20260729-1" defer></script>
+  <script src="app.js?v=20260804-update-bet-label-1" defer></script>
 </body>
 </html>

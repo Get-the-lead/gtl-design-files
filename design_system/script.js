@@ -192,7 +192,7 @@ const flatDocs = {
   },
   home: {
     title: "Home Page",
-    description: "Homepage variants for guest, signed-in, market availability, position context, and failure states.",
+    description: "Homepage variants for guest, signed-in, market availability, trade context, and failure states.",
     groups: [
       { title: "Unauthenticated", frames: [
         { label: "Logged out default", type: "home", mode: "guest" },
@@ -203,8 +203,8 @@ const flatDocs = {
         { label: "Error / empty state", type: "home", mode: "error" },
       ] },
       { title: "Authenticated", frames: [
-        { label: "No open positions", type: "home", mode: "logged" },
-        { label: "With open positions", type: "home", mode: "positions" },
+        { label: "No open trades", type: "home", mode: "logged" },
+        { label: "With open trades", type: "home", mode: "positions" },
       ] },
     ],
   },
@@ -227,7 +227,7 @@ const flatDocs = {
   },
   game: {
     title: "Game Page",
-    description: "Game detail page variants covering live market access, unavailable markets, position context, refresh, and errors.",
+    description: "Game detail page variants covering live market access, unavailable markets, trade context, refresh, and errors.",
     groups: [
       { title: "Default states", frames: [
         { label: "Live game default — no logos", type: "game", mode: "live" },
@@ -235,9 +235,16 @@ const flatDocs = {
         { label: "Final - away team won", type: "game", mode: "final" },
         { label: "Pregame unavailable", type: "game", mode: "pregame" },
         { label: "Betting paused after score change", type: "game", mode: "paused" },
-        { label: "Game Positions Available", type: "game", mode: "openPositions" },
-        { label: "Game Positions Panel Open", type: "game", mode: "positionsPanelOpen" },
         { label: "NFL game stats selected", type: "game", mode: "gameStatsNFL" },
+      ] },
+      { title: "Open Trades", frames: [
+        { label: "Trades displayed on the Game page", type: "game", mode: "openPositions" },
+        { label: "Current menu — one trade per game", type: "game", mode: "positionsPanelOpen" },
+        { label: "Option 1 — current menu with two trades", type: "game", mode: "positionsMenuTwoTrades" },
+        { label: "Option 2 — combined card with shared actions", type: "game", mode: "positionsMenuCombined" },
+        { label: "Option 3 — combined card with trade carousel", type: "game", mode: "positionsMenuCombinedCarousel" },
+        { label: "Option 4 — grouped horizontal trade cards", type: "game", mode: "positionsMenuGroupedCarousel" },
+        { label: "Option 5 — compact trade overview", type: "game", mode: "positionsMenuCompactOverview" },
       ] },
       { title: "Logo reference — future use", frames: [
         { label: "Live NFL game with licensed team logos", type: "game", mode: "liveLogos" },
@@ -267,7 +274,7 @@ const flatDocs = {
   },
   tracker: {
     title: "Portfolio",
-    description: "Wallet portfolio states from wallet.html for live positions, pending limit orders, settled bets, cancelled orders, and order detail.",
+    description: "Wallet portfolio states from wallet.html for open trades, pending limit orders, settled bets, cancelled orders, and order detail.",
     groups: [
       { title: "Wallet states", frames: [
         { label: "Orders overview", type: "tracker", mode: "open" },
@@ -341,18 +348,53 @@ const gameVariantDocumentation = {
     behavior: "Keep statistics available, prevent drawer entry and submissions, then atomically replace all complementary prices before re-enabling interaction.",
   },
   openPositions: {
-    summary: "The signed-in Game page when positions are available but the mobile/tablet disclosure remains closed.",
-    trigger: "Use when the authenticated portfolio contains positions whose gameId matches the active Game page.",
-    changes: "Add the closed 3 Game Positions control to the mobile/tablet bottom bar. Desktop renders the position cards inline below the markets in the sticky left column.",
-    data: "For each matching position provide market, side, quantity, average entry price, current price, current value, and unrealized return; retain the active game/team context.",
-    behavior: "Selecting the mobile/tablet control opens the position panel. Desktop remains persistently visible; Buy More and Sell open prefilled order drawers.",
+    summary: "The signed-in Game page with the customer’s matching trades displayed in the page content.",
+    trigger: "Use when the authenticated portfolio contains trades whose gameId matches the active Game page.",
+    changes: "Add the My Game Trades section above game statistics, using compact horizontally scrollable trade cards on every breakpoint and a circular count badge.",
+    data: "For each matching trade provide market, side, quantity, average entry price, current price, current value, and unrealized return; retain the active game/team context.",
+    behavior: "Buy More and Sell open prefilled order drawers. When the section is off screen, the sticky Trades action scrolls the customer back to it.",
   },
   positionsPanelOpen: {
-    summary: "The expanded Game Positions disclosure on mobile and tablet; desktop remains the same persistent inline panel.",
-    trigger: "Use after a customer selects the Game Positions control while positions exist for the active game.",
-    changes: "Dim and blur the game, place the position-card stack above the fixed bottom bar, and replace the control label with Hide.",
-    data: "The same current-value and unrealized-return data as Game Positions Available is required.",
-    behavior: "Buy More and Sell open prefilled drawers. Hide, backdrop click, or Escape closes the mobile/tablet panel and returns focus to the disclosure control.",
+    summary: "The global Open Trades menu opened from the authenticated header while the customer is on a Game page.",
+    trigger: "Use after the customer selects the Open Trades count in the header.",
+    changes: "Replace the count with a close icon and show all portfolio trades grouped under their game matchup. Mobile centres the heading and cards over a dimmed, blurred page; larger layouts anchor the list below the header control.",
+    data: "All currently open portfolio trades are required, grouped by game and ordered consistently within each matchup.",
+    behavior: "Buy More and Sell open prefilled drawers. The close control, mobile backdrop, or Escape closes the menu and returns focus to its header trigger.",
+  },
+  positionsMenuTwoTrades: {
+    summary: "The current grouped menu treatment with two separate cards for trades in the same game.",
+    trigger: "Use as a direct comparison against the current one-trade-per-game menu.",
+    changes: "Keep game headings and full trade cards, stacking both SF @ KC trades within the same group.",
+    data: "All open trades grouped by game, including every distinct market and side held in that matchup.",
+    behavior: "Each card retains its own Buy More and Sell actions; the menu itself scrolls vertically when required.",
+  },
+  positionsMenuCombined: {
+    summary: "A game-level card that combines multiple trades and removes the separate game headings.",
+    trigger: "Use when reducing repeated matchup chrome is more important than exposing every action simultaneously.",
+    changes: "Place the matchup once at the top of each card, show selectable trade rows beneath it, and provide one shared action area for the selected trade.",
+    data: "Game context plus market, side, contracts, current value, and return for each trade.",
+    behavior: "Selecting a trade row updates the Buy More and Sell context shown at the bottom of that game card.",
+  },
+  positionsMenuCombinedCarousel: {
+    summary: "A combined game card with horizontally scrollable trade panels and actions retained inside every panel.",
+    trigger: "Use when each trade needs permanently associated actions but repeated game scoreboards should be avoided.",
+    changes: "Keep one matchup header, then present full-width trade panels in an inner horizontal carousel.",
+    data: "The same per-trade values as the current menu plus stable ordering within each game.",
+    behavior: "Horizontal scrolling switches between trades; each slide retains independent Buy More and Sell actions.",
+  },
+  positionsMenuGroupedCarousel: {
+    summary: "The current game sections with multiple full trade cards arranged horizontally within each group.",
+    trigger: "Use when preserving the existing information hierarchy is the priority.",
+    changes: "Retain the game headings and current trade-card design, but make each game group a horizontal carousel when it has multiple trades.",
+    data: "All grouped open trades and their full game context.",
+    behavior: "Customers scroll horizontally within a game and vertically between games; every trade keeps its own actions.",
+  },
+  positionsMenuCompactOverview: {
+    summary: "A compact, non-nested-scrolling overview that shows every trade for a game at once.",
+    trigger: "Use when fast portfolio scanning and direct price comparison matter most.",
+    changes: "Show the matchup once, then use compact trade rows with side, contracts, bought price, current value, return, and small per-trade actions.",
+    data: "Market, side, quantity, average entry price, current price or value, and unrealized return for every trade.",
+    behavior: "All trades remain visible without horizontal scrolling; row-level Buy and Sell controls preserve direct action context.",
   },
   gameStatsNFL: {
     summary: "The standard live NFL Game page with the Game Stats tab selected.",
@@ -587,7 +629,7 @@ const standaloneVariantDocumentation = {
   },
   fees: {
     default: { summary: "The standalone pricing and fees explanation for a signed-out customer.", trigger: "Use when Fees is opened outside an active order without an authenticated session.", changes: "Show Login in the global header, the four numbered explanations, and the standard global footer without a floating return control.", data: "Production-approved fee percentage, minimum, price range, payout, settlement policy, and footer destinations are required.", behavior: "Back uses valid same-origin history or Home fallback; footer links follow the same destinations as the rest of the app." },
-    signedIn: { summary: "The same standalone explanation for an authenticated customer without a carried order.", trigger: "Use when a signed-in customer opens Fees without a valid game query parameter.", changes: "Replace Login with the signed-in navigation, balance, and any current Open Positions control; retain the complete global footer and do not show Continue Bet.", data: "The authenticated session, current balance, current open-position count, published fee content, and footer destinations are required.", behavior: "Keep header data synchronized with the shared account sources. Back follows valid same-origin history or the Home fallback and no draft is reconstructed." },
+    signedIn: { summary: "The same standalone explanation for an authenticated customer without a carried order.", trigger: "Use when a signed-in customer opens Fees without a valid game query parameter.", changes: "Replace Login with the signed-in navigation, balance, and any current Open Trades control; retain the complete global footer and do not show Continue Bet.", data: "The authenticated session, current balance, current open-trade count, published fee content, and footer destinations are required.", behavior: "Keep header data synchronized with the shared account sources. Back follows valid same-origin history or the Home fallback and no draft is reconstructed." },
     continueBet: { summary: "Production non-logo Continue Bet variant using team-initial chips.", trigger: "Use only when the URL contains a game id that resolves to an implemented game; otherwise retain the standalone page and keep the control hidden.", changes: "Retain the complete page and footer, then show the floating Continue Bet control with the standard abbreviation chips, secondary surface, and originating-team gradient border; reserve footer space so it never covers content.", data: "The current implementation carries game, market, side, quantity, and an optional limit price, plus each team’s abbreviation and colour for the chips and border.", behavior: "Continue Bet returns to the originating game with bet=1, reconstructs the draft, and reopens the drawer. Production must revalidate the game, market, price, balance, and limits before allowing confirmation." },
     continueBetLogos: { summary: "Optional Continue Bet reference with team logos.", trigger: "Reference only when a future surface explicitly calls for licensed team artwork; this is not the production Fees-page variant.", changes: "Replace the abbreviation chips with the two team logos while retaining the same secondary surface and originating-team gradient border.", data: "The same carried bet context plus validated team artwork and accessible names.", behavior: "Return behavior and validation remain identical to the production non-logo variant." },
   },
@@ -739,7 +781,7 @@ function renderAuthFrame(mode) {
 
   if (mode === "signupEmail" || mode === "signupEmailError") {
     const invalid = mode === "signupEmailError";
-    return authShell(`<div class="auth-steps" data-step="1"><section class="auth-step" data-step="1">${authHead("", "Create your account", "Choose a social account or continue with your email.")}${socialRow()}<div class="auth-divider">or</div><div class="auth-form">${field("Email", "you@email.com", { type: "email", value: invalid ? "alex" : "", error: invalid ? "Enter a valid email address" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue with Email</button></div><p class="auth-fineprint">By creating an account, you agree to our <span>Terms of Service</span> and <span>Privacy Policy</span>.</p></section></div>${authFoot("Already have an account?", "Login")}`);
+    return authShell(`<div class="auth-steps" data-step="1"><section class="auth-step" data-step="1">${authHead("", "Create your account", "Sign up with Google, Apple, or Email to get started.")}${socialRow()}<div class="auth-divider">or</div><div class="auth-form">${field("Email", "you@email.com", { type: "email", value: invalid ? "alex" : "", error: invalid ? "Enter a valid email address" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue with Email</button></div><p class="auth-fineprint">By creating an account, you agree to our <span>Terms of Service</span> and <span>Privacy Policy</span>.</p></section></div>${authFoot("Already have an account?", "Login")}`);
   }
 
   if (mode === "signupPhone" || mode === "signupPhoneError") {
@@ -767,7 +809,8 @@ function renderAuthFrame(mode) {
 }
 
 const logoSvg = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 5 20 18H4Z"/></svg>`;
-const headerLogoSvg = `<img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead">`;
+const brandLogoSVG = (className = "gtl-logo") => `<gtl-logo class="${className}" aria-hidden="true"></gtl-logo>`;
+const headerLogoSvg = brandLogoSVG();
 const chevronDown = `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 const homeGames = [
@@ -826,7 +869,7 @@ const homeGames = [
   },
 ];
 
-function homeHeader(authed = false, positions = false) {
+function homeHeader(authed = false, positions = false, positionsOpen = false, positionCount = 3) {
   return `<header class="site-header ds-static-header">
     <div class="header-row">
       <div class="header-left">
@@ -837,7 +880,7 @@ function homeHeader(authed = false, positions = false) {
         </span>
         <span class="theme-switch floating-btn"><span class="theme-switch-track"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">☼</span><span class="theme-option theme-moon">☾</span></span></span>
       </div>
-      <div class="header-right">${authed ? `<span class="header-wallet"><span class="wallet-chip floating-btn"><svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wallet-amount tnum">$248.50</span></span></span>${positions ? `<span class="header-positions"><span class="hpos-trigger"><span class="hpos-word">Open Positions</span><span class="hpos-num tnum">3</span><span class="hpos-close">${closeIcon}</span></span></span>` : ""}` : `<span class="header-auth"><span class="btn header-login floating-btn">Login</span></span>`}</div>
+      <div class="header-right">${authed ? `<span class="header-wallet"><span class="wallet-chip floating-btn"><svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wallet-amount tnum">$248.50</span></span></span>${positions ? `<span class="header-positions"><span class="hpos-trigger" aria-expanded="${String(positionsOpen)}"><span class="hpos-word">Open Trades</span><span class="hpos-num tnum">${positionCount}</span><span class="hpos-close">${closeIcon}</span></span></span>` : ""}` : `<span class="header-auth"><span class="btn header-login floating-btn">Login</span></span>`}</div>
     </div>
   </header>`;
 }
@@ -895,7 +938,18 @@ function homeHero(mode) {
 }
 
 function homePositionsBlock() {
-  return `<div class="positions-block"><div class="positions-head"><span class="eyebrow">Open Positions</span></div><div class="pos-carousel">${homePositionCardA("kc")}${homePositionCardA("ny")}${homePositionCardA("den")}</div><div class="pos-footer"><a href="javascript:void(0)" tabindex="-1">View All</a><div class="pos-dots"><button class="pos-dot is-active" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button></div><a href="javascript:void(0)" tabindex="-1">View Settled</a></div></div>`;
+  return `<div class="positions-block"><div class="positions-head"><span class="eyebrow">Open Trades</span></div><div class="pos-carousel">${homePositionGroupPreview()}${homePositionCardA("ny")}${homePositionCardA("den")}</div><div class="pos-footer"><button class="pos-nav-button" type="button" tabindex="-1" aria-label="Previous trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="pos-dots"><button class="pos-dot is-active" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button><button class="pos-dot" type="button" tabindex="-1"></button></div><button class="pos-nav-button" type="button" tabindex="-1" aria-label="Next trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>`;
+}
+
+function homePositionGroupPreview() {
+  const g = { period: "Q2", clock: "08:42", home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", logo: teamLogos.kc }, away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D", logo: teamLogos.sf } };
+  const trades = [
+    { market: "Get the Lead", team: g.home, side: "YES", qty: 150, value: "$57.00", pnl: "+$10.50", bought: "31¢", now: "38¢" },
+    { market: "Tie", team: g.away, side: "NO", qty: 60, value: "$46.80", pnl: "+$2.40", bought: "74¢", now: "78¢" },
+  ];
+  const actions = `<div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>`;
+  const rows = trades.map((trade) => `<section class="home-trade"><div class="home-trade-head"><span class="home-trade-title"><span class="position-outcome-chip" style="--outcome-color:${trade.team.color}"><span class="position-outcome-marks"><span class="team-mark position-outcome-mark is-fallback" style="--team-color:${trade.team.color}"><span class="team-mark-abbr">${trade.team.abbr}</span></span></span></span><span>${trade.market}</span></span><span class="home-trade-pnl up tnum">${trade.pnl}</span></div><div class="home-trade-meta"><span>${trade.side} · ${trade.qty} contracts</span><span>Value <strong class="tnum">${trade.value}</strong></span></div><div class="home-trade-prices"><span>Bought <strong class="tnum">${trade.bought}</strong></span><span aria-hidden="true">→</span><span>Now <strong class="tnum">${trade.now}</strong></span></div>${actions}</section>`).join("");
+  return `<article class="pos-card pos-card--group" style="--home-color:${g.home.color};--away-color:${g.away.color}"><div class="pos-media">${homeGameMedia(g)}</div><div class="pos-info home-trade-list">${rows}</div></article>`;
 }
 
 function homePositionCardA(variant) {
@@ -960,15 +1014,16 @@ function homeHowSection() {
   const steps = [
     ["01", "Pick a market", "Choose a live game and one of three lead markets.", `<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`],
     ["02", "View the order book", "See live Yes / No prices and where the market sits.", `<svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="7" y="11" width="3" height="5" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="7" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>`],
-    ["03", "Buy", "Take a position at the live price in a single tap.", `<svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
+    ["03", "Buy", "Place a trade at the live price in a single tap.", `<svg viewBox="0 0 24 24" fill="none"><path d="M7 8l-3 3 3 3M4 11h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 16l3-3-3-3M20 13h-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
     ["04", "Cash Out or Settle", "Cash out early or let it settle when the moment lands.", `<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
+    ["05", "Compete", "Turn settled trades into performance and climb the rankings.", `<svg viewBox="0 0 24 24" fill="none"><path d="M8 4h8v3a4 4 0 0 1-8 0V4Z" stroke="currentColor" stroke-width="1.8"/><path d="M8 6H5v1a4 4 0 0 0 4 4M16 6h3v1a4 4 0 0 1-4 4M12 11v5M8 20h8M9 16h6v4H9z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`],
   ];
-  return `<section class="section how"><div class="container"><div class="section-head center"><span class="eyebrow">How it works</span><h2>Four taps from watching to trading.</h2></div><ol class="flow">${steps.map(([n, title, copy, icon]) => `<li class="flow-step"><div class="flow-marker">${icon}</div><span class="flow-num">${n}</span><h3 class="flow-title">${title}</h3><p class="flow-text">${copy}</p></li>`).join("")}</ol></div></section>`;
+  return `<section class="section how"><div class="container"><div class="section-head center"><span class="eyebrow">How it works</span><h2>Five steps from watching to competing.</h2></div><ol class="flow">${steps.map(([n, title, copy, icon]) => `<li class="flow-step"><div class="flow-marker">${icon}</div><span class="flow-num">${n}</span><h3 class="flow-title">${title}</h3><p class="flow-text">${copy}</p></li>`).join("")}</ol></div></section>`;
 }
 
 function homeFooter(currentPage = "home") {
   const current = (page) => currentPage === page ? ` aria-current="page"` : "";
-  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="footer-logo-link" href="../gtl-app/home.html" aria-label="GTL home"><img class="footer-logo" src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></a><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Product</h4><a href="../gtl-app/home.html"${current("home")}>Home</a><a href="../gtl-app/profile.html"${current("profile")}>Profile</a><a href="../gtl-app/ranking.html"${current("ranking")}>Ranking</a><a href="../gtl-app/wallet.html"${current("portfolio")}>Portfolio</a></div><div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="../gtl-app/contact.html">Contact</a></div><div class="footer-col"><h4>Legal</h4><a href="../gtl-app/rules.html">Official Rules</a><a href="#">Terms</a><a href="#">Privacy</a></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>18+. Please play responsibly.</span></div></div></footer>`;
+  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="footer-logo-link" href="../gtl-app/home.html" aria-label="GTL home">${brandLogoSVG("gtl-logo footer-logo")}</a><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Product</h4><a href="../gtl-app/home.html"${current("home")}>Home</a><a href="../gtl-app/profile.html"${current("profile")}>Profile</a><a href="../gtl-app/ranking.html"${current("ranking")}>Ranking</a><a href="../gtl-app/wallet.html"${current("portfolio")}>Portfolio</a></div><div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="../gtl-app/contact.html">Contact</a></div><div class="footer-col"><h4>Legal</h4><a href="../gtl-app/rules.html">Official Rules</a><a href="#">Terms</a><a href="#">Privacy</a></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>18+. Please play responsibly.</span></div></div></footer>`;
 }
 
 function renderHomeFrame(mode) {
@@ -998,7 +1053,7 @@ function renderWelcomeFrame(mode) {
 }
 
 function renderLocationFrame() {
-  return `<div class="flat-screen is-location"><main class="location-main"><section class="location-panel"><span class="location-brand"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></span><div class="location-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M26 13.3C26 20 16 28 16 28S6 20 6 13.3a10 10 0 1 1 20 0Z" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="13" r="3.25" stroke="currentColor" stroke-width="2"/><path d="m7 27 18-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="location-copy"><p class="location-kicker">Location unavailable</p><h1>GTL isn’t available in this location.</h1><p>We’re working to bring GTL to more locations. Please check back again soon.</p></div><p class="location-footnote">Availability is based on your current location.</p></section></main></div>`;
+  return `<div class="flat-screen is-location"><main class="location-main"><section class="location-panel"><span class="location-brand">${brandLogoSVG()}</span><div class="location-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M26 13.3C26 20 16 28 16 28S6 20 6 13.3a10 10 0 1 1 20 0Z" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="13" r="3.25" stroke="currentColor" stroke-width="2"/><path d="m7 27 18-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="location-copy"><p class="location-kicker">Location unavailable</p><h1>GTL isn’t available in this location.</h1><p>We’re working to bring GTL to more locations. Please check back again soon.</p></div><p class="location-footnote">Availability is based on your current location.</p></section></main></div>`;
 }
 
 function supportBack() {
@@ -1017,6 +1072,7 @@ function renderContactFrame(mode) {
   const emailValue = prefilled || mode === "topicSelected" ? "alex@gtl.test" : invalid ? "alex" : "";
   const messageValue = mode === "topicSelected" ? "I have a question about the monthly competition." : invalid ? "Help" : "";
   const topicValue = topicSelected ? "Monthly competition" : "";
+  const formComplete = mode === "topicSelected";
   const fieldInput = (id, label, type, placeholder, value = "", error = "") => `<div class="field"><label for="${id}">${label}</label><input class="field-input${error ? " is-error" : ""}" id="${id}" name="${id}" type="${type}" value="${value}" placeholder="${placeholder}" tabindex="-1" readonly>${error ? `<p class="field-error" role="alert">${error}</p>` : ""}</div>`;
   const topics = [
     ["account", "Account support"],
@@ -1030,9 +1086,9 @@ function renderContactFrame(mode) {
     const active = menuOpen && index === 0;
     return `<button class="combobox-option${active ? " is-active" : ""}" id="contact-topic-${mode}-option-${index}" type="button" role="option" data-contact-topic-value="${value}" aria-selected="${selected}" tabindex="-1">${label}</button>`;
   }).join("");
-  const form = `<form data-contact-form novalidate><div class="contact-name-row">${fieldInput(`contact-name-${mode}`, "Name", "text", "Your name", nameValue, required ? "Enter your name" : "")}${fieldInput(`contact-email-${mode}`, "Email", "email", "you@example.com", emailValue, required ? "Enter your email" : invalid ? "Enter a valid email address" : "")}</div><div class="field"><label for="contact-topic-${mode}">What can we help with?</label><div class="field-combobox${menuAbove ? " is-up" : ""}" data-contact-topic><input class="field-input${required ? " is-error" : ""}" id="contact-topic-${mode}" name="topic" type="text" value="${topicValue}" placeholder="Choose a topic" role="combobox" aria-autocomplete="none" aria-controls="contact-topic-${mode}-options" aria-expanded="${menuOpen}"${menuOpen ? ` aria-activedescendant="contact-topic-${mode}-option-0"` : ""} tabindex="-1" readonly><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show contact topics">${chevronDownIcon}</button><div class="combobox-menu" id="contact-topic-${mode}-options" role="listbox" aria-label="Contact topic"${menuOpen ? "" : " hidden"}>${topicOptions}</div></div>${required ? `<p class="field-error" role="alert">Choose a topic</p>` : ""}</div><div class="field"><label for="contact-message-${mode}">Message</label><textarea class="field-input contact-message${required || invalid ? " is-error" : ""}" id="contact-message-${mode}" name="message" rows="6" maxlength="1000" placeholder="Tell us what happened or what you need help with" tabindex="-1" readonly>${messageValue}</textarea><span class="field-hint"><span>${messageValue.length}</span>/1000 characters</span>${required ? `<p class="field-error" role="alert">Enter a message</p>` : invalid ? `<p class="field-error" role="alert">Add a little more detail so we can help</p>` : ""}</div><button class="btn btn-primary btn-block contact-submit" type="button" tabindex="-1">Send Message</button><p class="contact-privacy">We’ll only use your details to respond to this request.</p></form>`;
+  const form = `<form data-contact-form novalidate><div class="contact-name-row">${fieldInput(`contact-name-${mode}`, "Name", "text", "Your name", nameValue, required ? "Enter your name" : "")}${fieldInput(`contact-email-${mode}`, "Email", "email", "you@example.com", emailValue, required ? "Enter your email" : invalid ? "Enter a valid email address" : "")}</div><div class="field"><label for="contact-topic-${mode}">What can we help with?</label><div class="field-combobox${menuAbove ? " is-up" : ""}" data-contact-topic><input class="field-input${required ? " is-error" : ""}" id="contact-topic-${mode}" name="topic" type="text" value="${topicValue}" placeholder="Choose a topic" role="combobox" aria-autocomplete="none" aria-controls="contact-topic-${mode}-options" aria-expanded="${menuOpen}"${menuOpen ? ` aria-activedescendant="contact-topic-${mode}-option-0"` : ""} tabindex="-1" readonly><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show contact topics">${chevronDownIcon}</button><div class="combobox-menu" id="contact-topic-${mode}-options" role="listbox" aria-label="Contact topic"${menuOpen ? "" : " hidden"}>${topicOptions}</div></div>${required ? `<p class="field-error" role="alert">Choose a topic</p>` : ""}</div><div class="field"><label for="contact-message-${mode}">Message</label><textarea class="field-input contact-message${required || invalid ? " is-error" : ""}" id="contact-message-${mode}" name="message" rows="6" maxlength="1000" placeholder="Tell us what happened or what you need help with" tabindex="-1" readonly>${messageValue}</textarea><span class="field-hint"><span>${messageValue.length}</span>/1000 characters</span>${required ? `<p class="field-error" role="alert">Enter a message</p>` : invalid ? `<p class="field-error" role="alert">Add a little more detail so we can help</p>` : ""}</div><button class="btn btn-primary btn-block contact-submit" type="button" tabindex="-1"${formComplete ? "" : " disabled"}>Send Message</button></form>`;
   const successState = `<div class="contact-success" role="status" tabindex="-1"><span class="contact-success-icon" aria-hidden="true">${sentIcon}</span><span class="eyebrow">Message sent</span><h2>Thanks for getting in touch.</h2><p>We’ve received your request and will reply to <strong>alex@gtl.test</strong>.</p><p class="contact-reference">Reference <span class="tnum">GTL-7F3K9Q</span></p><button class="btn btn-secondary" type="button" tabindex="-1">Send another message</button></div>`;
-  return `<div class="flat-screen is-contact contact-body">${homeHeader(prefilled, prefilled)}<main class="contact-page container">${supportBack()}<div class="contact-layout"><section class="contact-intro" aria-labelledby="contact-title-${mode}"><span class="eyebrow">Contact GTL</span><h1 id="contact-title-${mode}">How can we help?</h1><p>Send us a message and the GTL team will get back to you as soon as possible.</p><div class="contact-note"><span class="contact-note-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5h16v11H4z" stroke="currentColor" stroke-width="1.8"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>We usually reply within 1–2 business days.</strong><span>For account questions, use the email linked to your GTL account.</span></div></div></section><section class="contact-card" aria-label="Contact request form">${success ? successState : form}</section></div></main>${homeFooter()}</div>`;
+  return `<div class="flat-screen is-contact contact-body">${homeHeader(prefilled, prefilled)}<main class="contact-page container">${supportBack()}<div class="contact-layout"><section class="contact-intro" aria-labelledby="contact-title-${mode}"><h1 id="contact-title-${mode}">How can we help?</h1><p>Send us a message and we’ll get back to you as soon as possible, usually within one to two business days.</p></section><section class="contact-card" aria-label="Contact request form">${success ? successState : form}</section></div></main>${homeFooter()}</div>`;
 }
 
 function renderFeesFrame(mode) {
@@ -1083,7 +1139,7 @@ function legacyWaitlistConfirmation(mode) {
 function legacyRenderWaitlistFrame(mode) {
   const error = mode === "error";
   const marketRows = [["GTL", "Get the Lead", 38, 62], ["TIE", "", 22, 78], ["KTL", "Keep the Lead", 64, 36]];
-  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta">Join the Waitlist</span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form"><div class="form-row"><div class="email-field"><input class="field-input${error ? " is-error" : ""}" type="email" placeholder="Enter Your Email" tabindex="-1" readonly></div><button class="btn btn-primary join-button" type="button" tabindex="-1"><span>Get Early Access</span></button></div><p class="form-message${error ? " is-error" : ""}">${error ? "Enter a valid email address to join the waitlist." : ""}</p></div><div class="trust-row"><span>✓ First Access</span><span>✓ Launch Rewards</span><span>✓ Free to Join</span></div></div></div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${[["01", "Live by the play", "Prices shift as the game turns. Read the moment and make your move in seconds."], ["02", "Made for momentum", "Back the lead, the tie, or the comeback—without leaving the game you’re watching."], ["03", "Simple by design", "Clear Yes or No positions. No clutter, no complicated bet slips, no missed plays."]].map(([n, title, copy], i) => `<article class="promise-card${i === 1 ? " promise-card--feature" : ""}"><span class="promise-number">${n}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><article class="game-tile launch-game-card fan-card--center is-open" style="--home-color:#E31837;--away-color:#B3995D"><div class="tile-main"><div class="game-row"><div class="team team-home is-leading"><span class="team-mark team-logo is-fallback" style="--team-color:#E31837"><span class="team-mark-abbr">KC</span></span><div class="team-meta"><span class="team-abbr team-name">Chiefs</span><span class="team-score tnum">17</span></div></div><div class="game-center"><span class="period">Q2</span><span class="clock tnum">08:42</span></div><div class="team team-away"><span class="team-mark team-logo is-fallback" style="--team-color:#B3995D"><span class="team-mark-abbr">SF</span></span><div class="team-meta"><span class="team-abbr team-name">49ers</span><span class="team-score tnum">14</span></div></div></div></div><div class="tile-foot"><div class="foot-toggle"><span class="toggle-label">Hide Bets</span></div><div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad"><div class="mkt-grid"><div class="mkt-head"><span>Yes</span><span>Markets</span><span>No</span></div>${marketRows.map(([name, sub, yes, no]) => `<div class="mkt-row"><span class="price yes tnum">${yes}¢</span><span class="mkt-name">${name}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span><span class="price no tnum">${no}¢</span></div>`).join("")}</div></div></div></div></div></article></div></section><section class="ranking-section"><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong>$5,000</strong><span>Prize Pool</span></div><div><strong>Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${[["1", "leadstorm", "6,840", "$1,500"], ["2", "fourthquarter", "6,210", "$900"], ["3", "linehunter", "5,980", "$650"]].map(([rank, user, balance, prize]) => `<div class="competition-row"><span class="competition-rank">${rank}</span><strong>${user}</strong><span>${balance}</span><span>${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span>4,880</span><span>$300</span></div></div></div></div></section><section class="final-cta"><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button">Join the Waitlist</span></div></section></main>${legacyWaitlistConfirmation(mode)}<footer class="waitlist-footer"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"><p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
+  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand">${brandLogoSVG()}</span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta">Join the Waitlist</span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form"><div class="form-row"><div class="email-field"><input class="field-input${error ? " is-error" : ""}" type="email" placeholder="Enter Your Email" tabindex="-1" readonly></div><button class="btn btn-primary join-button" type="button" tabindex="-1"><span>Get Early Access</span></button></div><p class="form-message${error ? " is-error" : ""}">${error ? "Enter a valid email address to join the waitlist." : ""}</p></div><div class="trust-row"><span>✓ First Access</span><span>✓ Launch Rewards</span><span>✓ Free to Join</span></div></div></div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${[["01", "Live by the play", "Prices shift as the game turns. Read the moment and make your move in seconds."], ["02", "Made for momentum", "Back the lead, the tie, or the comeback—without leaving the game you’re watching."], ["03", "Simple by design", "Clear Yes or No positions. No clutter, no complicated bet slips, no missed plays."]].map(([n, title, copy], i) => `<article class="promise-card${i === 1 ? " promise-card--feature" : ""}"><span class="promise-number">${n}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><article class="game-tile launch-game-card fan-card--center is-open" style="--home-color:#E31837;--away-color:#B3995D"><div class="tile-main"><div class="game-row"><div class="team team-home is-leading"><span class="team-mark team-logo is-fallback" style="--team-color:#E31837"><span class="team-mark-abbr">KC</span></span><div class="team-meta"><span class="team-abbr team-name">Chiefs</span><span class="team-score tnum">17</span></div></div><div class="game-center"><span class="period">Q2</span><span class="clock tnum">08:42</span></div><div class="team team-away"><span class="team-mark team-logo is-fallback" style="--team-color:#B3995D"><span class="team-mark-abbr">SF</span></span><div class="team-meta"><span class="team-abbr team-name">49ers</span><span class="team-score tnum">14</span></div></div></div></div><div class="tile-foot"><div class="foot-toggle"><span class="toggle-label">Hide Bets</span></div><div class="foot-panel"><div class="foot-panel-inner"><div class="foot-panel-pad"><div class="mkt-grid"><div class="mkt-head"><span>Yes</span><span>Markets</span><span>No</span></div>${marketRows.map(([name, sub, yes, no]) => `<div class="mkt-row"><span class="price yes tnum">${yes}¢</span><span class="mkt-name">${name}${sub ? `<small class="mkt-sub">${sub}</small>` : ""}</span><span class="price no tnum">${no}¢</span></div>`).join("")}</div></div></div></div></div></article></div></section><section class="ranking-section"><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong>$5,000</strong><span>Prize Pool</span></div><div><strong>Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${[["1", "leadstorm", "6,840", "$1,500"], ["2", "fourthquarter", "6,210", "$900"], ["3", "linehunter", "5,980", "$650"]].map(([rank, user, balance, prize]) => `<div class="competition-row"><span class="competition-rank">${rank}</span><strong>${user}</strong><span>${balance}</span><span>${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span>4,880</span><span>$300</span></div></div></div></div></section><section class="final-cta"><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button">Join the Waitlist</span></div></section></main>${legacyWaitlistConfirmation(mode)}<footer class="waitlist-footer">${brandLogoSVG()}<p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
 }
 
 const waitlistCheckIcon = `<svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 10 3 3 7-7"/></svg>`;
@@ -1126,7 +1182,7 @@ function renderWaitlistFlatlay(mode) {
   const promiseCards = [
     ["01", `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`, "Live by the play", "Prices shift as the game turns. Read the moment and make your move in seconds."],
     ["02", `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`, "Made for momentum", "Back the lead, the tie, or the comeback—without leaving the game you’re watching."],
-    ["03", `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`, "Simple by design", "Clear Yes or No positions. No clutter, no complicated bet slips, no missed plays."],
+    ["03", `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.5 17 19 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`, "Simple by design", "Clear Yes or No trades. No clutter, no complicated bet slips, no missed plays."],
   ];
   const gameCards = [
     waitlistGameCard({ side: "left", home: { abbr: "BUF", name: "Bills", score: 24, color: "#00338D", leading: true }, away: { abbr: "MIA", name: "Dolphins", score: 20, color: "#008E97" }, period: "Q3", clock: "11:05", rows: [[44, "GTL", "Get the Lead", 56], [19, "TIE", "", 81], [58, "KTL", "Keep the Lead", 42]] }),
@@ -1134,7 +1190,7 @@ function renderWaitlistFlatlay(mode) {
     waitlistGameCard({ home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", leading: true }, away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D" }, period: "Q2", clock: "08:42", rows: [[38, "GTL", "Get the Lead", 62], [22, "TIE", "", 78], [64, "KTL", "Keep the Lead", 36]] }),
   ].join("");
   const rankingRows = [["is-first", waitlistTrophyIcon, "leadstorm", "6,840", "$1,500"], ["is-podium", waitlistMedalIcon, "fourthquarter", "6,210", "$900"], ["is-podium", waitlistMedalIcon, "linehunter", "5,980", "$650"]];
-  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand"><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta"><span class="header-cta-label-desktop">Join the Waitlist</span><span class="header-cta-label-mobile">Join Waitlist</span></span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form"><div class="form-row"><div class="email-field"><input class="field-input${error ? " is-error" : ""}" type="email" value="${error ? "not-an-email" : ""}" placeholder="Enter Your Email" tabindex="-1" readonly></div><span class="btn btn-primary join-button"><span>Get Early Access</span>${waitlistArrowIcon}</span></div><p class="form-message${error ? " is-error" : ""}">${error ? "Enter a valid email address to join the waitlist." : ""}</p></div><div class="trust-row"><span>${waitlistCheckIcon}First Access</span><span>${waitlistCheckIcon}Launch Rewards</span><span>${waitlistCheckIcon}Free to Join</span></div></div></div><div class="scroll-cue"><span></span>See what’s coming</div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${promiseCards.map(([number, icon, title, copy], index) => `<article class="promise-card${index === 1 ? " promise-card--feature" : ""}"><span class="promise-icon">${icon}</span><span class="promise-number">${number}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="market-field-lines"></div><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><div class="game-card-fan">${gameCards}</div></div></section><section class="ranking-section"><div class="ranking-glow"></div><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong class="tnum">$5,000</strong><span>Prize Pool</span></div><div><strong class="tnum">Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${rankingRows.map(([className, icon, user, balance, prize]) => `<div class="competition-row ${className}"><span class="competition-rank">${icon}</span><strong>${user}</strong><span class="tnum">${balance}</span><span class="tnum">${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span class="tnum">4,880</span><span class="tnum">$300</span></div></div></div></div></section><section class="final-cta"><div class="final-lines"></div><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button"><span>Join the Waitlist</span>${waitlistArrowIcon}</span></div></section></main>${waitlistFlatlayConfirmation(mode)}<footer class="waitlist-footer"><span><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"></span><p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
+  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand">${brandLogoSVG()}</span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta"><span class="header-cta-label-desktop">Join the Waitlist</span><span class="header-cta-label-mobile">Join Waitlist</span></span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form"><div class="form-row"><div class="email-field"><input class="field-input${error ? " is-error" : ""}" type="email" value="${error ? "not-an-email" : ""}" placeholder="Enter Your Email" tabindex="-1" readonly></div><span class="btn btn-primary join-button"><span>Get Early Access</span>${waitlistArrowIcon}</span></div><p class="form-message${error ? " is-error" : ""}">${error ? "Enter a valid email address to join the waitlist." : ""}</p></div><div class="trust-row"><span>${waitlistCheckIcon}First Access</span><span>${waitlistCheckIcon}Launch Rewards</span><span>${waitlistCheckIcon}Free to Join</span></div></div></div><div class="scroll-cue"><span></span>See what’s coming</div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${promiseCards.map(([number, icon, title, copy], index) => `<article class="promise-card${index === 1 ? " promise-card--feature" : ""}"><span class="promise-icon">${icon}</span><span class="promise-number">${number}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="market-field-lines"></div><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><div class="game-card-fan">${gameCards}</div></div></section><section class="ranking-section"><div class="ranking-glow"></div><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong class="tnum">$5,000</strong><span>Prize Pool</span></div><div><strong class="tnum">Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${rankingRows.map(([className, icon, user, balance, prize]) => `<div class="competition-row ${className}"><span class="competition-rank">${icon}</span><strong>${user}</strong><span class="tnum">${balance}</span><span class="tnum">${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span class="tnum">4,880</span><span class="tnum">$300</span></div></div></div></div></section><section class="final-cta"><div class="final-lines"></div><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button"><span>Join the Waitlist</span>${waitlistArrowIcon}</span></div></section></main>${waitlistFlatlayConfirmation(mode)}<footer class="waitlist-footer"><span>${brandLogoSVG()}</span><p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
 }
 
 function renderRankingFrame(mode) {
@@ -1295,6 +1351,20 @@ const gameFrameData = {
 
 const flatDocViews = {
   home: flatDocs.home,
+  trades: {
+    title: "Trades & Trade Cards",
+    description: "Alternative filtering and card layouts for the authenticated Home page, Live Game page, and global Open Trades menu.",
+    groups: [
+      { title: "Home Page", frames: [
+        { label: "Multiple Games — All Selected", type: "tradeLayout", mode: "homeAll" },
+        { label: "One Game — No All Option", type: "tradeLayout", mode: "homeSingle" },
+      ] },
+      { title: "Live Game Page & Open Trades Menu", frames: [
+        { label: "Live Game — My Game Trades", type: "tradeLayout", mode: "liveGame" },
+        { label: "Open Trades Menu — All Games", type: "tradeLayout", mode: "menuAll" },
+      ] },
+    ],
+  },
   waitlist: {
     title: "Waitlist Page",
     description: "Public launch landing page, email validation, submission progress, and confirmed early-access states.",
@@ -1413,14 +1483,14 @@ const flatDocViews = {
 };
 const individualHomeView = {
   title: "Home",
-  description: "Primary entry point for live NFL markets, account context, open positions and NBA-interest capture.",
+  description: "Primary entry point for live NFL markets, account context, open trades and NBA-interest capture.",
   groups: [
     { title: "Unauthenticated variants", frames: [
       { label: "Logged out default", type: "home", mode: "guest" },
     ] },
     { title: "Authenticated variants", frames: [
-      { label: "With open positions", type: "home", mode: "positions" },
-      { label: "No open positions", type: "home", mode: "logged" },
+      { label: "With open trades", type: "home", mode: "positions" },
+      { label: "No open trades", type: "home", mode: "logged" },
     ] },
     { title: "NBA variants", frames: [
       { label: "NBA markets coming soon", type: "home", mode: "nba" },
@@ -1435,6 +1505,23 @@ const individualHomeView = {
   ],
 };
 const individualPageDocumentation = {
+  trades: {
+    title: "Trades & Trade Cards",
+    implementation: "Exploration for <code>home.html</code>, <code>game.html</code>, and the shared Open Trades menu",
+    purpose: "Explore one consistent way to filter open trades by game while retaining score context in the All view and reducing repeated scoreboards in a game-specific view.",
+    states: "Multiple-game All view, multiple-game selected view, single-game view without All, Live Game My Trades, Open Trades menu All view, and Open Trades menu selected-game view.",
+    contract: [
+      "Show All only when trades belong to more than one game; with one game, render only that matchup option.",
+      "Keep one shared scorecard fixed above the trade carousel in both All and game-specific views.",
+      "In All, keep trades from the same game adjacent and update the shared scorecard as the focused card changes game.",
+      "Use the same filter order, selected state, trade values, and responsive behavior on Home and in the global Open Trades menu.",
+    ],
+    validation: "Confirm whether game filters should preserve their selection between Home and the Open Trades menu, and how settled or postponed games should be ordered alongside live games.",
+    guides: [
+      { title: "Filter Rules", items: ["Order All first, followed by games with the most recently active game first.", "Use compact matchup labels such as KC v SF; preserve a full accessible label containing both team names.", "If only one game has open trades, omit All and do not present a redundant disabled choice.", "Changing filters updates the score and cards together as one state change."] },
+      { title: "Card Rules", items: ["All and selected-game views use the same persistent scorecard and trade-card structure.", "Animate only the scorecard content when the focused trade changes game; do not move the scorecard container.", "Keep Buy More and Sell attached to the individual trade in both treatments.", "Multiple trades for one game remain adjacent and horizontally scroll only when the viewport cannot display them together."] },
+    ],
+  },
   waitlist: {
     title: "Waitlist",
     implementation: "<code>waitlist.html</code>, <code>waitlist.css</code>, <code>waitlist.js</code>",
@@ -1462,8 +1549,8 @@ const individualPageDocumentation = {
   game: {
     title: "Game",
     implementation: "<code>game.html</code>",
-    purpose: "Present one live game as a complete trading surface: navigation context, status and score, GTL/TIE/KTL prices, market statistics, game statistics, and any positions held in that game.",
-    states: "Open live market, scheduled countdown, waiting for first lead, transient price recalculation, final result, game positions available, game positions panel open, Market Stats selected, Game Stats selected, and future licensed-logo references.",
+    purpose: "Present one live game as a complete trading surface: navigation context, status and score, GTL/TIE/KTL prices, market statistics, game statistics, and any trades held in that game.",
+    states: "Open live market, scheduled countdown, waiting for first lead, transient price recalculation, final result, game trades available, game trades panel open, Market Stats selected, Game Stats selected, and future licensed-logo references.",
     contract: [
       "Resolve the game from the id query parameter and fall back safely when the identifier is absent or unknown.",
       "Render league and Regular Season above the status; derive Live, QTR Time, and Final from normalized feed fields rather than visual inference.",
@@ -1480,7 +1567,7 @@ const individualPageDocumentation = {
           "Floating global header, followed by a game-scoped back link whose label reflects Home or Portfolio when available.",
           "Scorecard: league/season, normalized status, home and away identity, score, leader emphasis, and team-colour gradient.",
           "Markets: Yes/Market/No header and fixed GTL, TIE, KTL row order, followed by contextual help or a blocking status.",
-          "Game positions: document the closed mobile/tablet bottom-bar control separately from its expanded dismissible panel; desktop keeps the same cards persistently inline below markets.",
+          "Game trades: document the closed mobile/tablet bottom-bar control separately from its expanded dismissible panel; desktop keeps the same cards persistently inline below markets.",
           "Statistics: Market Book and Order Flow, then Score Worm and five league-specific comparison rows.",
         ],
       },
@@ -1560,8 +1647,8 @@ const individualPageDocumentation = {
   portfolio: {
     title: "Portfolio",
     implementation: "<code>wallet.html</code>",
-    purpose: "Expose available credits, open positions, pending orders, settled activity and position actions.",
-    states: "Empty, open, winning, losing, conflicting positions, sell preview, loading and service error.",
+    purpose: "Expose available credits, open trades, pending orders, settled activity and trade actions.",
+    states: "Empty, open, winning, losing, conflicting trades, sell preview, loading and service error.",
     contract: ["Use the current credit balance as the shared balance source.", "Buy More and Sell retain the originating game, market and side.", "Financial values use tabular numerals and explicit positive/negative styling."],
     validation: "Confirm whether pending and settled orders require pagination or server-side filtering.",
   },
@@ -1675,9 +1762,9 @@ function gameMarkets(g) {
     <button class="price no" type="button" tabindex="-1"${disabled ? " disabled" : ""}>${g.waiting ? "–" : `${g.markets[key].no}¢`}</button>
   </div>`;
   return `<section class="container markets${g.recalc ? " is-recalc" : ""}${g.final ? " is-final" : ""}">
-    ${g.message ? `<div class="game-recalc"><span class="pause-dot"></span><span>${g.message}</span></div>` : ""}
     <div class="mkt-grid"><div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>${row("GTL", "Get the Lead", "gtl")}${row("TIE", "", "tie")}${row("KTL", "Keep the Lead", "ktl")}</div>
     <p class="bet-help">Tap a price to start your bet.</p>
+    ${g.message ? `<div class="game-recalc"><span class="pause-dot"></span><span>${g.message}</span></div>` : ""}
   </section>`;
 }
 
@@ -1857,45 +1944,477 @@ function gameStatsPreview(g, activePanel = "market", useLogos = false, instance 
   </section>`;
 }
 
-function gameOpenPositionsPreview(expanded = false) {
+function gamePositionMark(abbr, name, color) {
+  return `<span class="team-mark position-outcome-mark is-fallback" aria-label="${name}" style="--team-color:${color}"><span class="team-mark-abbr">${abbr}</span></span>`;
+}
+
+function gamePositionCardPreview({ market, side, qty, value, result, bought, now, teams }) {
+  const marks = teams.map((team) => gamePositionMark(team.abbr, team.name, team.color)).join("");
+  const colors = teams.map((team) => team.color);
+  const compactValue = value.replace(/\.00$/, "");
+  const up = !result.startsWith("-");
+  const teamName = teams[0]?.name || "team";
+  const winCopy = market === "Tie"
+    ? `You win if the game is ${side === "yes" ? "tied" : "not tied"}.`
+    : `You win if the ${teamName} ${market === "Get the Lead" ? (side === "yes" ? "get" : "do not get") : (side === "yes" ? "keep" : "do not keep")} the lead.`;
+  return `<article class="game-position-card pos-card--a${teams.length > 1 ? " is-tie-outcome" : ""}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
+    <div class="pos-info">
+      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><p class="trade-current-condition">${winCopy}</p></div>
+      <div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${result}</strong></span></div>
+      <div class="trade-option-inline-meta"><span>${qty} contracts</span><i>•</i><span>Bought ${bought}</span><i>•</i><span>Now ${now}</span></div>
+      <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
+    </div>
+  </article>`;
+}
+
+function gameOpenPositionsPreview(instance = "default") {
+  const buf = { abbr: "BUF", name: "Bills", color: "#00338D" };
+  const mia = { abbr: "MIA", name: "Dolphins", color: "#008E97" };
   const positions = [
-    { market: "Get the Lead", side: "yes", qty: 120, value: "$52.80", result: "+$7.20" },
-    { market: "Keep the Lead", side: "no", qty: 80, value: "$50.40", result: "+$8.80" },
-    { market: "Tie", side: "no", qty: 60, value: "$48.60", result: "+$4.20" },
+    { market: "Get the Lead", side: "yes", qty: 120, value: "$45.60", result: "+$8.40", bought: "31¢", now: "38¢", teams: [mia] },
+    { market: "Keep the Lead", side: "no", qty: 80, value: "$49.60", result: "+$5.60", bought: "55¢", now: "62¢", teams: [mia] },
+    { market: "Tie", side: "no", qty: 60, value: "$46.80", result: "+$3.60", bought: "74¢", now: "78¢", teams: [buf, mia] },
   ];
-  const cards = positions.map((position) => {
-    const up = !position.result.startsWith("−");
-    return `<article class="pos-card pos-card--b" style="--home-color:#00338D;--away-color:#008E97">
-      <div class="pos-info">
-        <div class="ocb-type">${position.market} · <span class="side-${position.side}">${position.side.toUpperCase()}</span></div>
-        <div class="ocb-stats">
-          <div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">${position.qty}</span></div>
-          <div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">${position.value}</span></div>
-          <div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl ${up ? "up" : "down"}">${position.result}</span></div>
-        </div>
-        <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
-      </div>
-    </article>`;
+  const titleId = `gamePositionsPreviewTitle-${instance}`;
+  return `<section class="game-open-position container" aria-labelledby="${titleId}">
+    <div class="game-positions-head"><h2 id="${titleId}">My Game Trades</h2><span class="game-trade-count" aria-label="${positions.length} open trades in this game">${positions.length}</span></div>
+    <div class="game-position-carousel">${positions.map(gamePositionCardPreview).join("")}</div>
+    <div class="game-position-navigation"><button class="game-position-nav-button" type="button" tabindex="-1" aria-label="Previous trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="game-position-dots"><button class="game-position-dot is-active" type="button" tabindex="-1" aria-label="Trades page 1"></button><button class="game-position-dot" type="button" tabindex="-1" aria-label="Trades page 2"></button><button class="game-position-dot ds-desktop-extra-page" type="button" tabindex="-1" aria-label="Trades page 3"></button></div><button class="game-position-nav-button" type="button" tabindex="-1" aria-label="Next trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+  </section>`;
+}
+
+const menuPositionPreviewGames = {
+  kc: {
+    label: "SF @ KC",
+    game: { period: "Q2", clock: "08:42", home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837" }, away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D" } },
+    trades: [
+      { market: "Get the Lead", side: "yes", qty: 150, value: "$57.00", pnl: "+$10.50", bought: "31¢", now: "38¢" },
+      { market: "Tie", side: "no", qty: 60, value: "$46.80", pnl: "+$2.40", bought: "74¢", now: "78¢" },
+      { market: "Keep the Lead", side: "yes", qty: 100, value: "$40.00", pnl: "+$0.00", bought: "40¢", now: "40¢" },
+    ],
+  },
+  den: {
+    label: "DAL @ DEN",
+    game: { period: "Q4", clock: "01:33", home: { abbr: "DEN", name: "Nuggets", score: 102, color: "#FEC524" }, away: { abbr: "DAL", name: "Mavericks", score: 99, color: "#00538C" } },
+    trades: [{ market: "Get the Lead", side: "no", qty: 90, value: "$60.30", pnl: "+$6.30", bought: "60¢", now: "67¢" }],
+  },
+  ny: {
+    label: "BOS @ NYK",
+    game: { period: "Q4", clock: "05:18", home: { abbr: "NYK", name: "Knicks", score: 84, color: "#F58426" }, away: { abbr: "BOS", name: "Celtics", score: 89, color: "#007A33" } },
+    trades: [{ market: "Keep the Lead", side: "yes", qty: 100, value: "$63.00", pnl: "-$7.00", bought: "70¢", now: "63¢" }],
+  },
+};
+
+function menuNoLogoTeamBlock(g, side) {
+  const lead = g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away";
+  const team = g[side];
+  return `<div class="team team-${side}${lead === side ? " is-leading" : ""}">${gamePositionMark(team.abbr, team.name, team.color).replace("position-outcome-mark", "team-logo")}<div class="team-meta"><span class="team-abbr">${team.abbr}</span><span class="team-score tnum">${team.score}</span></div></div>`;
+}
+
+function menuNoLogoGameMedia(g) {
+  return `<div class="game-row">${menuNoLogoTeamBlock(g, "home")}<div class="game-center"><span class="period">${g.period}</span><span class="clock tnum">${g.clock}</span></div>${menuNoLogoTeamBlock(g, "away")}</div>`;
+}
+
+function menuTradeActions(compact = false) {
+  return `<div class="oc-actions${compact ? " ds-compact-actions" : ""}"><button class="oc-buy" type="button" tabindex="-1">${compact ? "Buy" : "Buy More"}</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>`;
+}
+
+function menuPositionCard(gameKey, tradeIndex = 0) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const trade = entry.trades[tradeIndex] || entry.trades[0];
+  const up = !trade.pnl.startsWith("-");
+  const compactValue = trade.value.replace(/\.00$/, "");
+  return `<article class="pos-card pos-card--a ds-menu-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info"><div class="trade-current-topline"><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div><div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>${menuTradeActions()}</div></article>`;
+}
+
+function menuTradeSummary(trade, selected = false) {
+  const up = !trade.pnl.startsWith("-");
+  return `<div class="ds-trade-summary${selected ? " is-selected" : ""}"><div><strong>${trade.market}</strong><span><span class="side-${trade.side}">${trade.side.toUpperCase()}</span> · ${trade.qty} contracts</span></div><div class="ds-trade-values"><strong class="tnum">${trade.value}</strong><span class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</span></div></div>`;
+}
+
+function menuCombinedCard(gameKey, carousel = false) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const trades = entry.trades;
+  const content = carousel
+    ? `<div class="ds-trade-carousel">${trades.map((trade) => `<article class="ds-trade-slide">${menuTradeSummary(trade)}${menuTradeActions()}</article>`).join("")}</div>${trades.length > 1 ? `<div class="ds-inner-dots"><span class="is-active"></span><span></span></div>` : ""}`
+    : `<div class="ds-combined-trades">${trades.map((trade, index) => menuTradeSummary(trade, index === 0)).join("")}</div><p class="ds-action-context">Actions for ${trades[0].market} · ${trades[0].side.toUpperCase()}</p>${menuTradeActions()}`;
+  return `<article class="pos-card ds-combined-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info">${content}</div></article>`;
+}
+
+function menuCompactOverviewCard(gameKey) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const rows = entry.trades.map((trade) => {
+    const up = !trade.pnl.startsWith("-");
+    return `<article class="ds-compact-trade"><div class="ds-compact-trade-head"><strong>${trade.market}</strong><span class="side-${trade.side}">${trade.side.toUpperCase()}</span></div><div class="ds-compact-metrics"><span><small>Contracts</small><strong class="tnum">${trade.qty}</strong></span><span><small>Bought at</small><strong class="tnum">${trade.bought}</strong></span><span><small>Value now</small><strong class="tnum">${trade.value}</strong></span><span><small>Return</small><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div>${menuTradeActions(true)}</article>`;
   }).join("");
-  return `<div class="game-open-position${expanded ? " is-preview-open" : ""}" role="region" aria-label="Your open positions in this game">
-    <div class="gop-backdrop" aria-hidden="true"></div>
-    <div class="gop-pop"><p class="gop-heading">Game Open Positions</p><div class="hpos-list">${cards}</div></div>
+  return `<article class="pos-card ds-compact-overview-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info">${rows}</div></article>`;
+}
+
+function groupedMenuSections(twoTrades = false, horizontal = false) {
+  return Object.keys(menuPositionPreviewGames).map((gameKey) => {
+    const entry = menuPositionPreviewGames[gameKey];
+    const count = twoTrades && gameKey === "kc" ? entry.trades.length : 1;
+    const cards = Array.from({ length: count }, (_, index) => menuPositionCard(gameKey, index)).join("");
+    return `<section class="hpos-game-group" aria-label="${entry.label}"><p class="hpos-game-heading">${entry.label}</p><div class="${horizontal ? "ds-group-trade-carousel" : "ds-group-trade-stack"}">${cards}</div></section>`;
+  }).join("");
+}
+
+function gameHeaderPositionsMenuPreview(mode = "positionsPanelOpen") {
+  let list = groupedMenuSections(false, false);
+  if (mode === "positionsMenuTwoTrades") list = groupedMenuSections(true, false);
+  if (mode === "positionsMenuCombined") list = Object.keys(menuPositionPreviewGames).map((key) => menuCombinedCard(key)).join("");
+  if (mode === "positionsMenuCombinedCarousel") list = Object.keys(menuPositionPreviewGames).map((key) => menuCombinedCard(key, true)).join("");
+  if (mode === "positionsMenuGroupedCarousel") list = groupedMenuSections(true, true);
+  if (mode === "positionsMenuCompactOverview") list = Object.keys(menuPositionPreviewGames).map((key) => menuCompactOverviewCard(key)).join("");
+  return `<div class="hpos-backdrop is-open" aria-hidden="true"></div><div class="hpos-panel ds-hpos-panel ds-hpos-${mode}" role="dialog" aria-label="All open trades">
+    <p class="hpos-heading">All Open Trades</p>
+    <div class="hpos-list">${list}</div>
   </div>`;
 }
 
-function gameOpenPositionsBar(expanded = false) {
-  return `<div class="betbar ds-gop-betbar"><div class="container betbar-inner"><button class="btn ${expanded ? "btn-secondary" : "btn-primary"} gop-trigger" type="button" aria-expanded="${String(expanded)}" tabindex="-1"><span class="gop-open-label">Hide</span><span class="gop-closed-label"><span class="gop-num">3</span><span class="gop-game"> Game</span> Positions</span></button><button class="btn btn-primary betbar-cta" type="button" tabindex="-1">View Bets</button></div></div>`;
+const tradeLayoutVariantDocumentation = {
+  homeAll: {
+    summary: "The authenticated Home-page trade area when open trades span several games and All is selected.",
+    trigger: "Use when the customer has open trades in two or more games and has not narrowed the view.",
+    changes: "Add the game filter above one persistent scorecard and a trade carousel grouped by matchup.",
+    data: "All open trades, their game identity, live score and clock, market, side, contracts, value, and return.",
+    behavior: "Scrolling to a trade from another game transitions the fixed scorecard content; selecting a game scrolls in that game's cards beneath the same scorecard.",
+  },
+  homeGame: {
+    summary: "The authenticated Home-page trade area narrowed to one game from a multi-game portfolio.",
+    trigger: "Use after the customer selects a matchup from the multi-game filter.",
+    changes: "Show the selected game's live score once, then display its My Trades cards horizontally beneath it.",
+    data: "The selected game plus every open trade belonging to it.",
+    behavior: "All restores the grouped portfolio view; another matchup replaces both the scorecard and trade row.",
+  },
+  homeSingle: {
+    summary: "The Home-page trade area when every open trade belongs to one game.",
+    trigger: "Use when the customer has one or more trades, all sharing the same game id.",
+    changes: "Render only the matchup filter option; omit All because there is no second game to aggregate.",
+    data: "The single game and all of its open trades.",
+    behavior: "The sole matchup remains selected and the shared score plus My Trades row are displayed directly below it.",
+  },
+  liveGame: {
+    summary: "The Live Game page with trades belonging to the current game shown above the statistics.",
+    trigger: "Use when the authenticated customer holds one or more trades whose game id matches the page.",
+    changes: "Keep the page score and markets unchanged, then show My Game Trades as horizontal cards without repeating the score.",
+    data: "Current game data and only the customer's matching open trades.",
+    behavior: "Cards keep their individual Buy More and Sell actions and use pagination only when the visible set overflows.",
+  },
+  menuAll: {
+    summary: "The global Open Trades menu with multiple games and All selected.",
+    trigger: "Use when the menu opens and the customer has trades in two or more games.",
+    changes: "Use the implemented header trigger, backdrop and floating panel, then place the shared game filter above vertical game sections, each with its own live scoreboard and trade cards.",
+    data: "The complete open-trade portfolio and current game snapshots.",
+    behavior: "The menu itself scrolls vertically and matchup section breaks remain in All; selecting a matchup reveals that game's shared scoreboard and ungrouped trade list.",
+  },
+  menuGame: {
+    summary: "The global Open Trades menu narrowed to a selected game.",
+    trigger: "Use after a matchup is selected from the menu filter.",
+    changes: "Keep one shared live score above a vertical trade list and remove matchup section headings from the selected-game view.",
+    data: "The selected game and every matching trade.",
+    behavior: "Buy More and Sell remain scoped to each trade; All returns to the grouped menu.",
+  },
+};
+
+function tradeLayoutFilter(active = "all", singleGame = false) {
+  const games = singleGame ? ["kc"] : ["kc", "den", "ny"];
+  const options = [
+    ...(singleGame ? [] : [{ key: "all", label: "All", accessible: "All games" }]),
+    ...games.map((key) => {
+      const game = menuPositionPreviewGames[key].game;
+      return { key, label: `${game.home.abbr} v ${game.away.abbr}`, accessible: `${game.home.name} versus ${game.away.name}` };
+    }),
+  ];
+  return `<div class="trade-game-strip" role="tablist" aria-label="Filter open trades by game">${options.map((option) => {
+    const entry = option.key === "all" ? null : menuPositionPreviewGames[option.key];
+    const icon = option.key === "all"
+      ? `<span class="trade-game-all-content" aria-hidden="true"><strong>All</strong></span>`
+      : `<span class="trade-game-compact-mark" aria-hidden="true"><span class="trade-game-compact-label"><strong>${entry.game.home.abbr}</strong><b>/</b><strong>${entry.game.away.abbr}</strong></span></span>`;
+    const colors = entry ? `--filter-home:${entry.game.home.color};--filter-away:${entry.game.away.color}` : `--filter-home:var(--green);--filter-away:#8fb7ff`;
+    return `<button class="trade-game-pill${option.key === active ? " is-active" : ""}" type="button" role="tab" aria-selected="${String(option.key === active)}" aria-label="${option.accessible}" data-trade-filter="${option.key}"><span class="trade-game-icon${option.key === "all" ? " is-all" : ""}" style="${colors}">${icon}</span></button>`;
+  }).join("")}</div>`;
+}
+
+function tradeLayoutNavigation(count) {
+  if (count < 2) return "";
+  const dots = Array.from({ length: count }, (_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" aria-label="Trades page ${index + 1}" data-trade-page="${index}"></button>`).join("");
+  return `<div class="game-position-navigation"><button class="game-position-nav-button" type="button" aria-label="Previous trades page" data-trade-nav="prev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="game-position-dots">${dots}</div><button class="game-position-nav-button" type="button" aria-label="Next trades page" data-trade-nav="next"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`;
+}
+
+function tradeLayoutAllCards() {
+  const tradeCards = Object.entries(menuPositionPreviewGames).flatMap(([gameKey, entry]) => entry.trades.map((trade) => tradeLayoutCurrentGameCard(gameKey, trade, "compact")));
+  return `<section class="trade-layout-my-trades is-all-games" aria-label="All open trades, ordered by game"><div class="game-position-carousel">${tradeCards.join("")}</div>${tradeLayoutNavigation(tradeCards.length)}</section>`;
+}
+
+function tradeLayoutMenuAllCards() {
+  const groups = Object.entries(menuPositionPreviewGames).map(([gameKey, entry]) => `<section class="trade-layout-menu-group" aria-label="${entry.game.home.name} versus ${entry.game.away.name}"><div class="trade-layout-scorecard trade-layout-group-score">${tradeLayoutGameScoreboard(gameKey)}</div>${entry.trades.map((trade) => tradeLayoutCurrentGameCard(gameKey, trade, "compact")).join("")}</section>`).join("");
+  return `<section class="trade-layout-my-trades is-menu-vertical is-all-games" aria-label="All open trades, ordered by game"><div class="trade-layout-menu-list">${groups}</div></section>`;
+}
+
+function tradeLayoutGameData(gameKey) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const league = gameKey === "kc" ? "NFL" : "NBA";
+  return { ...entry.game, league, markets: { gtl: { yes: 38, no: 62 }, tie: { yes: 22, no: 78 }, ktl: { yes: 40, no: 60 } } };
+}
+
+function tradeLayoutGameScoreboard(gameKey) {
+  return gameScoreboard(tradeLayoutGameData(gameKey));
+}
+
+function tradeLayoutOutcomeTeams(gameKey, trade) {
+  const game = menuPositionPreviewGames[gameKey].game;
+  if (trade.market === "Tie") return [game.home, game.away];
+  const leader = game.home.score >= game.away.score ? game.home : game.away;
+  const trailer = leader === game.home ? game.away : game.home;
+  if (trade.market === "Get the Lead") return [trade.side === "yes" ? trailer : leader];
+  return [trade.side === "yes" ? leader : trailer];
+}
+
+function tradeLayoutCurrentGameCopy(gameKey, trade) {
+  const team = menuPositionPreviewGames[gameKey].game.home;
+  if (trade.market === "Get the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "get" : "do not get"} the lead.`;
+  if (trade.market === "Keep the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "keep" : "do not keep"} the lead.`;
+  return `You win if the game ${trade.side === "yes" ? "is tied" : "doesn't end tied"}.`;
+}
+
+function tradeLayoutCurrentGameCard(gameKey, trade, variant = "table") {
+  const teams = tradeLayoutOutcomeTeams(gameKey, trade);
+  const marks = teams.map((team) => gamePositionMark(team.abbr, team.name, team.color)).join("");
+  const colors = teams.map((team) => team.color);
+  const up = !trade.pnl.startsWith("-");
+  const compactValue = trade.value.replace(/\.00$/, "");
+  const earningsClass = `oc-pnl ${up ? "up" : "down"} tnum`;
+  const details = variant === "compact"
+    ? `<div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
+    : variant === "value"
+      ? `<div class="trade-option-value-focus"><span><small>Current Value</small><strong class="tnum">${compactValue}</strong></span><span><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
+    : variant === "movement"
+      ? `<div class="trade-option-price-flow"><span><small>Bought At</small><strong class="tnum">${trade.bought}</strong></span><b aria-hidden="true">→</b><span><small>Now</small><strong class="tnum">${trade.now}</strong></span></div><div class="trade-option-price-summary"><span>${trade.qty} contracts</span><span>Value <strong class="tnum">${compactValue}</strong></span><strong class="${earningsClass}">${trade.pnl} earnings</strong></div>`
+      : `<div class="trade-option-table" role="table" aria-label="Trade details"><div class="trade-option-table-row is-labels" role="row"><span role="columnheader">Contracts</span><span role="columnheader">Bought At</span><span role="columnheader">Now</span></div><div class="trade-option-table-row is-values" role="row"><strong class="tnum" role="cell">${trade.qty}</strong><strong class="tnum" role="cell">${trade.bought}</strong><strong class="tnum" role="cell">${trade.now}</strong></div></div><div class="trade-option-table-result"><span>Value <strong class="tnum">${compactValue}</strong></span><span>Earnings <strong class="${earningsClass}">${trade.pnl}</strong></span></div>`;
+  return `<article class="game-position-card pos-card--a trade-layout-current-card is-${variant}${teams.length > 1 ? " is-tie-outcome" : ""}" data-trade-game="${gameKey}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
+    <div class="pos-info">
+      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div>
+      ${details}
+      <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
+    </div>
+  </article>`;
+}
+
+function tradeLayoutGameTrades(gameKey, instance, cardVariant = "table", vertical = false) {
+  const entry = menuPositionPreviewGames[gameKey];
+  const cards = entry.trades.map((trade) => tradeLayoutCurrentGameCard(gameKey, trade, cardVariant)).join("");
+  const count = entry.trades.length;
+  if (vertical) return `<section class="trade-layout-my-trades is-menu-vertical" aria-label="Trades for ${entry.game.home.name} versus ${entry.game.away.name}"><div class="trade-layout-menu-list">${cards}</div></section>`;
+  return `<section class="trade-layout-my-trades" aria-label="Trades for ${entry.game.home.name} versus ${entry.game.away.name}"><div class="game-position-carousel">${cards}</div>${tradeLayoutNavigation(count)}</section>`;
+}
+
+function tradeLayoutSelectedGame(gameKey, instance, cardVariant = "table", showAll = false, verticalMenu = false) {
+  const trades = showAll ? (verticalMenu ? tradeLayoutMenuAllCards() : tradeLayoutAllCards()) : tradeLayoutGameTrades(gameKey, instance, cardVariant, verticalMenu);
+  return `<div class="trade-layout-selected-game" data-trade-layout-stage data-score-game="${gameKey}"><div class="trade-layout-scorecard" data-trade-scorecard>${tradeLayoutGameScoreboard(gameKey)}</div>${trades}</div>`;
+}
+
+function tradeLayoutBody({ active = "all", singleGame = false, instance = "default", cardVariant = "table" } = {}) {
+  const scoreGame = active === "all" ? "kc" : active;
+  const verticalMenu = instance.startsWith("menu");
+  return `<div class="trade-layout-experience" data-trade-layout-experience data-trade-instance="${instance}" data-trade-card-variant="${cardVariant}" data-trade-active="${active}" data-trade-vertical="${String(verticalMenu)}">${tradeLayoutFilter(active, singleGame)}${tradeLayoutSelectedGame(scoreGame, instance, cardVariant, active === "all", verticalMenu)}</div>`;
+}
+
+function tradeLayoutHomeHero(body) {
+  return `<section class="hero trade-layout-hero"><div class="hero-bg"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-glow"></div></div><div class="container hero-inner authed"><div class="hero-greeting"><h1>Hey Alex</h1></div><div class="authed-stack"><div class="positions-block trade-layout-home-panel"><div class="positions-head"><span class="eyebrow">Open Trades</span></div>${body}</div><span class="btn btn-primary authed-cta">Live Games</span></div></div></section>`;
+}
+
+function tradeLayoutLiveGameData() {
+  return {
+    ...tradeLayoutGameData("kc"),
+    variant: 3,
+    stats: gameFrameData.openPositions.stats,
+  };
+}
+
+function tradeLayoutLiveGameTrades(instance = "liveGame") {
+  const count = menuPositionPreviewGames.kc.trades.length;
+  const titleId = `tradeLayoutLiveGameTitle-${instance}`;
+  return `<section class="game-open-position container" aria-labelledby="${titleId}">
+    <div class="game-positions-head"><h2 id="${titleId}">My Game Trades</h2><span class="game-trade-count" aria-label="${count} open trades in this game">${count}</span></div>
+    <div class="trade-layout-experience" data-trade-layout-experience data-trade-instance="liveGame" data-trade-card-variant="compact" data-trade-active="kc" data-trade-vertical="false">${tradeLayoutGameTrades("kc", "liveGame", "compact")}</div>
+  </section>`;
+}
+
+function renderTradeLayoutLiveGame(menuBody = "") {
+  const game = tradeLayoutLiveGameData();
+  const gameColors = `--home-color:${game.home.color};--away-color:${game.away.color}`;
+  const menuOpen = Boolean(menuBody);
+  const portfolioCount = Object.values(menuPositionPreviewGames).reduce((total, entry) => total + entry.trades.length, 0);
+  const menu = menuOpen
+    ? `<div class="hpos-backdrop is-open" aria-hidden="true"></div><aside class="hpos-panel ds-hpos-panel trade-layout-actual-menu" role="dialog" aria-label="Open Trades"><p class="hpos-heading">Open Trades</p>${menuBody}</aside>`
+    : "";
+  const instance = menuOpen ? "menuAll" : "liveGame";
+  return `<div class="flat-screen is-game is-game-openPositions${menuOpen ? " is-game-positionsPanelOpen is-trade-layout-menu" : " is-trade-layout-live-game"}">${homeHeader(true, true, menuOpen, portfolioCount)}${menu}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(game)}${gameMarkets(game)}</div><div class="game-col-right">${tradeLayoutLiveGameTrades(instance)}${gameStatsPreview(game, "market", false, instance)}</div></div></main>${homeFooter()}</div>`;
+}
+
+function renderTradeLayoutFrame(mode) {
+  if (mode === "liveGame") return renderTradeLayoutLiveGame();
+  const selected = ["homeGame", "homeGameTable", "homeGameValue", "homeGameMovement", "menuGame", "homeSingle"].includes(mode);
+  const singleGame = mode === "homeSingle";
+  const cardVariant = mode === "homeGameTable" ? "table" : mode === "homeGameValue" ? "value" : mode === "homeGameMovement" ? "movement" : "compact";
+  const body = tradeLayoutBody({ active: selected ? "kc" : "all", singleGame, instance: mode, cardVariant });
+  if (mode === "menuAll" || mode === "menuGame") {
+    return renderTradeLayoutLiveGame(body);
+  }
+  return `<div class="flat-screen is-home is-home-positions is-trade-layout-home">${homeHeader(true, true, false, 4)}${tradeLayoutHomeHero(body)}${homeLiveSection("positions")}${homeHowSection()}${homeFooter()}</div>`;
+}
+
+function transitionTradeLayoutScorecard(experience, gameKey) {
+  const stage = experience.querySelector("[data-trade-layout-stage]");
+  const scorecard = experience.querySelector("[data-trade-scorecard]");
+  if (!stage || !scorecard || stage.dataset.scoreGame === gameKey) return;
+  const transitionId = `${Date.now()}-${gameKey}`;
+  scorecard.dataset.transitionId = transitionId;
+  scorecard.classList.add("is-changing");
+  window.setTimeout(() => {
+    if (scorecard.dataset.transitionId !== transitionId) return;
+    scorecard.innerHTML = tradeLayoutGameScoreboard(gameKey);
+    stage.dataset.scoreGame = gameKey;
+    scorecard.classList.remove("is-changing");
+    scorecard.classList.add("is-entering");
+    window.setTimeout(() => scorecard.classList.remove("is-entering"), 240);
+  }, 140);
+}
+
+function syncTradeLayoutCarousel(experience, index, smooth = true) {
+  const carousel = experience.querySelector(".trade-layout-my-trades .game-position-carousel");
+  if (!carousel) return;
+  const cards = [...carousel.querySelectorAll("[data-trade-game]")];
+  if (!cards.length) return;
+  const nextIndex = Math.max(0, Math.min(cards.length - 1, index));
+  experience.dataset.tradeCardIndex = String(nextIndex);
+  const target = cards[nextIndex];
+  const firstCardOffset = cards[0].offsetLeft;
+  carousel.scrollTo({ left: target.offsetLeft - firstCardOffset, behavior: smooth ? "smooth" : "auto" });
+  cards.forEach((card, cardIndex) => card.setAttribute("aria-hidden", String(cardIndex !== nextIndex)));
+  experience.querySelectorAll("[data-trade-page]").forEach((dot) => dot.classList.toggle("is-active", Number(dot.dataset.tradePage) === nextIndex));
+  const previous = experience.querySelector("[data-trade-nav='prev']");
+  const next = experience.querySelector("[data-trade-nav='next']");
+  if (previous) previous.disabled = nextIndex === 0;
+  if (next) next.disabled = nextIndex === cards.length - 1;
+  transitionTradeLayoutScorecard(experience, target.dataset.tradeGame);
+}
+
+function bindTradeLayoutCarousel(experience) {
+  const carousel = experience.querySelector(".trade-layout-my-trades .game-position-carousel");
+  if (!carousel || carousel.dataset.tradeBound === "true") return;
+  carousel.dataset.tradeBound = "true";
+  let scrollTimer;
+  carousel.addEventListener("scroll", () => {
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      const cards = [...carousel.querySelectorAll("[data-trade-game]")];
+      if (!cards.length) return;
+      const firstCardOffset = cards[0].offsetLeft;
+      const index = cards.reduce((closest, card, cardIndex) => Math.abs(card.offsetLeft - firstCardOffset - carousel.scrollLeft) < Math.abs(cards[closest].offsetLeft - firstCardOffset - carousel.scrollLeft) ? cardIndex : closest, 0);
+      syncTradeLayoutCarousel(experience, index, false);
+    }, 90);
+  }, { passive: true });
+  syncTradeLayoutCarousel(experience, 0, false);
+}
+
+function bindTradeLayoutVerticalList(experience) {
+  const panel = experience.closest(".trade-layout-menu-panel, .trade-layout-actual-menu");
+  if (!experience.querySelector(".trade-layout-my-trades.is-menu-vertical") || !panel || experience.dataset.tradeVerticalBound === "true") return;
+  experience.dataset.tradeVerticalBound = "true";
+  let scrollTimer;
+  panel.addEventListener("scroll", () => {
+    window.clearTimeout(scrollTimer);
+    scrollTimer = window.setTimeout(() => {
+      const list = experience.querySelector(".trade-layout-my-trades.is-menu-vertical");
+      if (!list) return;
+      const cards = [...list.querySelectorAll("[data-trade-game]")];
+      if (!cards.length) return;
+      const anchor = panel.getBoundingClientRect().top + panel.clientHeight * .42;
+      const activeCard = cards.reduce((closest, card) => Math.abs(card.getBoundingClientRect().top - anchor) < Math.abs(closest.getBoundingClientRect().top - anchor) ? card : closest, cards[0]);
+      transitionTradeLayoutScorecard(experience, activeCard.dataset.tradeGame);
+    }, 70);
+  }, { passive: true });
+  const list = experience.querySelector(".trade-layout-my-trades.is-menu-vertical");
+  const firstCard = list.querySelector("[data-trade-game]");
+  if (firstCard) transitionTradeLayoutScorecard(experience, firstCard.dataset.tradeGame);
+}
+
+function bindTradeLayoutCards(experience) {
+  bindTradeLayoutCarousel(experience);
+  bindTradeLayoutVerticalList(experience);
+}
+
+function changeTradeLayoutFilter(experience, filterKey) {
+  if (!menuPositionPreviewGames[filterKey] && filterKey !== "all") return;
+  const instance = experience.dataset.tradeInstance || "interactive";
+  const cardVariant = experience.dataset.tradeCardVariant || "compact";
+  const verticalMenu = experience.dataset.tradeVertical === "true";
+  const nextGame = filterKey === "all" ? "kc" : filterKey;
+  experience.dataset.tradeActive = filterKey;
+  experience.dataset.tradeCardIndex = "0";
+  experience.querySelectorAll("[data-trade-filter]").forEach((button) => {
+    const active = button.dataset.tradeFilter === filterKey;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", String(active));
+  });
+  transitionTradeLayoutScorecard(experience, nextGame);
+  const currentCards = experience.querySelector(".trade-layout-my-trades");
+  const nextCards = filterKey === "all" ? (verticalMenu ? tradeLayoutMenuAllCards() : tradeLayoutAllCards()) : tradeLayoutGameTrades(filterKey, instance, cardVariant, verticalMenu);
+  currentCards?.classList.add("is-leaving");
+  window.setTimeout(() => {
+    currentCards?.insertAdjacentHTML("afterend", nextCards);
+    currentCards?.remove();
+    const incoming = experience.querySelector(".trade-layout-my-trades");
+    incoming?.classList.add("is-entering");
+    bindTradeLayoutCards(experience);
+    window.setTimeout(() => incoming?.classList.remove("is-entering"), 300);
+  }, 130);
+}
+
+function hydrateTradeLayoutExperiences(root) {
+  root.querySelectorAll("[data-trade-layout-experience]").forEach((experience) => {
+    if (experience.dataset.tradeHydrated === "true") return;
+    experience.dataset.tradeHydrated = "true";
+    experience.addEventListener("click", (event) => {
+      const filter = event.target.closest("[data-trade-filter]");
+      if (filter) {
+        event.preventDefault();
+        event.stopPropagation();
+        changeTradeLayoutFilter(experience, filter.dataset.tradeFilter);
+        return;
+      }
+      const page = event.target.closest("[data-trade-page]");
+      if (page) {
+        event.preventDefault();
+        event.stopPropagation();
+        syncTradeLayoutCarousel(experience, Number(page.dataset.tradePage));
+        return;
+      }
+      const navigation = event.target.closest("[data-trade-nav]");
+      if (navigation) {
+        event.preventDefault();
+        event.stopPropagation();
+        const current = Number(experience.dataset.tradeCardIndex || 0);
+        syncTradeLayoutCarousel(experience, current + (navigation.dataset.tradeNav === "next" ? 1 : -1));
+      }
+    });
+    bindTradeLayoutCards(experience);
+  });
 }
 
 function renderGameFrame(mode) {
-  if (mode === "live" || mode === "liveLogos" || mode === "gameStatsLogos" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "openPositions" || mode === "positionsPanelOpen" || mode === "gameStatsNFL" || mode === "final") {
+  const positionsMenuModes = ["positionsPanelOpen", "positionsMenuTwoTrades", "positionsMenuCombined", "positionsMenuCombinedCarousel", "positionsMenuGroupedCarousel", "positionsMenuCompactOverview"];
+  if (mode === "live" || mode === "liveLogos" || mode === "gameStatsLogos" || mode === "pregame" || mode === "countdown" || mode === "paused" || mode === "openPositions" || positionsMenuModes.includes(mode) || mode === "gameStatsNFL" || mode === "final") {
     const useLogos = mode === "liveLogos" || mode === "gameStatsLogos";
-    const hasGamePositions = mode === "openPositions" || mode === "positionsPanelOpen";
-    const positionsExpanded = mode === "positionsPanelOpen";
+    const positionsMenuOpen = positionsMenuModes.includes(mode);
+    const hasGamePositions = mode === "openPositions" || positionsMenuOpen;
+    const positionCount = positionsMenuOpen && mode !== "positionsPanelOpen" ? 4 : 3;
     const g = mode === "gameStatsNFL" || useLogos ? gameFrameData.statsNfl : hasGamePositions ? gameFrameData.openPositions : gameFrameData[mode];
     const statsPanel = mode === "gameStatsNFL" || mode === "gameStatsLogos" ? "game" : "market";
     const gameColors = `--home-color:${g.home.color};--away-color:${g.away.color}`;
-    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader(hasGamePositions, hasGamePositions)}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}${hasGamePositions ? gameOpenPositionsPreview(positionsExpanded) : ""}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter()}${hasGamePositions ? gameOpenPositionsBar(positionsExpanded) : ""}</div>`;
+    return `<div class="flat-screen is-game is-game-${mode}${positionsMenuOpen ? " is-game-positionsPanelOpen" : ""}">${homeHeader(hasGamePositions, hasGamePositions, positionsMenuOpen, positionCount)}${positionsMenuOpen ? gameHeaderPositionsMenuPreview(mode) : ""}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${hasGamePositions ? gameOpenPositionsPreview(mode) : ""}${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter()}</div>`;
   }
   let banner = "";
   let markets = flatMarkets(mode === "pregame");
@@ -1943,11 +2462,11 @@ function renderDrawerSheet(mode, showClose = false) {
   const total = sell ? "$37.63" : limit ? "$53.04" : "$65.28";
   const profit = sell ? "$15.12" : limit ? "$46.96" : "$34.72";
   const warning = balance
-    ? `<div class="bet-conflict buy-only" role="alert">${drawerWarnIcon}<span><strong>Insufficient balance.</strong> Add funds before placing this bet.</span></div>`
+    ? `<div class="bet-conflict buy-only" role="alert"><span><strong>Insufficient balance.</strong> Add funds before placing this bet.</span></div>`
     : error
-    ? `<div class="bet-conflict buy-only" role="alert">${drawerWarnIcon}<span><strong>Order failed.</strong> Check the order and try again.</span></div>`
+    ? `<div class="bet-conflict buy-only" role="alert"><span><strong>Order failed.</strong> Check the order and try again.</span></div>`
     : conflict
-    ? `<div class="bet-conflict buy-only" role="alert">${drawerWarnIcon}<span>You already hold <strong>Get the Lead · NO</strong> in this game — this bet takes the opposite side.</span></div>`
+    ? `<div class="bet-conflict buy-only" role="alert"><span>Conflicts with your <strong>Get the Lead · NO</strong> trade. Only one can win.</span></div>`
     : "";
   const marketPrice = paused ? "—" : "64¢";
   const purchasePrice = paused ? "—" : total;
@@ -1958,17 +2477,16 @@ function renderDrawerSheet(mode, showClose = false) {
     : "You have 5 seconds to cancel the bet, or press Blitz Buy to place immediately.";
 
   return `<div class="bet-sheet-backdrop is-open"></div>
-    <aside class="${sheetClass}" data-step="1" data-mode="${sell ? "sell" : "buy"}" data-confirmed-market="gtl" data-confirmed-side="yes" data-draft-market="gtl" data-draft-side="yes"${paused ? ` data-trading="paused"` : ""} aria-hidden="false" aria-label="${sell ? "Sell position" : "Place a bet"}">
+    <aside class="${sheetClass}" data-step="1" data-mode="${sell ? "sell" : "buy"}" data-confirmed-market="gtl" data-confirmed-side="yes" data-draft-market="gtl" data-draft-side="yes"${paused ? ` data-trading="paused"` : ""} aria-hidden="false" aria-label="${sell ? "Sell trade" : "Place a bet"}">
       ${drawerScoreboardHTML()}
       <div class="bet-sheet-handle" aria-hidden="true"></div>
       <div class="bet-sheet-body">
         <div class="bet-step bet-step-1">
-          <div class="sell-only sell-readout"><span class="sell-tag">Get the Lead · <span class="side-yes">YES</span></span><span class="sell-sub"><span>120 Held</span><span aria-hidden="true">·</span><span>Bought at 38¢</span><span aria-hidden="true">·</span><span>Now 64¢</span></span></div>
-          ${warning}
+          <div class="sell-only sell-readout"><span class="sell-tag">Get the Lead · <span class="side-yes">YES</span></span><span class="sell-sub"><span>Bought at 38¢</span><span aria-hidden="true">·</span><span>Now 64¢</span></span></div>
           ${paused ? `<div class="trade-pause drawer-trade-pause buy-only" data-buy-main${changeBetType ? " hidden" : ""} role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
-          <div class="drawer-bet-heading buy-only" data-buy-main${changeBetType ? " hidden" : ""}><strong data-bet-heading>Get the Lead - Yes</strong><button class="limit-toggle" data-change-bet-type type="button">Change</button></div>
+          <div class="drawer-bet-heading buy-only" data-buy-main${changeBetType ? " hidden" : ""}><strong data-bet-heading>You win if the Chiefs get the lead.</strong><button class="limit-toggle" data-change-bet-type type="button">Change</button></div>
           <div class="bet-field contracts-field buy-only" data-buy-main${changeBetType ? " hidden" : ""}><span class="bet-label">Select number of contracts</span><input class="num-input drawer-contract-input${quantityMax ? " is-error" : ""}" data-qty-input type="text" inputmode="numeric" value="${quantityMax ? "1,100" : "100"}" aria-label="Number of contracts" aria-invalid="${quantityMax}"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="${quantityMax ? "" : "is-active"}" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit${quantityMax ? " is-error" : ""}" role="alert"${quantityMax ? "" : " hidden"}>The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total"${quantityMax ? "" : " hidden"}>Total contracts after purchase — <strong>1,250</strong></p></div>
-          <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3"><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div></div>
+          <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3"><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div><p class="sell-held">120 contracts held</p></div>
           <div class="drawer-bet-editor buy-only" data-bet-type-editor${changeBetType ? "" : " hidden"}>
             <div class="bet-field"><span class="bet-label">Bet type</span><div class="seg seg-3" role="group" aria-label="Bet type"><button class="is-active" data-market="gtl" type="button">GTL</button><button data-market="tie" type="button">TIE</button><button data-market="ktl" type="button">KTL</button></div></div>
             <div class="bet-field drawer-pick-side"><span class="bet-label">Pick a side</span><div class="bet-toggle" data-active="yes" role="group" aria-label="Side"><button class="bt-opt yes is-active" data-contract="yes" type="button"><span class="bt-side">Yes</span><span class="bt-price tnum" data-yes-price>64¢</span></button><button class="bt-opt no" data-contract="no" type="button"><span class="bt-side">No</span><span class="bt-price tnum" data-no-price>36¢</span></button></div></div>
@@ -1982,7 +2500,8 @@ function renderDrawerSheet(mode, showClose = false) {
           <div class="bet-field"><span class="bet-label">Potential gain</span><div class="summary"><div class="summary-row"><span>Potential payout</span><strong>${sell ? "$60.00" : "$100.00"}</strong></div><div class="summary-row"><span>Potential profit</span><strong>${profit}</strong></div><div class="summary-row"><span>Fees</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>Net potential gain</span><strong>${sell ? "$37.63" : "$33.44"}</strong></div></div></div>
         </div>
       </div>
-      <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown${changeBetType ? " data-type-return" : ""} type="button">${changeBetType ? "Return" : "See Details"}</button><button class="bet-secondary" data-bet-back type="button">Back</button><button class="btn btn-primary bet-primary" data-bet-primary${changeBetType ? " data-type-confirm" : ""} type="button"${paused || invalid || changeBetType || quantityMax ? " disabled" : ""}>${changeBetType ? "Confirm Bet Type" : primary}</button></footer>
+      <footer class="bet-sheet-footer"><button class="bet-secondary" data-breakdown${changeBetType ? " data-type-return" : ""} type="button">${changeBetType ? "Return" : "See Details"}</button><button class="bet-secondary" data-bet-back type="button">Back</button>${sell ? `<button class="bet-secondary sell-only" type="button">Cancel</button>` : ""}<button class="btn btn-primary bet-primary" data-bet-primary${changeBetType ? " data-type-confirm" : ""} type="button"${paused || invalid || changeBetType || quantityMax ? " disabled" : ""}>${changeBetType ? "Update Bet" : primary}</button></footer>
+      ${warning}
       <div class="bet-success">
         <div class="success-content"><div class="bet-success-head"><span class="bet-countdown-clock" role="timer" aria-live="polite" aria-label="5 seconds remaining"><strong>5</strong></span><h3 class="bet-success-title">${confirmationTitle}</h3><p class="bet-success-sub">${confirmationCopy}</p></div><div class="bet-field"><span class="bet-label">Order summary</span><div class="summary"><div class="summary-row"><span>Bet Type</span><strong>Get the Lead YES</strong></div><div class="summary-row"><span>Contract price</span><strong>64¢</strong></div><div class="summary-row"><span>Contracts</span><strong>${sell ? "60" : "100"}</strong></div><div class="summary-row"><span>Subtotal</span><strong>${sell ? "$38.40" : "$64.00"}</strong></div><div class="summary-row"><span>Trading fee</span><strong>${sell ? "$0.77" : "$1.28"}</strong></div><div class="summary-row total"><span>${sell ? "You receive" : "Total to pay"}</span><strong>${sell ? "$37.63" : "$65.28"}</strong></div></div></div></div><div class="success-actions"><button class="bet-secondary cancel-bet" type="button">${sell ? "Cancel Sale" : "Cancel Bet"}</button><button class="btn btn-primary success-close" type="button">${sell ? "Blitz Sell" : "Blitz Buy"}</button></div>
       </div>
@@ -2007,11 +2526,11 @@ const walletUser = {
     { gameId: "ny-bos", market: "ktl", side: "yes", qty: 100, avg: 70, date: "2026-07-06" },
   ],
   pending: [
-    { gameId: "kc-sf", market: "tie", side: "no", qty: 200, limit: 22, date: "2026-07-07" },
-    { gameId: "den-dal", market: "ktl", side: "yes", qty: 75, limit: 44, date: "2026-07-06" },
+    { gameId: "kc-sf", market: "tie", side: "no", qty: 200, limit: 22, date: "2026-07-07", time: "9:18 AM" },
+    { gameId: "den-dal", market: "ktl", side: "yes", qty: 75, limit: 44, date: "2026-07-06", time: "7:42 PM" },
   ],
   settled: [
-    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 100, avg: 45, result: "win", net: 54.1, date: "2026-06-28" },
+    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 100, avg: 45, result: "win", net: 54.1, date: "2026-06-28", time: "4:05 PM" },
     { gameId: "lal-gs", market: "ktl", side: "yes", qty: 60, avg: 55, result: "loss", net: -33, date: "2026-06-25" },
     { gameId: "kc-sf", market: "gtl", side: "no", qty: 80, avg: 40, result: "win", net: 41.2, date: "2026-06-30" },
     { gameId: "ny-bos", market: "gtl", side: "yes", qty: 50, avg: 62, result: "loss", net: -31, date: "2026-06-22" },
@@ -2020,7 +2539,7 @@ const walletUser = {
     { gameId: "buf-mia", market: "ktl", side: "yes", qty: 40, avg: 52, result: "loss", net: -20.8, date: "2026-06-20" },
   ],
   cancelled: [
-    { gameId: "lal-gs", market: "gtl", side: "yes", qty: 120, limit: 35, date: "2026-07-02" },
+    { gameId: "lal-gs", market: "gtl", side: "yes", qty: 120, limit: 35, date: "2026-07-02", time: "8:48 PM" },
     { gameId: "kc-sf", market: "ktl", side: "yes", qty: 60, limit: 41, date: "2026-07-01" },
     { gameId: "ny-bos", market: "gtl", side: "no", qty: 100, limit: 28, date: "2026-06-30" },
     { gameId: "den-dal", market: "tie", side: "no", qty: 45, limit: 12, date: "2026-07-03" },
@@ -2038,7 +2557,37 @@ const walletDate = (iso) => {
   const d = new Date(`${iso}T00:00:00`);
   return Number.isNaN(d.valueOf()) ? "" : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 };
+const walletMoment = (order) => [order.date ? walletDate(order.date) : "", order.time].filter(Boolean).join(" · ");
 const walletTeamMark = (team, className) => `<span class="team-mark ${className} is-fallback" aria-label="${team.abbr}" style="--team-color:${team.color}"><span class="team-mark-abbr">${team.abbr}</span></span>`;
+
+function walletOutcomeTeam(order, game) {
+  const leader = game.home.score === game.away.score ? "home" : game.home.score > game.away.score ? "home" : "away";
+  const trailer = leader === "home" ? "away" : "home";
+  if (order.market === "gtl") return game[order.side === "yes" ? trailer : leader];
+  return game[order.side === "yes" ? leader : trailer];
+}
+
+function walletTradeCondition(order, game) {
+  if (order.market === "tie") return order.side === "yes" ? "the game is tied" : "either team is leading";
+  const team = walletOutcomeTeam(order, game).abbr;
+  return order.market === "gtl" ? `${team} gets the lead` : `${team} keeps the lead`;
+}
+
+function walletRowContext(order, type, game) {
+  if (type === "open") return `Wins if ${walletTradeCondition(order, game)}.`;
+  if (type === "pending") return `Places when ${order.side.toUpperCase()} reaches ${order.limit}¢.`;
+  if (type === "cancelled") return `Placed ${walletMoment(order)}.`;
+  return walletMoment(order);
+}
+
+function walletDetailContext(order, type, game) {
+  if (type === "open") return `Wins if ${walletTradeCondition(order, game)}.`;
+  if (type === "pending") return `This order places when ${order.side.toUpperCase()} reaches ${order.limit}¢.`;
+  const team = order.market === "tie" ? null : walletOutcomeTeam(order, game).name;
+  if (order.market === "tie") return order.result === "win" ? "The trade’s tie condition was met." : "The trade’s tie condition was not met.";
+  const action = order.market === "gtl" ? (order.result === "win" ? "got" : "did not get") : (order.result === "win" ? "kept" : "did not keep");
+  return `${team} ${action} the lead.`;
+}
 
 function walletFigures(order) {
   const g = walletGames[order.gameId];
@@ -2061,13 +2610,12 @@ function walletOrderRow(order, type, index) {
     valueHTML = `<span class="or-amount tnum">${walletMoney((order.limit / 100) * order.qty)}</span><span class="or-status cancelled">Cancelled</span>`;
   } else {
     const win = order.result === "win";
-    valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${walletSigned(order.net)}</span><span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>`;
+    valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${walletSigned(order.net)}</span>`;
   }
   return `<button class="order-row" type="button" tabindex="-1" data-order-open="${type}:${index}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <span class="or-logos">${walletTeamMark(g.home, "or-logo")}${walletTeamMark(g.away, "or-logo")}</span>
-    <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${g.home.abbr} · ${g.away.abbr}${order.date ? ` · ${walletDate(order.date)}` : ""}</span></span>
+    <span class="or-logos">${walletTeamMark(g.home, "or-logo")}<span class="or-v" aria-hidden="true">v</span>${walletTeamMark(g.away, "or-logo")}</span>
+    <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${walletRowContext(order, type, g)}</span></span>
     <span class="or-value">${valueHTML}</span>
-    <span class="or-chev" aria-hidden="true">${walletChevron}</span>
   </button>`;
 }
 
@@ -2098,7 +2646,7 @@ function walletFrameHTML({ tab = "active", empty = false } = {}) {
   const cancelled = empty ? [] : walletUser.cancelled;
   return `<div class="flat-screen is-wallet">${homeHeader(true, !empty)}
     <main class="wallet container">
-      <div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your live positions, pending limit orders and settled bets — all in one place.</p></div>
+      <div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div>
       ${walletStatsHTML(empty)}
       <div class="stats-tabs" id="orderTabs" role="tablist" aria-label="Orders">
         <button class="stats-tab${tab === "active" ? " is-active" : ""}" type="button" role="tab" tabindex="-1" aria-selected="${tab === "active"}">Orders</button>
@@ -2123,7 +2671,7 @@ function walletDetailFrameHTML(type, index) {
     headline = `<span class="od-big tnum">${walletMoney(value)}</span>`;
     rows = `<div class="summary-row"><span>Your bet</span><strong>${betType}</strong></div>
           <div class="summary-row"><span>Status</span><strong><span class="status-chip pending">Pending</span></strong></div>
-          <div class="summary-row"><span>Order date</span><strong>${walletDate(order.date)}</strong></div>
+          <div class="summary-row"><span>Order placed</span><strong>${walletMoment(order)}</strong></div>
           <div class="summary-row"><span>Limit price</span><strong>${order.limit}¢</strong></div>
           <div class="summary-row"><span>Contracts</span><strong>${order.qty}</strong></div>
           <div class="summary-row total"><span>Order value</span><strong>${walletMoney(value)}</strong></div>`;
@@ -2133,7 +2681,7 @@ function walletDetailFrameHTML(type, index) {
     headline = `<span class="od-big ${win ? "up" : "down"} tnum">${walletSigned(order.net)}</span>`;
     rows = `<div class="summary-row"><span>Your bet</span><strong>${betType}</strong></div>
           <div class="summary-row"><span>Status</span><strong><span class="status-chip settled">Settled</span></strong></div>
-          <div class="summary-row"><span>Order date</span><strong>${walletDate(order.date)}</strong></div>
+          <div class="summary-row"><span>Game date</span><strong>${walletMoment(order)}</strong></div>
           <div class="summary-row"><span>Contracts</span><strong>${order.qty}</strong></div>
           <div class="summary-row"><span>Average price</span><strong>${order.avg}¢</strong></div>
           <div class="summary-row total"><span>Net return</span><strong>${walletSigned(order.net)}</strong></div>`;
@@ -2143,7 +2691,7 @@ function walletDetailFrameHTML(type, index) {
     headline = `<span class="od-big tnum">${walletMoney(value)}</span><span class="od-pnl ${up ? "up" : "down"} tnum">${walletSigned(pnl)}</span>`;
     rows = `<div class="summary-row"><span>Your bet</span><strong>${betType}</strong></div>
           <div class="summary-row"><span>Status</span><strong><span class="status-chip open">Current</span></strong></div>
-          <div class="summary-row"><span>Order date</span><strong>${walletDate(order.date)}</strong></div>
+          <div class="summary-row"><span>Order placed</span><strong>${walletMoment(order)}</strong></div>
           <div class="summary-row"><span>Contracts</span><strong>${order.qty}</strong></div>
           <div class="summary-row"><span>Average price</span><strong>${order.avg}¢</strong></div>
           <div class="summary-row"><span>Current price</span><strong>${cur}¢</strong></div>
@@ -2155,7 +2703,7 @@ function walletDetailFrameHTML(type, index) {
     <main class="wallet container">
       <button class="order-back" type="button" tabindex="-1">${walletChevron}<span>Orders</span></button>
       <div class="order-detail">
-        <div class="od-game"><span class="or-logos">${walletTeamMark(g.home, "or-logo")}${walletTeamMark(g.away, "or-logo")}</span><span class="od-game-meta"><span class="od-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span><span class="od-league">${g.league.toUpperCase()} · ${type === "settled" ? "Final" : `${g.period} ${g.clock}`}</span></span></div>
+        <div class="od-game"><span class="od-game-meta"><span class="or-logos">${walletTeamMark(g.home, "or-logo")}<span class="or-v" aria-hidden="true">v</span>${walletTeamMark(g.away, "or-logo")}</span><span class="od-condition">${walletDetailContext(order, type, g)}</span><span class="od-league">${g.league.toUpperCase()} · ${type === "settled" ? "Final" : `${g.period} ${g.clock}`}</span></span></div>
         <div class="od-headline">${headline}</div>
         <div class="summary od-summary">
           ${rows}
@@ -2168,8 +2716,8 @@ function walletDetailFrameHTML(type, index) {
 }
 
 function renderTrackerFrame(mode) {
-  if (mode === "loading") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your live positions, pending limit orders and settled bets — all in one place.</p></div>${flatLoading()}</main>${homeFooter("portfolio")}</div>`;
-  if (mode === "error") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your live positions, pending limit orders and settled bets — all in one place.</p></div><div class="wallet-empty wallet-error-state"><strong>Positions unavailable</strong><span>Could not load open exposure.</span><button class="btn btn-secondary" type="button" tabindex="-1">Reload</button></div></main>${homeFooter("portfolio")}</div>`;
+  if (mode === "loading") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div>${flatLoading()}</main>${homeFooter("portfolio")}</div>`;
+  if (mode === "error") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div><div class="wallet-empty wallet-error-state"><strong>Trades unavailable</strong><span>Could not load open exposure.</span><button class="btn btn-secondary" type="button" tabindex="-1">Reload</button></div></main>${homeFooter("portfolio")}</div>`;
   if (mode === "empty") return walletFrameHTML({ empty: true });
   if (mode === "detailCurrent") return walletDetailFrameHTML("open", 0);
   if (mode === "detailPending") return walletDetailFrameHTML("pending", 0);
@@ -2252,7 +2800,7 @@ function accountSubpageHTML(mode) {
     <section class="account-confirm-card">
       <span class="profile-kicker">Account management</span>
       <h1>Delete your account?</h1>
-      <p>This permanently removes your GTL profile and signs you out. Your username, account details, positions and competition history will no longer be available.</p>
+      <p>This permanently removes your GTL profile and signs you out. Your username, account details, trades and competition history will no longer be available.</p>
       <p class="account-confirm-note">This action can’t be undone.</p>
       <div class="account-confirm-actions"><button class="btn account-delete-confirm" type="button" tabindex="-1">Delete Account</button><span class="btn btn-secondary">Cancel</span></div>
     </section>
@@ -2294,7 +2842,7 @@ function titleCaseVariantLabel(value) {
 }
 
 function renderVariantDocumentation(frame, label) {
-  const documentation = ({ game: gameVariantDocumentation, ranking: rankingVariantDocumentation, auth: authVariantDocumentation }[frame.type] || standaloneVariantDocumentation[frame.type] || {})[frame.mode];
+  const documentation = ({ game: gameVariantDocumentation, ranking: rankingVariantDocumentation, auth: authVariantDocumentation, tradeLayout: tradeLayoutVariantDocumentation }[frame.type] || standaloneVariantDocumentation[frame.type] || {})[frame.mode];
   if (!documentation) return `<div class="flat-frame-label">${label}</div>`;
   const fields = [
     ["Displayed When", documentation.trigger],
@@ -2323,6 +2871,7 @@ function renderFlatFrame(frame, useTitleCase = false) {
     location: renderLocationFrame,
     ranking: renderRankingFrame,
     game: renderGameFrame,
+    tradeLayout: renderTradeLayoutFrame,
     drawer: renderDrawerFrame,
     tracker: renderTrackerFrame,
     account: renderAccountFrame,
@@ -2387,6 +2936,7 @@ function renderIndividualPageSection(section, device = "mobile") {
   content.dataset.device = nextDevice;
   content.innerHTML = `<header class="ds-page-states-head"><span class="ds-doc-label">Page Variants</span><h3>${title} Variants</h3><p>${variantsDescription}</p></header>
     ${doc.groups.map((group) => `<section class="flat-group"><div class="flat-group-title"><h3>${titleCaseVariantLabel(group.title)}</h3></div><div class="flat-frame-row">${group.frames.map((frame) => renderFlatFrame(frame, true)).join("")}</div></section>`).join("")}`;
+  hydrateTradeLayoutExperiences(content);
 
   section.querySelectorAll("[data-individual-device]").forEach((button) => {
     const active = button.dataset.individualDevice === nextDevice;
@@ -2559,7 +3109,7 @@ function loadPagePreview(button) {
   setPageFrameMode(compareFrames);
 
   pageFrameLabels.forEach((label) => {
-    const authLabels = { auth: "Logged in", empty: "No open positions", guest: "Guest" };
+    const authLabels = { auth: "Logged in", empty: "No open trades", guest: "Guest" };
     const gameLabels = { auth: "Paused after score change", empty: "Opens after first score", guest: "Live game default" };
     const labelMap = compareGame ? gameLabels : authLabels;
     label.textContent = compareFrames ? labelMap[label.dataset.pageFrameLabel] : nextName;
@@ -2576,7 +3126,7 @@ function loadPagePreview(button) {
       ? pagePreviewSrc(nextSrc, authState, extraParams)
       : pagePreviewSrc(nextSrc, button.dataset.pageAuth);
     frame.title = compareAuth
-      ? `${nextName} ${frameMode === "empty" ? "no open positions" : authState} preview`
+      ? `${nextName} ${frameMode === "empty" ? "no open trades" : authState} preview`
       : compareGame
       ? `${nextName} ${frameMode === "auth" ? "paused" : frameMode === "empty" ? "opens after first score" : "live"} preview`
       : `${nextName} page preview`;
@@ -2620,8 +3170,8 @@ function renderDrawerComponentStates() {
     { key: "change-bet-type", title: "Change Bet Type", copy: "Focused selection state showing only Bet Type and Pick a Side. Confirm remains disabled until the current selection changes.", mode: "changeBetType" },
     { key: "limit-open", title: "Limit Buy", copy: "The entered limit price stays inside the Set Limit control, with its valid range shown directly below.", mode: "buyLimit" },
     { key: "paused", title: "Trading Paused", copy: "Trading status, selected bet heading, disabled pricing, and the Change bet-type path while markets recalculate.", mode: "paused" },
-    { key: "conflict", title: "Existing Position Warning", copy: "The compact buy flow with the opposite-position warning shown above the selected bet.", mode: "conflict" },
-    { key: "sell", title: "Sell Position", copy: "Current sell flow with position context, quantity shortcuts, proceeds, and the same timed confirmation pattern.", mode: "sellMarket" },
+    { key: "conflict", title: "Existing Trade Warning", copy: "The compact buy flow with a lightweight opposing-trade warning below the potential-profit summary.", mode: "conflict" },
+    { key: "sell", title: "Sell Trade", copy: "Sell flow with matched quantity controls, held-contract context beneath the shortcuts, proceeds, and explicit Cancel and Sell actions.", mode: "sellMarket" },
     { key: "confirm-buy", title: "Buy Confirmation", copy: "Five-second cancellation window before a buy is placed, with Cancel Bet and Blitz Buy actions.", mode: "confirmBuy" },
     { key: "confirm-sell", title: "Sell Confirmation", copy: "Five-second cancellation window before a sale is placed, with Cancel Sale and Blitz Sell actions.", mode: "confirmSell" },
   ];
@@ -2717,7 +3267,7 @@ function createPausedDrawerState() {
       const betHeading = document.createElement("div");
       betHeading.className = "drawer-bet-heading";
       betHeading.dataset.pausedMain = "";
-      betHeading.innerHTML = `<strong data-paused-bet-heading>Get the Lead - Yes</strong><button class="limit-toggle" type="button" data-paused-change>Change</button>`;
+      betHeading.innerHTML = `<strong data-paused-bet-heading>You win if the Chiefs get the lead.</strong><button class="limit-toggle" type="button" data-paused-change>Change</button>`;
       contracts.before(betHeading);
 
       contracts.dataset.pausedMain = "";
@@ -2784,6 +3334,11 @@ function createPausedDrawerState() {
 }
 
 const pausedDrawerMarketLabels = { gtl: "Get the Lead", tie: "Tie", ktl: "Keep the Lead" };
+function drawerPreviewWinHeading(market, side) {
+  if (market === "tie") return `You win if the game is ${side === "yes" ? "tied" : "not tied"}.`;
+  if (market === "gtl") return `You win if the Chiefs ${side === "yes" ? "get" : "do not get"} the lead.`;
+  return `You win if the Chiefs ${side === "yes" ? "keep" : "do not keep"} the lead.`;
+}
 
 function syncPausedBetEditor(sheet, market, side) {
   sheet.querySelectorAll(".drawer-bet-editor [data-market]").forEach((button) => {
@@ -2810,7 +3365,7 @@ function setDrawerBetEditorOpen(sheet, open, commit = false) {
     sheet.dataset.confirmedSide = sheet.dataset.draftSide;
     const heading = sheet.querySelector("[data-bet-heading]");
     if (heading) {
-      heading.textContent = `${pausedDrawerMarketLabels[sheet.dataset.confirmedMarket]} - ${sheet.dataset.confirmedSide === "yes" ? "Yes" : "No"}`;
+      heading.textContent = drawerPreviewWinHeading(sheet.dataset.confirmedMarket, sheet.dataset.confirmedSide);
     }
   }
 
@@ -2820,10 +3375,12 @@ function setDrawerBetEditorOpen(sheet, open, commit = false) {
     open ? sheet.dataset.draftSide : sheet.dataset.confirmedSide,
   );
   sheet.querySelectorAll("[data-buy-main]").forEach((element) => { element.hidden = open; });
+  const warning = sheet.querySelector(".bet-conflict");
+  if (warning) warning.hidden = open;
   editor.hidden = !open;
   secondary.textContent = open ? "Return" : "See Details";
   secondary.toggleAttribute("data-type-return", open);
-  primary.textContent = open ? "Confirm Bet Type" : "Buy";
+  primary.textContent = open ? "Update Bet" : "Buy";
   primary.toggleAttribute("data-type-confirm", open);
   primary.disabled = open;
 }
@@ -2853,7 +3410,7 @@ function setPausedBetEditorOpen(sheet, open, restoreSelection = true) {
   editor.hidden = !open;
   secondary.textContent = open ? "Return" : "See Details";
   secondary.toggleAttribute("data-paused-return", open);
-  primary.textContent = open ? "Confirm Bet Type" : "Buy";
+  primary.textContent = open ? "Update Bet" : "Buy";
   primary.toggleAttribute("data-paused-confirm", open);
   primary.disabled = true;
 }
@@ -3007,7 +3564,7 @@ drawerSection?.addEventListener("click", (event) => {
       sheet.dataset.confirmedMarket = sheet.dataset.draftMarket;
       sheet.dataset.confirmedSide = sheet.dataset.draftSide;
       const heading = sheet.querySelector("[data-paused-bet-heading]");
-      if (heading) heading.textContent = `${pausedDrawerMarketLabels[sheet.dataset.confirmedMarket]} - ${sheet.dataset.confirmedSide === "yes" ? "Yes" : "No"}`;
+      if (heading) heading.textContent = drawerPreviewWinHeading(sheet.dataset.confirmedMarket, sheet.dataset.confirmedSide);
       setPausedBetEditorOpen(sheet, false, false);
       return;
     }
@@ -3306,7 +3863,7 @@ function componentDialogMarkup(type) {
   }
   if (type === "position") {
     return `<div class="gate-backdrop is-open"></div>
-      <div class="auth-gate pos-gate is-open"><div class="gate-body"><h3 class="gate-title">You already have a position in this game</h3><p class="gate-desc">Only one position can win. Do you want to continue?</p><div class="gate-actions"><button class="btn btn-secondary" type="button">Cancel</button><button class="btn btn-primary" type="button">Continue</button></div><label class="pos-gate-check"><input type="checkbox"><span class="pos-check-box">${drawerCheckIcon}</span><span>Do not show this message again</span></label></div></div>`;
+      <div class="auth-gate pos-gate is-open"><div class="gate-body"><h3 class="gate-title">You already have a trade in this game</h3><p class="gate-desc">Only one trade can win. Do you want to continue?</p><div class="gate-actions"><button class="btn btn-secondary" type="button">Cancel</button><button class="btn btn-primary" type="button">Continue</button></div><label class="pos-gate-check"><input type="checkbox"><span class="pos-check-box">${drawerCheckIcon}</span><span>Do not show this message again</span></label></div></div>`;
   }
   if (type === "ranking") {
     return `<div class="gate-backdrop ranking-prize-backdrop is-open"></div>
@@ -3334,7 +3891,7 @@ function componentDialogAppScreen(type) {
   if (type === "ranking" || type === "rankingWinner" || type === "rankingTopThree") return renderHomeFrame("logged");
   if (type === "topup") return renderTrackerFrame("open");
   if (type === "waitlist") {
-    return `<div class="flat-screen ds-waitlist-screen"><header><img src="../gtl-app/assets/gtl-footer-logo.png" alt="Get the Lead"><span class="tag">Early access</span></header><main><span class="eyebrow">Live sports, traded live</span><h2>Call the lead before it happens.</h2><p>Join the early-access list for the fastest way to trade the moments that move live games.</p><span class="btn btn-primary">Join the Waitlist</span></main></div>`;
+    return `<div class="flat-screen ds-waitlist-screen"><header>${brandLogoSVG()}<span class="tag">Early access</span></header><main><span class="eyebrow">Live sports, traded live</span><h2>Call the lead before it happens.</h2><p>Join the early-access list for the fastest way to trade the moments that move live games.</p><span class="btn btn-primary">Join the Waitlist</span></main></div>`;
   }
   return renderGameFrame("live");
 }
@@ -3380,7 +3937,7 @@ function syncAppComponentSections() {
     <div class="grid two ds-app-component-grid">
       <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Live and paused</h3><span class="tag">Game</span></div><div class="ds-status-stack"><span class="live-badge game-clock-badge"><span class="game-period"><span class="live-dot"></span>Q3</span><span class="game-clock tnum">11:05</span></span><div class="trade-pause"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div></div></article>
       <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Order outcomes</h3><span class="tag">Portfolio</span></div><div class="ds-chip-row"><span class="result-pill win">Won</span><span class="result-pill loss">Lost</span><span class="status-chip pending">Pending</span><span class="status-chip cancelled">Cancelled</span></div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Position sides</h3><span class="tag">Trading</span></div><div class="ds-chip-row"><span class="side-yes">YES</span><span class="side-no">NO</span></div></article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Trade sides</h3><span class="tag">Trading</span></div><div class="ds-chip-row"><span class="side-yes">YES</span><span class="side-no">NO</span></div></article>
       <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Availability</h3><span class="tag">Account</span></div><div class="ds-chip-row"><span class="status-pill">Coming soon</span></div></article>
     </div>`;
 
@@ -3416,7 +3973,7 @@ function syncAppComponentSections() {
       ["Trading paused", "paused"],
       ["Buy limit", "buyLimit"],
       ["Invalid limit", "invalid"],
-      ["Sell position", "sellMarket"],
+      ["Sell trade", "sellMarket"],
       ["Buy confirmation", "confirmBuy"],
       ["Sell confirmation", "confirmSell"],
     ];
@@ -3452,12 +4009,12 @@ function syncAppComponentSections() {
       </section>
 
       <section class="ds-card-group" aria-labelledby="ds-position-cards-title">
-        <div class="ds-card-group-head"><div><span class="eyebrow">Portfolio</span><h3 id="ds-position-cards-title">Positions and orders</h3></div><p>Open positions carry the live-game media header. Order rows use the compact portfolio treatment.</p></div>
+        <div class="ds-card-group-head"><div><span class="eyebrow">Portfolio</span><h3 id="ds-position-cards-title">Trades and orders</h3></div><p>Open trades carry the live-game media header. Order rows use the compact portfolio treatment.</p></div>
         <div class="ds-current-card-grid ds-position-card-grid">
           <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Portfolio Summary</h3><span class="tag">Overview</span></div><div class="ds-portfolio-summary">${walletStatsHTML()}</div><p class="ds-card-note">Always appears above the Portfolio order groups and recalculates from current, pending and settled data.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Position</h3><span class="tag">Positive Return</span></div>${componentPositionCard(walletUser.positions[0])}<p class="ds-card-note">Shared by the signed-in Home carousel and the header Open Positions panel.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Position</h3><span class="tag">Negative Return</span></div>${componentPositionCard(walletUser.positions[2])}<p class="ds-card-note">The same structure switches only the return colour and value when performance is negative.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Game Open Position</h3><span class="tag">Game Page</span></div>${componentGamePositionCard()}<p class="ds-card-note">Used inside the Game Positions panel. It omits the scoreboard because the parent game page already supplies that context.</p></article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Trade</h3><span class="tag">Positive Return</span></div>${componentPositionCard(walletUser.positions[0])}<p class="ds-card-note">Shared by the signed-in Home carousel and the header Open Trades panel.</p></article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Trade</h3><span class="tag">Negative Return</span></div>${componentPositionCard(walletUser.positions[2])}<p class="ds-card-note">The same structure switches only the return colour and value when performance is negative.</p></article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Game Open Trade</h3><span class="tag">Game Page</span></div>${componentGamePositionCard()}<p class="ds-card-note">Used inside the Game Trades panel. It omits the scoreboard because the parent game page already supplies that context.</p></article>
           <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Current Order</h3><span class="tag">Open</span></div>${walletOrderRow(walletUser.positions[0], "open", 0)}</article>
           <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Pending Order</h3><span class="tag">Limit</span></div>${walletOrderRow(walletUser.pending[0], "pending", 0)}</article>
           <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Cancelled Order</h3><span class="tag">Cancelled</span></div>${walletOrderRow(walletUser.cancelled[0], "cancelled", 0)}</article>
@@ -3506,7 +4063,7 @@ function syncAppComponentSections() {
   if (sections.dialogs) sections.dialogs.innerHTML = `${componentSectionHeader("Dialogs", "Every modal used by the app, shown implemented over the relevant screen in a complete phone mockup. Buy and sell confirmations remain in the dedicated Buy/Sell Drawer reference.")}
     <div class="ds-dialog-catalog">
       ${componentDialogGroup({ type: "auth", title: "Sign In to Bet", tag: "Authentication", copy: "Shown when a signed-out user selects a market. The separate Close action dismisses the saved bet intent." })}
-      ${componentDialogGroup({ type: "position", title: "Existing Position", tag: "Trading confirmation", copy: "Warns before a user opens a competing position in the same game, with an optional session-level dismissal." })}
+      ${componentDialogGroup({ type: "position", title: "Existing Trade", tag: "Trading confirmation", copy: "Warns before a user opens a competing trade in the same game, with an optional session-level dismissal." })}
       ${componentDialogGroup({ type: "ranking", title: "Monthly Ranking Result", tag: "Ranking", copy: "Shown over whichever screen the user returns to after a monthly competition completes. These examples use the Home screen to demonstrate outside-top-10, rewarded-top-10, and top-three outcomes." })}
       ${componentDialogGroup({ type: "topup", title: "Top Up Balance", tag: "Wallet", copy: "This wallet funding flow is outside the current MVP scope and is retained here as a future-state reference." })}
       ${componentDialogGroup({ type: "waitlist", title: "Waitlist Confirmation", tag: "Marketing", copy: "A focused confirmation state shown while an early-access place is being secured." })}

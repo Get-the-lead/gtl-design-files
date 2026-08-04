@@ -15,6 +15,9 @@
   width: 100%; max-width: 420px;
   display: flex; flex-direction: column;
 }
+.signup-body .auth-card { min-height: calc(100dvh - 104px); }
+.signup-body .auth-steps { margin-block: auto; }
+.signup-body .auth-foot { margin-top: auto; padding-top: var(--s6); }
 .auth-body .auth-main { padding-top: calc(var(--s5) + 40px + env(safe-area-inset-top, 0px)); }
 .auth-close {
   position: fixed;
@@ -79,6 +82,14 @@
 }
 .field-input::placeholder { color: var(--ink-3); }
 .field-input:focus { outline: none; border-color: var(--green); background: var(--bg-2); }
+.field-input:-webkit-autofill,
+.field-input:-webkit-autofill:hover,
+.field-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  box-shadow: 0 0 0 1000px var(--surface) inset;
+  transition: background-color 9999s ease-out 0s;
+}
 .field-hint { font-size: var(--fs-eyebrow); color: var(--ink-3); padding-left: var(--s1); }
 
 /* Typable select menu — shared by segmented date fields and future form comboboxes */
@@ -209,8 +220,8 @@
 .code-input { display: flex; align-items: center; justify-content: center; gap: var(--s2); margin: var(--s2) 0; }
 .code-dash { flex: 0 0 auto; width: 12px; height: 2px; border-radius: 2px; background: var(--ink-3); margin-inline: var(--s1); }
 .code-box {
-  flex: 1 1 0; min-width: 0; padding: 0;
-  height: 60px; text-align: center;
+  flex: 1 1 60px; width: 60px; max-width: 60px; min-width: 0; padding: 0;
+  height: auto; aspect-ratio: 1; text-align: center;
   border-radius: 16px;
   background: var(--surface); border: 1px solid var(--line-2);
   color: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: 1.6rem;
@@ -227,7 +238,12 @@
 @media (max-width: 440px) {
   .code-input { gap: var(--s1); }
   .code-dash { width: 8px; margin-inline: 2px; }
-  .code-box { height: 52px; border-radius: 16px; font-size: 1.35rem; }
+  .code-box { width: 52px; max-width: 52px; height: auto; border-radius: 16px; font-size: 1.35rem; }
+}
+
+@media (max-width: 767px) {
+  .step-back { padding-inline: 0; }
+  .step-back:hover { background: none; color: var(--ink-2); }
 }
 
 /* Forgot-password sent confirmation */

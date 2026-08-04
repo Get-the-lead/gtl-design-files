@@ -2267,7 +2267,7 @@
 }
 
 .design-system-page .flat-screen.is-location .location-brand { margin-bottom: var(--s8); }
-.design-system-page .flat-screen.is-location .location-brand img { width: 124px; }
+.design-system-page .flat-screen.is-location .location-brand .gtl-logo { width: 124px; }
 .design-system-page .flat-screen.is-location .location-copy h1 { font-size: 2.35rem; }
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location,
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location .location-main {
@@ -2528,6 +2528,33 @@
 .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score {
   gap: var(--s3);
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score > .gb-team:first-child,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-score > .gb-team:last-child,
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-numbers {
+  grid-area: auto;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-team {
+  flex-direction: column;
+  gap: 0;
+  justify-self: stretch;
+  min-width: 48px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-abbr {
+  left: 50%;
+  max-width: 130px;
+  position: absolute;
+  top: calc(100% + var(--s2));
+  transform: translateX(-50%);
+  width: max-content;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-numbers {
+  justify-self: auto;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game .gb-logo {
@@ -3116,10 +3143,6 @@
   width: 26px;
 }
 
-.design-system-page .flat-screen.is-wallet .or-logos > img + img {
-  margin-left: -8px;
-}
-
 .design-system-page .flat-screen.is-wallet .od-game .or-logos > img {
   flex-basis: 34px;
   height: 34px;
@@ -3623,6 +3646,7 @@
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--fs-h3);
+  font-weight: 700;
 }
 
 .design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-heading .limit-toggle {
@@ -4940,10 +4964,6 @@
   width: 26px;
 }
 
-.design-system-page #cards .ds-order-row-frame .or-logos > img + img {
-  margin-left: -8px;
-}
-
 .design-system-page .ds-order-row-frame .or-logo .team-mark-abbr {
   font-size: 0.56rem;
 }
@@ -5925,7 +5945,7 @@
   justify-content: space-between;
 }
 
-.design-system-page .ds-waitlist-screen header img {
+.design-system-page .ds-waitlist-screen header .gtl-logo {
   height: auto;
   width: 112px;
 }
@@ -6362,122 +6382,6 @@
 
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-section-label {
   display: none;
-}
-
-/* Open game positions are a bottom-bar disclosure on mobile/tablet. The host
-   viewport is desktop-sized, so explicitly restore the implemented overlay. */
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-frame--game-positionsPanelOpen .flat-phone {
-  height: var(--flat-frame-h, 844px);
-  min-height: var(--flat-frame-h, 844px);
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen {
-  height: 100%;
-  min-height: 100%;
-  overflow: hidden;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .game-open-position {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .game-open-position {
-  inset: 0;
-  margin: 0;
-  pointer-events: none;
-  position: absolute;
-  z-index: 55;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-backdrop {
-  display: block;
-  inset: 0;
-  opacity: 1;
-  pointer-events: none;
-  position: absolute;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-pop {
-  bottom: 84px;
-  left: 0;
-  max-height: calc(100% - 156px);
-  opacity: 1;
-  overflow-y: auto;
-  padding: var(--s4);
-  pointer-events: auto;
-  position: absolute;
-  right: 0;
-  transform: none;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-pop .hpos-list {
-  margin-inline: auto;
-  max-width: 400px;
-  padding-inline: 0;
-  width: 100%;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-heading {
-  margin-bottom: var(--s3);
-  padding-inline: 0;
-  text-align: center;
-}
-
-.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar {
-  bottom: 0;
-  display: block;
-  left: 0;
-  opacity: 1;
-  position: absolute;
-  right: 0;
-  transform: none;
-  z-index: 60;
-}
-
-.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar .betbar-cta {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
-  display: block;
-  flex-shrink: 0;
-  margin-top: var(--s16);
-  pointer-events: auto;
-  position: static;
-  z-index: auto;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-backdrop {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-pop {
-  bottom: auto;
-  left: auto;
-  max-height: none;
-  opacity: 1;
-  overflow: visible;
-  padding: 0;
-  pointer-events: auto;
-  position: static;
-  right: auto;
-  transform: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-pop .hpos-list {
-  margin-inline: 0;
-  max-width: none;
-  padding-inline: var(--s5);
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-heading {
-  margin-bottom: var(--s3);
-  padding-inline: var(--s5);
-  text-align: left;
 }
 
 /* Desktop live games mirror the app's current sticky two-column page. */
@@ -7011,12 +6915,6 @@
   width: auto;
 }
 
-.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-backdrop {
-  background: rgba(20, 30, 40, 0.18);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
 .design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen .site-header .floating-btn {
   background: rgba(255, 255, 255, 0.94);
 }
@@ -7030,10 +6928,1243 @@
   color: var(--ink);
 }
 
+/* Current Game-page Open Positions variants. The app now displays matching game
+   positions inline and reserves the header overlay for the global portfolio list. */
+.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  display: block;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  inset: auto;
+  margin: 0 auto;
+  padding-bottom: var(--s8);
+  padding-top: var(--s10);
+  pointer-events: auto;
+  position: static;
+  z-index: auto;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-positions-head {
+  text-align: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-positions-head h2 {
+  font-size: var(--fs-h3);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-nav-button {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-desktop-extra-page {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  margin: 0;
+  padding: 0 0 var(--s10);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen {
+  overflow: hidden;
+  position: relative;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-backdrop {
+  inset: 0;
+  position: absolute;
+  z-index: 90;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen .hpos-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-hpos-panel {
+  bottom: auto;
+  left: auto;
+  max-height: calc(100% - 104px);
+  overflow-y: auto;
+  position: absolute;
+  right: var(--s4);
+  top: 80px;
+  transform: none;
+  z-index: 102;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .site-header {
+  z-index: 101;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-trigger[aria-expanded="true"] .hpos-close {
+  display: inline-flex;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-trigger[aria-expanded="true"] {
+  background: var(--surface-2);
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-trigger[aria-expanded="true"] :is(.hpos-word, .hpos-num) {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen .ds-hpos-panel {
+  align-items: center;
+  left: var(--s4);
+  margin-inline: auto;
+  right: var(--s4);
+  top: 88px;
+  width: min(360px, calc(100% - var(--s8)));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen :is(.hpos-heading, .hpos-game-heading) {
+  text-align: center;
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen .hpos-list {
+  align-items: center;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-hpos-panel .pos-card {
+  width: 100%;
+}
+
+/* The inline Game-page cards use the full available content width in the
+   preview, matching the implemented position-card footprint. */
+.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-card {
+  flex-basis: 100%;
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-menu-position-card .team-logo,
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .team-logo {
+  height: 48px;
+  width: 48px;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-menu-position-card .team-logo .team-mark-abbr,
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .team-logo .team-mark-abbr {
+  font-size: 0.72rem;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-group-trade-stack, .ds-group-trade-carousel) {
+  display: flex;
+  gap: var(--s4);
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-stack {
+  flex-direction: column;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-carousel {
+  flex-direction: row;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-carousel::-webkit-scrollbar,
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-carousel .pos-card {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: #08090c;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.9));
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .pos-media {
+  background: transparent;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .pos-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4) var(--s5) var(--s5);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-combined-trades {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary.is-selected {
+  border-color: var(--green);
+  box-shadow: inset 3px 0 0 var(--green);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary span {
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary .ds-trade-values {
+  align-items: flex-end;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-action-context {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--fs-eyebrow);
+  text-align: center;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-carousel {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-slide {
+  display: flex;
+  flex: 0 0 100%;
+  flex-direction: column;
+  gap: var(--s3);
+  scroll-snap-align: start;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-inner-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--s2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-inner-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-inner-dots span.is-active {
+  background: var(--green);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-overview-card .pos-info {
+  gap: 0;
+  padding-top: 0;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding-block: var(--s4);
+  border-top: 1px solid var(--line);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade:first-child {
+  border-top: 0;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade-head strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics small {
+  color: var(--ink-3);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-actions button {
+  min-height: 38px;
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) {
+  background: var(--surface);
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card)::before {
+  content: none;
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary {
+  background: var(--surface-2);
+}
+
 /* The component catalogue uses wide data tables, but the legal prize schedule
    is a responsive two-column content table and must fit inside mobile flatlays. */
 .design-system-page .flat-screen.is-rules .rules-table {
   min-width: 0;
   table-layout: fixed;
   width: 100%;
+}
+
+/* Trades & Trade Cards exploration ---------------------------------------- */
+.design-system-page .flat-frame--tradeLayout .flat-phone {
+  height: auto;
+  min-height: var(--flat-frame-h, 760px);
+}
+
+.design-system-page .flat-screen.is-trade-layout {
+  background:
+    radial-gradient(circle at 16% 8%, color-mix(in srgb, var(--green) 9%, transparent), transparent 30%),
+    var(--bg);
+  gap: 0;
+  min-height: var(--flat-frame-h, 760px);
+  overflow: hidden;
+  position: relative;
+}
+
+.design-system-page .flat-screen.is-trade-layout-home > .site-header {
+  position: relative;
+  z-index: 4;
+}
+
+.design-system-page .flat-screen.is-trade-layout-menu > .site-header {
+  inset: 0 0 auto;
+  position: absolute;
+  z-index: 103;
+}
+
+.design-system-page .trade-layout-page {
+  display: grid;
+  gap: var(--s6);
+  margin-inline: auto;
+  max-width: 1120px;
+  padding: 104px var(--s4) var(--s10);
+  width: 100%;
+}
+
+.design-system-page .trade-layout-page-head {
+  display: grid;
+  gap: var(--s2);
+  text-align: center;
+}
+
+.design-system-page .trade-layout-page-head h1,
+.design-system-page .trade-layout-menu-panel > header h1 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.design-system-page .trade-layout-page-head p {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  margin: 0;
+}
+
+.design-system-page .trade-layout-filter {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  display: flex;
+  gap: var(--s1);
+  margin-inline: auto;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 4px;
+  scrollbar-width: none;
+  width: max-content;
+}
+
+.design-system-page .trade-layout-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .trade-layout-filter-option {
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-pill);
+  color: var(--ink-2);
+  flex: 0 0 auto;
+  font-size: var(--fs-label);
+  font-weight: 700;
+  min-height: 36px;
+  padding: 0 var(--s4);
+  white-space: nowrap;
+}
+
+.design-system-page .trade-layout-filter-option.is-active {
+  background: var(--green);
+  color: var(--green-ink);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--green) 20%, transparent);
+}
+
+.design-system-page .trade-game-strip {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--s6);
+  justify-content: flex-start;
+  margin: var(--s5) auto var(--s6);
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--s2) var(--s1);
+  scrollbar-width: none;
+  width: max-content;
+}
+
+.design-system-page .trade-game-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .trade-game-pill {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--ink-3);
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.design-system-page .trade-game-icon {
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  display: flex;
+  height: 72px;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .04), 0 8px 24px rgba(0, 0, 0, .18);
+  opacity: 1;
+  position: relative;
+  transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+  width: 72px;
+}
+
+.design-system-page .trade-game-pill.is-active {
+  color: var(--ink);
+}
+
+.design-system-page .trade-game-pill.is-active .trade-game-icon {
+  background: var(--surface-2);
+  border-color: var(--green);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+  opacity: 1;
+}
+
+.design-system-page .trade-game-icon.is-all {
+  background: var(--surface-2);
+  border-color: var(--line-2);
+}
+
+.design-system-page .trade-game-pill.is-active .trade-game-icon.is-all {
+  background: var(--surface-2);
+  border-color: var(--green);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+}
+
+.design-system-page .trade-game-label {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.design-system-page .trade-game-all-content {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.design-system-page .trade-game-all-content strong {
+  font-size: .72rem;
+  line-height: 1;
+}
+
+.design-system-page .trade-game-compact-mark {
+  align-items: center;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.design-system-page .trade-game-compact-label {
+  align-items: center;
+  display: flex;
+  font-size: .65rem;
+  gap: 3px;
+  line-height: 1;
+}
+
+.design-system-page .trade-game-compact-label b {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.design-system-page .trade-game-matchup-mark {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.design-system-page .trade-game-matchup-mark i {
+  align-items: center;
+  background: color-mix(in srgb, var(--team-color) 78%, #111);
+  border: 1px solid color-mix(in srgb, var(--team-color) 78%, #fff);
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .28);
+  color: #fff;
+  display: flex;
+  font-size: .58rem;
+  font-style: normal;
+  font-weight: 800;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+.design-system-page .trade-game-matchup-mark b {
+  color: var(--ink-2);
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.design-system-page .trade-layout-groups {
+  display: grid;
+  gap: var(--s7);
+}
+
+.design-system-page .trade-layout-group {
+  display: grid;
+  gap: var(--s3);
+  min-width: 0;
+}
+
+.design-system-page .trade-layout-group h3 {
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.design-system-page .trade-layout-card-row {
+  display: flex;
+  gap: var(--s3);
+  overflow-x: auto;
+  padding: 0 0 var(--s2);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.design-system-page .trade-layout-card-row::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .trade-layout-card-row .ds-menu-position-card {
+  flex: 0 0 min(100%, 360px);
+  width: min(100%, 360px);
+}
+
+.design-system-page .trade-layout-all-row {
+  display: flex;
+  gap: var(--s4);
+  margin-inline: calc(-1 * var(--s5));
+  overflow-x: auto;
+  padding: 0 var(--s5) var(--s2);
+  scroll-padding-inline: var(--s5);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.design-system-page .trade-layout-all-row::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .trade-layout-all-row .ds-menu-position-card {
+  flex: 0 0 min(100%, 360px);
+  scroll-snap-align: start;
+  width: min(100%, 360px);
+}
+
+.design-system-page .trade-layout-all-navigation {
+  margin-top: var(--s4);
+}
+
+.design-system-page .trade-layout-home-panel {
+  width: 100%;
+}
+
+.design-system-page .trade-layout-hero .hero-grid {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 8%, #000 34%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 8%, #000 34%, #000 100%);
+  opacity: .14;
+  perspective-origin: 50% 28%;
+}
+
+.design-system-page .trade-layout-hero .hero-grid-plane {
+  top: 28%;
+}
+
+.design-system-page .trade-layout-home-panel .positions-head {
+  justify-content: center;
+}
+
+.design-system-page .trade-layout-home-panel .positions-head .eyebrow {
+  text-align: center;
+}
+
+.design-system-page .trade-layout-selected-game {
+  display: grid;
+  gap: var(--s6);
+  min-width: 0;
+}
+
+.design-system-page .trade-layout-scorecard {
+  margin-inline: auto;
+  max-width: 720px;
+  transform-origin: center;
+  transition: opacity .16s var(--ease), transform .16s var(--ease), filter .16s var(--ease);
+  width: 100%;
+}
+
+.design-system-page .trade-layout-scorecard.is-changing {
+  filter: blur(2px);
+  opacity: .28;
+  transform: scale(.985);
+}
+
+.design-system-page .trade-layout-scorecard.is-entering {
+  animation: trade-scorecard-in .24s var(--ease) both;
+}
+
+@keyframes trade-scorecard-in {
+  from { filter: blur(2px); opacity: .25; transform: scale(.985); }
+  to { filter: blur(0); opacity: 1; transform: scale(1); }
+}
+
+.design-system-page .trade-layout-scorecard .gb {
+  background: transparent;
+  min-height: 0;
+  overflow: visible;
+  padding-block: var(--s4);
+}
+
+.design-system-page .trade-layout-scorecard .gb-glow,
+.design-system-page .trade-layout-scorecard .gb-league {
+  display: none !important;
+}
+
+.design-system-page .trade-layout-scorecard .gb-topbar {
+  display: none;
+}
+
+.design-system-page .trade-layout-scorecard .gb-inner {
+  min-height: 0;
+}
+
+/* The home flat lays render inside a fixed mobile frame while the design-system
+   page itself remains desktop-sized, so mirror the live game's <=520px compact
+   score treatment explicitly for three-digit scores. */
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-layout-scorecard .gb-score.is-compact-score {
+  gap: var(--s2);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-layout-scorecard .gb-score.is-compact-score .gb-logo {
+  height: 48px;
+  width: 48px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-layout-scorecard .gb-score.is-compact-score .gb-logo.is-fallback {
+  height: 44px;
+  width: 44px;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-layout-scorecard .gb-score.is-compact-score .gb-numbers {
+  gap: var(--s2);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-layout-scorecard .gb-score.is-compact-score :is(.gb-num, .gb-dash) {
+  font-size: 2.6rem;
+}
+
+.design-system-page .trade-layout-my-trades {
+  margin-inline: auto;
+  max-width: 960px;
+  min-width: 0;
+  transition: opacity .13s var(--ease), transform .13s var(--ease);
+  width: 100%;
+}
+
+.design-system-page .trade-layout-my-trades.is-leaving {
+  opacity: 0;
+  transform: translateX(-18px);
+}
+
+.design-system-page .trade-layout-my-trades.is-entering {
+  animation: trade-cards-in .3s var(--ease) both;
+}
+
+@keyframes trade-cards-in {
+  from { opacity: 0; transform: translateX(22px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.design-system-page :is(.flat-screen.is-trade-layout-home, .flat-screen.is-trade-layout-live-game, .flat-screen.is-trade-layout-menu) :is(.trade-game-pill, .game-position-nav-button, .game-position-dot) {
+  cursor: pointer;
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 5;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-trade-layout-live-game .game-position-nav-button {
+  display: grid;
+}
+
+.design-system-page .trade-layout-my-trades .game-positions-head {
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.design-system-page .trade-layout-my-trades .game-positions-head h2 {
+  font-size: var(--fs-h3);
+  margin: 0;
+}
+
+.design-system-page .trade-layout-my-trades .game-trade-count {
+  flex: 0 0 auto;
+}
+
+.design-system-page .trade-layout-my-trades .game-position-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
+.design-system-page .trade-layout-my-trades .game-position-card {
+  flex: 0 0 100%;
+  width: 100%;
+}
+
+.design-system-page .trade-layout-current-card .pos-info {
+  gap: var(--s3);
+}
+
+.design-system-page .trade-current-topline {
+  align-items: center;
+  display: flex;
+  gap: var(--s3);
+}
+
+.design-system-page .trade-current-condition {
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.design-system-page .trade-current-total {
+  align-items: baseline;
+  display: flex;
+  gap: var(--s4);
+  justify-content: space-between;
+}
+
+.design-system-page .trade-current-total-item {
+  align-items: baseline;
+  display: inline-flex;
+  gap: var(--s2);
+}
+
+.design-system-page .trade-current-total strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.design-system-page .trade-current-total small {
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+}
+
+.design-system-page .trade-current-total .oc-pnl.up {
+  color: var(--green-ink);
+}
+
+.design-system-page .trade-current-total .oc-pnl.down {
+  color: var(--no-ink);
+}
+
+.design-system-page :is(.trade-option-table-row, .trade-option-table-result, .trade-option-value-focus, .trade-option-price-summary) {
+  display: grid;
+  gap: var(--s3);
+}
+
+.design-system-page .trade-option-table {
+  display: grid;
+  gap: 5px;
+}
+
+.design-system-page .trade-option-table-row {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.design-system-page .trade-option-table-row.is-labels,
+.design-system-page .trade-option-value-focus small,
+.design-system-page .trade-option-price-flow small {
+  color: var(--ink-2);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.design-system-page .trade-option-table-row.is-values strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+}
+
+.design-system-page .trade-option-table-result {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  grid-template-columns: 1fr 1fr;
+}
+
+.design-system-page .trade-option-table-result strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin-left: 4px;
+}
+
+.design-system-page .trade-option-table-result span:last-child {
+  text-align: right;
+}
+
+.design-system-page .trade-option-value-focus {
+  grid-template-columns: 1fr 1fr;
+}
+
+.design-system-page .trade-option-value-focus > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.design-system-page .trade-option-value-focus > span:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.design-system-page .trade-option-value-focus strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.design-system-page .trade-option-inline-meta {
+  align-items: center;
+  color: var(--ink-2);
+  display: flex;
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  gap: var(--s2);
+}
+
+.design-system-page .trade-option-inline-meta i {
+  color: var(--ink-3);
+  font-style: normal;
+}
+
+.design-system-page .trade-option-price-flow {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+
+.design-system-page .trade-option-price-flow > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.design-system-page .trade-option-price-flow > span:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.design-system-page .trade-option-price-flow strong {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.design-system-page .trade-option-price-flow > b {
+  color: var(--green);
+  font-size: 1.3rem;
+}
+
+.design-system-page .trade-option-price-summary {
+  align-items: center;
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.design-system-page .trade-option-price-summary > :last-child {
+  text-align: right;
+}
+
+.design-system-page :is(.trade-option-table-result, .trade-option-value-focus, .trade-option-price-summary) .oc-pnl.up {
+  color: var(--green-ink);
+}
+
+.design-system-page :is(.trade-option-table-result, .trade-option-value-focus, .trade-option-price-summary) .oc-pnl.down {
+  color: var(--no-ink);
+}
+
+.design-system-page .trade-layout-menu-context {
+  display: grid;
+  gap: var(--s2);
+  padding: 128px var(--s8);
+}
+
+.design-system-page .trade-layout-menu-context h1 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+.design-system-page .trade-layout-backdrop {
+  background: rgba(0, 0, 0, 0.58);
+  inset: 72px 0 0;
+  position: absolute;
+  z-index: 2;
+}
+
+.design-system-page .trade-layout-menu-panel {
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  display: grid;
+  gap: var(--s5);
+  inset: 88px var(--s3) auto;
+  max-height: calc(var(--flat-frame-h, 760px) - 108px);
+  overflow-y: auto;
+  padding: var(--s5) var(--s4);
+  position: absolute;
+  scrollbar-width: none;
+  z-index: 3;
+}
+
+.design-system-page .trade-layout-menu-panel::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .trade-layout-menu-panel > header {
+  display: grid;
+  gap: var(--s2);
+  text-align: center;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-game-strip {
+  margin-bottom: var(--s1);
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-card-row .ds-menu-position-card {
+  flex-basis: 100%;
+  width: 100%;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-all-row {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-all-row .ds-menu-position-card {
+  flex-basis: 100%;
+  width: 100%;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-scorecard {
+  border-radius: 0;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-selected-game {
+  gap: var(--s4);
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-my-trades.is-menu-vertical {
+  max-width: none;
+}
+
+.design-system-page .trade-layout-actual-menu {
+  align-items: stretch;
+  padding-top: calc(var(--s5) + var(--s3));
+}
+
+.design-system-page .flat-screen.is-trade-layout-menu .hpos-backdrop {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, .90);
+}
+
+.design-system-page .flat-screen.is-trade-layout-menu :is(.game-col-left > .gb .gb-topbar, .gb-back-right) {
+  display: none !important;
+}
+
+.design-system-page .trade-layout-actual-menu .trade-layout-experience {
+  display: grid;
+  gap: var(--s4);
+  min-width: 0;
+  width: 100%;
+}
+
+.design-system-page .trade-layout-actual-menu .trade-game-strip {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.design-system-page .trade-layout-actual-menu .trade-layout-selected-game {
+  gap: var(--s3);
+}
+
+.design-system-page .trade-layout-actual-menu [data-trade-active="all"] > .trade-layout-selected-game > .trade-layout-scorecard {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-game .trade-layout-actual-menu .trade-layout-scorecard .gb {
+  min-height: 0;
+  padding: var(--s1) 0 var(--s3);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .trade-layout-actual-menu .trade-layout-scorecard .gb-topbar,
+.design-system-page .flat-screen.is-game .trade-layout-actual-menu .trade-layout-scorecard .gb-league {
+  display: none !important;
+}
+
+.design-system-page .trade-layout-actual-menu .trade-layout-my-trades.is-menu-vertical {
+  max-width: none;
+}
+
+.design-system-page .trade-layout-actual-menu .trade-layout-menu-list .game-position-card {
+  flex: none;
+  width: 100%;
+}
+
+.design-system-page .trade-layout-actual-menu .trade-layout-group-score {
+  max-width: 100%;
+}
+
+.design-system-page .trade-layout-menu-list,
+.design-system-page .trade-layout-menu-group {
+  display: grid;
+  gap: var(--s3);
+}
+
+.design-system-page .trade-layout-menu-group {
+  border-top: 1px solid var(--line);
+  padding-top: var(--s5);
+}
+
+.design-system-page .trade-layout-menu-group:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.design-system-page .trade-layout-menu-group > p {
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  font-weight: 800;
+  letter-spacing: .1em;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-menu-list .game-position-card {
+  flex: none;
+  width: 100%;
+}
+
+.design-system-page .trade-layout-menu-panel .trade-layout-my-trades.is-menu-vertical .game-position-navigation {
+  display: none;
+}
+
+.design-system-page .trade-layout-my-trades .game-position-navigation {
+  margin-top: var(--s4);
+}
+
+@media (min-width: 720px) {
+  .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-game-strip {
+    gap: var(--s2);
+    justify-content: space-between;
+    overflow: hidden;
+    padding-inline: var(--s2);
+    width: 100%;
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-game-pill {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-game-icon {
+    height: 64px;
+    width: 64px;
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-game-matchup-mark i {
+    font-size: .52rem;
+    height: 25px;
+    width: 25px;
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .trade-game-label {
+    font-size: .66rem;
+    letter-spacing: 0;
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-page {
+    padding-inline: var(--s8);
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-group h3 {
+    text-align: left;
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-card-row {
+    overflow: visible;
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-all-row {
+    margin-inline: 0;
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-all-navigation .trade-layout-mobile-page {
+    display: none;
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-menu-panel {
+    bottom: auto;
+    left: auto;
+    padding: var(--s6);
+    right: var(--s5);
+    top: 88px;
+    width: min(560px, calc(100% - var(--s10)));
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-groups {
+    gap: var(--s6);
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-card-row .ds-menu-position-card {
+    flex-basis: min(350px, calc((100% - var(--s3)) / 2));
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-my-trades .game-position-carousel {
+    justify-content: center;
+  }
+
+  .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-my-trades .game-position-card {
+    flex-basis: min(350px, calc((100% - var(--s3)) / 2));
+    width: min(350px, calc((100% - var(--s3)) / 2));
+  }
 }

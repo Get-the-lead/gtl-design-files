@@ -86,7 +86,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .section-head .eyebrow + h2 { margin-top: var(--s3); }
 .section-head.center { text-align: center; display: flex; flex-direction: column; align-items: center; }
 
-/* Connected four-step flow — shared by How it works and competition summaries */
+/* Connected multi-step flow — shared by How it works and competition summaries */
 .flow { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: 1fr; gap: var(--s8); }
 .flow::before {
   content: ""; position: absolute; left: 23px; top: 24px; bottom: 24px; width: 2px;
@@ -106,8 +106,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
 .flow-text { margin: 0; color: var(--ink-2); font-size: var(--fs-label); line-height: 1.6; }
 
 @media (min-width: 768px) {
-  .flow { grid-template-columns: repeat(4, 1fr); gap: var(--s6); text-align: center; }
-  .flow::before { left: 12.5%; right: 12.5%; top: 24px; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent); }
+  .flow { grid-template-columns: repeat(5, 1fr); gap: var(--s6); text-align: center; }
+  .flow::before { left: 10%; right: 10%; top: 24px; bottom: auto; width: auto; height: 2px; background: linear-gradient(90deg, transparent, var(--green-line) 20%, var(--green-line) 80%, transparent); }
   .flow-step { padding-left: 0; padding-top: 68px; }
   .flow-marker { left: 50%; transform: translateX(-50%); }
 }
@@ -288,18 +288,18 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   color: #06210f;
 }
 .brand-mark svg { width: 20px; height: 20px; }
-/* Header logo — full Get the Lead wordmark supplied for the product header */
-.site-header .floating-logo { height: 48px; padding: 2px 7px; border-radius: 13px; gap: 0; }
+/* Reusable GTL wordmark. The type follows the page theme; the arrow keeps the brand green. */
+.gtl-logo { display: block; width: 100%; height: auto; aspect-ratio: 1034 / 522; color: var(--ink); overflow: visible; }
+.gtl-logo > svg { display: block; width: 100%; height: 100%; overflow: visible; }
+/* Header logo retains the shared floating glass chip; only the artwork is transparent. */
+.site-header .floating-logo { height: 48px; padding: 8px; border-radius: 13px; gap: 0; }
 .header-brand-logo {
-  width: 86px;
-  height: 44px;
+  width: 64px;
+  height: 32px;
   display: block;
   flex: 0 0 auto;
-  overflow: hidden;
-  border-radius: 8px;
 }
-.header-brand-logo :is(img, svg) { display: block; width: 100%; height: 100%; object-fit: cover; }
-:root[data-theme="light"] .header-brand-logo img { filter: invert(1) hue-rotate(180deg); }
+.header-brand-logo .gtl-logo { width: 100%; height: 100%; }
 .site-header .brand-mark { width: 34px; height: 34px; }
 .site-header .brand-mark svg { width: 20px; height: 20px; }
 .site-header .brand-word { font-size: 1.02rem; white-space: nowrap; }
@@ -396,7 +396,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   .menu-prototype-info:hover { background: rgba(255, 255, 255, 0.06); color: var(--ink); }
 }
 .prototype-menu-info-gate .gate-body { padding-bottom: var(--s10); }
-.menu-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: auto; padding-top: var(--s5); border-top: 1px solid var(--line); }
+.menu-actions { display: flex; flex-direction: column; gap: var(--s3); margin-top: auto; padding-top: var(--s5); border-top: 0; }
 body.menu-open { overflow: hidden; }
 /* while the takeover is open, hide the right-hand auth chip (it's inside the menu) */
 body.menu-open #headerAuth { display: none; }
@@ -419,7 +419,7 @@ body.menu-open #headerAuth { display: none; }
     transform-origin: top left; animation: menu-in-drop 0.2s var(--ease-out);
   }
   .menu-nav a { font-family: var(--font-ui); font-size: var(--fs-body); padding: var(--s3) var(--s4); border-radius: var(--r-sm); }
-  .menu-actions { margin-top: var(--s2); padding-top: var(--s3); border-top: 1px solid var(--line); gap: var(--s2); }
+  .menu-actions { margin-top: var(--s2); padding-top: var(--s3); border-top: 0; gap: var(--s2); }
   .menu-appearance { display: none; }
 }
 
@@ -430,6 +430,7 @@ body.menu-open #headerAuth { display: none; }
 
   .brand-pill {
     pointer-events: auto;
+    padding-left: var(--s2);
     padding-right: var(--s2);
     border-radius: var(--r-pill);
     border: 1px solid var(--line-2);
@@ -477,7 +478,7 @@ body.menu-open #headerAuth { display: none; }
 .hpos-trigger[aria-expanded="true"] .hpos-word { display: none; }
 .hpos-trigger[aria-expanded="true"] .hpos-close { display: inline-flex; }
 
-/* Panel is chrome-free — just the floating position cards stacked down the side, full height (no scrollbar) */
+/* Panel is chrome-free — just the floating trade cards stacked down the side. */
 .hpos-panel {
   pointer-events: auto;
   position: absolute; top: calc(100% + var(--s2) + 16px); right: 0; z-index: 5;
@@ -487,10 +488,27 @@ body.menu-open #headerAuth { display: none; }
   animation: menu-in-drop 0.2s var(--ease-out);
 }
 .hpos-panel[hidden] { display: none; }
-.hpos-list { display: flex; flex-direction: column; gap: var(--s3); }
+.hpos-heading {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.hpos-list { display: flex; width: 100%; flex-direction: column; gap: var(--s5); }
+.hpos-game-group { display: flex; width: 100%; flex-direction: column; gap: var(--s3); }
+.hpos-game-heading {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
 
-/* Mobile: dim + blur the page behind the open dropdown and lock the page so only
-   the positions themselves scroll. Sits above the page but below the header chips. */
+/* Dim the page behind the open dropdown and lock the page so only the trades
+   themselves scroll. The backdrop sits below the header and its menu. */
 .hpos-backdrop {
   position: fixed; inset: 0; z-index: 50;
   background: rgba(0, 0, 0, 0.5);
@@ -498,14 +516,54 @@ body.menu-open #headerAuth { display: none; }
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s var(--ease);
 }
-@media (max-width: 767px) {
+body.pos-open { overflow: hidden; }
+
+/* Desktop/tablet uses a lighter treatment and keeps the dropdown itself scrollable. */
+@media (min-width: 768px) {
+  .hpos-backdrop {
+    background: rgba(0, 0, 0, 0.28);
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
   .hpos-backdrop.is-open { opacity: 1; pointer-events: auto; }
-  body.pos-open { overflow: hidden; }
   .hpos-panel {
     max-height: calc(100vh - 96px);
     max-height: calc(100dvh - 96px);
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   }
+  .hpos-panel::-webkit-scrollbar { width: 8px; }
+  .hpos-panel::-webkit-scrollbar-track { background: transparent; }
+  .hpos-panel::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.22);
+    background-clip: padding-box;
+  }
+}
+@media (max-width: 767px) {
+  .hpos-backdrop.is-open { opacity: 1; pointer-events: auto; }
+  .hpos-panel {
+    position: fixed;
+    top: calc(var(--s4) + 72px);
+    right: var(--s4);
+    left: var(--s4);
+    width: min(360px, calc(100vw - var(--s8)));
+    margin-inline: auto;
+    align-items: center;
+    max-height: calc(100vh - 96px);
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .hpos-panel::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  .hpos-heading { width: 100%; text-align: center; }
+  .hpos-list { align-items: center; }
+  .hpos-game-heading { text-align: center; }
+  .hpos-list .pos-card { width: 100%; }
 }
 
 /* The Open Positions dropdown renders each position as the home page's 3rd carousel
@@ -617,10 +675,9 @@ body.menu-open #headerAuth { display: none; }
 }
 .footer-brand { max-width: 320px; }
 .footer-logo-link { display: inline-flex; margin-bottom: var(--s4); background: transparent; }
-.footer-logo { display: block; width: 132px; height: auto; background: transparent; }
-:root[data-theme="light"] .footer-logo { filter: invert(1) hue-rotate(180deg); }
+.footer-logo { display: block; width: 132px; height: auto; color: var(--ink); background: transparent; }
 .footer-blurb { color: var(--ink-2); font-size: var(--fs-label); line-height: 1.7; }
-.footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4); }
+.footer-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); }
 .footer-col h4 {
   font-family: var(--font-ui);
   font-size: var(--fs-eyebrow);
@@ -658,7 +715,7 @@ body.menu-open #headerAuth { display: none; }
 
 @media (min-width: 768px) {
   .footer-grid { grid-template-columns: 1.2fr 2fr; gap: var(--s16); }
-  .footer-cols { grid-template-columns: repeat(3, 1fr); gap: var(--s6); }
+  .footer-cols { grid-template-columns: repeat(2, 1fr); gap: var(--s6); }
   .footer-col h4 { margin-bottom: var(--s4); }
 }
 
@@ -871,7 +928,7 @@ body.sheet-open { overflow: hidden; }
 .bet-sheet .drawer-trade-pause[hidden],
 .bet-sheet [data-buy-main][hidden] { display: none; }
 .drawer-bet-heading { display: flex; flex-direction: column; align-items: center; gap: var(--s1); text-align: center; }
-.drawer-bet-heading strong { color: var(--ink); font-family: var(--font-display); font-size: var(--fs-h3); }
+.drawer-bet-heading strong { color: var(--ink); font-family: var(--font-display); font-size: var(--fs-h3); font-weight: 700; }
 .drawer-bet-heading .limit-toggle { margin-top: 0; padding-block: 0; }
 .drawer-bet-editor { display: flex; flex-direction: column; gap: var(--s6); }
 .drawer-bet-editor[hidden] { display: none; }
@@ -1026,15 +1083,15 @@ body.sheet-open { overflow: hidden; }
 
 /* Conflict warning — this buy takes the opposite side of a position already held in the game */
 .bet-conflict {
-  display: flex; align-items: flex-start; gap: var(--s2);
-  padding: var(--s3) var(--s4);
-  border-radius: var(--r-md);
-  background: rgba(255, 206, 77, 0.12);
-  border: 1px solid rgba(255, 206, 77, 0.4);
-  color: var(--ink); font-size: var(--fs-label); line-height: 1.35;
+  display: flex; align-items: center; justify-content: center; gap: var(--s2);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gold); font-size: var(--fs-label); line-height: 1.35; text-align: center;
 }
 .bet-conflict[hidden] { display: none; }
-.bet-conflict .warn-ico { flex: 0 0 auto; width: 18px; height: 18px; color: var(--gold); margin-top: 1px; }
+.bet-sheet > .bet-conflict { padding: 0 var(--s5) var(--s5); }
+.bet-conflict .warn-ico { display: none; }
 .bet-conflict strong { font-weight: 700; }
 .qty-quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s2); }
 .qty-quick button { height: 40px; border-radius: var(--r-pill); border: 1px solid var(--line-2); background: var(--surface-2); color: var(--ink-2); font-weight: 600; font-size: var(--fs-label); }
@@ -1398,10 +1455,21 @@ a.pos-media { display: block; color: inherit; cursor: pointer; }
 :root[data-theme="light"] .sell-readout .sell-tag .side-no { color: var(--no-ink); }
 .sell-readout .sell-sub { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: var(--ink-2); font-size: var(--fs-label); }
 .qty-quick.q3 { grid-template-columns: repeat(3, 1fr); }
-/* Sell footer — single full-width action */
+.bet-sheet[data-mode="sell"] .contracts-field { gap: var(--s3); }
+.bet-sheet[data-mode="sell"] .contracts-field .num-input {
+  height: 1em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 2.8rem;
+  line-height: 1;
+}
+.sell-held { margin: 0; color: var(--ink-2); font-size: var(--fs-label); font-weight: 600; text-align: center; }
+/* Sell footer — explicit secondary Cancel beside the primary action */
 .bet-sheet[data-mode="sell"] [data-breakdown],
 .bet-sheet[data-mode="sell"] [data-bet-back] { display: none; }
-.bet-sheet[data-mode="sell"] .bet-primary { flex: 1; }
+.bet-sheet[data-mode="sell"] :is([data-sell-cancel], .bet-primary) { flex: 1; }
 
 /* Toast notifications (success / error) ------------------------------ */
 .toast-stack {

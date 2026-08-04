@@ -11,10 +11,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="tokens.css" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="auth.css" />
+  <link rel="stylesheet" href="styles.css?v=20260804-drawer-heading-restore-1" />
+  <link rel="stylesheet" href="auth.css?v=20260804-auth-flow-update-1" />
+  <script src="brand.js?v=20260804-1" defer></script>
 </head>
-<body class="auth-body">
+<body class="auth-body signup-body">
   <header class="site-header" id="siteHeader"></header>
 
   <main class="auth-main">
@@ -26,8 +27,8 @@
       <div class="auth-steps" data-step="1" id="signupSteps">
         <section class="auth-step" data-step="1" aria-labelledby="signupEmailTitle">
           <div class="auth-head">
-            <h1 id="signupEmailTitle">Create your account</h1>
-            <p>Choose a social account or continue with your email.</p>
+            <h1 id="signupEmailTitle">Create Your Account</h1>
+            <p>Sign up with Google, Apple, or Email to get started.</p>
           </div>
 
           <div class="social-row">
@@ -47,7 +48,7 @@
               <label for="email">Email</label>
               <input class="field-input" id="email" type="email" autocomplete="email" placeholder="you@email.com" required />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Continue with Email</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Continue with Email</button>
           </form>
           <p class="auth-fineprint">By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
         </section>
@@ -57,16 +58,16 @@
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1 id="signupPhoneTitle">Add your phone number</h1>
+            <h1 id="signupPhoneTitle">Add Your Phone Number</h1>
             <p>We’ll use this number to verify and protect your account.</p>
           </div>
           <form data-step2-form novalidate>
             <div class="field">
-              <label for="phone">Phone number</label>
+              <label for="phone">Phone Number</label>
               <input class="field-input" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" required />
               <span class="field-hint">US phone numbers only. Standard message rates may apply.</span>
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Continue</button>
           </form>
         </section>
 
@@ -75,7 +76,7 @@
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1 id="signupVerifyTitle">Verify your phone</h1>
+            <h1 id="signupVerifyTitle">Verify Your Phone</h1>
             <p>Enter the 6-digit code sent to <span class="code-sent-to" data-code-phone>your phone</span>.</p>
           </div>
           <form data-step3-form novalidate>
@@ -88,7 +89,7 @@
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Continue</button>
           </form>
           <p class="code-resend">Didn't get a code? <button type="button" data-resend>Resend</button></p>
         </section>
@@ -98,7 +99,7 @@
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1 id="signupPasswordTitle">Enter a password</h1>
+            <h1 id="signupPasswordTitle">Enter a Password</h1>
             <p>Keep your account secure with a password you don’t use elsewhere.</p>
           </div>
           <form data-step4-form novalidate>
@@ -113,7 +114,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="confirmpass">Confirm password</label>
+              <label for="confirmpass">Confirm Password</label>
               <div class="field-pass">
                 <input class="field-input" id="confirmpass" type="password" autocomplete="new-password" placeholder="Re-enter your password" required />
                 <button class="pass-toggle" type="button" data-pass-toggle aria-label="Show password">
@@ -122,7 +123,7 @@
                 </button>
               </div>
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Create Account</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Create Account</button>
           </form>
         </section>
       </div>
@@ -131,6 +132,6 @@
     </div>
   </main>
 
-  <script src="app.js?v=20260729-1" defer></script>
+  <script src="app.js?v=20260804-update-bet-label-1" defer></script>
 </body>
 </html>
