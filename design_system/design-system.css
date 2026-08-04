@@ -2267,7 +2267,7 @@
 }
 
 .design-system-page .flat-screen.is-location .location-brand { margin-bottom: var(--s8); }
-.design-system-page .flat-screen.is-location .location-brand img { width: 124px; }
+.design-system-page .flat-screen.is-location .location-brand .gtl-logo { width: 124px; }
 .design-system-page .flat-screen.is-location .location-copy h1 { font-size: 2.35rem; }
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location,
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-location .location-main {
@@ -3116,10 +3116,6 @@
   width: 26px;
 }
 
-.design-system-page .flat-screen.is-wallet .or-logos > img + img {
-  margin-left: -8px;
-}
-
 .design-system-page .flat-screen.is-wallet .od-game .or-logos > img {
   flex-basis: 34px;
   height: 34px;
@@ -3623,6 +3619,7 @@
   color: var(--ink);
   font-family: var(--font-display);
   font-size: var(--fs-h3);
+  font-weight: 700;
 }
 
 .design-system-page :is(.flat-screen.is-drawer, .ds-drawer-preview) .drawer-bet-heading .limit-toggle {
@@ -4940,10 +4937,6 @@
   width: 26px;
 }
 
-.design-system-page #cards .ds-order-row-frame .or-logos > img + img {
-  margin-left: -8px;
-}
-
 .design-system-page .ds-order-row-frame .or-logo .team-mark-abbr {
   font-size: 0.56rem;
 }
@@ -5925,7 +5918,7 @@
   justify-content: space-between;
 }
 
-.design-system-page .ds-waitlist-screen header img {
+.design-system-page .ds-waitlist-screen header .gtl-logo {
   height: auto;
   width: 112px;
 }
@@ -6362,122 +6355,6 @@
 
 .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game .stats-section-label {
   display: none;
-}
-
-/* Open game positions are a bottom-bar disclosure on mobile/tablet. The host
-   viewport is desktop-sized, so explicitly restore the implemented overlay. */
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-frame--game-positionsPanelOpen .flat-phone {
-  height: var(--flat-frame-h, 844px);
-  min-height: var(--flat-frame-h, 844px);
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen {
-  height: 100%;
-  min-height: 100%;
-  overflow: hidden;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-openPositions .game-open-position {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .game-open-position {
-  inset: 0;
-  margin: 0;
-  pointer-events: none;
-  position: absolute;
-  z-index: 55;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-backdrop {
-  display: block;
-  inset: 0;
-  opacity: 1;
-  pointer-events: none;
-  position: absolute;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-pop {
-  bottom: 84px;
-  left: 0;
-  max-height: calc(100% - 156px);
-  opacity: 1;
-  overflow-y: auto;
-  padding: var(--s4);
-  pointer-events: auto;
-  position: absolute;
-  right: 0;
-  transform: none;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-pop .hpos-list {
-  margin-inline: auto;
-  max-width: 400px;
-  padding-inline: 0;
-  width: 100%;
-}
-
-.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-heading {
-  margin-bottom: var(--s3);
-  padding-inline: 0;
-  text-align: center;
-}
-
-.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar {
-  bottom: 0;
-  display: block;
-  left: 0;
-  opacity: 1;
-  position: absolute;
-  right: 0;
-  transform: none;
-  z-index: 60;
-}
-
-.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar .betbar-cta {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-gop-betbar {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
-  display: block;
-  flex-shrink: 0;
-  margin-top: var(--s16);
-  pointer-events: auto;
-  position: static;
-  z-index: auto;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-backdrop {
-  display: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-pop {
-  bottom: auto;
-  left: auto;
-  max-height: none;
-  opacity: 1;
-  overflow: visible;
-  padding: 0;
-  pointer-events: auto;
-  position: static;
-  right: auto;
-  transform: none;
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-pop .hpos-list {
-  margin-inline: 0;
-  max-width: none;
-  padding-inline: var(--s5);
-}
-
-.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .gop-heading {
-  margin-bottom: var(--s3);
-  padding-inline: var(--s5);
-  text-align: left;
 }
 
 /* Desktop live games mirror the app's current sticky two-column page. */
@@ -7011,12 +6888,6 @@
   width: auto;
 }
 
-.design-system-root[data-theme="light"] .design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen.is-game-positionsPanelOpen .gop-backdrop {
-  background: rgba(20, 30, 40, 0.18);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-}
-
 .design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen .site-header .floating-btn {
   background: rgba(255, 255, 255, 0.94);
 }
@@ -7028,6 +6899,350 @@
   background: rgba(255, 255, 255, 0.72);
   border-color: var(--line-2);
   color: var(--ink);
+}
+
+/* Current Game-page Open Positions variants. The app now displays matching game
+   positions inline and reserves the header overlay for the global portfolio list. */
+.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  display: block;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  inset: auto;
+  margin: 0 auto;
+  padding-bottom: var(--s8);
+  padding-top: var(--s10);
+  pointer-events: auto;
+  position: static;
+  z-index: auto;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-positions-head {
+  text-align: center;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-positions-head h2 {
+  font-size: var(--fs-h3);
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-nav-button {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .ds-desktop-extra-page {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas:is([data-flat-device="mobile"], [data-flat-device="tablet"]) .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+  scroll-padding-inline: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-open-position {
+  margin: 0;
+  padding: 0 0 var(--s10);
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-carousel {
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen {
+  overflow: hidden;
+  position: relative;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-backdrop {
+  inset: 0;
+  position: absolute;
+  z-index: 90;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen .hpos-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-hpos-panel {
+  bottom: auto;
+  left: auto;
+  max-height: calc(100% - 104px);
+  overflow-y: auto;
+  position: absolute;
+  right: var(--s4);
+  top: 80px;
+  transform: none;
+  z-index: 102;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .site-header {
+  z-index: 101;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-trigger[aria-expanded="true"] .hpos-close {
+  display: inline-flex;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-trigger[aria-expanded="true"] {
+  background: var(--surface-2);
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .hpos-trigger[aria-expanded="true"] :is(.hpos-word, .hpos-num) {
+  display: none;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen .ds-hpos-panel {
+  align-items: center;
+  left: var(--s4);
+  margin-inline: auto;
+  right: var(--s4);
+  top: 88px;
+  width: min(360px, calc(100% - var(--s8)));
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen :is(.hpos-heading, .hpos-game-heading) {
+  text-align: center;
+  width: 100%;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-game-positionsPanelOpen .hpos-list {
+  align-items: center;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-hpos-panel .pos-card {
+  width: 100%;
+}
+
+/* The inline Game-page cards use the full available content width in the
+   preview, matching the implemented position-card footprint. */
+.design-system-page .flat-screen:is(.is-game-openPositions, .is-game-positionsPanelOpen) .game-position-card {
+  flex-basis: 100%;
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-menu-position-card .team-logo,
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .team-logo {
+  height: 48px;
+  width: 48px;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-menu-position-card .team-logo .team-mark-abbr,
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .team-logo .team-mark-abbr {
+  font-size: 0.72rem;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-group-trade-stack, .ds-group-trade-carousel) {
+  display: flex;
+  gap: var(--s4);
+  width: 100%;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-stack {
+  flex-direction: column;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-carousel {
+  flex-direction: row;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-carousel::-webkit-scrollbar,
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-group-trade-carousel .pos-card {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: #08090c;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--home-color) 60%, transparent), transparent 58%),
+    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--away-color) 60%, transparent), transparent 58%),
+    linear-gradient(180deg, rgba(8, 10, 12, 0.32), rgba(8, 9, 11, 0.9));
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .pos-media {
+  background: transparent;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) .pos-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s4) var(--s5) var(--s5);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-combined-trades {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary.is-selected {
+  border-color: var(--green);
+  box-shadow: inset 3px 0 0 var(--green);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary span {
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary .ds-trade-values {
+  align-items: flex-end;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-action-context {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: var(--fs-eyebrow);
+  text-align: center;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-carousel {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-slide {
+  display: flex;
+  flex: 0 0 100%;
+  flex-direction: column;
+  gap: var(--s3);
+  scroll-snap-align: start;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-inner-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--s2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-inner-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-2);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-inner-dots span.is-active {
+  background: var(--green);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-overview-card .pos-info {
+  gap: 0;
+  padding-top: 0;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding-block: var(--s4);
+  border-top: 1px solid var(--line);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade:first-child {
+  border-top: 0;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-trade-head strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s3);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics small {
+  color: var(--ink-3);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-metrics strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .flat-screen.is-game-positionsPanelOpen .ds-compact-actions button {
+  min-height: 38px;
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card) {
+  background: var(--surface);
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen :is(.ds-combined-position-card, .ds-compact-overview-card)::before {
+  content: none;
+}
+
+.design-system-root[data-theme="light"] .design-system-page .flat-screen.is-game-positionsPanelOpen .ds-trade-summary {
+  background: var(--surface-2);
 }
 
 /* The component catalogue uses wide data tables, but the legal prize schedule

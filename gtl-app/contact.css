@@ -8,6 +8,12 @@
 }
 
 .contact-page > .support-back { margin-bottom: var(--s8); }
+.contact-page > .support-back,
+.contact-page > .support-back:hover {
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+}
 
 .contact-layout {
   display: grid;
@@ -17,8 +23,8 @@
 }
 
 .contact-intro { max-width: 520px; }
-.contact-intro h1 { margin: var(--s3) 0 var(--s4); font-size: var(--fs-hero); line-height: 1.02; }
-.contact-intro > p { margin: 0; color: var(--ink-2); font-size: var(--fs-lead); line-height: 1.65; }
+.contact-intro h1 { margin: 0 0 var(--s4); font-size: var(--fs-h2); line-height: 1.1; }
+.contact-intro > p { margin: 0; color: var(--ink-2); font-size: var(--fs-body); line-height: 1.65; }
 
 .contact-note {
   display: flex;
@@ -54,7 +60,6 @@
 .contact-message { height: auto; min-height: 156px; padding-block: var(--s4); border-radius: var(--r-md); line-height: 1.55; resize: vertical; }
 .contact-message + .field-hint { align-self: flex-end; padding-right: var(--s1); }
 .contact-submit { --btn-h: 54px; margin-top: var(--s6); font-size: var(--fs-body); }
-.contact-privacy { margin: var(--s3) 0 0; color: var(--ink-3); font-size: var(--fs-eyebrow); text-align: center; }
 
 .contact-success {
   min-height: 490px;

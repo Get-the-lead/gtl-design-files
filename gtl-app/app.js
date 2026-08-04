@@ -92,6 +92,12 @@ const GAMES = [
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 const leaderOf = (g) => (g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away");
+function drawerWinHeading(game, market, side) {
+  if (market === "tie") return `You win if the game is ${side === "yes" ? "tied" : "not tied"}.`;
+  const team = game.home.name;
+  if (market === "gtl") return `You win if ${team} ${side === "yes" ? "get" : "do not get"} the lead.`;
+  return `You win if ${team} ${side === "yes" ? "keep" : "do not keep"} the lead.`;
+}
 function teamMarkHTML(t, className, loading = "") {
   const fallback = `<span class="team-mark-abbr">${t.abbr}</span>`;
   if (!t.logo) return `<span class="team-mark ${className} is-fallback" aria-label="${t.name}" style="--team-color:${t.color}">${fallback}</span>`;
@@ -311,14 +317,14 @@ function initLeagueFilter() {
 /* ----------------------------------------------- HEADER (shared, rendered) */
 const ICON_MOON = '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_SUN = '<svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-const HEADER_LOGO = '<img src="assets/gtl-footer-logo.png" alt="" />';
+const HEADER_LOGO = '<gtl-logo class="gtl-logo" aria-hidden="true"></gtl-logo>';
 const THEME_SWITCH = `<span class="theme-switch-track" aria-hidden="true"><span class="theme-switch-thumb"></span><span class="theme-option theme-sun">${ICON_SUN}</span><span class="theme-option theme-moon">${ICON_MOON}</span></span>`;
 // Header nav shown inside the GTL pill on desktop. Account destinations only appear when signed in.
 function navHTML(authed) {
   return `<nav class="header-nav" aria-label="Primary navigation">
     <a href="home.html" data-scroll-top>Home</a>
     <a href="home.html#live">Live Games</a>
-    <a href="ranking.html">Ranking</a>
+    ${authed ? `<a href="ranking.html">Ranking</a>` : ""}
     ${authed ? `<a href="wallet.html">Portfolio</a>` : ""}
     ${authed ? `<a href="profile.html">Profile &amp; Settings</a>` : ""}
     ${authed ? `<span class="header-nav-sep" aria-hidden="true"></span><button type="button" class="header-nav-logout" data-logout>Logout</button>` : ""}
@@ -326,7 +332,6 @@ function navHTML(authed) {
 }
 const WALLET_ICO = '<svg class="wallet-ico" viewBox="0 0 24 24" fill="none"><path d="M3 8a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M3 8v9a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1v-3M20 8v4h-4a2 2 0 0 1 0-4h4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const ICON_CLOSE = '<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-const WARNING_ICON = '<svg class="warn-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.4 1.8 20.4h20.4L12 3.4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.6v4.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.05" fill="currentColor"/></svg>';
 
 // Single source of truth for the header on every page (auth slots filled by applyAuthChrome)
 function renderHeader() {
@@ -356,8 +361,8 @@ function renderHeader() {
       <nav class="menu-nav">
         <a href="home.html" data-scroll-top>Home</a>
         <a href="home.html#live">Live Games</a>
-        <a href="ranking.html">Ranking</a>
-        <a href="wallet.html">Portfolio</a>
+        <a href="ranking.html" data-auth-only>Ranking</a>
+        <a href="wallet.html" data-auth-only>Portfolio</a>
         <a href="profile.html" data-auth-only>Profile &amp; Settings</a>
       </nav>
       <div class="menu-appearance">
@@ -387,6 +392,35 @@ function renderHeader() {
         </div>
       </div>
       <div class="menu-actions" id="menuActions"></div>
+    </div>`;
+}
+
+function initFooterNavigation() {
+  const footer = $(".site-footer");
+  if (!footer) return;
+  const columns = $(".footer-cols", footer);
+  if (!columns) return;
+  const currentPage = location.pathname.split("/").pop() || "home.html";
+  const link = (href, label) => `<a href="${href}"${currentPage === href ? ' aria-current="page"' : ""}>${label}</a>`;
+  const sitemap = isAuthed()
+    ? [
+        ["home.html", "Home"],
+        ["profile.html", "Profile"],
+        ["ranking.html", "Ranking"],
+        ["wallet.html", "Portfolio"],
+        ["contact.html", "Contact"],
+      ]
+    : [["home.html", "Home"], ["contact.html", "Contact"]];
+  columns.innerHTML = `
+    <div class="footer-col">
+      <h4>Sitemap</h4>
+      ${sitemap.map(([href, label]) => link(href, label)).join("")}
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      ${link("rules.html", "Official Rules")}
+      <a href="#" data-legal-pending="terms">Terms</a>
+      <a href="#" data-legal-pending="privacy">Privacy</a>
     </div>`;
 }
 
@@ -1029,6 +1063,11 @@ function renderGamePage() {
     return `<div class="gb-team${leading}">${teamAbbrMarkHTML(t, "gb-logo")}<span class="gb-abbr">${t.name}</span></div>`;
   };
 
+  const marketStatusHTML = g.id === RECALC_DEMO_GAME_ID
+    ? `<div class="game-recalc" data-game-recalc hidden><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>`
+    : isMarketWaiting(g)
+      ? `<div class="game-recalc"><span class="pause-dot"></span><span>Markets open when a team takes the lead.</span></div>`
+      : "";
   const marketsHTML = `
     <div class="mkt-grid">
       <div class="mkt-head"><span class="col-yes">Yes</span><span class="col-market">Markets</span><span class="col-no">No</span></div>
@@ -1036,7 +1075,8 @@ function renderGamePage() {
       ${marketRow(g, "TIE", "", "tie")}
       ${marketRow(g, "KTL", "Keep the Lead", "ktl")}
     </div>
-    <p class="bet-help">Tap a price to start your bet.</p>`;
+    <p class="bet-help">Tap a price to start your bet.</p>
+    ${marketStatusHTML}`;
 
   const bettingStatsHTML = bettingChartsPro(g);
   const gameSummaryHTML = gameMomentumCardsPro(g);
@@ -1088,8 +1128,6 @@ function renderGamePage() {
     </section>
 
     <section class="container markets" id="marketsSection"${g.id === RECALC_DEMO_GAME_ID ? " data-recalc-managed" : ""}>
-      ${g.id === RECALC_DEMO_GAME_ID ? `<div class="game-recalc" data-game-recalc hidden><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
-      ${isMarketWaiting(g) ? `<div class="game-recalc"><span class="pause-dot"></span><span>Markets open when a team takes the lead.</span></div>` : ""}
       ${marketsHTML}
     </section>
     </div>
@@ -1105,8 +1143,37 @@ function renderGamePage() {
   if (gamePositions.length) initGamePositions(gamePositions);
 }
 
-// The Open Positions card set for the header dropdown uses one consistent layout.
-const openPositionCards = (list) => list.map((p, i) => positionCardA(p, i)).join("");
+const POSITION_MARKET_ORDER = { gtl: 0, tie: 1, ktl: 2 };
+
+// Header positions always come from the user's live portfolio. Preserve the portfolio's
+// first-seen game order, group matching games together, then order each game's markets while
+// retaining every position's real USER index so actions still target the correct holding.
+function openPositionCards(list) {
+  const groups = [];
+  const groupsByGame = new Map();
+  list.forEach((position) => {
+    let group = groupsByGame.get(position.gameId);
+    if (!group) {
+      group = { gameId: position.gameId, positions: [] };
+      groupsByGame.set(position.gameId, group);
+      groups.push(group);
+    }
+    group.positions.push(position);
+  });
+  return groups.map((group) => {
+    const game = GAMES.find((item) => item.id === group.gameId);
+    const label = game ? `${game.away.abbr} @ ${game.home.abbr}` : "Other Game";
+    const orderedPositions = [...group.positions].sort((a, b) =>
+      (POSITION_MARKET_ORDER[a.market] ?? Number.MAX_SAFE_INTEGER) - (POSITION_MARKET_ORDER[b.market] ?? Number.MAX_SAFE_INTEGER)
+      || a.side.localeCompare(b.side)
+    );
+    const cards = orderedPositions.map((position) => positionCardA(position, USER.positions.indexOf(position))).join("");
+    return `<section class="hpos-game-group" aria-label="${label}">
+      <p class="hpos-game-heading">${label}</p>
+      ${cards}
+    </section>`;
+  }).join("");
+}
 
 // A compact game-position card. It keeps the game-page position treatment while using the
 // horizontal home-page carousel layout. The team chip makes the desired outcome explicit.
@@ -1130,7 +1197,7 @@ function positionOutcomeChipHTML(p, g) {
 }
 
 function gopPositionCard(p, i, { actions = true } = {}) {
-  const { g, value, pnl } = posFigures(p);
+  const { g, cur, value, pnl } = posFigures(p);
   const outcome = positionOutcome(p, g);
   const up = pnl >= 0;
   const sideTag = `<span class="side-${p.side}">${p.side.toUpperCase()}</span>`;
@@ -1145,6 +1212,10 @@ function gopPositionCard(p, i, { actions = true } = {}) {
           <span class="oc-sub">${sideTag} · ${p.qty} contracts</span>
           <span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span></span>
         </div>
+        <div class="game-position-pricing" aria-label="Trade price movement">
+          <span>Bought <strong class="tnum">${p.avg}¢</strong></span>
+          <span>Now <strong class="tnum">${cur}¢</strong></span>
+        </div>
       </div>
       ${actions ? posActions(i) : ""}
     </div>
@@ -1155,25 +1226,52 @@ function gamePositionsHTML(list) {
   return `
     <section class="game-open-position container" id="gamePositionsSection" aria-labelledby="gamePositionsTitle">
       <div class="game-positions-head">
-        <span class="eyebrow">Your game</span>
-        <h2 id="gamePositionsTitle">My Positions</h2>
+        <h2 id="gamePositionsTitle">My Game Trades</h2>
+        <span class="game-trade-count" aria-label="${list.length} open trade${list.length === 1 ? "" : "s"} in this game">${list.length}</span>
       </div>
-      <div class="game-position-carousel" data-game-position-list>${list.map((p, i) => gopPositionCard(p, i)).join("")}</div>
-      <div class="game-position-dots" data-game-position-dots aria-label="Position carousel pagination" hidden></div>
+      <div class="game-position-carousel" data-game-position-list>${list.map((p) => gopPositionCard(p, USER.positions.indexOf(p))).join("")}</div>
+      <div class="game-position-navigation" data-game-position-navigation hidden>
+        <button class="game-position-nav-button" type="button" data-game-position-prev aria-label="Previous trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="game-position-dots" data-game-position-dots aria-label="Trade carousel pagination"></div>
+        <button class="game-position-nav-button" type="button" data-game-position-next aria-label="Next trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
     </section>`;
 }
 
 function syncGamePositionCarousel(wrap) {
   const carousel = $("[data-game-position-list]", wrap);
   const dots = $("[data-game-position-dots]", wrap);
-  if (!carousel || !dots) return;
+  const navigation = $("[data-game-position-navigation]", wrap);
+  const previous = $("[data-game-position-prev]", wrap);
+  const next = $("[data-game-position-next]", wrap);
+  if (!carousel || !dots || !navigation) return;
+  const cards = $$(".game-position-card", carousel);
+  let activeIndex = Number(carousel.dataset.activeTradePage) || 0;
 
-  const renderDots = () => {
-    const cards = $$(".game-position-card", carousel);
-    dots.hidden = cards.length < 2;
-    dots.innerHTML = cards.length > 1
-      ? cards.map((_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" data-game-position-dot="${index}" aria-label="Go to position ${index + 1}"></button>`).join("")
-      : "";
+  const pageOffsets = () => carouselPageOffsets(carousel, cards);
+
+  const setActive = (index) => {
+    const offsets = pageOffsets();
+    activeIndex = Math.min(Math.max(0, index), Math.max(0, offsets.length - 1));
+    carousel.dataset.activeTradePage = String(activeIndex);
+    $$(".game-position-dot", dots).forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === activeIndex));
+    if (previous) previous.disabled = activeIndex === 0;
+    if (next) next.disabled = activeIndex === offsets.length - 1;
+  };
+
+  const renderPagination = () => {
+    const scrolls = carouselContentOverflows(carousel, cards);
+    carousel.classList.toggle("is-centered", !scrolls);
+    syncCarouselPageTail(carousel, cards, scrolls);
+    navigation.hidden = !scrolls;
+    const offsets = scrolls ? pageOffsets() : [0];
+    if (dots.children.length !== offsets.length) {
+      dots.innerHTML = offsets.length > 1
+        ? offsets.map((_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" data-game-trade-page="${index}" aria-label="Go to trades page ${index + 1}"></button>`).join("")
+        : "";
+    }
+    if (!scrolls) activeIndex = 0;
+    setActive(activeIndex);
   };
 
   if (!carousel.dataset.paginationBound) {
@@ -1183,26 +1281,41 @@ function syncGamePositionCarousel(wrap) {
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = null;
-        const cards = $$(".game-position-card", carousel);
-        const center = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
+        const offsets = pageOffsets();
         let active = 0;
         let distance = Infinity;
-        cards.forEach((card, index) => {
-          const rect = card.getBoundingClientRect();
-          const nextDistance = Math.abs(rect.left + rect.width / 2 - center);
+        offsets.forEach((offset, index) => {
+          const nextDistance = Math.abs(carousel.scrollLeft - offset);
           if (nextDistance < distance) { distance = nextDistance; active = index; }
         });
-        $$(".game-position-dot", dots).forEach((dot, index) => dot.classList.toggle("is-active", index === active));
+        setActive(active);
       });
     }, { passive: true });
     dots.addEventListener("click", (event) => {
-      const dot = event.target.closest("[data-game-position-dot]");
+      const dot = event.target.closest("[data-game-trade-page]");
       if (!dot) return;
-      const card = $$(".game-position-card", carousel)[Number(dot.dataset.gamePositionDot)];
-      card?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      const index = Number(dot.dataset.gameTradePage);
+      setActive(index);
+      carousel.scrollTo({ left: pageOffsets()[index], behavior: "smooth" });
     });
+    previous?.addEventListener("click", () => {
+      const index = Math.max(0, (Number(carousel.dataset.activeTradePage) || 0) - 1);
+      setActive(index);
+      carousel.scrollTo({ left: pageOffsets()[index], behavior: "smooth" });
+    });
+    next?.addEventListener("click", () => {
+      const offsets = pageOffsets();
+      const index = Math.min(offsets.length - 1, (Number(carousel.dataset.activeTradePage) || 0) + 1);
+      setActive(index);
+      carousel.scrollTo({ left: offsets[index], behavior: "smooth" });
+    });
+    if (window.ResizeObserver) {
+      new ResizeObserver(renderPagination).observe(carousel);
+    } else {
+      window.addEventListener("resize", renderPagination, { passive: true });
+    }
   }
-  renderDots();
+  renderPagination();
 }
 
 function initGamePositions(list) {
@@ -1220,7 +1333,7 @@ function initGamePositions(list) {
     trigger.type = "button";
     trigger.className = "btn btn-primary game-positions-trigger";
     trigger.setAttribute("aria-controls", "gamePositionsSection");
-    trigger.innerHTML = `<span class="game-positions-full-label">${list.length} Game Position${list.length === 1 ? "" : "s"}</span><span class="game-positions-compact-label">Positions</span>`;
+    trigger.innerHTML = `<span class="game-positions-full-label">${list.length} Game Trade${list.length === 1 ? "" : "s"}</span><span class="game-positions-compact-label">Trades</span>`;
     barInner.insertBefore(trigger, barInner.firstChild);
   }
 
@@ -1242,10 +1355,8 @@ function initGamePositions(list) {
   wrap.addEventListener("click", (e) => {
     const buy = e.target.closest("[data-buy]");
     const sell = e.target.closest("[data-sell]");
-    const gameId = new URL(location.href).searchParams.get("id") || GAMES[0].id;
-    const currentList = positionsInGame(gameId);
-    if (buy) openBuy(currentList[Number(buy.dataset.buy)]);
-    else if (sell) openSell(currentList[Number(sell.dataset.sell)]);
+    if (buy) openBuy(USER.positions[Number(buy.dataset.buy)]);
+    else if (sell) openSell(USER.positions[Number(sell.dataset.sell)]);
   });
 
   // Publish the bar height so the popup sits just above it (updates if it reflows).
@@ -1273,10 +1384,15 @@ function refreshGamePositions() {
     initGamePositions(list);
     return;
   }
-  if (listEl) listEl.innerHTML = list.map((p, i) => gopPositionCard(p, i)).join("");
+  if (listEl) listEl.innerHTML = list.map((p) => gopPositionCard(p, USER.positions.indexOf(p))).join("");
+  const count = $(".game-trade-count", section);
+  if (count) {
+    count.textContent = String(list.length);
+    count.setAttribute("aria-label", `${list.length} open trade${list.length === 1 ? "" : "s"} in this game`);
+  }
   syncGamePositionCarousel(section);
   const fullLabel = trigger?.querySelector(".game-positions-full-label");
-  if (fullLabel) fullLabel.textContent = `${list.length} Game Position${list.length === 1 ? "" : "s"}`;
+  if (fullLabel) fullLabel.textContent = `${list.length} Game Trade${list.length === 1 ? "" : "s"}`;
 }
 
 // Game 1's detail page: every ~9s the market "recalculates" — the recalculating
@@ -1412,13 +1528,10 @@ function ensureBetSheet() {
             <span class="sell-sub" data-sell-sub>—</span>
           </div>
 
-          <!-- BUY: warns when this bet takes the opposite side of a position already held in this game -->
-          <div class="bet-conflict buy-only" data-conflict-warning role="alert" hidden></div>
-
           <div class="trade-pause drawer-trade-pause buy-only" data-bet-paused role="status" hidden><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>
 
           <div class="drawer-bet-heading buy-only" data-buy-main>
-            <strong data-bet-heading>Get the Lead - Yes</strong>
+            <strong data-bet-heading>You win if the Chiefs get the lead.</strong>
             <button class="limit-toggle" data-change-bet-type>Change</button>
           </div>
 
@@ -1445,6 +1558,7 @@ function ensureBetSheet() {
               <button data-sell-pct="50">50%</button>
               <button data-sell-pct="100">All</button>
             </div>
+            <p class="sell-held" data-sell-held>— contracts held</p>
           </div>
 
           <div class="drawer-bet-editor buy-only" data-bet-type-editor hidden>
@@ -1515,8 +1629,11 @@ function ensureBetSheet() {
       <footer class="bet-sheet-footer">
         <button class="bet-secondary" data-breakdown>See Details</button>
         <button class="bet-secondary" data-bet-back>Back</button>
+        <button class="bet-secondary sell-only" data-sell-cancel>Cancel</button>
         <button class="btn btn-primary bet-primary" data-bet-primary>Buy</button>
       </footer>
+      <!-- BUY: shown below the actions when this conflicts with a trade already held in the game -->
+      <div class="bet-conflict buy-only" data-conflict-warning role="alert" hidden></div>
 
       <div class="bet-success">
         <div class="success-content">
@@ -1584,6 +1701,7 @@ function ensureBetSheet() {
     updateBetSheet();
   });
   sheet.querySelector("[data-bet-back]").addEventListener("click", () => { betState.step = 1; updateBetSheet(); });
+  sheet.querySelector("[data-sell-cancel]").addEventListener("click", closeBetSheet);
   sheet.querySelector("[data-bet-primary]").addEventListener("click", () => {
     if (betState.typeOpen) {
       if (betState.draftMarket === betState.market && betState.draftContract === betState.contract) return;
@@ -1679,7 +1797,7 @@ function updateBetSheet() {
   sheet.querySelector("[data-bet-type-editor]").hidden = !betState.typeOpen;
   $$('[data-buy-main]', sheet).forEach((element) => { element.hidden = betState.typeOpen; });
   sheet.querySelector("[data-bet-paused]").hidden = betState.typeOpen || !betState.priceUpdating;
-  sheet.querySelector("[data-bet-heading]").textContent = `${MARKET_LABELS[betState.market]} - ${betState.contract === "yes" ? "Yes" : "No"}`;
+  sheet.querySelector("[data-bet-heading]").textContent = drawerWinHeading(betState.game, betState.market, betState.contract);
   // Buying more of an existing position: show the running total they'll hold after this purchase
   const qtyTotalEl = sheet.querySelector("[data-qty-total]");
   if (qtyTotalEl) {
@@ -1691,9 +1809,9 @@ function updateBetSheet() {
   // Warn when this buy takes the opposite side of a position already held in this game
   const conflictEl = sheet.querySelector("[data-conflict-warning]");
   if (conflictEl) {
-    const clash = betState.mode === "buy" && betState.game && betState.editPending == null ? conflictingPosition(betState.game.id, betState.market, betState.contract) : null;
+    const clash = betState.mode === "buy" && !betState.typeOpen && betState.game && betState.editPending == null ? conflictingPosition(betState.game.id, betState.market, betState.contract) : null;
     conflictEl.hidden = !clash;
-    if (clash) conflictEl.innerHTML = `${WARNING_ICON}<span>Your current <strong>${MARKET_LABELS[clash.market]} · ${clash.side.toUpperCase()}</strong> position conflicts with this contract. Only one can win.</span>`;
+    if (clash) conflictEl.innerHTML = `<span>Conflicts with your <strong>${MARKET_LABELS[clash.market]} · ${clash.side.toUpperCase()}</strong> trade. Only one can win.</span>`;
   }
 
   // Market / limit price control
@@ -1742,7 +1860,8 @@ function updateBetSheet() {
   if (betState.mode === "sell") {
     const s = computeSell();
     sheet.querySelector("[data-sell-tag]").innerHTML = `${MARKET_LABELS[betState.market]} · <span class="side-${betState.contract}">${betState.contract.toUpperCase()}</span>`;
-    sheet.querySelector("[data-sell-sub]").innerHTML = `<span>${betState.holding} Held</span><span aria-hidden="true">·</span><span>Bought at ${betState.avg}¢</span><span aria-hidden="true">·</span><span>Now ${s.priceCents}¢</span>`;
+    sheet.querySelector("[data-sell-sub]").innerHTML = `<span>Bought at ${betState.avg}¢</span><span aria-hidden="true">·</span><span>Now ${s.priceCents}¢</span>`;
+    sheet.querySelector("[data-sell-held]").textContent = `${betState.holding.toLocaleString("en-US")} contracts held`;
     $$("[data-sell-pct]", sheet).forEach((b) => {
       const target = Math.max(1, Math.round(betState.holding * Number(b.dataset.sellPct) / 100));
       b.classList.toggle("is-active", target === s.qty);
@@ -1760,7 +1879,7 @@ function updateBetSheet() {
     const unchangedType = betState.draftMarket === betState.market && betState.draftContract === betState.contract;
     const transactionTooLarge = betState.mode === "buy" && !betState.typeOpen && !transactionStatus.valid;
     primary.disabled = !!betState.priceUpdating || transactionTooLarge || (betState.typeOpen && unchangedType) || (betState.limitOpen && !limitStatus.valid);
-    primary.textContent = betState.typeOpen ? "Confirm Bet Type" : betState.editPending != null ? "Update Bet" : (betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Buy"));
+    primary.textContent = betState.typeOpen ? "Update Bet" : betState.editPending != null ? "Update Bet" : (betState.mode === "sell" ? "Sell" : (betState.step === 2 ? "Place Bet" : "Buy"));
   }
   const breakdown = sheet.querySelector("[data-breakdown]");
   if (breakdown) breakdown.textContent = betState.typeOpen ? "Return" : "See Details";
@@ -1966,7 +2085,7 @@ function placeBet() {
 
 // Re-render every surface that lists open positions (guards no-op where absent)
 function refreshPositionSurfaces() {
-  applyAuthChrome();          // header Open Positions dropdown
+  applyAuthChrome();          // wallet + grouped Open Positions menu from USER.positions
   renderAuthedHome();         // home hero carousel
   initWallet();               // wallet portfolio list
   refreshGamePositions();     // inline game-specific position carousel
@@ -2167,7 +2286,7 @@ function ensurePositionGate() {
     <div class="gate-backdrop" id="posGateBackdrop"></div>
     <div class="auth-gate pos-gate" id="posGate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="posGateTitle">
       <div class="gate-body">
-        <h3 class="gate-title" id="posGateTitle">These Positions Conflict</h3>
+        <h3 class="gate-title" id="posGateTitle">These Trades Conflict</h3>
         <p class="gate-desc">Only one of these outcomes can win. You can still continue.</p>
         <div class="pos-gate-current" id="posGateCurrent"></div>
         <div class="gate-actions">
@@ -2194,7 +2313,7 @@ function openPositionGate(position, onContinue) {
   const g = GAMES.find((game) => game.id === position.gameId);
   const current = $("#posGateCurrent");
   if (current && g) {
-    current.innerHTML = `<span class="pos-gate-current-label">Your Current Position</span>${gopPositionCard(position, 0, { actions: false })}`;
+    current.innerHTML = `<span class="pos-gate-current-label">Your Current Trade</span>${gopPositionCard(position, 0, { actions: false })}`;
   }
   $("#posGateHide").checked = false;
   posGateContinueFn = onContinue;
@@ -2289,10 +2408,8 @@ function initFeesPage() {
 
 function initStickyBet() {
   const bar = $("#betBar");
-  const scorecard = $("#scorecardSection");
-  const markets = $("#marketsSection");
   const hero = $(".markets .mkt-row"); // first row = Get the Lead
-  if (!bar || !hero || !scorecard) return;
+  if (!bar || !hero) return;
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
       ([entry]) => bar.classList.toggle("is-visible", !entry.isIntersecting && entry.boundingClientRect.top < 0),
@@ -2301,7 +2418,7 @@ function initStickyBet() {
     io.observe(hero);
   }
   bar.querySelector(".betbar-cta").addEventListener("click", () => {
-    (markets || scorecard).scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
 
@@ -2313,32 +2430,34 @@ const USER = {
   balance: 248.5,
   positions: [
     { gameId: "kc-sf", market: "gtl", side: "yes", qty: 150, avg: 31, date: "2026-07-06" },
+    { gameId: "kc-sf", market: "tie", side: "yes", qty: 100, avg: 27, date: "2026-07-06" },
+    { gameId: "kc-sf", market: "ktl", side: "yes", qty: 100, avg: 40, date: "2026-07-06" },
     { gameId: "den-dal", market: "gtl", side: "no", qty: 90, avg: 60, date: "2026-07-05" },
     { gameId: "ny-bos", market: "ktl", side: "yes", qty: 100, avg: 70, date: "2026-07-06" },
   ],
   // Limit orders placed but not yet filled — priced at `limit`¢, awaiting the market to reach them.
   pending: [
-    { gameId: "kc-sf", market: "tie", side: "no", qty: 200, limit: 22, date: "2026-07-07" },
-    { gameId: "den-dal", market: "ktl", side: "yes", qty: 75, limit: 44, date: "2026-07-06" },
+    { gameId: "kc-sf", market: "tie", side: "no", qty: 200, limit: 22, date: "2026-07-07", time: "9:18 AM" },
+    { gameId: "den-dal", market: "ktl", side: "yes", qty: 75, limit: 44, date: "2026-07-06", time: "7:42 PM" },
   ],
   settled: [
-    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 100, avg: 45, result: "win", net: 54.1, reopened: true, date: "2026-06-28" },
-    { gameId: "lal-gs", market: "ktl", side: "yes", qty: 60, avg: 55, result: "loss", net: -33, date: "2026-06-25" },
-    { gameId: "kc-sf", market: "gtl", side: "no", qty: 80, avg: 40, result: "win", net: 41.2, date: "2026-06-30" },
-    { gameId: "ny-bos", market: "gtl", side: "yes", qty: 50, avg: 62, result: "loss", net: -31, date: "2026-06-22" },
-    { gameId: "den-dal", market: "ktl", side: "no", qty: 120, avg: 48, result: "win", net: 66.4, date: "2026-07-01" },
-    { gameId: "dal-phi", market: "tie", side: "no", qty: 90, avg: 78, result: "win", net: 19.8, date: "2026-06-29" },
-    { gameId: "buf-mia", market: "ktl", side: "yes", qty: 40, avg: 52, result: "loss", net: -20.8, date: "2026-06-20" },
+    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 100, avg: 45, result: "win", net: 54.1, reopened: true, date: "2026-06-28", time: "4:05 PM" },
+    { gameId: "lal-gs", market: "ktl", side: "yes", qty: 60, avg: 55, result: "loss", net: -33, date: "2026-06-25", time: "9:30 PM" },
+    { gameId: "kc-sf", market: "gtl", side: "no", qty: 80, avg: 40, result: "win", net: 41.2, date: "2026-06-30", time: "8:15 PM" },
+    { gameId: "ny-bos", market: "gtl", side: "yes", qty: 50, avg: 62, result: "loss", net: -31, date: "2026-06-22", time: "7:40 PM" },
+    { gameId: "den-dal", market: "ktl", side: "no", qty: 120, avg: 48, result: "win", net: 66.4, date: "2026-07-01", time: "10:10 PM" },
+    { gameId: "dal-phi", market: "tie", side: "no", qty: 90, avg: 78, result: "win", net: 19.8, date: "2026-06-29", time: "6:20 PM" },
+    { gameId: "buf-mia", market: "ktl", side: "yes", qty: 40, avg: 52, result: "loss", net: -20.8, date: "2026-06-20", time: "3:35 PM" },
   ],
   // Limit orders the user cancelled before they filled (moved here from `pending`).
   cancelled: [
-    { gameId: "lal-gs", market: "gtl", side: "yes", qty: 120, limit: 35, date: "2026-07-02" },
-    { gameId: "kc-sf", market: "ktl", side: "yes", qty: 60, limit: 41, date: "2026-07-01" },
-    { gameId: "ny-bos", market: "gtl", side: "no", qty: 100, limit: 28, date: "2026-06-30" },
-    { gameId: "den-dal", market: "tie", side: "no", qty: 45, limit: 12, date: "2026-07-03" },
-    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 150, limit: 39, date: "2026-07-04" },
-    { gameId: "dal-phi", market: "ktl", side: "no", qty: 70, limit: 55, date: "2026-06-28" },
-    { gameId: "lal-gs", market: "tie", side: "yes", qty: 30, limit: 18, date: "2026-07-05" },
+    { gameId: "lal-gs", market: "gtl", side: "yes", qty: 120, limit: 35, date: "2026-07-02", time: "8:48 PM" },
+    { gameId: "kc-sf", market: "ktl", side: "yes", qty: 60, limit: 41, date: "2026-07-01", time: "6:12 PM" },
+    { gameId: "ny-bos", market: "gtl", side: "no", qty: 100, limit: 28, date: "2026-06-30", time: "9:04 PM" },
+    { gameId: "den-dal", market: "tie", side: "no", qty: 45, limit: 12, date: "2026-07-03", time: "7:26 PM" },
+    { gameId: "buf-mia", market: "gtl", side: "yes", qty: 150, limit: 39, date: "2026-07-04", time: "2:50 PM" },
+    { gameId: "dal-phi", market: "ktl", side: "no", qty: 70, limit: 55, date: "2026-06-28", time: "5:33 PM" },
+    { gameId: "lal-gs", market: "tie", side: "yes", qty: 30, limit: 18, date: "2026-07-05", time: "10:02 PM" },
   ],
 };
 
@@ -2685,6 +2804,7 @@ function initRanking() {
   const countdown = $("[data-ranking-countdown]");
   const list = $("[data-ranking-list]");
   if (!countdown && !list) return;
+  if (!isAuthed()) { location.replace("login.html"); return; }
   renderRanking();
   initRankingMonthSelect();
   openRankingPrizeModal();
@@ -2754,6 +2874,38 @@ function positionCardA(p, i) {
       </div>
       ${posActions(i)}
     </div>
+  </article>`;
+}
+
+// Authenticated Home groups every open trade from the same game beneath one scorecard.
+// Each trade retains its own pricing, value, return, and Buy/Sell actions.
+function homePositionGroupCard(positions) {
+  const g = GAMES.find((game) => game.id === positions[0]?.gameId);
+  if (!g) return "";
+  const trades = positions.map((p) => {
+    const index = USER.positions.indexOf(p);
+    const { cur, value, pnl } = posFigures(p);
+    const up = pnl >= 0;
+    return `<section class="home-trade" aria-label="${MARKET_LABELS[p.market]} ${p.side.toUpperCase()}">
+      <div class="home-trade-head">
+        <span class="home-trade-title">${positionOutcomeChipHTML(p, g)}<span>${MARKET_LABELS[p.market]}</span></span>
+        <span class="home-trade-pnl ${up ? "up" : "down"} tnum">${signed(pnl)}</span>
+      </div>
+      <div class="home-trade-meta">
+        <span>${p.side.toUpperCase()} · ${p.qty} contracts</span>
+        <span>Value <strong class="tnum">${money(value)}</strong></span>
+      </div>
+      <div class="home-trade-prices">
+        <span>Bought <strong class="tnum">${p.avg}¢</strong></span>
+        <span aria-hidden="true">→</span>
+        <span>Now <strong class="tnum">${cur}¢</strong></span>
+      </div>
+      ${posActions(index)}
+    </section>`;
+  }).join("");
+  return `<article class="pos-card pos-card--group" style="--home-color:${g.home.color};--away-color:${g.away.color}">
+    <a class="pos-media" href="${gamePageHref(g)}" aria-label="Open ${g.away.abbr} at ${g.home.abbr}">${gameMedia(g, clockCenter(g))}</a>
+    <div class="pos-info home-trade-list">${trades}</div>
   </article>`;
 }
 
@@ -2845,12 +2997,13 @@ function applyAuthChrome() {
     const n = authed ? openPositions.length : 0;
     if (n) {
       positions.innerHTML = `
-        <button class="hpos-trigger" data-hpos-toggle aria-expanded="false" aria-haspopup="true" aria-controls="hposPanel" aria-label="${n} open positions">
-          <span class="hpos-word">Open Positions</span>
+        <button class="hpos-trigger" data-hpos-toggle aria-expanded="false" aria-haspopup="true" aria-controls="hposPanel" aria-label="${n} open trades">
+          <span class="hpos-word">Open Trades</span>
           <span class="hpos-num tnum">${n}</span>
           <span class="hpos-close" aria-hidden="true">${ICON_CLOSE}</span>
         </button>
         <div class="hpos-panel" id="hposPanel" role="menu" hidden>
+          <p class="hpos-heading">All Open Trades</p>
           <div class="hpos-list">${openPositionCards(openPositions)}</div>
         </div>`;
       bindPositionActions(positions.querySelector(".hpos-list"));
@@ -2875,19 +3028,28 @@ function renderAuthedHome() {
   if (!heroInner || !$("#gameGrid") || !isAuthed()) return;
 
   heroInner.classList.add("authed");
-  // Render each position card, then swap the display order of the 2nd and 3rd cards.
   const openPositions = currentPositions();
-  const posCards = openPositions.map((p, i) => positionCardA(p, i));
-  if (posCards.length >= 3) [posCards[1], posCards[2]] = [posCards[2], posCards[1]];
+  const groups = [];
+  const groupsByGame = new Map();
+  openPositions.forEach((position) => {
+    let group = groupsByGame.get(position.gameId);
+    if (!group) {
+      group = [];
+      groupsByGame.set(position.gameId, group);
+      groups.push(group);
+    }
+    group.push(position);
+  });
+  const posCards = groups.map(homePositionGroupCard);
   heroInner.classList.toggle("no-open-positions", !posCards.length);
   const positionsContent = `
       <div class="positions-block">
-        <div class="positions-head"><span class="eyebrow">Open Positions</span></div>
+        <div class="positions-head"><span class="eyebrow">Open Trades</span></div>
         <div class="pos-carousel" id="positionList">${posCards.join("")}</div>
-        <div class="pos-footer">
-          <a href="wallet.html">View All</a>
+        <div class="pos-footer" aria-label="Open Trades carousel navigation">
+          <button class="pos-nav-button" type="button" data-home-trade-prev aria-label="Previous trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           <div class="pos-dots" id="posDots"></div>
-          <a href="wallet.html#settled">View Settled</a>
+          <button class="pos-nav-button" type="button" data-home-trade-next aria-label="Next trades page"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
       </div>`;
   heroInner.innerHTML = `
@@ -3055,51 +3217,144 @@ function initWelcomeCreditAnimation() {
   }, 550);
 }
 
+function carouselContentOverflows(carousel, cards) {
+  if (!carousel || !cards.length) return false;
+  const styles = getComputedStyle(carousel);
+  const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+  const padding = (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+  const contentWidth = cards.reduce((total, card) => total + card.getBoundingClientRect().width, 0) + gap * Math.max(0, cards.length - 1);
+  return contentWidth - Math.max(0, carousel.clientWidth - padding) > 1;
+}
+
+function syncCarouselPageTail(carousel, cards, enabled) {
+  if (!carousel || !cards.length) return;
+  carousel.classList.toggle("has-page-tail", enabled);
+  if (!enabled) {
+    carousel.style.removeProperty("--carousel-page-tail");
+    return;
+  }
+  const styles = getComputedStyle(carousel);
+  const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+  const padding = (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+  const viewportWidth = Math.max(1, carousel.clientWidth - padding);
+  const tail = Math.max(0, viewportWidth - cards[cards.length - 1].getBoundingClientRect().width - gap);
+  const value = `${tail}px`;
+  if (carousel.style.getPropertyValue("--carousel-page-tail") !== value) {
+    carousel.style.setProperty("--carousel-page-tail", value);
+  }
+}
+
+function carouselPageOffsets(carousel, cards) {
+  if (!carousel || !cards?.length) return [0];
+  const maxScroll = Math.max(0, carousel.scrollWidth - carousel.clientWidth);
+  if (maxScroll <= 1) return [0];
+  const styles = getComputedStyle(carousel);
+  const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+  const paddingRight = parseFloat(styles.paddingRight) || 0;
+  const viewportWidth = Math.max(1, carousel.clientWidth - paddingLeft - paddingRight);
+  const carouselRect = carousel.getBoundingClientRect();
+  const metrics = cards.map((card) => {
+    const rect = card.getBoundingClientRect();
+    const left = carousel.scrollLeft + rect.left - carouselRect.left - paddingLeft;
+    return { left, right: left + rect.width };
+  });
+  const offsets = [0];
+  let offset = 0;
+  while (offset < maxScroll - 1) {
+    const viewportEnd = offset + viewportWidth;
+    const nextCard = metrics.find((card) => card.left > offset + 1 && card.right > viewportEnd + 1);
+    if (!nextCard) break;
+    const nextOffset = Math.min(maxScroll, nextCard.left);
+    if (nextOffset <= offset + 1) break;
+    offsets.push(nextOffset);
+    offset = nextOffset;
+  }
+  return offsets;
+}
+
 function initPositionsCarousel() {
   const car = $("#positionList");
   const dots = $("#posDots");
   if (!car || !dots) return;
   const footer = car.closest(".positions-block")?.querySelector(".pos-footer");
+  const previous = footer?.querySelector("[data-home-trade-prev]");
+  const next = footer?.querySelector("[data-home-trade-next]");
   const cards = $$(".pos-card", car);
+  let activeIndex = Number(car.dataset.activeTradePage) || 0;
+  const pageOffsets = () => carouselPageOffsets(car, cards);
 
-  // Dots + spread footer links only while the carousel actually scrolls. When every card
-  // fits side by side (wide desktop), hide the dots and centre View All / View Settled.
-  const syncOverflow = () => {
-    const scrolls = cards.length > 1 && car.scrollWidth - car.clientWidth > 1;
-    dots.hidden = !scrolls;
-    footer?.classList.toggle("no-scroll", !scrolls);
+  const setActive = (index) => {
+    const offsets = pageOffsets();
+    activeIndex = Math.min(Math.max(0, index), Math.max(0, offsets.length - 1));
+    car.dataset.activeTradePage = String(activeIndex);
+    $$(".pos-dot", dots).forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === activeIndex));
+    if (previous) previous.disabled = activeIndex === 0;
+    if (next) next.disabled = activeIndex === offsets.length - 1;
   };
 
-  if (cards.length > 1) {
-    dots.innerHTML = cards.map((_, i) => `<button class="pos-dot${i === 0 ? " is-active" : ""}" data-dot="${i}" aria-label="Go to position ${i + 1}"></button>`).join("");
-    const dotEls = $$(".pos-dot", dots);
-    const setActive = (i) => dotEls.forEach((d, k) => d.classList.toggle("is-active", k === i));
+  // Pagination represents scrollable viewport pages rather than individual cards. When
+  // every card fits, hide the navigation row entirely.
+  const renderPagination = () => {
+    const scrolls = carouselContentOverflows(car, cards);
+    car.classList.toggle("is-centered", !scrolls);
+    syncCarouselPageTail(car, cards, scrolls);
+    dots.hidden = !scrolls;
+    if (footer) footer.hidden = !scrolls;
+    const offsets = scrolls ? pageOffsets() : [0];
+    if (dots.children.length !== (scrolls ? offsets.length : 0)) {
+      dots.innerHTML = scrolls
+        ? offsets.map((_, index) => `<button class="pos-dot${index === 0 ? " is-active" : ""}" type="button" data-home-trade-page="${index}" aria-label="Go to trades page ${index + 1}"></button>`).join("")
+        : "";
+    }
+    if (!scrolls) activeIndex = 0;
+    setActive(activeIndex);
+  };
+
+  if (!car.dataset.paginationBound) {
+    car.dataset.paginationBound = "true";
     let raf = null;
     car.addEventListener("scroll", () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = null;
-        const cRect = car.getBoundingClientRect();
-        const center = cRect.left + cRect.width / 2;
-        let best = 0, bd = Infinity;
-        cards.forEach((c, i) => { const r = c.getBoundingClientRect(); const d = Math.abs((r.left + r.width / 2) - center); if (d < bd) { bd = d; best = i; } });
-        setActive(best);
+        const offsets = pageOffsets();
+        let active = 0;
+        let distance = Infinity;
+        offsets.forEach((offset, index) => {
+          const nextDistance = Math.abs(car.scrollLeft - offset);
+          if (nextDistance < distance) { distance = nextDistance; active = index; }
+        });
+        setActive(active);
       });
     }, { passive: true });
     dots.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-dot]");
-      if (b) cards[Number(b.dataset.dot)].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      const dot = e.target.closest("[data-home-trade-page]");
+      if (!dot) return;
+      const index = Number(dot.dataset.homeTradePage);
+      setActive(index);
+      car.scrollTo({ left: pageOffsets()[index], behavior: "smooth" });
+    });
+    previous?.addEventListener("click", () => {
+      const index = Math.max(0, (Number(car.dataset.activeTradePage) || 0) - 1);
+      setActive(index);
+      car.scrollTo({ left: pageOffsets()[index], behavior: "smooth" });
+    });
+    next?.addEventListener("click", () => {
+      const offsets = pageOffsets();
+      const index = Math.min(offsets.length - 1, (Number(car.dataset.activeTradePage) || 0) + 1);
+      setActive(index);
+      car.scrollTo({ left: offsets[index], behavior: "smooth" });
     });
   }
 
   // Measure via ResizeObserver so the check runs after layout settles (an immediate read
   // can see clientWidth 0 and wrongly think it overflows) and re-runs on any resize.
   if (window.ResizeObserver) {
-    new ResizeObserver(syncOverflow).observe(car);
+    new ResizeObserver(renderPagination).observe(car);
   } else {
-    window.addEventListener("resize", syncOverflow, { passive: true });
+    window.addEventListener("resize", renderPagination, { passive: true });
   }
-  syncOverflow();
+  renderPagination();
 }
 
 /* ------------------------------------------------------------ WALLET PAGE */
@@ -3137,7 +3392,42 @@ function addFundsHTML() {
     </aside>`;
 }
 
-// Compact single-row order: logos · bet type · value → taps through to the detail view.
+function orderMoment(o) {
+  const date = o.date ? fmtDate(o.date) : "";
+  return [date, o.time].filter(Boolean).join(" · ");
+}
+
+function tradeCondition(o, g) {
+  if (o.market === "tie") return o.side === "yes" ? "the game is tied" : "either team is leading";
+  const outcome = positionOutcome(o, g);
+  const team = outcome.teams[0]?.abbr || "the selected team";
+  return o.market === "gtl" ? `${team} gets the lead` : `${team} keeps the lead`;
+}
+
+function tradeWinDescription(o, g) {
+  return `Wins if ${tradeCondition(o, g)}.`;
+}
+
+function settledOutcomeDescription(o, g) {
+  const outcome = positionOutcome(o, g);
+  const team = outcome.teams[0]?.name || "The selected team";
+  const won = o.result === "win";
+  if (o.market === "tie") {
+    if (o.side === "yes") return won ? "The game was tied." : "The game was not tied.";
+    return won ? "The game had a leader." : "The game was tied.";
+  }
+  if (o.market === "gtl") return `${team} ${won ? "got" : "did not get"} the lead.`;
+  return `${team} ${won ? "kept" : "did not keep"} the lead.`;
+}
+
+function orderRowContext(o, type, g) {
+  if (type === "open") return tradeWinDescription(o, g);
+  if (type === "pending") return `Places when ${o.side.toUpperCase()} reaches ${o.limit}¢.`;
+  if (type === "cancelled") return `Placed ${orderMoment(o)}.`;
+  return orderMoment(o);
+}
+
+// Compact single-row order: logos · bet type · useful outcome context · value.
 function orderRowHTML(o, type, i) {
   const g = GAMES.find((x) => x.id === o.gameId);
   const betType = `${MARKET_LABELS[o.market]} · <span class="side-${o.side}">${o.side.toUpperCase()}</span>`;
@@ -3151,13 +3441,12 @@ function orderRowHTML(o, type, i) {
     valueHTML = `<span class="or-amount tnum">${money((o.limit / 100) * o.qty)}</span><span class="or-status cancelled">Cancelled</span>`;
   } else {
     const win = o.result === "win";
-    valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${signed(o.net)}</span><span class="result-pill ${win ? "win" : "loss"}">${win ? "Won" : "Lost"}</span>`;
+    valueHTML = `<span class="or-pnl ${win ? "up" : "down"} tnum">${signed(o.net)}</span>`;
   }
   return `<button class="order-row" type="button" data-order-open="${type}:${i}" style="--home-color:${g.home.color};--away-color:${g.away.color}">
-    <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}${teamAbbrMarkHTML(g.away, "or-logo")}</span>
-    <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${g.home.abbr} · ${g.away.abbr}${o.date ? ` · ${fmtDate(o.date)}` : ""}</span></span>
+    <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}<span class="or-v" aria-hidden="true">v</span>${teamAbbrMarkHTML(g.away, "or-logo")}</span>
+    <span class="or-main"><span class="or-type">${betType}</span><span class="or-teams">${orderRowContext(o, type, g)}</span></span>
     <span class="or-value">${valueHTML}</span>
-    <span class="or-chev" aria-hidden="true">${CHEVRON}</span>
   </button>`;
 }
 
@@ -3196,12 +3485,12 @@ function portfolioStatsHTML() {
 function initWallet() {
   const main = $("#walletMain");
   if (!main) return;
-  if (!isAuthed()) { main.innerHTML = walletGuardHTML; return; }
+  if (!isAuthed()) { location.replace("login.html"); return; }
   document.body.classList.remove("order-detail-open");
   main.innerHTML = `
     <div class="wallet-head">
       <h1>Portfolio</h1>
-      <p class="wallet-desc">Your live positions, pending limit orders and settled bets — all in one place.</p>
+      <p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p>
     </div>
     ${portfolioStatsHTML()}
     <div class="stats-tabs" id="orderTabs" role="tablist" aria-label="Orders">
@@ -3264,6 +3553,12 @@ const summaryRow = (k, v, total) => `<div class="summary-row${total ? " total" :
 const orderActionsDock = (buttons) => `<div class="order-actions-dock"><div class="oad-inner">${buttons}</div></div>`;
 const STATUS_LABELS = { open: "Current", pending: "Pending", cancelled: "Cancelled", settled: "Settled" };
 const statusChip = (type) => `<span class="status-chip ${type}">${STATUS_LABELS[type] || ""}</span>`;
+function orderDetailContext(o, type, g) {
+  if (type === "open") return tradeWinDescription(o, g);
+  if (type === "pending") return `This order places when ${o.side.toUpperCase()} reaches ${o.limit}¢.`;
+  if (type === "cancelled") return `Placed ${orderMoment(o)} and cancelled before it filled.`;
+  return settledOutcomeDescription(o, g);
+}
 function orderDetailHTML(type, i) {
   const o = type === "open" ? USER.positions[i] : type === "pending" ? USER.pending[i] : type === "cancelled" ? USER.cancelled[i] : USER.settled[i];
   const g = GAMES.find((x) => x.id === o.gameId);
@@ -3288,9 +3583,9 @@ function orderDetailHTML(type, i) {
     <button class="order-back" type="button" data-order-back>${CHEVRON}<span>Orders</span></button>
     <div class="order-detail">
       <div class="od-game">
-        <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}${teamAbbrMarkHTML(g.away, "or-logo")}</span>
         <span class="od-game-meta">
-          <span class="od-teams">${g.home.abbr} ${g.home.score} · ${g.away.score} ${g.away.abbr}</span>
+          <span class="or-logos">${teamAbbrMarkHTML(g.home, "or-logo")}<span class="or-v" aria-hidden="true">v</span>${teamAbbrMarkHTML(g.away, "or-logo")}</span>
+          <span class="od-condition">${orderDetailContext(o, type, g)}</span>
           <span class="od-league">${g.league.toUpperCase()} · ${type === "settled" ? "Final" : `${g.period} ${g.clock}`}</span>
         </span>
       </div>
@@ -3298,7 +3593,7 @@ function orderDetailHTML(type, i) {
       <div class="summary od-summary">
         ${summaryRow("Your bet", betType)}
         ${summaryRow("Status", statusChip(type))}
-        ${o.date ? summaryRow("Order date", fmtDate(o.date)) : ""}
+        ${o.date ? summaryRow(type === "settled" ? "Game date" : "Order placed", orderMoment(o)) : ""}
         ${extraRows}
       </div>
     </div>
@@ -3372,7 +3667,7 @@ function initProfile() {
   const main = $("#profileMain");
   if (!main) return;
   const auth = getAuth();
-  if (!auth) { main.innerHTML = profileGuardHTML(); return; }
+  if (!auth) { location.replace("login.html"); return; }
 
   const email = auth.email || "alex@gtl.test";
   const fullName = auth.name || [auth.firstName, auth.lastName].filter(Boolean).join(" ") || "Not provided";
@@ -3494,7 +3789,7 @@ function initAccountSubpages() {
   const root = $("#deleteAccountMain") || $("#bettingControlsMain");
   if (!root) return;
   if (!isAuthed()) {
-    root.innerHTML = profileGuardHTML();
+    location.replace("login.html");
     return;
   }
   const deleteButton = $("[data-delete-account]", root);
@@ -3829,6 +4124,10 @@ function initSignup() {
   };
   const f1 = steps.querySelector("[data-step1-form]");
   const emailEl = f1.querySelector("#email");
+  const emailSubmit = $("button[type='submit']", f1);
+  const syncEmailSubmit = () => { emailSubmit.disabled = !validEmail(emailEl.value.trim()); };
+  emailEl.addEventListener("input", syncEmailSubmit);
+  syncEmailSubmit();
   f1.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(emailEl);
@@ -3841,7 +4140,10 @@ function initSignup() {
 
   const f2 = steps.querySelector("[data-step2-form]");
   const phoneEl = f2.querySelector("#phone");
-  phoneEl.addEventListener("input", () => { phoneEl.value = formatPhoneInput(phoneEl.value); });
+  const phoneSubmit = $("button[type='submit']", f2);
+  const syncPhoneSubmit = () => { phoneSubmit.disabled = !validPhone(phoneEl.value); };
+  phoneEl.addEventListener("input", () => { phoneEl.value = formatPhoneInput(phoneEl.value); syncPhoneSubmit(); });
+  syncPhoneSubmit();
   f2.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(phoneEl);
@@ -3856,6 +4158,13 @@ function initSignup() {
 
   const f3 = steps.querySelector("[data-step3-form]");
   const codeWrap = f3.querySelector("[data-code-input]");
+  const codeSubmit = $("button[type='submit']", f3);
+  const syncCodeSubmit = () => {
+    codeSubmit.disabled = $$(".code-box", codeWrap).some((box) => !/^\d$/.test(box.value));
+  };
+  codeWrap.addEventListener("input", syncCodeSubmit);
+  codeWrap.addEventListener("paste", () => setTimeout(syncCodeSubmit, 0));
+  syncCodeSubmit();
   f3.addEventListener("submit", (e) => {
     e.preventDefault();
     clearCodeErr(codeWrap);
@@ -3867,6 +4176,11 @@ function initSignup() {
   const f4 = steps.querySelector("[data-step4-form]");
   const p1 = f4.querySelector("#newpass");
   const p2 = f4.querySelector("#confirmpass");
+  const passwordSubmit = $("button[type='submit']", f4);
+  const syncPasswordSubmit = () => { passwordSubmit.disabled = p1.value.length < 8 || p1.value !== p2.value; };
+  p1.addEventListener("input", syncPasswordSubmit);
+  p2.addEventListener("input", syncPasswordSubmit);
+  syncPasswordSubmit();
   f4.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(p1); clearErr(p2);
@@ -3888,6 +4202,12 @@ function initSignup() {
   if (resend) resend.addEventListener("click", () => showToast("Code resent — check your phone", "success"));
   clearErrsOnInput(f1); clearErrsOnInput(f2); clearErrsOnInput(f4);
   initCodeInput(codeWrap);
+  window.setTimeout(() => {
+    syncEmailSubmit();
+    syncPhoneSubmit();
+    syncCodeSubmit();
+    syncPasswordSubmit();
+  }, 250);
 }
 
 function initWelcome() {
@@ -4014,6 +4334,7 @@ function initContact() {
   const topicOptions = $$("[data-contact-topic-value]", topicMenu);
   const messageEl = $("#contactMessage", form);
   const countEl = $("[data-message-count]", form);
+  const submitButton = $("[data-contact-submit]", form);
   const success = $("[data-contact-success]");
   const another = $("[data-contact-another]", success);
 
@@ -4023,9 +4344,19 @@ function initContact() {
     emailEl.value = auth.email || "";
   }
 
+  const updateSubmitState = () => {
+    submitButton.disabled = !(
+      nameEl.value.trim()
+      && validEmail(emailEl.value.trim())
+      && topicEl.dataset.value
+      && messageEl.value.trim().length >= 10
+    );
+  };
   const updateCount = () => { countEl.textContent = String(messageEl.value.length); };
+  form.addEventListener("input", updateSubmitState);
   messageEl.addEventListener("input", updateCount);
   updateCount();
+  updateSubmitState();
 
   let activeTopicIndex = -1;
   const closeTopicMenu = () => {
@@ -4054,6 +4385,7 @@ function initContact() {
     topicOptions.forEach((item) => item.setAttribute("aria-selected", String(item === option)));
     clearErr(topicEl);
     closeTopicMenu();
+    updateSubmitState();
     topicEl.focus();
   };
   const setActiveTopic = (index) => {
@@ -4137,6 +4469,7 @@ function initContact() {
       emailEl.value = auth.email || "";
     }
     updateCount();
+    updateSubmitState();
     success.hidden = true;
     form.hidden = false;
     messageEl.focus();
@@ -4199,6 +4532,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPausedDemo();
   initLeagueFilter();
   initHeader();
+  initFooterNavigation();
   initProfile();
   initTheme();
   initScrollTop();

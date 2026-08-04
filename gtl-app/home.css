@@ -76,15 +76,25 @@
 .authed-stack { display: flex; flex-direction: column; gap: var(--s6); margin-top: var(--s8); }
 
 .positions-head { display: flex; justify-content: center; }
-/* row under the carousel: View All (left) · dots (centre) · View Settled (right) */
+/* Carousel controls: previous (left) · page indicators (centre) · next (right). */
 .pos-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: var(--s4); }
-.pos-footer a { color: var(--ink-2); font-weight: 600; font-size: var(--fs-label); }
-.pos-footer a:hover { color: var(--ink); text-decoration: underline; }
-.pos-footer a:first-child { justify-self: start; }
-.pos-footer a:last-child { justify-self: end; }
+.pos-footer[hidden] { display: none; }
+.pos-footer > .pos-nav-button:first-child { justify-self: start; }
+.pos-footer > .pos-nav-button:last-child { justify-self: end; }
 .pos-footer .pos-dots { margin-top: 0; }
-/* No scroll needed (all cards fit): drop the dots column and centre the two links together */
-.pos-footer.no-scroll { display: flex; justify-content: center; gap: var(--s8); }
+.pos-nav-button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.pos-nav-button svg { width: 17px; height: 17px; }
+.pos-nav-button:disabled { opacity: .35; cursor: default; }
 
 /* Open Positions — full-bleed horizontal carousel (media + settled styles are shared, in styles.css) */
 .pos-carousel {
@@ -94,6 +104,11 @@
   margin-inline: calc(-1 * var(--s5)); padding-inline: var(--s5); scroll-padding-inline: var(--s5);
 }
 .pos-carousel::-webkit-scrollbar { display: none; }
+.pos-carousel.has-page-tail::after {
+  content: "";
+  flex: 0 0 var(--carousel-page-tail, 0px);
+}
+.pos-carousel.is-centered { justify-content: center; scroll-snap-type: none; }
 .pos-card { position: relative; isolation: isolate; flex: 0 0 clamp(316px, 94%, 376px); scroll-snap-align: start; border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: #08090c; }
 /* team-colour tint spans the whole card (like the live-game tiles), not just the media header */
 .pos-card::before {
@@ -124,6 +139,38 @@
   .pos-card { flex-basis: calc((100% - 2 * var(--s4)) / 3); }
 }
 .pos-info { padding: var(--s4) var(--s5) var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+
+/* Grouped authenticated portfolio card: one scorecard per game, then each held trade. */
+.pos-card--group .home-trade-list { gap: 0; padding-top: var(--s2); }
+.home-trade { display: flex; flex-direction: column; gap: var(--s3); padding-block: var(--s4); }
+.home-trade + .home-trade { border-top: 1px solid var(--line); }
+.home-trade-head,
+.home-trade-meta { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.home-trade-title { display: inline-flex; align-items: center; gap: var(--s2); min-width: 0; font-size: var(--fs-label); font-weight: 700; }
+.home-trade-title .position-outcome-chip { min-height: 28px; }
+.home-trade-title .position-outcome-mark { width: 28px; height: 28px; }
+.home-trade-pnl { flex: 0 0 auto; font-size: var(--fs-label); font-weight: 700; }
+.home-trade-pnl.up { color: var(--green); }
+.home-trade-pnl.down { color: var(--no); }
+.home-trade-meta { color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.home-trade-meta strong { color: var(--ink); }
+.home-trade-prices {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  min-height: 32px;
+  padding-inline: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, .035);
+  color: var(--ink-2);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+}
+.home-trade-prices strong { color: var(--ink); }
+.home-trade .oc-actions { margin-top: var(--s1); }
+:root[data-theme="light"] .home-trade-prices { background: var(--surface-2); }
 
 /* Position card variant A — [bet type] / "Value & Return" labels above [side · contracts] / [value · return] */
 .pos-card--a .pos-info { padding-top: calc(var(--s4) - 12px); } /* tighten the media→text gap by 12px */
