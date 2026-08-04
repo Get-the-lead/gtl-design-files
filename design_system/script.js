@@ -1948,6 +1948,10 @@ function gamePositionMark(abbr, name, color) {
   return `<span class="team-mark position-outcome-mark is-fallback" aria-label="${name}" style="--team-color:${color}"><span class="team-mark-abbr">${abbr}</span></span>`;
 }
 
+function tradeMarketCode(market) {
+  return market === "Get the Lead" ? "GTL" : market === "Keep the Lead" ? "KTL" : "TIE";
+}
+
 function gamePositionCardPreview({ market, side, qty, value, result, bought, now, teams }) {
   const marks = teams.map((team) => gamePositionMark(team.abbr, team.name, team.color)).join("");
   const colors = teams.map((team) => team.color);
@@ -1955,13 +1959,14 @@ function gamePositionCardPreview({ market, side, qty, value, result, bought, now
   const up = !result.startsWith("-");
   const teamName = teams[0]?.name || "team";
   const winCopy = market === "Tie"
-    ? `You win if the game is ${side === "yes" ? "tied" : "not tied"}.`
-    : `You win if the ${teamName} ${market === "Get the Lead" ? (side === "yes" ? "get" : "do not get") : (side === "yes" ? "keep" : "do not keep")} the lead.`;
+    ? `You win if the game is ${side === "yes" ? "tied" : "not tied"}`
+    : `You win if the ${teamName} ${market === "Get the Lead" ? (side === "yes" ? "get" : "do not get") : (side === "yes" ? "keep" : "do not keep")} the lead`;
   return `<article class="game-position-card pos-card--a${teams.length > 1 ? " is-tie-outcome" : ""}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
     <div class="pos-info">
-      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><p class="trade-current-condition">${winCopy}</p></div>
+      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><div class="trade-type-line"><span>${tradeMarketCode(market)}</span><i>•</i><strong class="side-${side}">${side.toUpperCase()}</strong></div></div>
+      <p class="trade-current-condition">${winCopy}</p>
       <div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${result}</strong></span></div>
-      <div class="trade-option-inline-meta"><span>${qty} contracts</span><i>•</i><span>Bought ${bought}</span><i>•</i><span>Now ${now}</span></div>
+      <div class="trade-option-inline-meta"><span>${qty} Contracts</span><i>•</i><span>Bought ${bought}</span><i>•</i><span>Now ${now}</span></div>
       <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
     </div>
   </article>`;
@@ -2024,7 +2029,7 @@ function menuPositionCard(gameKey, tradeIndex = 0) {
   const trade = entry.trades[tradeIndex] || entry.trades[0];
   const up = !trade.pnl.startsWith("-");
   const compactValue = trade.value.replace(/\.00$/, "");
-  return `<article class="pos-card pos-card--a ds-menu-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info"><div class="trade-current-topline"><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div><div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>${menuTradeActions()}</div></article>`;
+  return `<article class="pos-card pos-card--a ds-menu-position-card" style="--home-color:${entry.game.home.color};--away-color:${entry.game.away.color}"><div class="pos-media">${menuNoLogoGameMedia(entry.game)}</div><div class="pos-info"><div class="trade-current-topline"><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div><div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="oc-pnl ${up ? "up" : "down"} tnum">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} Contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>${menuTradeActions()}</div></article>`;
 }
 
 function menuTradeSummary(trade, selected = false) {
@@ -2138,8 +2143,8 @@ function tradeLayoutFilter(active = "all", singleGame = false) {
 
 function tradeLayoutNavigation(count) {
   if (count < 2) return "";
-  const dots = Array.from({ length: count }, (_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" aria-label="Trades page ${index + 1}" data-trade-page="${index}"></button>`).join("");
-  return `<div class="game-position-navigation"><button class="game-position-nav-button" type="button" aria-label="Previous trades page" data-trade-nav="prev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="game-position-dots">${dots}</div><button class="game-position-nav-button" type="button" aria-label="Next trades page" data-trade-nav="next"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`;
+  const dots = Array.from({ length: count }, (_, index) => `<button class="game-position-dot${index === 0 ? " is-active" : ""}" type="button" aria-label="Focus trade card ${index + 1} of ${count}" data-trade-page="${index}"></button>`).join("");
+  return `<div class="game-position-navigation"><button class="game-position-nav-button" type="button" aria-label="Previous trade card" data-trade-nav="prev"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="game-position-dots" aria-label="Trade card carousel">${dots}</div><button class="game-position-nav-button" type="button" aria-label="Next trade card" data-trade-nav="next"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`;
 }
 
 function tradeLayoutAllCards() {
@@ -2173,9 +2178,9 @@ function tradeLayoutOutcomeTeams(gameKey, trade) {
 
 function tradeLayoutCurrentGameCopy(gameKey, trade) {
   const team = menuPositionPreviewGames[gameKey].game.home;
-  if (trade.market === "Get the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "get" : "do not get"} the lead.`;
-  if (trade.market === "Keep the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "keep" : "do not keep"} the lead.`;
-  return `You win if the game ${trade.side === "yes" ? "is tied" : "doesn't end tied"}.`;
+  if (trade.market === "Get the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "get" : "do not get"} the lead`;
+  if (trade.market === "Keep the Lead") return `You win if the ${team.name} ${trade.side === "yes" ? "keep" : "do not keep"} the lead`;
+  return `You win if the game ${trade.side === "yes" ? "is tied" : "doesn't end tied"}`;
 }
 
 function tradeLayoutCurrentGameCard(gameKey, trade, variant = "table") {
@@ -2186,15 +2191,16 @@ function tradeLayoutCurrentGameCard(gameKey, trade, variant = "table") {
   const compactValue = trade.value.replace(/\.00$/, "");
   const earningsClass = `oc-pnl ${up ? "up" : "down"} tnum`;
   const details = variant === "compact"
-    ? `<div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
+    ? `<div class="trade-current-total"><span class="trade-current-total-item"><strong class="tnum">${compactValue}</strong><small>Total Value</small></span><span class="trade-current-total-item is-earnings"><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} Contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
     : variant === "value"
-      ? `<div class="trade-option-value-focus"><span><small>Current Value</small><strong class="tnum">${compactValue}</strong></span><span><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
+      ? `<div class="trade-option-value-focus"><span><small>Current Value</small><strong class="tnum">${compactValue}</strong></span><span><strong class="${earningsClass}">${trade.pnl}</strong></span></div><div class="trade-option-inline-meta"><span>${trade.qty} Contracts</span><i>•</i><span>Bought ${trade.bought}</span><i>•</i><span>Now ${trade.now}</span></div>`
     : variant === "movement"
-      ? `<div class="trade-option-price-flow"><span><small>Bought At</small><strong class="tnum">${trade.bought}</strong></span><b aria-hidden="true">→</b><span><small>Now</small><strong class="tnum">${trade.now}</strong></span></div><div class="trade-option-price-summary"><span>${trade.qty} contracts</span><span>Value <strong class="tnum">${compactValue}</strong></span><strong class="${earningsClass}">${trade.pnl} earnings</strong></div>`
+      ? `<div class="trade-option-price-flow"><span><small>Bought At</small><strong class="tnum">${trade.bought}</strong></span><b aria-hidden="true">→</b><span><small>Now</small><strong class="tnum">${trade.now}</strong></span></div><div class="trade-option-price-summary"><span>${trade.qty} Contracts</span><span>Value <strong class="tnum">${compactValue}</strong></span><strong class="${earningsClass}">${trade.pnl} earnings</strong></div>`
       : `<div class="trade-option-table" role="table" aria-label="Trade details"><div class="trade-option-table-row is-labels" role="row"><span role="columnheader">Contracts</span><span role="columnheader">Bought At</span><span role="columnheader">Now</span></div><div class="trade-option-table-row is-values" role="row"><strong class="tnum" role="cell">${trade.qty}</strong><strong class="tnum" role="cell">${trade.bought}</strong><strong class="tnum" role="cell">${trade.now}</strong></div></div><div class="trade-option-table-result"><span>Value <strong class="tnum">${compactValue}</strong></span><span>Earnings <strong class="${earningsClass}">${trade.pnl}</strong></span></div>`;
   return `<article class="game-position-card pos-card--a trade-layout-current-card is-${variant}${teams.length > 1 ? " is-tie-outcome" : ""}" data-trade-game="${gameKey}" style="--outcome-color:${colors[0]};--outcome-color-2:${colors[1] || colors[0]}">
     <div class="pos-info">
-      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p></div>
+      <div class="trade-current-topline"><span class="position-outcome-chip"><span class="position-outcome-marks">${marks}</span></span><div class="trade-type-line"><span>${tradeMarketCode(trade.market)}</span><i>•</i><strong class="side-${trade.side}">${trade.side.toUpperCase()}</strong></div></div>
+      <p class="trade-current-condition">${tradeLayoutCurrentGameCopy(gameKey, trade)}</p>
       ${details}
       <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
     </div>
@@ -2484,7 +2490,7 @@ function renderDrawerSheet(mode, showClose = false) {
         <div class="bet-step bet-step-1">
           <div class="sell-only sell-readout"><span class="sell-tag">Get the Lead · <span class="side-yes">YES</span></span><span class="sell-sub"><span>Bought at 38¢</span><span aria-hidden="true">·</span><span>Now 64¢</span></span></div>
           ${paused ? `<div class="trade-pause drawer-trade-pause buy-only" data-buy-main${changeBetType ? " hidden" : ""} role="status"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div>` : ""}
-          <div class="drawer-bet-heading buy-only" data-buy-main${changeBetType ? " hidden" : ""}><strong data-bet-heading>You win if the Chiefs get the lead.</strong><button class="limit-toggle" data-change-bet-type type="button">Change</button></div>
+          <div class="drawer-bet-heading buy-only" data-buy-main${changeBetType ? " hidden" : ""}><strong data-bet-heading>You win if the Chiefs get the lead</strong><button class="limit-toggle" data-change-bet-type type="button">Change GTL Yes</button></div>
           <div class="bet-field contracts-field buy-only" data-buy-main${changeBetType ? " hidden" : ""}><span class="bet-label">Select number of contracts</span><input class="num-input drawer-contract-input${quantityMax ? " is-error" : ""}" data-qty-input type="text" inputmode="numeric" value="${quantityMax ? "1,100" : "100"}" aria-label="Number of contracts" aria-invalid="${quantityMax}"><div class="qty-quick"><button data-qty-set="50" type="button">50</button><button class="${quantityMax ? "" : "is-active"}" data-qty-set="100" type="button">100</button><button data-qty-set="500" type="button">500</button><button data-qty-set="1000" type="button">1,000</button></div><p class="limit-minmax transaction-limit${quantityMax ? " is-error" : ""}" role="alert"${quantityMax ? "" : " hidden"}>The maximum contracts that can be purchased in one bet is 1,000.</p><p class="qty-total"${quantityMax ? "" : " hidden"}>Total contracts after purchase — <strong>1,250</strong></p></div>
           <div class="bet-field contracts-field sell-only"><span class="bet-label">Contracts to sell</span><input class="num-input" data-sell-qty-input type="text" inputmode="numeric" value="60" aria-label="Contracts to sell"><div class="qty-quick q3"><button data-sell-pct="25" type="button">25%</button><button class="is-active" data-sell-pct="50" type="button">50%</button><button data-sell-pct="100" type="button">All</button></div><p class="sell-held">120 contracts held</p></div>
           <div class="drawer-bet-editor buy-only" data-bet-type-editor${changeBetType ? "" : " hidden"}>
@@ -2574,14 +2580,14 @@ function walletTradeCondition(order, game) {
 }
 
 function walletRowContext(order, type, game) {
-  if (type === "open") return `Wins if ${walletTradeCondition(order, game)}.`;
+  if (type === "open") return `Wins if ${walletTradeCondition(order, game)}`;
   if (type === "pending") return `Places when ${order.side.toUpperCase()} reaches ${order.limit}¢.`;
   if (type === "cancelled") return `Placed ${walletMoment(order)}.`;
   return walletMoment(order);
 }
 
 function walletDetailContext(order, type, game) {
-  if (type === "open") return `Wins if ${walletTradeCondition(order, game)}.`;
+  if (type === "open") return `Wins if ${walletTradeCondition(order, game)}`;
   if (type === "pending") return `This order places when ${order.side.toUpperCase()} reaches ${order.limit}¢.`;
   const team = order.market === "tie" ? null : walletOutcomeTeam(order, game).name;
   if (order.market === "tie") return order.result === "win" ? "The trade’s tie condition was met." : "The trade’s tie condition was not met.";
@@ -3267,7 +3273,7 @@ function createPausedDrawerState() {
       const betHeading = document.createElement("div");
       betHeading.className = "drawer-bet-heading";
       betHeading.dataset.pausedMain = "";
-      betHeading.innerHTML = `<strong data-paused-bet-heading>You win if the Chiefs get the lead.</strong><button class="limit-toggle" type="button" data-paused-change>Change</button>`;
+      betHeading.innerHTML = `<strong data-paused-bet-heading>You win if the Chiefs get the lead</strong><button class="limit-toggle" type="button" data-paused-change>Change GTL Yes</button>`;
       contracts.before(betHeading);
 
       contracts.dataset.pausedMain = "";
@@ -3334,10 +3340,14 @@ function createPausedDrawerState() {
 }
 
 const pausedDrawerMarketLabels = { gtl: "Get the Lead", tie: "Tie", ktl: "Keep the Lead" };
+const drawerPreviewMarketCodes = { gtl: "GTL", tie: "TIE", ktl: "KTL" };
+function drawerPreviewBetTypeLabel(market, side) {
+  return `${drawerPreviewMarketCodes[market] || String(market || "").toUpperCase()} ${side === "no" ? "No" : "Yes"}`;
+}
 function drawerPreviewWinHeading(market, side) {
-  if (market === "tie") return `You win if the game is ${side === "yes" ? "tied" : "not tied"}.`;
-  if (market === "gtl") return `You win if the Chiefs ${side === "yes" ? "get" : "do not get"} the lead.`;
-  return `You win if the Chiefs ${side === "yes" ? "keep" : "do not keep"} the lead.`;
+  if (market === "tie") return `You win if the game is ${side === "yes" ? "tied" : "not tied"}`;
+  if (market === "gtl") return `You win if the Chiefs ${side === "yes" ? "get" : "do not get"} the lead`;
+  return `You win if the Chiefs ${side === "yes" ? "keep" : "do not keep"} the lead`;
 }
 
 function syncPausedBetEditor(sheet, market, side) {
@@ -3368,6 +3378,9 @@ function setDrawerBetEditorOpen(sheet, open, commit = false) {
       heading.textContent = drawerPreviewWinHeading(sheet.dataset.confirmedMarket, sheet.dataset.confirmedSide);
     }
   }
+
+  const changeButton = sheet.querySelector("[data-change-bet-type]");
+  if (changeButton) changeButton.textContent = `Change ${drawerPreviewBetTypeLabel(sheet.dataset.confirmedMarket, sheet.dataset.confirmedSide)}`;
 
   syncPausedBetEditor(
     sheet,
@@ -3565,6 +3578,8 @@ drawerSection?.addEventListener("click", (event) => {
       sheet.dataset.confirmedSide = sheet.dataset.draftSide;
       const heading = sheet.querySelector("[data-paused-bet-heading]");
       if (heading) heading.textContent = drawerPreviewWinHeading(sheet.dataset.confirmedMarket, sheet.dataset.confirmedSide);
+      const changeButton = sheet.querySelector("[data-paused-change]");
+      if (changeButton) changeButton.textContent = `Change ${drawerPreviewBetTypeLabel(sheet.dataset.confirmedMarket, sheet.dataset.confirmedSide)}`;
       setPausedBetEditorOpen(sheet, false, false);
       return;
     }

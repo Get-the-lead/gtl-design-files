@@ -14,10 +14,9 @@
   inset: -25% -10% auto -10%;
   height: 130%;
   background:
-    radial-gradient(50% 55% at 28% 12%, rgba(74, 222, 128, 0.22), transparent 60%),
-    radial-gradient(48% 50% at 82% 4%, rgba(96, 140, 250, 0.18), transparent 60%),
-    radial-gradient(45% 45% at 60% 60%, rgba(168, 85, 247, 0.12), transparent 60%);
-  filter: blur(8px);
+    radial-gradient(50% 55% at 28% 12%, rgba(74, 222, 128, 0.07), transparent 60%),
+    radial-gradient(48% 50% at 82% 4%, rgba(96, 140, 250, 0.18), transparent 60%);
+  filter: blur(12px);
   animation: hero-drift 16s var(--ease) infinite alternate;
 }
 @keyframes hero-drift {

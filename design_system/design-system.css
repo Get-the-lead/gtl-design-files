@@ -7412,7 +7412,7 @@
   display: flex;
   height: 72px;
   justify-content: center;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .04), 0 8px 24px rgba(0, 0, 0, .18);
+  box-shadow: none;
   opacity: 1;
   position: relative;
   transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
@@ -7426,7 +7426,7 @@
 .design-system-page .trade-game-pill.is-active .trade-game-icon {
   background: var(--surface-2);
   border-color: var(--green);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+  box-shadow: none;
   opacity: 1;
 }
 
@@ -7438,7 +7438,7 @@
 .design-system-page .trade-game-pill.is-active .trade-game-icon.is-all {
   background: var(--surface-2);
   border-color: var(--green);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+  box-shadow: none;
 }
 
 .design-system-page .trade-game-label {
@@ -7743,7 +7743,7 @@
 
 .design-system-page .trade-current-condition {
   color: var(--ink);
-  font-size: var(--fs-label);
+  font-size: var(--fs-body);
   font-weight: 700;
   line-height: 1.35;
   margin: 0;
@@ -7771,7 +7771,7 @@
 }
 
 .design-system-page .trade-current-total small {
-  color: var(--ink-2);
+  color: var(--trade-muted, var(--ink-2));
   font-size: var(--fs-eyebrow);
   font-weight: 600;
 }
@@ -7855,7 +7855,7 @@
 
 .design-system-page .trade-option-inline-meta {
   align-items: center;
-  color: var(--ink-2);
+  color: var(--trade-muted, var(--ink-2));
   display: flex;
   font-size: var(--fs-eyebrow);
   font-weight: 600;
@@ -7863,7 +7863,7 @@
 }
 
 .design-system-page .trade-option-inline-meta i {
-  color: var(--ink-3);
+  color: currentColor;
   font-style: normal;
 }
 

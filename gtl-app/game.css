@@ -596,7 +596,7 @@
 }
 .betbar.is-visible { transform: none; }
 
-/* When positions exist, both dock actions ride in together after the market leaves view. */
+/* Open trades do not add another dock action; View Contracts remains the sole control. */
 .has-open-position .betbar {
   z-index: 60; bottom: 0;
 }
@@ -609,51 +609,8 @@
 }
 .betbar-cta { pointer-events: auto; width: 100%; --btn-h: 52px; padding-inline: var(--s10); box-shadow: var(--shadow), 0 0 0 4px var(--green-soft); }
 .contracts-compact-label { display: none; }
-.has-open-position .betbar-cta {
-  display: inline-flex;
-  width: auto;
-  flex: 1 1 0;
-  max-width: 360px;
-  padding-inline: var(--s6);
-  opacity: 1;
-  transform: none;
-  white-space: nowrap;
-}
-.has-open-position .betbar.is-visible:not(.are-positions-visible) .contracts-full-label { display: none; }
-.has-open-position .betbar.is-visible:not(.are-positions-visible) .contracts-compact-label { display: inline; }
 /* When the HEADER Open Positions dropdown is open, the game bar must not sit over it */
 body.pos-open .betbar { display: none; }
-
-/* The positions action uses a detailed label by itself and the compact label when
-   Contracts joins it. */
-.game-positions-trigger {
-  pointer-events: auto;
-  --btn-h: 52px;
-  flex: 1 1 0;
-  max-width: 360px;
-  padding-inline: var(--s6);
-  overflow: hidden;
-  opacity: 1;
-  transform: none;
-  transition: max-width .24s ease, padding .24s ease, opacity .18s ease, transform .24s ease;
-  box-shadow: var(--shadow), 0 0 0 4px var(--green-soft);
-}
-.betbar.are-positions-visible .game-positions-trigger {
-  pointer-events: none;
-  flex-basis: 0;
-  max-width: 0;
-  padding-inline: 0;
-  opacity: 0;
-  transform: translateY(10px) scale(.96);
-}
-.has-open-position .betbar.are-positions-visible:not(.is-visible) {
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(120%);
-}
-.game-positions-compact-label { display: none; }
-.has-open-position .betbar.is-visible:not(.are-positions-visible) .game-positions-full-label { display: none; }
-.has-open-position .betbar.is-visible:not(.are-positions-visible) .game-positions-compact-label { display: inline; }
 
 /* My Game Trades uses the game-position card, arranged as the compact horizontal
    carousel used by Open Trades on the authenticated home page. */
@@ -701,6 +658,7 @@ body.pos-open .betbar { display: none; }
 .game-position-nav-button svg { width: 17px; height: 17px; }
 .game-position-nav-button:disabled { opacity: .35; cursor: default; }
 .game-position-card {
+  --trade-muted: color-mix(in srgb, var(--ink) 72%, var(--ink-2));
   position: relative;
   isolation: isolate;
   flex: 0 0 clamp(286px, 88vw, 356px);
@@ -739,11 +697,11 @@ body.pos-open .betbar { display: none; }
 .game-position-pricing strong { color: var(--ink); }
 .game-position-card .oc-actions { margin-top: var(--s1); }
 .game-position-card .trade-current-topline { display: flex; align-items: center; gap: var(--s3); }
-.game-position-card .trade-current-condition { margin: 0; color: var(--ink); font-size: var(--fs-label); font-weight: 700; line-height: 1.35; }
+.game-position-card .trade-current-condition { margin: 0; color: var(--ink); font-size: var(--fs-body); font-weight: 700; line-height: 1.35; }
 .game-position-card .trade-current-total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
 .game-position-card .trade-current-total-item { display: inline-flex; align-items: baseline; gap: var(--s2); }
 .game-position-card .trade-current-total strong { color: var(--ink); font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; line-height: 1; }
-.game-position-card .trade-current-total small { color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-card .trade-current-total small { color: var(--trade-muted); font-size: var(--fs-eyebrow); font-weight: 600; }
 .game-position-card .trade-current-total .oc-pnl.up { color: var(--green-ink); }
 .game-position-card .trade-current-total .oc-pnl.down { color: var(--no-ink); }
 .game-position-card .trade-option-value-focus { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
@@ -753,8 +711,8 @@ body.pos-open .betbar { display: none; }
 .game-position-card .trade-option-value-focus strong { color: var(--ink); font-family: var(--font-display); font-size: 1.55rem; font-weight: 700; line-height: 1; }
 .game-position-card .trade-option-value-focus .oc-pnl.up { color: var(--green-ink); }
 .game-position-card .trade-option-value-focus .oc-pnl.down { color: var(--no-ink); }
-.game-position-card .trade-option-inline-meta { display: flex; align-items: center; gap: var(--s2); color: var(--ink-2); font-size: var(--fs-eyebrow); font-weight: 600; }
-.game-position-card .trade-option-inline-meta i { color: var(--ink-3); font-style: normal; }
+.game-position-card .trade-option-inline-meta { display: flex; align-items: center; gap: var(--s2); color: var(--trade-muted); font-size: var(--fs-eyebrow); font-weight: 600; }
+.game-position-card .trade-option-inline-meta i { color: var(--trade-muted); font-style: normal; }
 .position-outcome-chip {
   display: inline-flex;
   align-items: center;
@@ -780,16 +738,13 @@ body.pos-open .betbar { display: none; }
 .pos-gate-current-label { color: var(--ink-3); font-size: var(--fs-eyebrow); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .pos-gate-current .game-position-card { width: 100%; flex: none; text-align: left; }
 :root[data-theme="light"] .game-position-card {
-  background:
-    radial-gradient(145% 145% at 18% 18%, color-mix(in srgb, var(--outcome-color) 24%, transparent), transparent 62%),
-    var(--surface);
-  border-color: color-mix(in srgb, var(--outcome-color) 28%, var(--line));
+  --trade-muted: var(--ink-2);
+  background: var(--surface);
+  border-color: var(--outcome-color);
 }
 :root[data-theme="light"] .game-position-card.is-tie-outcome {
-  background:
-    radial-gradient(120% 130% at 0% 25%, color-mix(in srgb, var(--outcome-color) 20%, transparent), transparent 58%),
-    radial-gradient(120% 130% at 100% 25%, color-mix(in srgb, var(--outcome-color-2) 20%, transparent), transparent 58%),
-    var(--surface);
+  background: var(--surface);
+  border-color: var(--outcome-color);
 }
 :root[data-theme="light"] .game-position-card::before { content: none; }
 
