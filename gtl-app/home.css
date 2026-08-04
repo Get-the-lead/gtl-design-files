@@ -180,13 +180,13 @@
 .oc-figures { font-size: var(--fs-label); font-weight: 700; color: var(--ink); }
 .oc-figures .oc-pnl { font-weight: 600; }
 .oc-sub .side-yes { color: var(--green); }
-.oc-sub .side-no { color: var(--no); }
+.oc-sub .side-no { color: var(--ink); }
 :root[data-theme="light"] .oc-sub .side-yes { color: var(--green-ink); }
 
 /* Position card variant B — bet-type headline + Contracts / Value / Return row, all centred */
 .ocb-type { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.01em; text-align: center; }
 .ocb-type .side-yes { color: var(--green); }
-.ocb-type .side-no { color: var(--no); }
+.ocb-type .side-no { color: var(--ink); }
 .ocb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }
 .ocb-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
 .ocb-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); font-weight: 600; }

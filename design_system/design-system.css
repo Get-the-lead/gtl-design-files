@@ -2205,6 +2205,14 @@
   width: 100%;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .waitlist-form.is-complete .form-row {
+  padding: 0;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .waitlist-form.is-complete .join-button {
+  width: min(100%, 300px);
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="mobile"] .flat-screen.is-waitlist .trust-row {
   flex-wrap: wrap;
   font-size: 0.72rem;
@@ -2460,7 +2468,13 @@
 }
 
 .design-system-page .flat-screen.is-welcome .welcome-reward .welcome-copy h1 {
-  max-width: min(15ch, 100%);
+  font-size: 2.5rem;
+  max-width: none;
+  overflow-wrap: normal;
+}
+
+.design-system-page .flat-screen.is-welcome .welcome-reward .welcome-copy h1 span {
+  white-space: nowrap;
 }
 
 .design-system-page .flat-screen.is-welcome .field-input {
@@ -2488,6 +2502,10 @@
   font-size: 3.84rem;
 }
 
+.design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-welcome .welcome-reward .welcome-copy h1 {
+  font-size: 3.36rem;
+}
+
 .design-system-page .flat-lay-canvas[data-flat-device="tablet"] .flat-screen.is-welcome .ticket-value {
   font-size: 4.4rem;
 }
@@ -2498,6 +2516,10 @@
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-copy h1 {
   font-size: 4.9rem;
+}
+
+.design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-reward .welcome-copy h1 {
+  font-size: 4rem;
 }
 
 .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .flat-screen.is-welcome .welcome-reward {
@@ -7918,6 +7940,8 @@
   font-weight: 700;
   line-height: 1.35;
   margin: 0;
+  min-height: 2.7em;
+  text-wrap: balance;
 }
 
 .design-system-page .trade-current-total {
@@ -8322,6 +8346,15 @@
     width: min(560px, calc(100% - var(--s10)));
   }
 
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-my-trades .game-position-carousel {
+    justify-content: flex-start;
+  }
+
+  .design-system-page .flat-lay-canvas:is([data-flat-device="tablet"], [data-flat-device="desktop"]) .trade-layout-my-trades .game-position-card {
+    flex-basis: min(356px, calc((100% - var(--s3)) / 2));
+    width: min(356px, calc((100% - var(--s3)) / 2));
+  }
+
   .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-groups {
     gap: var(--s6);
   }
@@ -8330,12 +8363,4 @@
     flex-basis: min(350px, calc((100% - var(--s3)) / 2));
   }
 
-  .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-my-trades .game-position-carousel {
-    justify-content: center;
-  }
-
-  .design-system-page .flat-lay-canvas[data-flat-device="desktop"] .trade-layout-my-trades .game-position-card {
-    flex-basis: min(350px, calc((100% - var(--s3)) / 2));
-    width: min(350px, calc((100% - var(--s3)) / 2));
-  }
 }

@@ -248,7 +248,7 @@
 
 /* Forgot-password sent confirmation */
 .auth-sent { display: none; flex-direction: column; align-items: center; text-align: center; gap: var(--s4); }
-.auth-card.is-sent .auth-form { display: none; }
+.auth-card.is-sent > :is(.step-back, .auth-head, .auth-form, .auth-foot) { display: none; }
 .auth-card.is-sent .auth-sent { display: flex; }
 .sent-check { width: 72px; height: 72px; display: grid; place-items: center; border-radius: 50%; background: var(--green-soft); color: var(--green); margin-bottom: var(--s2); }
 .sent-check svg { width: 36px; height: 36px; }

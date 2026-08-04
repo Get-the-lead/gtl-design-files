@@ -13,7 +13,7 @@
 
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="styles.css?v=20260804-drawer-heading-restore-1" />
-  <link rel="stylesheet" href="auth.css?v=20260804-auth-flow-update-1" />
+  <link rel="stylesheet" href="auth.css?v=20260805-authentication-alignment-1" />
   <script src="brand.js?v=20260804-1" defer></script>
 </head>
 <body class="auth-body">
@@ -32,8 +32,8 @@
         Back
       </a>
       <div class="auth-head">
-        <span class="eyebrow">Reset password</span>
-        <h1>Forgot your password?</h1>
+        <span class="eyebrow">Reset Password</span>
+        <h1>Forgot Your Password?</h1>
         <p>Enter your email and we'll send you a link to reset it.</p>
       </div>
 
@@ -42,14 +42,14 @@
           <label for="email">Email</label>
           <input class="field-input" id="email" type="email" autocomplete="email" placeholder="you@email.com" required />
         </div>
-        <button class="btn btn-primary auth-submit" type="submit">Send Reset Link</button>
+        <button class="btn btn-primary auth-submit" type="submit" disabled>Send Reset Link</button>
       </form>
 
       <div class="auth-sent">
         <div class="sent-check">
           <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <h1>Check your email</h1>
+        <h1>Check Your Email</h1>
         <p>We've sent a reset link to <span class="code-sent-to" data-sent-email>your email</span>. It expires in 30 minutes.</p>
         <a class="btn btn-secondary auth-submit" href="login.html">Back to Login</a>
         <p class="code-resend">Didn't get it? <button type="button" data-forgot-resend>Resend Link</button></p>
@@ -59,6 +59,6 @@
     </div>
   </main>
 
-  <script src="app.js?v=20260804-update-bet-label-1" defer></script>
+  <script src="app.js?v=20260805-authentication-alignment-1" defer></script>
 </body>
 </html>

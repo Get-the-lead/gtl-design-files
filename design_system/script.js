@@ -471,7 +471,7 @@ const authVariantDocumentation = {
   },
   forgot: {
     summary: "Password recovery entry reached from the password alternative in the unified Login flow.",
-    trigger: "Show after Forgot Password is selected from Enter your password.",
+    trigger: "Show after Forgot Password is selected from Enter Your Password.",
     changes: "Request the account email and retain a Back to Login route.",
     data: "Email, reset-token lifetime, resend policy, and a neutral delivery response are required.",
     behavior: "Validate before submission and never reveal whether the account exists. Back returns to the canonical Login route.",
@@ -507,7 +507,7 @@ const authVariantDocumentation = {
   signupPhone: {
     summary: "Phone collection for every Create Account route, including social signup.",
     trigger: "Show after the email or social identity step succeeds.",
-    changes: "Replace identity selection with Add your phone number, the US-only hint, Back, and Continue.",
+    changes: "Replace identity selection with Add Your Phone Number, the US-only hint, Back, and Continue.",
     data: "Normalized US phone number, existing identity context, SMS capability, and service state are required.",
     behavior: "Preserve the identity context on Back, validate a 10-digit US number, then request the verification challenge.",
   },
@@ -521,7 +521,7 @@ const authVariantDocumentation = {
   signupVerify: {
     summary: "Six-digit phone verification within Create Account.",
     trigger: "Show after a challenge is successfully sent to the supplied phone number.",
-    changes: "Replace phone entry with Verify your phone, the formatted destination, six code boxes, Continue, Back, and Resend.",
+    changes: "Replace phone entry with Verify Your Phone, the formatted destination, six code boxes, Continue, Back, and Resend.",
     data: "Phone number, challenge identifier, six-digit code, expiry, resend cooldown, attempt count, and errors are required.",
     behavior: "Support numeric paste and sequential focus, preserve the number on Back, throttle Resend, and advance only after server verification.",
   },
@@ -559,11 +559,13 @@ const standaloneVariantDocumentation = {
     usernameInvalid: { summary: "Format feedback when the proposed username violates the implemented character rules.", trigger: "Use after Start Betting when the value is not 3–20 letters, numbers, or underscores.", changes: "Preserve and mark the proposed value, then show the complete format rule beneath the field.", data: "Submitted username, normalized value, format result, and—after format passes—availability result are required.", behavior: "Do not claim credits or leave Welcome until validation succeeds. Availability conflicts need a distinct safe customer-facing error." },
   },
   waitlist: {
-    default: { summary: "The public launch landing page before an email is submitted.", trigger: "Use for every new public Waitlist visit.", changes: "Show the complete launch story and enabled email capture without modal feedback.", data: "Launch-season copy, email placeholder, product preview content, prize summary, and destination endpoint configuration.", behavior: "Header and final CTA return focus to the hero email field; animated previews pause for reduced motion." },
-    error: { summary: "Local email validation failure before a waitlist request begins.", trigger: "Use when the email field is empty or fails native email validity.", changes: "Apply the field error treatment and show the explicit valid-email message below the form.", data: "The rejected email value and validation result only; no network request is created.", behavior: "Focus the email field and clear the message as the customer edits." },
-    joining: { summary: "Indeterminate progress while the waitlist request and minimum feedback interval are running.", trigger: "Use immediately after a valid submission starts.", changes: "Dim the page and show the Securing Your Place progress dialog without a dismiss action.", data: "Submitted email, request state, endpoint result, and minimum progress duration.", behavior: "Disable duplicate submission. Do not permit dismissal until success or failure resolves." },
-    confirmed: { summary: "Successful early-access confirmation after the email has been saved.", trigger: "Use only after the waitlist endpoint confirms success.", changes: "Replace progress with the confirmed eyebrow, check treatment, expanded explanation, Share with Friends action, and Close control.", data: "Confirmed request result and retained page position.", behavior: "Share with Friends advances to the sharing modal. Backdrop, Escape, or Close dismisses the resolved flow." },
-    sharing: { summary: "Share-link modal reached from the confirmed early-access state.", trigger: "Use after the customer selects Share with Friends from Early Access Confirmed.", changes: "Change the eyebrow and heading, reduce the confirmation visual, and replace the confirmation action with a read-only waitlist URL and Copy button.", data: "A canonical public waitlist URL suitable for sharing and clipboard availability are required.", behavior: "Copy writes the complete URL and reports success inline. If clipboard access fails, select the URL for manual copying; Backdrop, Escape, or Close dismisses the modal." },
+    default: { summary: "The standard public landing page for a visitor who has not joined the waitlist on this browser." },
+    error: { summary: "The email field retains the entered value and displays a clear inline message when the address is missing or invalid." },
+    duplicate: { summary: "A valid email that is already registered remains editable and displays an inline already-on-the-waitlist message." },
+    joining: { summary: "A non-dismissible progress message confirms that a valid waitlist request is currently being saved." },
+    confirmed: { summary: "A successful submission confirms early access and offers the customer a Share with Friends action." },
+    alreadyJoined: { summary: "Returning visitors see a persistent confirmation panel with their saved email and a Share with Friends action, without submitting again." },
+    sharing: { summary: "The sharing state provides the approved public waitlist link with a clear copy action and confirmation feedback." },
   },
   contact: {
     default: { summary: "The empty structured support-request form.", trigger: "Use when Contact opens or after Send Another Message.", changes: "Show the introductory SLA note and blank name, email, topic, and message fields.", data: "Topic options, maximum message length, privacy copy, and delivery configuration.", behavior: "Update the character count while typing and submit only after required fields validate." },
@@ -583,6 +585,53 @@ const standaloneVariantDocumentation = {
   },
   rules: {
     default: { summary: "The complete published Monthly Prize Competition rules document.", trigger: "Use from Ranking, footer Official Rules, and any competition legal disclosure.", changes: "Render all 13 numbered legal sections and the ten-row $5,000 prize schedule.", data: "Approved legal entity, jurisdiction, eligible states, dates, contact details, payment method, URLs, and rules version.", behavior: "Preserve semantic reading order, table structure, stable deep-link behavior if added, and a visible last-updated record." },
+  },
+};
+
+const conciseVariantDocumentation = {
+  home: {
+    guest: { summary: "The signed-out Home experience with Login access, the primary live-game area, and no customer-specific trade content." },
+    logged: { summary: "The signed-in Home experience when the customer has no open trades, moving Live Games directly beneath the greeting." },
+    noLive: { summary: "The Home empty state used when no live games are currently available for trading." },
+    nba: { summary: "The NBA coming-soon state before the customer has responded to the interest prompt." },
+    nbaInterested: { summary: "The NBA coming-soon confirmation after the customer indicates they want access to future NBA markets." },
+    nbaNotForMe: { summary: "The NBA coming-soon confirmation after the customer indicates they are not currently interested." },
+    loading: { summary: "The Home loading state shown while live-game and market data are being retrieved." },
+    error: { summary: "The recoverable Home service-error state shown when live-game content cannot be loaded." },
+  },
+  location: {
+    default: { summary: "The signed-out eligibility message shown when GTL is unavailable from the customer’s current location." },
+  },
+  drawer: {
+    buyMarket: { summary: "The default Buy drawer for entering a contract quantity at the current market price." },
+    changeBetType: { summary: "The Buy drawer with market and side selection open so the customer can change the current bet type." },
+    paused: { summary: "The blocked Buy drawer shown while trading is temporarily paused and market prices are recalculated." },
+    buyLimit: { summary: "The Buy drawer with Set Limit selected and a valid limit-price input available." },
+    sellMarket: { summary: "The Sell drawer for choosing how many owned contracts to sell at the current market price." },
+    balance: { summary: "The Buy drawer validation state shown when the order cost exceeds the customer’s available balance." },
+    invalid: { summary: "The limit-order validation state shown when the entered price falls outside the permitted range." },
+    confirmBuy: { summary: "The timed success confirmation shown after a Buy order has been accepted." },
+    confirmSell: { summary: "The timed success confirmation shown after a Sell order has been accepted." },
+    error: { summary: "The recoverable order error shown when the Buy or Sell request cannot be completed." },
+  },
+  tracker: {
+    open: { summary: "The Portfolio Orders overview with current trades and pending orders available for review." },
+    settled: { summary: "The Portfolio Settled view containing completed trade outcomes and final values." },
+    empty: { summary: "The Portfolio empty state shown when the selected order category contains no activity." },
+    loading: { summary: "The Portfolio loading state shown while balances and order history are being retrieved." },
+    error: { summary: "The recoverable Portfolio service-error state shown when order data cannot be loaded." },
+    detailCurrent: { summary: "The detail view for an active trade, including its current value and available Buy More or Sell actions." },
+    detailPending: { summary: "The detail view for a pending limit order with its requested price and cancellation action." },
+    detailSettled: { summary: "The read-only detail view for a settled trade with its final outcome and value." },
+  },
+  account: {
+    profilePassword: { summary: "Profile & Settings for an email-and-password account with customer details and password management." },
+    editUsername: { summary: "The inline Profile & Settings state for editing and validating the customer’s public username." },
+    profileGoogle: { summary: "Profile & Settings for an account connected through Google, with provider-managed sign-in guidance." },
+    profileApple: { summary: "Profile & Settings for an account connected through Apple, with provider-managed sign-in guidance." },
+    signedOut: { summary: "The Profile & Settings access guard shown to a signed-out customer." },
+    bettingControls: { summary: "The account-management page for reviewing and changing available betting controls." },
+    deleteAccount: { summary: "The destructive account-management page for permanently deleting the customer’s GTL account." },
   },
 };
 
@@ -713,44 +762,45 @@ function renderAuthFrame(mode) {
     const invalid = mode === "loginIdentifierError";
     return authShell(`${authHead("Welcome back", "Login to GTL", "Continue with a social account, email, or phone number.")}
       ${socialRow()}<div class="auth-divider">or</div>
-      <div class="auth-form">${field("Email or phone", "you@email.com or (555) 123-4567", { value: invalid ? "alex" : "", error: invalid ? "Enter a valid email or 10-digit US phone number" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div>
+      <div class="auth-form">${field("Email or Phone", "you@email.com or (555) 123-4567", { value: invalid ? "alex" : "", error: invalid ? "Enter a valid email or 10-digit US phone number" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Continue</button></div>
       ${authFoot("New to GTL?", "Create an Account")}`);
   }
 
   if (mode === "loginVerify" || mode === "loginVerifyError") {
     const error = mode === "loginVerifyError" ? "Enter the 6-digit verification code" : "";
-    return authShell(`<div class="auth-steps" data-step="2"><section class="auth-step" data-step="2">${authBack()}${authHead("", "Verify it’s you", `Enter the 6-digit code sent to the registered phone ending in <span class="code-sent-to">4567</span>.`)}<div class="auth-form">${authCodeInput({ error })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Login</button></div><button class="auth-alternate" type="button" tabindex="-1">Or Enter Password</button><p class="code-resend">Didn't get a code? <button type="button" tabindex="-1">Resend</button></p></section></div>${authFoot("New to GTL?", "Create an Account")}`);
+    return authShell(`<div class="auth-steps" data-step="2"><section class="auth-step" data-step="2">${authBack()}${authHead("", "Verify It’s You", `Enter the 6-digit code sent to the registered phone ending in <span class="code-sent-to">4567</span>.`)}<div class="auth-form">${authCodeInput({ error })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Login</button></div><button class="auth-alternate" type="button" tabindex="-1">Or Enter Password</button><p class="code-resend">Didn't get a code? <button type="button" tabindex="-1">Resend</button></p></section></div>${authFoot("New to GTL?", "Create an Account")}`);
   }
 
   if (mode === "loginPassword" || mode === "loginPasswordError") {
     const invalid = mode === "loginPasswordError";
-    return authShell(`<div class="auth-steps" data-step="3"><section class="auth-step" data-step="3">${authBack()}${authHead("", "Enter your password", "Use the password associated with your GTL account.")}<div class="auth-form">${field("Password", "Your password", { type: "password", passwordToggle: true, error: invalid ? "Enter your password" : "" })}<div class="field-row"><span class="link-green">Forgot Password?</span></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1">Login</button></div></section></div>${authFoot("New to GTL?", "Create an Account")}`);
+    return authShell(`<div class="auth-steps" data-step="3"><section class="auth-step" data-step="3">${authBack()}${authHead("", "Enter Your Password", "Use the password associated with your GTL account.")}<div class="auth-form">${field("Password", "Your password", { type: "password", passwordToggle: true, error: invalid ? "Enter your password" : "" })}<div class="field-row"><span class="link-green">Forgot Password?</span></div><button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Login</button></div></section></div>${authFoot("New to GTL?", "Create an Account")}`);
   }
 
   if (mode === "signupEmail" || mode === "signupEmailError") {
     const invalid = mode === "signupEmailError";
-    return authShell(`<div class="auth-steps" data-step="1"><section class="auth-step" data-step="1">${authHead("", "Create your account", "Sign up with Google, Apple, or Email to get started.")}${socialRow()}<div class="auth-divider">or</div><div class="auth-form">${field("Email", "you@email.com", { type: "email", value: invalid ? "alex" : "", error: invalid ? "Enter a valid email address" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue with Email</button></div><p class="auth-fineprint">By creating an account, you agree to our <span>Terms of Service</span> and <span>Privacy Policy</span>.</p></section></div>${authFoot("Already have an account?", "Login")}`);
+    return authShell(`<div class="auth-steps" data-step="1"><section class="auth-step" data-step="1">${authHead("", "Create Your Account", "Sign up with Google, Apple, or Email to get started.")}${socialRow()}<div class="auth-divider">or</div><div class="auth-form">${field("Email", "you@email.com", { type: "email", value: invalid ? "alex" : "", error: invalid ? "Enter a valid email address" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Continue with Email</button></div><p class="auth-fineprint">By creating an account, you agree to our <span>Terms of Service</span> and <span>Privacy Policy</span>.</p></section></div>${authFoot("Already have an account?", "Login")}`);
   }
 
   if (mode === "signupPhone" || mode === "signupPhoneError") {
     const invalid = mode === "signupPhoneError";
-    return authShell(`<div class="auth-steps" data-step="2"><section class="auth-step" data-step="2">${authBack()}${authHead("", "Add your phone number", "We’ll use this number to verify and protect your account.")}<div class="auth-form">${field("Phone number", "(555) 123-4567", { type: "tel", value: invalid ? "(555) 123" : "", hint: "US phone numbers only. Standard message rates may apply.", error: invalid ? "Enter a valid 10-digit US phone number" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div></section></div>${authFoot("Already have an account?", "Login")}`);
+    return authShell(`<div class="auth-steps" data-step="2"><section class="auth-step" data-step="2">${authBack()}${authHead("", "Add Your Phone Number", "We’ll use this number to verify and protect your account.")}<div class="auth-form">${field("Phone Number", "(555) 123-4567", { type: "tel", value: invalid ? "(555) 123" : "", hint: "US phone numbers only. Standard message rates may apply.", error: invalid ? "Enter a valid 10-digit US phone number" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Continue</button></div></section></div>${authFoot("Already have an account?", "Login")}`);
   }
 
   if (mode === "signupVerify" || mode === "signupVerifyError") {
     const error = mode === "signupVerifyError" ? "Enter the 6-digit code we sent you" : "";
-    return authShell(`<div class="auth-steps" data-step="3"><section class="auth-step" data-step="3">${authBack()}${authHead("", "Verify your phone", `Enter the 6-digit code sent to <span class="code-sent-to">(555) 123-4567</span>.`)}<div class="auth-form">${authCodeInput({ error })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Continue</button></div><p class="code-resend">Didn't get a code? <button type="button" tabindex="-1">Resend</button></p></section></div>${authFoot("Already have an account?", "Login")}`);
+    return authShell(`<div class="auth-steps" data-step="3"><section class="auth-step" data-step="3">${authBack()}${authHead("", "Verify Your Phone", `Enter the 6-digit code sent to <span class="code-sent-to">(555) 123-4567</span>.`)}<div class="auth-form">${authCodeInput({ error })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Continue</button></div><p class="code-resend">Didn't get a code? <button type="button" tabindex="-1">Resend</button></p></section></div>${authFoot("Already have an account?", "Login")}`);
   }
 
   if (mode === "signupPassword" || mode === "signupPasswordError") {
     const invalid = mode === "signupPasswordError";
-    return authShell(`<div class="auth-steps" data-step="4"><section class="auth-step" data-step="4">${authBack()}${authHead("", "Enter a password", "Keep your account secure with a password you don’t use elsewhere.")}<div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, value: invalid ? "password" : "" })}${field("Confirm password", "Re-enter your password", { type: "password", passwordToggle: true, value: invalid ? "different" : "", error: invalid ? "Passwords don't match" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Create Account</button></div></section></div>${authFoot("Already have an account?", "Login")}`);
+    return authShell(`<div class="auth-steps" data-step="4"><section class="auth-step" data-step="4">${authBack()}${authHead("", "Enter a Password", "Keep your account secure with a password you don’t use elsewhere.")}<div class="auth-form">${field("Password", "At least 8 characters", { type: "password", passwordToggle: true, value: invalid ? "password" : "" })}${field("Confirm Password", "Re-enter your password", { type: "password", passwordToggle: true, value: invalid ? "different" : "", error: invalid ? "Passwords don't match" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Create Account</button></div></section></div>${authFoot("Already have an account?", "Login")}`);
   }
 
   if (mode === "forgot" || mode === "forgotError" || mode === "forgotSent") {
     const sent = mode === "forgotSent";
     const invalid = mode === "forgotError";
-    return authShell(`${authBack()}${authHead("Reset password", "Forgot your password?", "Enter your email and we'll send you a link to reset it.")}<div class="auth-form">${field("Email", "you@email.com", { type: "email", value: invalid ? "alex" : "", error: invalid ? "Enter a valid email address" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1">Send Reset Link</button></div><div class="auth-sent"><div class="sent-check">${sentIcon}</div><h1>Check your email</h1><p>We've sent a reset link to <span class="code-sent-to">alex@gtl.test</span>. It expires in 30 minutes.</p><span class="btn btn-secondary auth-submit">Back to Login</span><p class="code-resend">Didn't get it? <span>Resend Link</span></p></div>${authFoot("Remembered it?", "Login")}`, sent ? "is-sent" : "");
+    if (sent) return authShell(`<div class="auth-sent"><div class="sent-check">${sentIcon}</div><h1>Check Your Email</h1><p>We've sent a reset link to <span class="code-sent-to">alex@gtl.test</span>. It expires in 30 minutes.</p><span class="btn btn-secondary auth-submit">Back to Login</span><p class="code-resend">Didn't get it? <span>Resend Link</span></p></div>`, "is-sent");
+    return authShell(`${authBack()}${authHead("Reset Password", "Forgot Your Password?", "Enter your email and we'll send you a link to reset it.")}<div class="auth-form">${field("Email", "you@email.com", { type: "email", value: invalid ? "alex" : "", error: invalid ? "Enter a valid email address" : "" })}<button class="btn btn-primary auth-submit" type="button" tabindex="-1" disabled>Send Reset Link</button></div>${authFoot("Remembered it?", "Login")}`);
   }
 
   return renderAuthFrame("loginIdentifier");
@@ -969,14 +1019,17 @@ function homeHowSection() {
   return `<section class="section how"><div class="container"><div class="section-head center"><span class="eyebrow">How it works</span><h2>Five steps from watching to competing.</h2></div><ol class="flow">${steps.map(([n, title, copy, icon]) => `<li class="flow-step"><div class="flow-marker">${icon}</div><span class="flow-num">${n}</span><h3 class="flow-title">${title}</h3><p class="flow-text">${copy}</p></li>`).join("")}</ol></div></section>`;
 }
 
-function homeFooter(currentPage = "home") {
+function homeFooter(currentPage = "home", authenticated = false) {
   const current = (page) => currentPage === page ? ` aria-current="page"` : "";
-  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="footer-logo-link" href="../gtl-app/home.html" aria-label="GTL home">${brandLogoSVG("gtl-logo footer-logo")}</a><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Product</h4><a href="../gtl-app/home.html"${current("home")}>Home</a><a href="../gtl-app/profile.html"${current("profile")}>Profile</a><a href="../gtl-app/ranking.html"${current("ranking")}>Ranking</a><a href="../gtl-app/wallet.html"${current("portfolio")}>Portfolio</a></div><div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="../gtl-app/contact.html">Contact</a></div><div class="footer-col"><h4>Legal</h4><a href="../gtl-app/rules.html">Official Rules</a><a href="#">Terms</a><a href="#">Privacy</a></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>18+. Please play responsibly.</span></div></div></footer>`;
+  const accountLinks = authenticated
+    ? `<a href="../gtl-app/profile.html"${current("profile")}>Profile</a><a href="../gtl-app/ranking.html"${current("ranking")}>Ranking</a><a href="../gtl-app/wallet.html"${current("portfolio")}>Portfolio</a>`
+    : "";
+  return `<footer class="site-footer"><div class="container"><div class="footer-grid"><div class="footer-brand"><a class="footer-logo-link" href="../gtl-app/home.html" aria-label="GTL home">${brandLogoSVG("gtl-logo footer-logo")}</a><p class="footer-blurb">Get the Lead. The fastest way to trade the moments that move live NFL and NBA games.</p></div><div class="footer-cols"><div class="footer-col"><h4>Sitemap</h4><a href="../gtl-app/home.html"${current("home")}>Home</a>${accountLinks}<a href="../gtl-app/contact.html"${current("contact")}>Contact</a></div><div class="footer-col"><h4>Legal</h4><a href="../gtl-app/rules.html"${current("rules")}>Official Rules</a><a href="#">Terms</a><a href="#">Privacy</a></div></div></div><div class="footer-base"><span>© 2026 GTL Markets</span><span>18+. Please play responsibly.</span></div></div></footer>`;
 }
 
 function renderHomeFrame(mode) {
   const authed = mode === "logged" || mode === "positions";
-  return `<div class="flat-screen is-home is-home-${mode}">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter()}</div>`;
+  return `<div class="flat-screen is-home is-home-${mode}">${homeHeader(authed, mode === "positions")}${homeHero(mode)}${homeLiveSection(mode)}${homeHowSection()}${homeFooter("home", authed)}</div>`;
 }
 
 function renderWelcomeFrame(mode) {
@@ -987,7 +1040,7 @@ function renderWelcomeFrame(mode) {
   const datePart = (part, placeholder, value = "", isError = false) => `<div class="date-part"><div class="field-combobox"><input class="field-input${isError ? " is-error" : ""}" id="welcome-${part}-${mode}" type="text" placeholder="${placeholder}" value="${value}" role="combobox" aria-label="${placeholder}" aria-expanded="false" tabindex="-1" readonly><button class="combobox-toggle" type="button" tabindex="-1" aria-hidden="true">${chevronDownIcon}</button></div></div>`;
   const detailsRequired = mode === "detailsRequired";
   const underage = mode === "underage";
-  const details = `<section class="welcome-panel welcome-details"><div class="welcome-copy"><h1>Tell us about <span>you.</span></h1></div><div class="welcome-form"><div class="welcome-name-row">${field(`welcome-first-${mode}`, "First name", "Alex", underage ? "Alex" : "", detailsRequired ? "Enter your first name" : "")}${field(`welcome-last-${mode}`, "Last name", "Morgan", underage ? "Morgan" : "", detailsRequired ? "Enter your last name" : "")}</div><fieldset class="field welcome-birthday-field"><legend>Date of birth</legend><div class="date-fields">${datePart("month", "Month", underage ? "July" : "", detailsRequired || underage)}${datePart("day", "Day", underage ? "29" : "", detailsRequired || underage)}${datePart("year", "Year", underage ? "2012" : "", detailsRequired || underage)}</div><span class="field-hint">You must be 18 or older to use GTL.</span>${detailsRequired ? `<p class="field-error birthday-error" role="alert">Enter a valid month, day, and year</p>` : underage ? `<p class="field-error birthday-error" role="alert">GTL is for users 18 or older.</p>` : ""}</fieldset><span class="btn btn-primary btn-lg">Continue</span></div></section>`;
+  const details = `<section class="welcome-panel welcome-details"><div class="welcome-copy"><h1>Tell Us About <span>You</span></h1></div><div class="welcome-form"><div class="welcome-name-row">${field(`welcome-first-${mode}`, "First Name", "Alex", underage ? "Alex" : "", detailsRequired ? "Enter your first name" : "")}${field(`welcome-last-${mode}`, "Last Name", "Morgan", underage ? "Morgan" : "", detailsRequired ? "Enter your last name" : "")}</div><fieldset class="field welcome-birthday-field"><legend>Date of Birth</legend><div class="date-fields">${datePart("month", "Month", underage ? "July" : "", detailsRequired || underage)}${datePart("day", "Day", underage ? "29" : "", detailsRequired || underage)}${datePart("year", "Year", underage ? "2012" : "", detailsRequired || underage)}</div><span class="field-hint">You must be 18 or older to use GTL.</span>${detailsRequired ? `<p class="field-error birthday-error" role="alert">Enter a valid month, day, and year</p>` : underage ? `<p class="field-error birthday-error" role="alert">GTL is for users 18 or older.</p>` : ""}</fieldset><button class="btn btn-primary btn-lg" type="button"${underage ? "" : " disabled"}>Continue</button></div></section>`;
   const usernameOptions = mode === "usernameRequired"
     ? { value: "", error: "Choose a username" }
     : mode === "usernameInvalid"
@@ -995,7 +1048,8 @@ function renderWelcomeFrame(mode) {
       : { value: "alexmorgan" };
   const usernameId = `welcome-username-${mode}`;
   const usernameField = `<div class="field"><label for="${usernameId}">Username</label><input class="field-input${usernameOptions.error ? " is-error" : ""}" id="${usernameId}" type="text" autocomplete="username" placeholder="alexmorgan" value="${usernameOptions.value}" tabindex="-1" readonly><span class="field-hint">Use 3–20 letters, numbers, or underscores. This is how you’ll appear in rankings.</span>${usernameOptions.error ? `<p class="field-error" role="alert">${usernameOptions.error}</p>` : ""}</div>`;
-  const username = `<section class="welcome-panel welcome-username welcome-reward"><div class="welcome-copy"><p class="welcome-kicker">One last step</p><h1>Claim your <span>welcome credits.</span></h1><p>Choose the username you’ll use across GTL and in the rankings.</p></div><div class="credit-ticket"><span class="ticket-label">Welcome credits</span><strong class="ticket-value tnum">1,500</strong></div><div class="welcome-form">${usernameField}<span class="btn btn-primary btn-lg">Start Betting</span></div></section>`;
+  const usernameDisabled = mode === "usernameRequired" || mode === "usernameInvalid";
+  const username = `<section class="welcome-panel welcome-username welcome-reward"><div class="welcome-copy"><h1>Claim Your<br><span>Welcome Credits</span></h1><p>Choose a username to claim your credits and join the rankings.</p></div><div class="credit-ticket"><span class="ticket-label">Welcome credits</span><strong class="ticket-value tnum">1,500</strong></div><div class="welcome-form">${usernameField}<button class="btn btn-primary btn-lg" type="button"${usernameDisabled ? " disabled" : ""}>Start Betting</button></div></section>`;
   const intro = `<section class="welcome-panel welcome-intro"><div class="welcome-copy"><p class="welcome-kicker">You’re officially in</p><h1>Welcome to <span>GTL.</span></h1><p>Your account is live. Next, we’ll personalise your experience and reserve your welcome credits.</p></div><div class="welcome-transition" role="status">Setting up your account<span aria-hidden="true"></span></div></section>`;
   return `<div class="flat-screen is-welcome is-welcome-${mode}"><main class="welcome-main container" data-welcome-state="${state}">${state === "intro" ? decor + intro : state === "details" ? details : username}</main></div>`;
 }
@@ -1036,7 +1090,7 @@ function renderContactFrame(mode) {
   }).join("");
   const form = `<form data-contact-form novalidate><div class="contact-name-row">${fieldInput(`contact-name-${mode}`, "Name", "text", "Your name", nameValue, required ? "Enter your name" : "")}${fieldInput(`contact-email-${mode}`, "Email", "email", "you@example.com", emailValue, required ? "Enter your email" : invalid ? "Enter a valid email address" : "")}</div><div class="field"><label for="contact-topic-${mode}">What can we help with?</label><div class="field-combobox${menuAbove ? " is-up" : ""}" data-contact-topic><input class="field-input${required ? " is-error" : ""}" id="contact-topic-${mode}" name="topic" type="text" value="${topicValue}" placeholder="Choose a topic" role="combobox" aria-autocomplete="none" aria-controls="contact-topic-${mode}-options" aria-expanded="${menuOpen}"${menuOpen ? ` aria-activedescendant="contact-topic-${mode}-option-0"` : ""} tabindex="-1" readonly><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show contact topics">${chevronDownIcon}</button><div class="combobox-menu" id="contact-topic-${mode}-options" role="listbox" aria-label="Contact topic"${menuOpen ? "" : " hidden"}>${topicOptions}</div></div>${required ? `<p class="field-error" role="alert">Choose a topic</p>` : ""}</div><div class="field"><label for="contact-message-${mode}">Message</label><textarea class="field-input contact-message${required || invalid ? " is-error" : ""}" id="contact-message-${mode}" name="message" rows="6" maxlength="1000" placeholder="Tell us what happened or what you need help with" tabindex="-1" readonly>${messageValue}</textarea><span class="field-hint"><span>${messageValue.length}</span>/1000 characters</span>${required ? `<p class="field-error" role="alert">Enter a message</p>` : invalid ? `<p class="field-error" role="alert">Add a little more detail so we can help</p>` : ""}</div><button class="btn btn-primary btn-block contact-submit" type="button" tabindex="-1"${formComplete ? "" : " disabled"}>Send Message</button></form>`;
   const successState = `<div class="contact-success" role="status" tabindex="-1"><span class="contact-success-icon" aria-hidden="true">${sentIcon}</span><span class="eyebrow">Message sent</span><h2>Thanks for getting in touch.</h2><p>We’ve received your request and will reply to <strong>alex@gtl.test</strong>.</p><p class="contact-reference">Reference <span class="tnum">GTL-7F3K9Q</span></p><button class="btn btn-secondary" type="button" tabindex="-1">Send another message</button></div>`;
-  return `<div class="flat-screen is-contact contact-body">${homeHeader(prefilled, prefilled)}<main class="contact-page container">${supportBack()}<div class="contact-layout"><section class="contact-intro" aria-labelledby="contact-title-${mode}"><h1 id="contact-title-${mode}">How can we help?</h1><p>Send us a message and we’ll get back to you as soon as possible, usually within one to two business days.</p></section><section class="contact-card" aria-label="Contact request form">${success ? successState : form}</section></div></main>${homeFooter()}</div>`;
+  return `<div class="flat-screen is-contact contact-body">${homeHeader(prefilled, prefilled)}<main class="contact-page container">${supportBack()}<div class="contact-layout"><section class="contact-intro" aria-labelledby="contact-title-${mode}"><h1 id="contact-title-${mode}">How can we help?</h1><p>Send us a message and we’ll get back to you as soon as possible, usually within one to two business days.</p></section><section class="contact-card" aria-label="Contact request form">${success ? successState : form}</section></div></main>${homeFooter("contact", prefilled)}</div>`;
 }
 
 function renderFeesFrame(mode) {
@@ -1054,7 +1108,7 @@ function renderFeesFrame(mode) {
     ? `<span class="bet-mini" style="--home-color:#E31837;--away-color:#B3995D"><span class="bet-mini-teams">${miniTeams}</span><span class="bet-mini-label">Continue Bet</span></span>`
     : "";
   const authenticated = mode === "signedIn" || hasBetContext;
-  return `<div class="flat-screen is-support is-fees fees-body">${homeHeader(authenticated, authenticated)}<main class="support-page">${supportBack()}<div class="support-head"><span class="eyebrow">Pricing &amp; fees</span><h1>What you pay, what you win</h1><p class="support-lead">Simple, transparent pricing — no hidden charges. Every order carries a flat <strong>2% trading fee</strong> (minimum $0.01), and that's the only cost. Here's exactly how it works.</p></div><ol class="support-list">${items.map(([n, title, copy]) => `<li class="support-item"><span class="support-num">${n}</span><div><h3>${title}</h3><p>${copy}</p></div></li>`).join("")}</ol></main>${homeFooter()}${mini}</div>`;
+  return `<div class="flat-screen is-support is-fees fees-body">${homeHeader(authenticated, authenticated)}<main class="support-page">${supportBack()}<div class="support-head"><span class="eyebrow">Pricing &amp; fees</span><h1>What you pay, what you win</h1><p class="support-lead">Simple, transparent pricing — no hidden charges. Every order carries a flat <strong>2% trading fee</strong> (minimum $0.01), and that's the only cost. Here's exactly how it works.</p></div><ol class="support-list">${items.map(([n, title, copy]) => `<li class="support-item"><span class="support-num">${n}</span><div><h3>${title}</h3><p>${copy}</p></div></li>`).join("")}</ol></main>${homeFooter("fees", authenticated)}${mini}</div>`;
 }
 
 const rulesContent = [
@@ -1075,7 +1129,7 @@ const rulesContent = [
 
 function renderRulesFrame() {
   const prizes = [["1st", "$1,500"], ["2nd", "$900"], ["3rd", "$650"], ["4th", "$500"], ["5th", "$400"], ["6th", "$300"], ["7th", "$250"], ["8th", "$200"], ["9th", "$175"], ["10th", "$125"]];
-  return `<div class="flat-screen is-support is-rules rules-body">${homeHeader(false)}<main class="support-page">${supportBack()}<div class="support-head"><span class="eyebrow">Official rules</span><h1>GTL Monthly Prize Competition</h1><p class="rules-notice"><strong>NO PURCHASE NECESSARY TO ENTER OR WIN. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. VOID WHERE PROHIBITED BY LAW.</strong></p><p class="rules-summary"><em>This is a free-to-play, skill-based prediction competition. Credits used in gameplay have no monetary value, cannot be purchased, and cannot be redeemed, transferred, or exchanged for cash or anything of value.</em></p></div><ol class="support-list">${rulesContent.map(([title, copy], index) => `<li class="support-item"><span class="support-num" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><section><h2>${title}</h2>${copy}${title === "Prizes" ? `<div class="rules-table-wrap"><table class="rules-table"><caption>Monthly Competition prize schedule</caption><thead><tr><th>Rank</th><th>Prize</th></tr></thead><tbody>${prizes.map(([rank, prize]) => `<tr><td>${rank}</td><td>${prize}</td></tr>`).join("")}</tbody></table></div><p><strong>Ties.</strong> Tied rank prizes are combined and divided equally among tied participants; the next participant takes the next unoccupied rank.</p><p>Prizes are non-transferable. Sponsor may substitute a prize of equal value if a listed prize becomes unavailable.</p>` : ""}</section></li>`).join("")}</ol><p class="rules-updated"><em>Last updated: [DATE]. © [YEAR] [LEGAL ENTITY NAME]. Get The Lead, GTL, and KTL are trademarks of Sponsor.</em></p></main>${homeFooter()}</div>`;
+  return `<div class="flat-screen is-support is-rules rules-body">${homeHeader(false)}<main class="support-page">${supportBack()}<div class="support-head"><span class="eyebrow">Official rules</span><h1>GTL Monthly Prize Competition</h1><p class="rules-notice"><strong>NO PURCHASE NECESSARY TO ENTER OR WIN. A PURCHASE WILL NOT INCREASE YOUR CHANCES OF WINNING. VOID WHERE PROHIBITED BY LAW.</strong></p><p class="rules-summary"><em>This is a free-to-play, skill-based prediction competition. Credits used in gameplay have no monetary value, cannot be purchased, and cannot be redeemed, transferred, or exchanged for cash or anything of value.</em></p></div><ol class="support-list">${rulesContent.map(([title, copy], index) => `<li class="support-item"><span class="support-num" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><section><h2>${title}</h2>${copy}${title === "Prizes" ? `<div class="rules-table-wrap"><table class="rules-table"><caption>Monthly Competition prize schedule</caption><thead><tr><th>Rank</th><th>Prize</th></tr></thead><tbody>${prizes.map(([rank, prize]) => `<tr><td>${rank}</td><td>${prize}</td></tr>`).join("")}</tbody></table></div><p><strong>Ties.</strong> Tied rank prizes are combined and divided equally among tied participants; the next participant takes the next unoccupied rank.</p><p>Prizes are non-transferable. Sponsor may substitute a prize of equal value if a listed prize becomes unavailable.</p>` : ""}</section></li>`).join("")}</ol><p class="rules-updated"><em>Last updated: [DATE]. © [YEAR] [LEGAL ENTITY NAME]. Get The Lead, GTL, and KTL are trademarks of Sponsor.</em></p></main>${homeFooter("rules")}</div>`;
 }
 
 function legacyWaitlistConfirmation(mode) {
@@ -1127,6 +1181,19 @@ function waitlistFlatlayConfirmation(mode) {
 
 function renderWaitlistFlatlay(mode) {
   const error = mode === "error";
+  const duplicate = mode === "duplicate";
+  const alreadyJoined = mode === "alreadyJoined";
+  const emailValue = error ? "not-an-email" : duplicate ? "alex@example.com" : "";
+  const emailPlaceholder = alreadyJoined ? "alex@example.com" : "Enter Your Email";
+  const formMessage = error
+    ? "Enter a valid email address to join the waitlist."
+    : duplicate
+      ? "This email is already on the waitlist."
+      : alreadyJoined
+        ? "We’ll send launch updates to this email."
+        : "";
+  const formMessageState = error || duplicate ? " is-error" : alreadyJoined ? " is-success" : "";
+  const joinLabel = alreadyJoined ? "Share with Friends" : "Get Early Access";
   const promiseCards = [
     ["01", `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`, "Live by the play", "Prices shift as the game turns. Read the moment and make your move in seconds."],
     ["02", `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`, "Made for momentum", "Back the lead, the tie, or the comeback—without leaving the game you’re watching."],
@@ -1138,7 +1205,7 @@ function renderWaitlistFlatlay(mode) {
     waitlistGameCard({ home: { abbr: "KC", name: "Chiefs", score: 17, color: "#E31837", leading: true }, away: { abbr: "SF", name: "49ers", score: 14, color: "#B3995D" }, period: "Q2", clock: "08:42", rows: [[38, "GTL", "Get the Lead", 62], [22, "TIE", "", 78], [64, "KTL", "Keep the Lead", 36]] }),
   ].join("");
   const rankingRows = [["is-first", waitlistTrophyIcon, "leadstorm", "6,840", "$1,500"], ["is-podium", waitlistMedalIcon, "fourthquarter", "6,210", "$900"], ["is-podium", waitlistMedalIcon, "linehunter", "5,980", "$650"]];
-  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand">${brandLogoSVG()}</span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta"><span class="header-cta-label-desktop">Join the Waitlist</span><span class="header-cta-label-mobile">Join Waitlist</span></span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form"><div class="form-row"><div class="email-field"><input class="field-input${error ? " is-error" : ""}" type="email" value="${error ? "not-an-email" : ""}" placeholder="Enter Your Email" tabindex="-1" readonly></div><span class="btn btn-primary join-button"><span>Get Early Access</span>${waitlistArrowIcon}</span></div><p class="form-message${error ? " is-error" : ""}">${error ? "Enter a valid email address to join the waitlist." : ""}</p></div><div class="trust-row"><span>${waitlistCheckIcon}First Access</span><span>${waitlistCheckIcon}Launch Rewards</span><span>${waitlistCheckIcon}Free to Join</span></div></div></div><div class="scroll-cue"><span></span>See what’s coming</div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${promiseCards.map(([number, icon, title, copy], index) => `<article class="promise-card${index === 1 ? " promise-card--feature" : ""}"><span class="promise-icon">${icon}</span><span class="promise-number">${number}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="market-field-lines"></div><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><div class="game-card-fan">${gameCards}</div></div></section><section class="ranking-section"><div class="ranking-glow"></div><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong class="tnum">$5,000</strong><span>Prize Pool</span></div><div><strong class="tnum">Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${rankingRows.map(([className, icon, user, balance, prize]) => `<div class="competition-row ${className}"><span class="competition-rank">${icon}</span><strong>${user}</strong><span class="tnum">${balance}</span><span class="tnum">${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span class="tnum">4,880</span><span class="tnum">$300</span></div></div></div></div></section><section class="final-cta"><div class="final-lines"></div><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button"><span>Join the Waitlist</span>${waitlistArrowIcon}</span></div></section></main>${waitlistFlatlayConfirmation(mode)}<footer class="waitlist-footer"><span>${brandLogoSVG()}</span><p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
+  return `<div class="flat-screen is-waitlist waitlist-page"><header class="waitlist-header"><span class="waitlist-brand">${brandLogoSVG()}</span><div class="waitlist-header-actions"><span class="btn btn-glass header-cta"><span class="header-cta-label-desktop">Join the Waitlist</span><span class="header-cta-label-mobile">Join Waitlist</span></span><span class="btn btn-glass header-home">Home</span></div></header><main><section class="waitlist-hero"><div class="hero-atmosphere"><div class="hero-grid"><div class="hero-grid-plane"></div></div><div class="hero-orb hero-orb--green"></div><div class="hero-orb hero-orb--blue"></div></div><div class="waitlist-shell hero-layout"><div class="hero-copy"><div class="kickoff-pill"><span class="live-pulse"></span>Launching for NFL Season</div><h1>Don’t just watch the game. <span>Get the lead.</span></h1><p class="hero-lead">Trade the moments that move live games. Join now for early access to the NFL season.</p><div class="waitlist-form${alreadyJoined ? " is-complete" : ""}"><div class="form-row"><div class="email-field"><input class="field-input${error || duplicate ? " is-error" : ""}" type="email" value="${emailValue}" placeholder="${emailPlaceholder}" tabindex="-1" readonly${alreadyJoined ? " disabled" : ""}></div><span class="btn btn-primary join-button"><span>${joinLabel}</span>${alreadyJoined ? "" : waitlistArrowIcon}</span></div><p class="form-message${formMessageState}">${formMessage}</p></div><div class="trust-row"><span>${waitlistCheckIcon}First Access</span><span>${waitlistCheckIcon}Launch Rewards</span><span>${waitlistCheckIcon}Free to Join</span></div></div></div><div class="scroll-cue"><span></span>See what’s coming</div></section><section class="promise-section"><div class="waitlist-shell"><div class="section-intro"><span class="eyebrow">Every drive matters</span><h2>Built for the moments between the moments.</h2><p>Fast, focused markets that keep you in the action from kickoff to the final play.</p></div><div class="promise-grid">${promiseCards.map(([number, icon, title, copy], index) => `<article class="promise-card${index === 1 ? " promise-card--feature" : ""}"><span class="promise-icon">${icon}</span><span class="promise-number">${number}</span><h3>${title}</h3><p>${copy}</p></article>`).join("")}</div></div></section><section class="markets-section"><div class="market-field-lines"></div><div class="waitlist-shell markets-layout"><div class="markets-copy"><span class="eyebrow">One Game. Three Ways In.</span><h2>The game tells the story.<br><span>The market moves with it.</span></h2><p>Everything you need to read the moment—live score, game clock, possession, and prices—brought together in one focused view.</p></div><div class="game-card-fan">${gameCards}</div></div></section><section class="ranking-section"><div class="ranking-glow"></div><div class="waitlist-shell ranking-layout"><div class="ranking-copy"><span class="eyebrow">Monthly Competition</span><h2>Build your balance.<br><span>Climb the ranking.</span></h2><p>Trade with Free Credits throughout the month. The ten highest balances share $5,000 in cash prizes when the competition ends.</p><div class="competition-facts"><div><strong class="tnum">$5,000</strong><span>Prize Pool</span></div><div><strong class="tnum">Top 10</strong><span>Win Prizes</span></div><div><strong>Monthly</strong><span>Competition Reset</span></div></div></div><div class="competition-preview"><div class="competition-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="competition-rows">${rankingRows.map(([className, icon, user, balance, prize]) => `<div class="competition-row ${className}"><span class="competition-rank">${icon}</span><strong>${user}</strong><span class="tnum">${balance}</span><span class="tnum">${prize}</span></div>`).join("")}</div><div class="competition-current"><div class="competition-row is-current"><span class="competition-rank">6</span><strong>You</strong><span class="tnum">4,880</span><span class="tnum">$300</span></div></div></div></div></section><section class="final-cta"><div class="final-lines"></div><div class="waitlist-shell final-inner"><span class="football-mark">🏈</span><h2>Be there before kickoff.</h2><p>Early access is limited. Join the list and we’ll save your spot.</p><span class="btn btn-primary join-button"><span>Join the Waitlist</span>${waitlistArrowIcon}</span></div></section></main>${waitlistFlatlayConfirmation(mode)}<footer class="waitlist-footer"><span>${brandLogoSVG()}</span><p>© 2026 GTL Markets. 18+. Please play responsibly.</p></footer></div>`;
 }
 
 function renderRankingFrame(mode) {
@@ -1169,7 +1236,7 @@ function renderRankingFrame(mode) {
   }[mode];
   const celebration = resultConfig?.prize ? `<div class="ranking-celebration" aria-hidden="true"><span class="celebration-glow"></span><div class="confetti-burst burst-left"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="confetti-burst burst-right"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="celebration-stars"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>` : "";
   const resultModal = resultConfig ? `<div class="gate-backdrop ranking-prize-backdrop is-open"></div>${celebration}<div class="auth-gate ranking-prize-gate${resultConfig.topThree ? " is-top-three" : ""} is-open" role="dialog" aria-modal="true"><div class="gate-body"><span class="ranking-prize-kicker">July Rankings</span>${resultConfig.topThree ? `<span class="ranking-prize-medal" data-rank="${resultConfig.rank}" aria-hidden="true"><span class="ranking-medal-ribbon ribbon-left"></span><span class="ranking-medal-ribbon ribbon-right"></span><span class="ranking-medal-face"><strong>${resultConfig.rank}</strong></span></span>` : ""}<h3 class="gate-title">You finished in position ${resultConfig.rank}</h3><p class="gate-desc">${resultConfig.description}</p>${resultConfig.prize ? `<strong class="ranking-prize-value tnum">${resultConfig.prize}</strong>` : ""}</div></div><button class="btn btn-secondary gate-close ranking-result-close is-open" type="button">Close</button>` : "";
-  return `<div class="flat-screen is-ranking ranking-body">${homeHeader(!signedOut)}<main><header class="ranking-hero"><div class="ranking-hero-glow"></div><div class="ranking-hero-inner container"><h1>Ranking Leaderboard</h1><div class="ranking-countdown"><span class="reset-label">Resets in</span><span class="reset-time tnum"><span class="reset-num">06</span><span class="reset-unit">d</span><span class="reset-num">10</span><span class="reset-unit">h</span><span class="reset-num">15</span><span class="reset-unit">m</span></span></div></div></header><section class="ranking-page container"><section class="ranking-card" aria-label="Monthly leaderboard" role="table"><header class="ranking-card-head"><div>${monthSelect}</div><p>Top 10 win cash prizes</p></header><div class="ranking-table-head" role="row"><span role="columnheader">Rank</span><span role="columnheader">Player</span><span role="columnheader">Balance</span><span role="columnheader">Prize</span></div><div class="ranking-scroll" role="rowgroup">${rowHTML}</div>${currentRow}</section></section>${rules}</main>${homeFooter("ranking")}${resultModal}</div>`;
+  return `<div class="flat-screen is-ranking ranking-body">${homeHeader(!signedOut)}<main><header class="ranking-hero"><div class="ranking-hero-glow"></div><div class="ranking-hero-inner container"><h1>Ranking Leaderboard</h1><div class="ranking-countdown"><span class="reset-label">Resets in</span><span class="reset-time tnum"><span class="reset-num">06</span><span class="reset-unit">d</span><span class="reset-num">10</span><span class="reset-unit">h</span><span class="reset-num">15</span><span class="reset-unit">m</span></span></div></div></header><section class="ranking-page container"><section class="ranking-card" aria-label="Monthly leaderboard" role="table"><header class="ranking-card-head"><div>${monthSelect}</div><p>Top 10 win cash prizes</p></header><div class="ranking-table-head" role="row"><span role="columnheader">Rank</span><span role="columnheader">Player</span><span role="columnheader">Balance</span><span role="columnheader">Prize</span></div><div class="ranking-scroll" role="rowgroup">${rowHTML}</div>${currentRow}</section></section>${rules}</main>${homeFooter("ranking", !signedOut)}${resultModal}</div>`;
 }
 
 const gameFrameData = {
@@ -1305,12 +1372,57 @@ const flatDocViews = {
     groups: [{ title: "Waitlist States", frames: [
       { label: "Default", type: "waitlist", mode: "default" },
       { label: "Email Validation Error", type: "waitlist", mode: "error" },
+      { label: "Email Already Registered", type: "waitlist", mode: "duplicate" },
       { label: "Joining the Waitlist", type: "waitlist", mode: "joining" },
       { label: "Early Access Confirmed", type: "waitlist", mode: "confirmed" },
+      { label: "Already on the Waitlist", type: "waitlist", mode: "alreadyJoined" },
       { label: "Share With Friends", type: "waitlist", mode: "sharing" },
     ] }],
   },
-  welcome: flatDocs.welcome,
+  authentication: {
+    title: "Authentication",
+    description: "Login, account creation, recovery, and post-registration onboarding presented as one connected authentication journey.",
+    groups: [
+      { title: "Login — Core Flow", frames: [
+        { label: "Email or Phone", type: "auth", mode: "loginIdentifier" },
+        { label: "Verification Code", type: "auth", mode: "loginVerify" },
+        { label: "Password Option", type: "auth", mode: "loginPassword" },
+      ] },
+      { title: "Login — Password Recovery", frames: [
+        { label: "Forgot Password", type: "auth", mode: "forgot" },
+        { label: "Check Your Email", type: "auth", mode: "forgotSent" },
+      ] },
+      { title: "Login — Validation", frames: [
+        { label: "Identifier Error", type: "auth", mode: "loginIdentifierError" },
+        { label: "Verification Error", type: "auth", mode: "loginVerifyError" },
+        { label: "Password Error", type: "auth", mode: "loginPasswordError" },
+        { label: "Recovery Email Error", type: "auth", mode: "forgotError" },
+      ] },
+      { title: "Registration — Account Creation", frames: [
+        { label: "Email or Social", type: "auth", mode: "signupEmail" },
+        { label: "Add Phone Number", type: "auth", mode: "signupPhone" },
+        { label: "Verify Phone", type: "auth", mode: "signupVerify" },
+        { label: "Create Password", type: "auth", mode: "signupPassword" },
+      ] },
+      { title: "Registration — Validation", frames: [
+        { label: "Email Error", type: "auth", mode: "signupEmailError" },
+        { label: "Phone Error", type: "auth", mode: "signupPhoneError" },
+        { label: "Verification Error", type: "auth", mode: "signupVerifyError" },
+        { label: "Password Error", type: "auth", mode: "signupPasswordError" },
+      ] },
+      { title: "Welcome — Onboarding", frames: [
+        { label: "Account Setup Transition", type: "welcome", mode: "intro" },
+        { label: "Personal Details", type: "welcome", mode: "details" },
+        { label: "Username and Welcome Credits", type: "welcome", mode: "username" },
+      ] },
+      { title: "Welcome — Validation", frames: [
+        { label: "Personal Details Required", type: "welcome", mode: "detailsRequired" },
+        { label: "Age Eligibility Error", type: "welcome", mode: "underage" },
+        { label: "Username Required", type: "welcome", mode: "usernameRequired" },
+        { label: "Username Format Error", type: "welcome", mode: "usernameInvalid" },
+      ] },
+    ],
+  },
   game: flatDocs.game,
   portfolio: {
     ...flatDocs.tracker,
@@ -1328,45 +1440,6 @@ const flatDocViews = {
       { title: "Active Order", frames: [
         { label: "Continue Bet — Non-logo Initials", type: "fees", mode: "continueBet" },
         { label: "Continue Bet — Team Logos", type: "fees", mode: "continueBetLogos" },
-      ] },
-    ],
-  },
-  login: {
-    title: "Login Page",
-    description: "The implemented login flow accepts email or phone, verifies with a six-digit code, and retains password entry as an alternate account route.",
-    groups: [
-      { title: "Login Flow", frames: [
-        { label: "Email or Phone", type: "auth", mode: "loginIdentifier" },
-        { label: "Verification Code", type: "auth", mode: "loginVerify" },
-        { label: "Password Option", type: "auth", mode: "loginPassword" },
-      ] },
-      { title: "Password Recovery", frames: [
-        { label: "Forgot Password", type: "auth", mode: "forgot" },
-        { label: "Check Your Email", type: "auth", mode: "forgotSent" },
-      ] },
-      { title: "Inline Validation", frames: [
-        { label: "Identifier Error", type: "auth", mode: "loginIdentifierError" },
-        { label: "Verification Error", type: "auth", mode: "loginVerifyError" },
-        { label: "Password Error", type: "auth", mode: "loginPasswordError" },
-        { label: "Recovery Email Error", type: "auth", mode: "forgotError" },
-      ] },
-    ],
-  },
-  registration: {
-    title: "Registration Page",
-    description: "The implemented account-creation flow uses email or social authentication, phone verification, and password creation before handing off to Welcome onboarding.",
-    groups: [
-      { title: "Create Account Flow", frames: [
-        { label: "Email or Social", type: "auth", mode: "signupEmail" },
-        { label: "Add Phone Number", type: "auth", mode: "signupPhone" },
-        { label: "Verify Phone", type: "auth", mode: "signupVerify" },
-        { label: "Create Password", type: "auth", mode: "signupPassword" },
-      ] },
-      { title: "Inline Validation", frames: [
-        { label: "Email Error", type: "auth", mode: "signupEmailError" },
-        { label: "Phone Error", type: "auth", mode: "signupPhoneError" },
-        { label: "Verification Error", type: "auth", mode: "signupVerifyError" },
-        { label: "Password Error", type: "auth", mode: "signupPasswordError" },
       ] },
     ],
   },
@@ -1466,24 +1539,49 @@ const individualPageDocumentation = {
     title: "Waitlist",
     implementation: "<code>waitlist.html</code>, <code>waitlist.css</code>, <code>waitlist.js</code>",
     purpose: "Acquire launch-interest emails on a public NFL-season landing page while explaining the product, markets, and monthly competition.",
-    states: "Default, invalid email, joining progress modal, confirmed early-access modal, and Share With Friends modal.",
-    contract: ["Keep the page publicly accessible without the private-preview gate.", "Use one email field and preserve the same join action in the fixed header, hero, and final CTA.", "Show validation inline before any request; show progress while saving and confirmation only after success.", "The animated game card and confirmation effects must respect reduced-motion preferences."],
-    validation: "Confirm the production waitlist endpoint, consent/privacy copy, duplicate-email behavior, retry policy, launch season copy, and analytics events.",
-    guides: [
-      { title: "Page Anatomy", items: ["Fixed waitlist header with brand, Join Waitlist, and Home.", "Launch hero with NFL-season pill, email capture, and three trust benefits.", "Promise cards, interactive game-market preview, monthly-ranking preview, final CTA, and compact footer.", "Submission feedback is a page-level modal with joining, confirmed, and sharing phases."] },
-      { title: "Submission Contract", items: ["Validate with the browser email rules before opening progress.", "Disable repeat submission and retain the submitted destination while the request is active.", "On success mark the form complete and expose Share with Friends; on failure close progress, restore the form, and show a scoped retry message.", "The share action advances to the URL-copy phase; Backdrop and Escape dismiss only after the request has resolved, never while the save is indeterminate."] },
+    states: [
+      "A first-time visitor who has not yet joined the waitlist.",
+      "Inline email feedback for a missing, malformed, or already-registered address.",
+      "Joining progress while a valid email is being saved.",
+      "Successful early-access confirmation and Share with Friends.",
+      "A returning visitor who has already joined on the current browser.",
+    ],
+    contract: [
+      "Keep the page publicly accessible and use the same hero email field for the header and final Join Waitlist actions.",
+      "Validate the email before showing progress. An already-registered email stays in the field and receives a specific inline message.",
+      "After a successful submission, remember the completed state in the browser and show You’re on the List by default on future visits.",
+      "Keep progress non-dismissible while saving. After success, allow Close, backdrop, or Escape and offer Share with Friends.",
+    ],
+    validation: [
+      "Client approval is required for the already-registered, successful confirmation, and returning-visitor copy.",
+      "Confirm whether a completed waitlist state should follow the customer across browsers or remain specific to the current browser.",
     ],
   },
-  welcome: {
-    title: "Welcome",
-    implementation: "<code>welcome.html</code>",
-    purpose: "Complete post-registration onboarding through a timed account-setup celebration, identity and age capture, and a final username-based welcome-credit claim.",
-    states: "Account Setup Transition, Personal Details, Username And Welcome Credits, required details, age eligibility, required username, username format validation, and successful completion to Home.",
-    contract: ["Open on the Account Setup Transition and automatically advance after 3.2 seconds, using the implemented 280ms exit and reduced-motion timing.", "Collect first name, last name, and a real Month/Day/Year birthday before showing the username step; customers must be at least 18.", "Keep the 1,500-credit ticket and username claim on the final step only.", "Preserve valid values, report errors beside the affected control, and focus the first invalid field.", "Start Betting validates and reserves the username, claims credits once, completes onboarding, and routes to Home."],
-    validation: "Confirm username availability and normalization rules, backend persistence for names and date of birth, timezone-safe age calculation, welcome-credit idempotency, retry behavior, and analytics for each transition.",
-    guides: [
-      { title: "Flow And Timing", items: ["Registration success opens Welcome directly in the celebration state.", "The status row reads Setting up your account and remains visible during the 3.2-second intro delay.", "After a 280ms transition, Personal Details replaces—not overlays—the intro; reduced motion shortens the delay to 900ms and removes decorative animation.", "A valid adult birthday advances to Username And Welcome Credits; a successful username claim completes onboarding and routes to Home."] },
-      { title: "Data And Error Contract", items: ["Treat first name, last name, complete birthday, and username as required account fields.", "Validate calendar correctness before age and calculate age without locale or timezone rollover errors.", "Accept only 3–20 letters, numbers, or underscores before checking username availability.", "Credit claiming must be idempotent so retries cannot award the 1,500 credits more than once."] },
+  authentication: {
+    title: "Authentication",
+    implementation: "<code>login.html</code>, <code>forgot.html</code>, <code>signup.html</code>, <code>welcome.html</code>, <code>auth.css</code>, <code>welcome.css</code>, and authentication handlers in <code>app.js</code>",
+    purpose: "Bring login, account creation, password recovery, verification, and post-registration onboarding together as one connected customer journey.",
+    states: [
+      "Login through email or phone, six-digit verification, password entry, Google, or Apple.",
+      "Password recovery request and non-enumerating Check Your Email confirmation.",
+      "Account creation through email or social identity, followed by phone collection, verification, and password creation.",
+      "Post-registration account setup, personal details, age eligibility, username selection, and welcome-credit claim.",
+      "Inline validation for every identifier, verification, password, personal-detail, age, and username step.",
+    ],
+    contract: [
+      "Login uses one Email or phone entry point. Preserve the customer’s destination and identifier when moving between verification, password, Back, and Resend.",
+      "Keep password recovery inside the canonical login journey and never reveal whether a submitted recovery email exists.",
+      "Every registration route, including Google and Apple, collects and verifies a US phone number before password creation.",
+      "Verification uses six numeric inputs with a separator after the third digit and supports full-code paste, sequential focus, Backspace, expiry, and resend limits.",
+      "Successful account creation opens Welcome. Name, birthday, age eligibility, username, and the 1,500-credit claim remain in that onboarding flow rather than Registration.",
+      "Preserve valid non-sensitive values, place errors beside the affected control, and focus and announce the first invalid field.",
+      "Keep each primary action disabled until its visible fields satisfy client-side format requirements. Server validation still runs on submission and may return an inline error without advancing the step.",
+      "Start Betting reserves the username, claims credits once, completes onboarding, and routes to Home.",
+    ],
+    validation: [
+      "Confirm safe customer-facing responses for invalid credentials, expired codes, resend limits, provider cancellation, duplicate identity, duplicate phone, and SMS delivery failure.",
+      "Confirm username availability and normalization, personal-detail persistence, and timezone-safe age calculation.",
+      "Confirm welcome-credit idempotency and retry behaviour so the 1,500-credit award cannot be claimed more than once.",
     ],
   },
   game: {
@@ -1607,30 +1705,6 @@ const individualPageDocumentation = {
     guides: [
       { title: "Page and Content Contract", items: ["Keep the reading column at the implemented 640px maximum with page-top spacing below the global header.", "Back uses same-origin browser history when available and otherwise follows its Home fallback.", "Preserve the four numbered sections and their order: contract pricing, cost, potential winnings, and settlement.", "Place the standard Product, Company, Legal, copyright, and responsible-play footer after the article; the full page must never become an internally scrolling flatlay."] },
       { title: "Continue Bet Contract", items: ["The current query contract is game, market, side, qty, and optional limit; reconstruct the return URL with id and bet=1.", "Resolve the game before showing the control; the production non-logo variant renders the same coloured abbreviation chips used throughout the app.", "Revalidate game state, current market availability, balance, transaction cap, quantity, and limit price when the drawer reopens.", "Use the implemented floating geometry: 16px viewport gutters and bottom offset, a 480px maximum width, the secondary surface background, and a one-pixel gradient border derived from both teams. The separately labelled licensed-logo state is a reference variant, not the Fees-page production default."] },
-    ],
-  },
-  login: {
-    title: "Login",
-    implementation: "<code>login.html</code>, <code>forgot.html</code>",
-    purpose: "Provide one implemented authentication flow: email or phone identification, six-digit verification, an optional password alternative, social login, and password recovery.",
-    states: "Email or phone, verification code, password alternative, forgot password, recovery confirmation, and field-level validation for every input step.",
-    contract: ["Use one Email or phone entry point; do not expose competing login variations or prototype-switch routes.", "Keep Google and Apple on the first step and preserve the customer’s post-login destination through every method.", "Verification uses exactly six numeric inputs with a visual separator after the third digit, plus Back, Resend, and Enter Password.", "Forgot Password is reachable only from the password alternative and always returns to the canonical Login route."],
-    validation: "Backend integration must map service, expired-code, resend-rate, provider-cancellation, and invalid-credential responses to safe inline feedback without changing this page architecture.",
-    guides: [
-      { title: "Flow and State Contract", items: ["A valid email or 10-digit US phone requests a six-digit challenge and advances inside the same auth card.", "Enter Password switches only the verification body; Back restores verification with the account identifier intact.", "Social success completes login directly; cancellation or provider failure returns to the first step with safe feedback.", "Recovery confirmation is non-enumerating and must not reveal whether the submitted email exists."] },
-      { title: "Accessibility and Security", items: ["Keep visible labels, autocomplete attributes, logical focus order, inline errors, and one primary action per step.", "Support full-code paste, sequential focus, Backspace navigation, resend throttling, expiry, and attempt limits.", "Announce step headings and validation messages when content changes without a navigation.", "Never retain passwords or verification codes after completion, cancellation, expiry, or route change."] },
-    ],
-  },
-  registration: {
-    title: "Registration",
-    implementation: "<code>signup.html</code>",
-    purpose: "Create an account through one email-or-social flow, followed by phone collection, six-digit verification, and password creation before Welcome onboarding.",
-    states: "Email or social identity, phone number, phone verification, password creation, and field-level validation for all four steps.",
-    contract: ["Email and social providers share the same continuation: every route collects and verifies a US phone number.", "Verification uses exactly six numeric inputs with a separator after the third digit and preserves the phone number on Back.", "Require a password of at least eight characters and an exact confirmation match before account creation.", "Name, birthday, age eligibility, and username are not Registration fields; they remain in the Welcome flow after account creation."],
-    validation: "Backend integration must define duplicate-identity, duplicate-phone, provider, SMS delivery, expired-code, resend-rate, and account-creation errors while preserving the documented step structure.",
-    guides: [
-      { title: "Flow and Data Contract", items: ["Continue with Email validates the address; Google and Apple establish the identity but do not skip phone security.", "Normalize phone input before requesting a challenge and retain identity context across Back navigation.", "Only a server-verified challenge may advance to password creation.", "Successful Create Account routes to Welcome, where personal details, age eligibility, username, and welcome credits are completed."] },
-      { title: "Accessibility and Security", items: ["Keep Terms and Privacy links available on the first step and use visible labels on every control.", "Support full-code paste, sequential focus, Backspace navigation, resend throttling, expiry, and attempt limits.", "Focus and announce the first invalid field while retaining valid non-sensitive values.", "Never log or persist raw verification codes, passwords, or password confirmations."] },
     ],
   },
   contact: {
@@ -2098,7 +2172,7 @@ function renderTradeLayoutLiveGame(menuBody = "") {
     ? `<div class="hpos-backdrop is-open" aria-hidden="true"></div><aside class="hpos-panel ds-hpos-panel trade-layout-actual-menu" role="dialog" aria-label="Open Trades"><p class="hpos-heading">Open Trades</p>${menuBody}</aside>`
     : "";
   const instance = menuOpen ? "menuAll" : "liveGame";
-  return `<div class="flat-screen is-game is-game-openPositions${menuOpen ? " is-game-positionsPanelOpen is-trade-layout-menu" : " is-trade-layout-live-game"}">${homeHeader(true, true, menuOpen, portfolioCount)}${menu}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(game)}${gameMarkets(game)}</div><div class="game-col-right">${tradeLayoutLiveGameTrades(instance)}${gameStatsPreview(game, "market", false, instance)}</div></div></main>${homeFooter()}</div>`;
+  return `<div class="flat-screen is-game is-game-openPositions${menuOpen ? " is-game-positionsPanelOpen is-trade-layout-menu" : " is-trade-layout-live-game"}">${homeHeader(true, true, menuOpen, portfolioCount)}${menu}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(game)}${gameMarkets(game)}</div><div class="game-col-right">${tradeLayoutLiveGameTrades(instance)}${gameStatsPreview(game, "market", false, instance)}</div></div></main>${homeFooter("home", true)}</div>`;
 }
 
 function renderTradeLayoutFrame(mode) {
@@ -2110,7 +2184,7 @@ function renderTradeLayoutFrame(mode) {
   if (mode === "menuAll" || mode === "menuGame") {
     return renderTradeLayoutLiveGame(body);
   }
-  return `<div class="flat-screen is-home is-home-positions is-trade-layout-home">${homeHeader(true, true, false, 4)}${tradeLayoutHomeHero(body)}${homeLiveSection("positions")}${homeHowSection()}${homeFooter()}</div>`;
+  return `<div class="flat-screen is-home is-home-positions is-trade-layout-home">${homeHeader(true, true, false, 4)}${tradeLayoutHomeHero(body)}${homeLiveSection("positions")}${homeHowSection()}${homeFooter("home", true)}</div>`;
 }
 
 function transitionTradeLayoutScorecard(experience, gameKey) {
@@ -2258,7 +2332,7 @@ function renderGameFrame(mode) {
     const g = mode === "gameStatsNFL" || useLogos ? gameFrameData.statsNfl : gameFrameData[mode];
     const statsPanel = mode === "gameStatsNFL" || mode === "gameStatsLogos" ? "game" : "market";
     const gameColors = `--home-color:${g.home.color};--away-color:${g.away.color}`;
-    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader()}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter()}</div>`;
+    return `<div class="flat-screen is-game is-game-${mode}">${homeHeader()}<main><div class="game-layout" style="${gameColors}"><div class="game-col-left" style="${gameColors}"><span class="gb-back gb-back-right" aria-hidden="true">${backIcon}<span>Home</span></span>${gameScoreboard(g, useLogos)}${gameMarkets(g)}</div><div class="game-col-right">${gameStatsPreview(g, statsPanel, useLogos, mode)}</div></div></main>${homeFooter("home")}</div>`;
   }
   let banner = "";
   let markets = flatMarkets(mode === "pregame");
@@ -2499,7 +2573,7 @@ function walletFrameHTML({ tab = "active", empty = false } = {}) {
       <div class="order-panel" data-order-panel="active"${tab === "active" ? "" : " hidden"}>${walletOrderGroup("Current", positions, "open", "No current orders.")}${walletOrderGroup("Pending", pending, "pending", "No pending orders.")}</div>
       <div class="order-panel" data-order-panel="settled"${tab === "settled" ? "" : " hidden"}>${walletOrderGroup("Settled", settled, "settled", "No settled orders yet.")}${walletOrderGroup("Cancelled", cancelled, "cancelled", "No cancelled orders.")}</div>
     </main>
-    ${homeFooter("portfolio")}
+    ${homeFooter("portfolio", true)}
   </div>`;
 }
 
@@ -2555,13 +2629,13 @@ function walletDetailFrameHTML(type, index) {
       </div>
       ${actions}
     </main>
-    ${homeFooter("portfolio")}
+    ${homeFooter("portfolio", true)}
   </div>`;
 }
 
 function renderTrackerFrame(mode) {
-  if (mode === "loading") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div>${flatLoading()}</main>${homeFooter("portfolio")}</div>`;
-  if (mode === "error") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div><div class="wallet-empty wallet-error-state"><strong>Trades unavailable</strong><span>Could not load open exposure.</span><button class="btn btn-secondary" type="button" tabindex="-1">Reload</button></div></main>${homeFooter("portfolio")}</div>`;
+  if (mode === "loading") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div>${flatLoading()}</main>${homeFooter("portfolio", true)}</div>`;
+  if (mode === "error") return `<div class="flat-screen is-wallet">${homeHeader(true, true)}<main class="wallet container"><div class="wallet-head"><h1>Portfolio</h1><p class="wallet-desc">Your open trades, pending limit orders and settled bets — all in one place.</p></div><div class="wallet-empty wallet-error-state"><strong>Trades unavailable</strong><span>Could not load open exposure.</span><button class="btn btn-secondary" type="button" tabindex="-1">Reload</button></div></main>${homeFooter("portfolio", true)}</div>`;
   if (mode === "empty") return walletFrameHTML({ empty: true });
   if (mode === "detailCurrent") return walletDetailFrameHTML("open", 0);
   if (mode === "detailPending") return walletDetailFrameHTML("pending", 0);
@@ -2664,7 +2738,7 @@ function renderAccountFrame(mode) {
     profileGoogle: accountProfileHTML({ email: "alex.morgan@gmail.com", provider: "google", hasPassword: false }),
     profileApple: accountProfileHTML({ email: "alex@icloud.com", provider: "apple", hasPassword: false }),
   }[mode];
-  return `<div class="flat-screen is-account profile-body">${homeHeader(true)}<main class="profile container">${content}</main>${homeFooter("profile")}</div>`;
+  return `<div class="flat-screen is-account profile-body">${homeHeader(true)}<main class="profile container">${content}</main>${homeFooter("profile", true)}</div>`;
 }
 
 function titleCaseVariantLabel(value) {
@@ -2686,20 +2760,28 @@ function titleCaseVariantLabel(value) {
 }
 
 function renderVariantDocumentation(frame, label) {
-  const documentation = ({ game: gameVariantDocumentation, ranking: rankingVariantDocumentation, auth: authVariantDocumentation, tradeLayout: tradeLayoutVariantDocumentation }[frame.type] || standaloneVariantDocumentation[frame.type] || {})[frame.mode];
-  if (!documentation) return `<div class="flat-frame-label">${label}</div>`;
-  const fields = [
-    ["Displayed When", documentation.trigger],
-    ["What Changes", documentation.changes],
-    ["Required Data", documentation.data],
-    ["Implementation Behavior", documentation.behavior],
-  ];
-  return `<details class="flat-frame-doc">
+  const documentationSources = {
+    game: gameVariantDocumentation,
+    ranking: rankingVariantDocumentation,
+    auth: authVariantDocumentation,
+    tradeLayout: tradeLayoutVariantDocumentation,
+    ...standaloneVariantDocumentation,
+    ...conciseVariantDocumentation,
+  };
+  const documentation = documentationSources[frame.type]?.[frame.mode];
+  if (!documentation?.summary) {
+    console.warn(`Missing variant description: ${frame.type}:${frame.mode}`);
+    return `<details class="flat-frame-doc is-state-summary-only is-description-missing">
+      <summary><span class="flat-frame-label">${label}</span><span class="flat-frame-doc-toggle">View Details</span></summary>
+      <div class="flat-frame-doc-body"><p class="flat-frame-doc-summary">Description pending for this state.</p></div>
+    </details>`;
+  }
+  return `<details class="flat-frame-doc is-state-summary-only">
     <summary>
       <span class="flat-frame-label">${label}</span>
       <span class="flat-frame-doc-toggle">View Details</span>
     </summary>
-    <div class="flat-frame-doc-body"><p class="flat-frame-doc-summary">${documentation.summary}</p><dl>${fields.map(([term, description]) => `<div><dt>${term}</dt><dd>${description}</dd></div>`).join("")}</dl></div>
+    <div class="flat-frame-doc-body"><p class="flat-frame-doc-summary">${documentation.summary}</p></div>
   </details>`;
 }
 
@@ -2754,7 +2836,6 @@ function hydrateIndividualPageChrome(section) {
       <article class="is-validation"><span class="ds-doc-label">Open validation</span>${documentationList(doc.validation)}</article>
     </div>
     ${doc.decision ? `<section class="ds-page-decision" aria-label="Implementation decision required"><header><span class="ds-decision-status">${doc.decision.status}</span><h3>${doc.decision.title}</h3><p>${doc.decision.summary}</p></header><div class="ds-page-decision-grid">${doc.decision.options.map((option) => `<article><div class="ds-decision-option-head"><h4>${option.title}</h4><code>${option.source}</code></div><ul>${option.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
-    ${doc.guides ? `<section class="ds-page-implementation"><header><span class="ds-doc-label">Developer Guide</span><h3>Implementation Details</h3><p>Use these key notes together with the state-specific guidance below. The flat lays illustrate output; these rules define when and how that output is produced.</p></header><div class="ds-page-implementation-grid">${doc.guides.map((guide) => `<article><h4>${guide.title}</h4><ul>${guide.items.map((item) => `<li>${item}</li>`).join("")}</ul></article>`).join("")}</div></section>` : ""}
     </div>
     <section class="ds-page-states flat-lay-canvas" data-individual-content data-flat-device="mobile" data-device="mobile" style="--page-zoom: 1;"></section>
   </article>`;
@@ -2768,13 +2849,7 @@ function renderIndividualPageSection(section, device = "mobile") {
   if (!doc || !content) return;
 
   const nextDevice = ["mobile", "tablet", "desktop"].includes(device) ? device : "mobile";
-  const variantsDescription = docKey === "home"
-    ? "All implemented, authenticated, unauthenticated, and edge-case variants for this page are grouped below."
-      : docKey === "game"
-      ? "Each state includes its trigger, visual delta, required data, and behavior contract so the flat lay can be implemented without inferring rules from the image."
-      : docKey === "login" || docKey === "registration"
-        ? "The implemented sequence is documented step by step, followed by its matching validation states and developer behavior contract."
-      : "All implemented default, alternate, and edge-case variants for this page are grouped below.";
+  const variantsDescription = "Each flat lay represents an approved page state. Open View Details for a concise description of the state shown.";
   content.dataset.flatDevice = nextDevice;
   content.dataset.device = nextDevice;
   content.innerHTML = `<header class="ds-page-states-head"><span class="ds-doc-label">Page Variants</span><h3>${title} Variants</h3><p>${variantsDescription}</p></header>

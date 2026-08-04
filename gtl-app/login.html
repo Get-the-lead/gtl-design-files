@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="styles.css?v=20260804-drawer-heading-restore-1" />
-  <link rel="stylesheet" href="auth.css?v=20260804-auth-flow-update-1" />
+  <link rel="stylesheet" href="auth.css?v=20260805-authentication-alignment-1" />
   <script src="brand.js?v=20260804-1" defer></script>
 </head>
 <body class="auth-body auth-login">
@@ -46,10 +46,10 @@
           <div class="auth-divider">or</div>
           <form data-login-identifier-form novalidate>
             <div class="field">
-              <label for="loginIdentifier">Email or phone</label>
+              <label for="loginIdentifier">Email or Phone</label>
               <input class="field-input" id="loginIdentifier" type="text" inputmode="email" autocomplete="username" placeholder="you@email.com or (555) 123-4567" required />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Continue</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Continue</button>
           </form>
         </section>
 
@@ -58,7 +58,7 @@
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1 id="loginVerifyTitle">Verify it’s you</h1>
+            <h1 id="loginVerifyTitle">Verify It’s You</h1>
             <p>Enter the 6-digit code sent to the registered phone ending in <span class="code-sent-to" data-login-phone-ending>4567</span>.</p>
           </div>
           <form data-login-code-form novalidate>
@@ -71,7 +71,7 @@
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
               <input class="code-box" type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
             </div>
-            <button class="btn btn-primary auth-submit" type="submit">Login</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Login</button>
           </form>
           <button class="auth-alternate" type="button" data-login-password-option>Or Enter Password</button>
           <p class="code-resend">Didn't get a code? <button type="button" data-login-resend>Resend</button></p>
@@ -82,7 +82,7 @@
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Back
           </button>
           <div class="auth-head">
-            <h1 id="loginPasswordTitle">Enter your password</h1>
+            <h1 id="loginPasswordTitle">Enter Your Password</h1>
             <p>Use the password associated with your GTL account.</p>
           </div>
           <form data-login-password-form novalidate>
@@ -97,7 +97,7 @@
               </div>
             </div>
             <div class="field-row"><a class="link-green" href="forgot.html">Forgot Password?</a></div>
-            <button class="btn btn-primary auth-submit" type="submit">Login</button>
+            <button class="btn btn-primary auth-submit" type="submit" disabled>Login</button>
           </form>
         </section>
       </div>
@@ -107,6 +107,6 @@
     </div>
   </main>
 
-  <script src="app.js?v=20260804-update-bet-label-1" defer></script>
+  <script src="app.js?v=20260805-authentication-alignment-1" defer></script>
 </body>
 </html>

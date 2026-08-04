@@ -18,6 +18,7 @@
   const confirmationBackdrop = confirmation?.querySelector(".confirmation-backdrop");
   const defaultMessage = "";
   const defaultShareUrl = "https://gtl-design-app.onrender.com";
+  const waitlistStorageKey = "gtl-waitlist-email";
   let confirmationReady = false;
 
   const header = document.querySelector(".waitlist-header");
@@ -55,6 +56,23 @@
     message.className = `form-message${state ? ` is-${state}` : ""}`;
   }
 
+  function showCompletedForm(email, copy = "We’ll send launch updates to this email.") {
+    if (!form || !emailInput || !button) return;
+    form.classList.add("is-complete");
+    emailInput.value = "";
+    emailInput.placeholder = email;
+    emailInput.disabled = true;
+    button.disabled = false;
+    button.querySelector("span").textContent = "Share with Friends";
+    setMessage(copy, "success");
+  }
+
+  function openCompletedShare() {
+    openConfirmation();
+    showConfirmation({ focusAction: false });
+    showShareConfirmation();
+  }
+
   function openConfirmation() {
     confirmationReady = false;
     confirmation.hidden = false;
@@ -71,7 +89,7 @@
     window.requestAnimationFrame(() => confirmation.classList.add("is-visible"));
   }
 
-  function showConfirmation() {
+  function showConfirmation({ focusAction = true } = {}) {
     confirmationReady = true;
     confirmation.classList.add("is-confirmed");
     confirmationEyebrow.textContent = "Early Access Confirmed";
@@ -79,7 +97,7 @@
     confirmationCopy.textContent = "We’ll email you before live trading opens, with early market previews and a quick-start guide so you’re ready to make your first move.";
     confirmationActions.hidden = false;
     confirmationScreenClose.hidden = false;
-    window.setTimeout(() => confirmationShareButton.focus(), 450);
+    if (focusAction) window.setTimeout(() => confirmationShareButton.focus(), 450);
   }
 
   function showShareConfirmation() {
@@ -126,6 +144,10 @@
 
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (form.classList.contains("is-complete")) {
+      openCompletedShare();
+      return;
+    }
     const email = emailInput.value.trim();
 
     if (!emailInput.checkValidity()) {
@@ -147,29 +169,29 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, source: "public-waitlist" })
           }).then((response) => {
+            if (response.status === 409) {
+              const duplicateError = new Error("Email already registered");
+              duplicateError.code = "duplicate-email";
+              throw duplicateError;
+            }
             if (!response.ok) throw new Error("Waitlist request failed");
           })
-        : new Promise((resolve) => window.setTimeout(resolve, 650)).then(() => {
-            localStorage.setItem("gtl-waitlist-email", email);
-          });
+        : new Promise((resolve) => window.setTimeout(resolve, 650));
 
       await Promise.all([
         saveRequest,
         new Promise((resolve) => window.setTimeout(resolve, 1450))
       ]);
 
-      form.classList.add("is-complete");
-      emailInput.value = "";
-      emailInput.placeholder = email;
-      emailInput.disabled = true;
-      button.querySelector("span").textContent = "You’re on the List";
+      try { localStorage.setItem(waitlistStorageKey, email); } catch (error) { /* Storage may be unavailable. */ }
+      showCompletedForm(email, "We’ll send launch updates to this email.");
       showConfirmation();
-    } catch {
+    } catch (error) {
       confirmationReady = true;
       closeConfirmation();
       button.disabled = false;
       button.querySelector("span").textContent = "Get Early Access";
-      setMessage("We couldn’t save your spot. Please try again.", "error");
+      setMessage(error?.code === "duplicate-email" ? "This email is already on the waitlist." : "We couldn’t save your spot. Please try again.", "error");
       window.setTimeout(() => emailInput.focus(), 320);
     }
   });
@@ -177,6 +199,11 @@
   emailInput?.addEventListener("input", () => {
     if (message.classList.contains("is-error")) setMessage(defaultMessage);
   });
+
+  try {
+    const joinedEmail = localStorage.getItem(waitlistStorageKey);
+    if (joinedEmail) showCompletedForm(joinedEmail, "We’ll send launch updates to this email.");
+  } catch (error) { /* Storage may be unavailable. */ }
 
   confirmationShareButton?.addEventListener("click", showShareConfirmation);
   confirmationCopyButton?.addEventListener("click", copyShareLink);

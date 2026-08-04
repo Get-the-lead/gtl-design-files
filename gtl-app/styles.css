@@ -634,12 +634,12 @@ body.pos-open { overflow: hidden; }
 .hpos-list .oc-figures { font-size: var(--fs-label); font-weight: 700; color: var(--ink); }
 .hpos-list .oc-figures .oc-pnl { font-weight: 600; }
 .hpos-list .oc-sub .side-yes { color: var(--green); }
-.hpos-list .oc-sub .side-no { color: var(--no); }
+.hpos-list .oc-sub .side-no { color: var(--ink); }
 .hpos-list .pos-card--b .pos-info { padding-top: calc(var(--s4) - 12px); }
 .hpos-list .pos-card--b .oc-actions { margin-top: 8px; }
 .hpos-list .ocb-type { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.01em; text-align: center; }
 .hpos-list .ocb-type .side-yes { color: var(--green); }
-.hpos-list .ocb-type .side-no { color: var(--no); }
+.hpos-list .ocb-type .side-no { color: var(--ink); }
 .hpos-list .ocb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }
 .hpos-list .ocb-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
 .hpos-list .ocb-k { font-size: var(--fs-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); font-weight: 600; }
@@ -743,12 +743,12 @@ body.pos-open { overflow: hidden; }
 .trade-type-line i { color: currentColor; font-style: normal; font-weight: 500; }
 .trade-type-line strong { padding: 0; border: 0; border-radius: 0; background: none; color: inherit; font-size: inherit; letter-spacing: inherit; }
 .trade-type-line .side-yes { color: var(--green); }
-.trade-type-line .side-no { color: var(--no); }
+.trade-type-line .side-no { color: var(--ink); }
 :root[data-theme="light"] .trade-layout-scorecard .gb-score-stack .game-clock-badge { color: var(--green-ink); }
 :root[data-theme="light"] .trade-type-line .side-yes { color: var(--green-ink); }
-:root[data-theme="light"] .trade-type-line .side-no { color: var(--no-ink); }
+:root[data-theme="light"] .trade-type-line .side-no { color: var(--ink); }
 .portfolio-trade-card .trade-current-topline { display: flex; align-items: center; gap: var(--s3); }
-.portfolio-trade-card .trade-current-condition { margin: 0; color: var(--ink); font-size: var(--fs-body); font-weight: 700; line-height: 1.35; }
+.portfolio-trade-card .trade-current-condition { min-height: 2.7em; margin: 0; color: var(--ink); font-size: var(--fs-body); font-weight: 700; line-height: 1.35; text-wrap: balance; }
 .portfolio-trade-card .trade-current-total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
 .portfolio-trade-card .trade-current-total-item { display: inline-flex; align-items: baseline; gap: var(--s2); }
 .portfolio-trade-card .trade-current-total strong { color: var(--ink); font-family: var(--font-display); font-size: 1.4rem; line-height: 1; }
@@ -1447,7 +1447,7 @@ body.sheet-open { overflow: hidden; }
 .oc-pos { display: flex; flex: 1 1 auto; flex-direction: column; gap: 3px; min-width: 0; }
 .oc-tag { font-weight: 700; font-size: var(--fs-label); }
 .oc-tag .side-yes { color: var(--green); }
-.oc-tag .side-no { color: var(--no); }
+.oc-tag .side-no { color: var(--ink); }
 :root[data-theme="light"] .oc-tag .side-yes { color: var(--green-ink); }
 .oc-sub { font-size: var(--fs-eyebrow); color: var(--ink-2); font-weight: 600; letter-spacing: 0.04em; }
 .oc-val { text-align: right; display: flex; flex-direction: column; gap: 2px; }

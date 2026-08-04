@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="styles.css?v=20260804-drawer-heading-restore-1" />
-  <link rel="stylesheet" href="auth.css?v=20260804-auth-flow-update-1" />
+  <link rel="stylesheet" href="auth.css?v=20260805-authentication-alignment-1" />
   <link rel="stylesheet" href="welcome.css?v=20260804-auth-flow-update-1" />
   <script src="brand.js?v=20260804-1" defer></script>
 </head>
@@ -37,7 +37,7 @@
 
     <section class="welcome-panel welcome-details" aria-labelledby="detailsTitle" data-welcome-details hidden>
       <div class="welcome-copy">
-        <h1 id="detailsTitle">Tell us about <span>you.</span></h1>
+        <h1 id="detailsTitle">Tell Us About <span>You</span></h1>
       </div>
       <form class="welcome-form" data-details-form novalidate>
         <div class="welcome-name-row">
@@ -78,7 +78,7 @@
           <span class="field-hint">You must be 18 or older to use GTL.</span>
           <p class="field-error birthday-error" data-birthday-error role="alert" hidden></p>
         </fieldset>
-        <button class="btn btn-primary btn-lg" type="submit">Continue</button>
+        <button class="btn btn-primary btn-lg" type="submit" disabled>Continue</button>
       </form>
     </section>
 
@@ -97,12 +97,12 @@
           <input class="field-input" id="username" type="text" autocomplete="username" placeholder="alexmorgan" required />
           <span class="field-hint">Use 3–20 letters, numbers, or underscores. This is how you’ll appear in rankings.</span>
         </div>
-        <button class="btn btn-primary btn-lg" type="submit">Start Betting</button>
+        <button class="btn btn-primary btn-lg" type="submit" disabled>Start Betting</button>
       </form>
     </section>
 
   </main>
 
-  <script src="app.js?v=20260804-update-bet-label-1" defer></script>
+  <script src="app.js?v=20260805-authentication-alignment-1" defer></script>
 </body>
 </html>

@@ -4044,6 +4044,13 @@ function initLogin() {
 
   const identifierForm = $("[data-login-identifier-form]", steps);
   const identifierEl = $("#loginIdentifier", identifierForm);
+  const identifierSubmit = $("button[type='submit']", identifierForm);
+  const syncIdentifierSubmit = () => {
+    const value = identifierEl.value.trim();
+    identifierSubmit.disabled = !(validEmail(value) || validPhone(value));
+  };
+  identifierEl.addEventListener("input", syncIdentifierSubmit);
+  syncIdentifierSubmit();
   identifierForm.addEventListener("submit", (event) => {
     event.preventDefault();
     clearErr(identifierEl);
@@ -4059,6 +4066,13 @@ function initLogin() {
 
   const codeForm = $("[data-login-code-form]", steps);
   const codeWrap = $("[data-code-input]", codeForm);
+  const codeSubmit = $("button[type='submit']", codeForm);
+  const syncCodeSubmit = () => {
+    codeSubmit.disabled = $$(".code-box", codeWrap).some((box) => !/^\d$/.test(box.value));
+  };
+  codeWrap.addEventListener("input", syncCodeSubmit);
+  codeWrap.addEventListener("paste", () => setTimeout(syncCodeSubmit, 0));
+  syncCodeSubmit();
   codeForm.addEventListener("submit", (event) => {
     event.preventDefault();
     clearCodeErr(codeWrap);
@@ -4069,6 +4083,10 @@ function initLogin() {
 
   const passwordForm = $("[data-login-password-form]", steps);
   const passwordEl = $("#loginPassword", passwordForm);
+  const passwordSubmit = $("button[type='submit']", passwordForm);
+  const syncPasswordSubmit = () => { passwordSubmit.disabled = !passwordEl.value; };
+  passwordEl.addEventListener("input", syncPasswordSubmit);
+  syncPasswordSubmit();
   passwordForm.addEventListener("submit", (event) => {
     event.preventDefault();
     clearErr(passwordEl);
@@ -4356,6 +4374,18 @@ function initWelcome() {
   const birthdayInputs = [$("#dobMonth", detailsForm), $("#dobDay", detailsForm), $("#dobYear", detailsForm)];
   const birthdayError = $("[data-birthday-error]", detailsForm);
   const usernameEl = $("#username", usernameForm);
+  const detailsSubmit = $("button[type='submit']", detailsForm);
+  const usernameSubmit = $("button[type='submit']", usernameForm);
+  const syncDetailsSubmit = () => {
+    detailsSubmit.disabled = !(
+      firstNameEl.value.trim()
+      && lastNameEl.value.trim()
+      && birthdayISOFromFields(detailsForm)
+    );
+  };
+  const syncUsernameSubmit = () => {
+    usernameSubmit.disabled = !/^[a-zA-Z0-9_]{3,20}$/.test(usernameEl.value.trim());
+  };
 
   const showState = (state) => {
     main.dataset.welcomeState = state;
@@ -4379,9 +4409,12 @@ function initWelcome() {
   firstNameEl.value = authAtStart?.firstName || "";
   lastNameEl.value = authAtStart?.lastName || "";
   birthdayInputs.forEach((input) => {
-    input.addEventListener("input", clearBirthdayError);
-    input.addEventListener("change", clearBirthdayError);
+    input.addEventListener("input", () => { clearBirthdayError(); syncDetailsSubmit(); });
+    input.addEventListener("change", () => { clearBirthdayError(); syncDetailsSubmit(); });
   });
+  firstNameEl.addEventListener("input", syncDetailsSubmit);
+  lastNameEl.addEventListener("input", syncDetailsSubmit);
+  usernameEl.addEventListener("input", syncUsernameSubmit);
   initDateComboboxes(detailsForm);
   clearErrsOnInput(detailsForm);
 
@@ -4401,6 +4434,7 @@ function initWelcome() {
     setAuth({ ...getAuth(), firstName, lastName, name: `${firstName} ${lastName}`, birthday });
     const suggestedUsername = `${firstName}${lastName}`.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 20);
     if (!usernameEl.value && suggestedUsername.length >= 3) usernameEl.value = suggestedUsername;
+    syncUsernameSubmit();
     showState("username");
   });
 
@@ -4425,6 +4459,8 @@ function initWelcome() {
     location.href = "home.html";
   });
   clearErrsOnInput(usernameForm);
+  syncDetailsSubmit();
+  syncUsernameSubmit();
 }
 
 function initForgot() {
@@ -4432,6 +4468,10 @@ function initForgot() {
   if (!form) return;
   const card = $("#forgotCard");
   const emailEl = form.querySelector("#email");
+  const submit = $("button[type='submit']", form);
+  const syncSubmit = () => { submit.disabled = !validEmail(emailEl.value.trim()); };
+  emailEl.addEventListener("input", syncSubmit);
+  syncSubmit();
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     clearErr(emailEl);

@@ -10,11 +10,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../gtl-app/tokens.css?v=20260729-light-theme-3">
-    <link rel="stylesheet" href="../gtl-app/styles.css?v=20260805-trade-layouts-11">
-    <link rel="stylesheet" href="../gtl-app/home.css?v=20260805-trade-layouts-3">
-    <link rel="stylesheet" href="../gtl-app/game.css?v=20260805-trade-layouts-10">
+    <link rel="stylesheet" href="../gtl-app/styles.css?v=20260805-walkthrough-2">
+    <link rel="stylesheet" href="../gtl-app/home.css?v=20260805-walkthrough-2">
+    <link rel="stylesheet" href="../gtl-app/game.css?v=20260805-walkthrough-2">
     <link rel="stylesheet" href="../gtl-app/wallet.css?v=20260804-order-condition-spacing-1">
-    <link rel="stylesheet" href="../gtl-app/auth.css?v=20260804-auth-flow-update-1">
+    <link rel="stylesheet" href="../gtl-app/auth.css?v=20260805-authentication-alignment-1">
     <link rel="stylesheet" href="../gtl-app/welcome.css?v=20260804-auth-flow-update-1">
     <link rel="stylesheet" href="../gtl-app/location.css">
     <link rel="stylesheet" href="../gtl-app/ranking.css?v=20260730-light-theme-1">
@@ -22,8 +22,8 @@
     <link rel="stylesheet" href="../gtl-app/contact.css?v=20260729-light-theme-2">
     <link rel="stylesheet" href="../gtl-app/fees.css">
     <link rel="stylesheet" href="../gtl-app/rules.css?v=20260730-mobile-table-1">
-    <link rel="stylesheet" href="../gtl-app/waitlist.css?v=20260730-dark-only-1">
-  <link rel="stylesheet" href="design-system.css?v=20260805-update-log-4">
+    <link rel="stylesheet" href="../gtl-app/waitlist.css?v=20260805-walkthrough-6">
+  <link rel="stylesheet" href="design-system.css?v=20260805-authentication-alignment-4">
     <script src="../gtl-app/brand.js?v=20260804-1" defer></script>
   </head>
   <body class="design-system-page">
@@ -40,20 +40,18 @@
         <a href="#overview" class="is-active">Overview</a>
         <a href="#update-log">Update Log</a>
         <span class="side-nav-label">Pages</span>
+        <a href="#page-authentication">Authentication</a>
         <a href="#page-drawer">Buy / Sell</a>
         <a href="#page-contact">Contact</a>
         <a href="#page-fees">Fees</a>
         <a href="#page-game">Game</a>
         <a href="#page-home">Home</a>
         <a href="#page-location">Location</a>
-        <a href="#page-login">Login</a>
         <a href="#page-rules">Monthly Competition Rules</a>
         <a href="#page-portfolio">Portfolio</a>
         <a href="#page-account">Profile &amp; Settings</a>
         <a href="#page-ranking">Ranking</a>
-        <a href="#page-registration">Registration</a>
         <a href="#page-waitlist">Waitlist</a>
-        <a href="#page-welcome">Welcome</a>
         <span class="side-nav-label">Primitives</span>
         <a href="#borders">Borders</a>
         <a href="#tokens">Colors</a>
@@ -94,7 +92,7 @@
         </header>
 
         <dl class="ds-overview-metrics" aria-label="Design system snapshot">
-          <div><dt>Pages</dt><dd>14</dd></div>
+          <div><dt>Pages</dt><dd>12</dd></div>
           <div><dt>Production tokens</dt><dd>55</dd></div>
           <div><dt>Open decisions</dt><dd>0</dd></div>
         </dl>
@@ -134,6 +132,67 @@
 
         <div class="ds-update-list">
           <details class="ds-update-card" open>
+            <summary>
+              <span class="ds-update-summary">
+                <strong>Update 03 — Authentication Consolidation</strong>
+                <span class="ds-update-meta">Covers changes from 5 August</span>
+              </span>
+              <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
+            </summary>
+
+            <div class="ds-update-content">
+              <section>
+                <h2>Authentication</h2>
+                <ul>
+                  <li>Combined Login, Registration, and Welcome into one canonical Authentication page.</li>
+                  <li>Preserved every login, recovery, account-creation, verification, onboarding, and validation variant.</li>
+                  <li>Organised the flat lays into seven clearly labelled flow and validation sections.</li>
+                </ul>
+              </section>
+
+              <section class="ds-update-handoff">
+                <h2>Developer Handoff</h2>
+                <p>Use Authentication as the single Design System reference for the complete signed-out entry, account-creation, recovery, and post-registration onboarding journey.</p>
+              </section>
+            </div>
+          </details>
+
+          <details class="ds-update-card">
+            <summary>
+              <span class="ds-update-summary">
+                <strong>Update 02 — Home and Waitlist Alignment</strong>
+                <span class="ds-update-meta">Covers changes from 5 August</span>
+              </span>
+              <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
+            </summary>
+
+            <div class="ds-update-content">
+              <section>
+                <h2>Home and Shared Previews</h2>
+                <ul>
+                  <li>Updated flat-lay footers to match the app’s authenticated and guest Sitemap and Legal structure.</li>
+                  <li>Changed No outcome labels on trade cards from red to neutral text and stabilised two-line bet sentence spacing.</li>
+                  <li>Aligned tablet and desktop trade carousels with production card sizing and left-focused overflow behaviour.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>Waitlist</h2>
+                <ul>
+                  <li>Added explicit already-registered and returning-visitor states alongside validation, progress, confirmation, and sharing.</li>
+                  <li>Remembered successful signup in the browser and restored You’re on the List automatically on return.</li>
+                  <li>Simplified state details and rewrote Required States, Key Implementation Notes, and Open Validation for product handoff.</li>
+                </ul>
+              </section>
+
+              <section class="ds-update-handoff">
+                <h2>Developer Handoff</h2>
+                <p>Validate the production duplicate-email response, approve customer-facing confirmation copy, and confirm whether waitlist completion remains browser-specific or follows the customer across devices.</p>
+              </section>
+            </div>
+          </details>
+
+          <details class="ds-update-card">
             <summary>
               <span class="ds-update-summary">
                 <strong>Update 01 — Open Trades and Design System Alignment</strong>
@@ -179,24 +238,9 @@
         </div>
       </section>
 
-      <section id="page-home" class="section individual-page-doc" data-individual-page="home"></section>
+      <section id="page-authentication" class="section individual-page-doc" data-individual-page="authentication"></section>
 
-      <section id="page-welcome" class="section individual-page-doc" data-individual-page="welcome">
-        <div class="individual-page-head">
-          <span class="eyebrow">Page documentation</span>
-          <h1>Welcome</h1>
-          <p>Post-registration onboarding covering the account-setup transition, personal details, age eligibility, username selection, and welcome credits.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>welcome.html</code></span><span>7 documented states</span><span>Mobile · Tablet · Desktop</span></div>
-        </div>
-        <article class="panel individual-page-panel">
-          <div class="individual-device-tabs" role="tablist" aria-label="Welcome screen sizes">
-            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
-            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
-            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
-          </div>
-          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
-        </article>
-      </section>
+      <section id="page-home" class="section individual-page-doc" data-individual-page="home"></section>
 
       <section id="page-waitlist" class="section individual-page-doc" data-individual-page="waitlist"></section>
 
@@ -254,40 +298,6 @@
       </section>
 
       <section id="page-fees" class="section individual-page-doc" data-individual-page="fees"></section>
-
-      <section id="page-login" class="section individual-page-doc" data-individual-page="login">
-        <div class="individual-page-head">
-          <span class="eyebrow">Page documentation</span>
-          <h1>Login</h1>
-          <p>The unified email-or-phone login flow, six-digit verification, password alternative, recovery, and inline validation.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>login.html</code>, <code>forgot.html</code></span><span>9 documented states</span><span>Mobile · Tablet · Desktop</span></div>
-        </div>
-        <article class="panel individual-page-panel">
-          <div class="individual-device-tabs" role="tablist" aria-label="Login screen sizes">
-            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
-            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
-            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
-          </div>
-          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
-        </article>
-      </section>
-
-      <section id="page-registration" class="section individual-page-doc" data-individual-page="registration">
-        <div class="individual-page-head">
-          <span class="eyebrow">Page documentation</span>
-          <h1>Registration</h1>
-          <p>The unified email-or-social account creation flow, phone verification, password creation, and inline validation.</p>
-          <div class="individual-page-meta"><span>Implementation: <code>signup.html</code></span><span>8 documented states</span><span>Mobile · Tablet · Desktop</span></div>
-        </div>
-        <article class="panel individual-page-panel">
-          <div class="individual-device-tabs" role="tablist" aria-label="Registration screen sizes">
-            <button class="is-active" type="button" role="tab" aria-selected="true" data-individual-device="mobile">Mobile</button>
-            <button type="button" role="tab" aria-selected="false" data-individual-device="tablet">Tablet</button>
-            <button type="button" role="tab" aria-selected="false" data-individual-device="desktop">Desktop</button>
-          </div>
-          <div class="flat-lay-canvas individual-page-canvas" data-individual-content data-flat-device="mobile"></div>
-        </article>
-      </section>
 
       <section id="page-contact" class="section individual-page-doc" data-individual-page="contact"></section>
 
@@ -1649,6 +1659,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260805-update-log-1"></script>
+    <script src="script.js?v=20260805-documentation-standard-2"></script>
   </body>
 </html>
