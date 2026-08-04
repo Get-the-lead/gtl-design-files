@@ -3621,6 +3621,117 @@ function componentSectionHeader(title, copy) {
   return `<div class="section-header"><h2>${title}</h2><p>${copy}</p></div>`;
 }
 
+function primitiveTokenRows(items) {
+  return `<div class="token-list ds-primitive-token-list">${items.map(([token, value, usage]) => `<div><code>${token}</code><strong>${value}</strong><span>${usage}</span></div>`).join("")}</div>`;
+}
+
+function primitiveSwatchGroup(title, items) {
+  return `<section class="color-token-group ds-primitive-color-group"><div class="panel-header"><h3>${title}</h3><span class="tag">tokens.css</span></div><div class="swatch-grid ds-primitive-swatch-grid">${items.map(([token, name, usage]) => `<article class="swatch"><span style="--swatch: var(${token})"></span><strong>${name}</strong><code>${token}</code><p class="ds-token-use">${usage}</p></article>`).join("")}</div></section>`;
+}
+
+function syncPrimitiveSections() {
+  const colors = document.querySelector("#tokens");
+  const spacing = document.querySelector("#spacing");
+  const radius = document.querySelector("#radius");
+  const shadows = document.querySelector("#shadows");
+  const borders = document.querySelector("#borders");
+  const effects = document.querySelector("#effects");
+  const typography = document.querySelector("#typography");
+
+  if (colors) colors.innerHTML = `${componentSectionHeader("Colors", "Only production color tokens currently referenced by the GTL app. Theme-aware tokens update automatically between dark and light modes.")}
+    <div class="color-section-stack">
+      ${primitiveSwatchGroup("Surfaces and Text", [
+        ["--bg", "Page Background", "Use for the application canvas and full-page backgrounds."],
+        ["--bg-2", "Focused Background", "Use behind focused fields and subtly separated page regions."],
+        ["--surface", "Primary Surface", "Use for cards, fields, menus, and primary contained surfaces."],
+        ["--surface-2", "Secondary Surface", "Use for nested controls, secondary cards, and hover treatments."],
+        ["--surface-3", "Strong Surface", "Use for the strongest neutral separation and disabled surfaces."],
+        ["--ink", "Primary Text", "Use for headings, values, and primary interface copy."],
+        ["--ink-2", "Secondary Text", "Use for body copy, labels, and supporting information."],
+        ["--ink-3", "Muted Text", "Use for placeholders, hints, captions, and low-emphasis metadata."],
+      ])}
+      ${primitiveSwatchGroup("Brand and Semantic", [
+        ["--green", "Brand Green", "Use for primary actions, positive fills, live indicators, and brand emphasis."],
+        ["--green-ink", "Accessible Green Text", "Use for green text and icons that must retain contrast in both themes."],
+        ["--green-strong", "Green Hover", "Use for stronger positive interaction states such as primary-button hover."],
+        ["--green-soft", "Green Tint", "Use for positive badges, selected backgrounds, and subtle success surfaces."],
+        ["--no", "Negative Red", "Use for No/Sell fills, destructive emphasis, and validation errors."],
+        ["--no-ink", "Accessible Red Text", "Use for red text and icons that must retain contrast in both themes."],
+        ["--no-soft", "Red Tint", "Use behind validation errors and other subtle negative states."],
+        ["--gold", "Tie and Warning", "Use for TIE market data, paused trading, pending orders, and ranking highlights."],
+      ])}
+    </div>`;
+
+  if (spacing) spacing.innerHTML = `${componentSectionHeader("Spacing", "The complete spacing scale currently used for component rhythm, page gutters, and section separation.")}
+    <article class="panel"><div class="panel-header"><h3>Spacing Tokens</h3><span class="tag">tokens.css</span></div>${primitiveTokenRows([
+      ["--s1", "4px", "Micro offsets between icons, labels, and compact metadata."],
+      ["--s2", "8px", "Tight control gaps, field spacing, and inline feedback."],
+      ["--s3", "12px", "Compact component padding and grouped control spacing."],
+      ["--s4", "16px", "Default component gap and small card padding."],
+      ["--s5", "20px", "Mobile page gutters, field padding, and standard card padding."],
+      ["--s6", "24px", "Action grouping and medium content-block separation."],
+      ["--s8", "32px", "Major card sections and heading-to-content spacing."],
+      ["--s10", "40px", "Large section breaks and spacious panel padding."],
+      ["--s12", "48px", "Page-level and hero content separation."],
+      ["--s16", "64px", "Major section padding and standard page-bottom clearance."],
+      ["--s20", "80px", "Large editorial or onboarding separation."],
+      ["--s24", "96px", "Exceptional top-level spacing used only by the largest page compositions."],
+    ])}</article>`;
+
+  if (radius) radius.innerHTML = `${componentSectionHeader("Radius", "Production shape tokens, ordered from compact controls to fully rounded actions.")}
+    <article class="panel"><div class="panel-header"><h3>Radius Tokens</h3><span class="tag">tokens.css</span></div>${primitiveTokenRows([
+      ["--r-sm", "10px", "Compact menus, small controls, and local interactive states."],
+      ["--r-md", "16px", "Code inputs, dropdowns, and medium contained surfaces."],
+      ["--r-lg", "22px", "Cards, dialogs, and standard elevated panels."],
+      ["--r-xl", "28px", "Large feature cards, sheets, and prominent content surfaces."],
+      ["--r-pill", "999px", "Buttons, fields, chips, segmented controls, and circular actions."],
+    ])}</article>`;
+
+  if (shadows) shadows.innerHTML = `${componentSectionHeader("Shadows", "The two elevation levels and the shared keyboard-focus treatment used by the app.")}
+    <article class="panel"><div class="panel-header"><h3>Elevation and Focus</h3><span class="tag">tokens.css · styles.css</span></div>${primitiveTokenRows([
+      ["--shadow-sm", "Subtle elevation", "Use for floating controls, compact menus, and lightly raised surfaces."],
+      ["--shadow", "Overlay elevation", "Use for drawers, dialogs, dropdowns, and major floating surfaces."],
+      ["focus-visible", "2px green outline", "Use the global keyboard-only focus ring; do not replace it with a permanent outline."],
+    ])}</article>`;
+
+  if (borders) borders.innerHTML = `${componentSectionHeader("Borders", "Only the structural and semantic border tokens currently referenced by app components.")}
+    <article class="panel"><div class="panel-header"><h3>Border Tokens</h3><span class="tag">tokens.css</span></div>${primitiveTokenRows([
+      ["--line", "Subtle line", "Use for quiet dividers, card outlines, and nested structure."],
+      ["--line-2", "Strong line", "Use for fields, interactive boundaries, and stronger neutral separation."],
+      ["--green-line", "Positive line", "Use for selected, successful, live, and Yes-state borders."],
+      ["--no-line", "Negative line", "Use for invalid, destructive, and No/Sell-state borders."],
+    ])}</article>`;
+
+  if (effects) effects.innerHTML = `${componentSectionHeader("Layout and Motion", "Shared layout measurements, animation curves, and the production green glow used across the app.")}
+    <div class="grid two">
+      <article class="panel"><div class="panel-header"><h3>Layout</h3><span class="tag">tokens.css</span></div>${primitiveTokenRows([
+        ["--maxw", "1180px", "Maximum width for the primary desktop content container."],
+        ["--header-h", "64px", "Shared header height used when calculating page and account layouts."],
+        ["--page-top", "108px / 128px", "Top clearance below the floating header; increases at the tablet breakpoint."],
+      ])}</article>
+      <article class="panel"><div class="panel-header"><h3>Motion and Glow</h3><span class="tag">tokens.css</span></div>${primitiveTokenRows([
+        ["--ease", "Standard easing", "Use for hover, opacity, colour, and routine state transitions."],
+        ["--ease-out", "Entrance easing", "Use for drawers, dialogs, celebrations, and content entering the viewport."],
+        ["--green-glow", "Positive glow", "Use sparingly for live pulses, success rings, and celebratory positive emphasis."],
+      ])}</article>
+    </div>`;
+
+  if (typography) typography.innerHTML = `${componentSectionHeader("Typography", "The two production font families and the complete type scale currently used by GTL.")}
+    <article class="panel"><div class="panel-header"><h3>Typography Tokens</h3><span class="tag">tokens.css</span></div>${primitiveTokenRows([
+        ["--font-display", "Space Grotesk", "Use for page headings, card headings, scores, prices, and high-emphasis values."],
+        ["--font-ui", "Inter", "Use for body copy, labels, buttons, fields, navigation, and dense interface text."],
+        ["--fs-eyebrow", "0.72rem", "Uppercase section labels, hints, captions, and compact timestamps."],
+        ["--fs-label", "0.8rem", "Field labels, metadata, compact buttons, and control text."],
+        ["--fs-body", "0.95rem", "Default body copy, standard buttons, and form inputs."],
+        ["--fs-lead", "1.05rem", "Introductory copy and emphasized interface sentences."],
+        ["--fs-h3", "1.1–1.4rem", "Card and subsection headings."],
+        ["--fs-h2", "1.5–2.2rem", "Primary section and panel headings."],
+        ["--fs-hero", "2.4–4.6rem", "Page hero and major onboarding headings."],
+        ["--fs-score", "2.2–3.4rem", "Scores inside repeated live-game cards."],
+        ["--fs-score-lg", "3.4–5.6rem", "The primary game-page scoreboard."],
+      ])}</article>`;
+}
+
 function componentTeamMark(team, className = "team-logo") {
   return `<span class="team-mark ${className} is-fallback" aria-label="${team.abbr}" style="--team-color:${team.color}"><span class="team-mark-abbr">${team.abbr}</span></span>`;
 }
@@ -3998,6 +4109,7 @@ window.addEventListener("hashchange", () => {
 });
 
 setDesignSystemTheme(currentDesignSystemTheme(), { persist: false });
+syncPrimitiveSections();
 syncAppComponentSections();
 installDesignSystemThemeToggles();
 startConfirmationTimers();

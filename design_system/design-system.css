@@ -4433,6 +4433,17 @@
   font-weight: 700;
 }
 
+.design-system-page .ds-primitive-swatch-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.design-system-page .ds-token-use {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+  margin: 0;
+}
+
 .design-system-page code {
   color: var(--green);
   font-size: var(--fs-label);
@@ -4463,6 +4474,37 @@
 .design-system-page .token-list span {
   justify-self: end;
   text-align: right;
+}
+
+.design-system-page .ds-primitive-token-list div {
+  grid-template-columns: minmax(145px, 0.7fr) minmax(120px, 0.65fr) minmax(260px, 1.65fr);
+}
+
+.design-system-page .ds-primitive-token-list strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+  font-weight: 700;
+}
+
+.design-system-page .ds-primitive-token-list span {
+  justify-self: start;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.design-system-page #effects .ds-primitive-token-list div {
+  grid-template-columns: 1fr;
+  gap: var(--s2);
+}
+
+.design-system-page #effects .ds-primitive-token-list span {
+  grid-column: 1;
+}
+
+@media (max-width: 1180px) {
+  .design-system-page .ds-primitive-swatch-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .design-system-page :is(.spacing-demo, .radius-demo, .shadow-demo) {
