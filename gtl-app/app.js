@@ -92,9 +92,21 @@ const GAMES = [
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 const leaderOf = (g) => (g.home.score === g.away.score ? null : g.home.score > g.away.score ? "home" : "away");
+function marketSubjectSide(game, market) {
+  if (market === "tie") return null;
+  const leadingSide = leaderOf(game) || "home";
+  const trailingSide = leadingSide === "home" ? "away" : "home";
+  return market === "gtl" ? trailingSide : leadingSide;
+}
+function positionTargetSide(game, market, side) {
+  const subjectSide = marketSubjectSide(game, market);
+  if (!subjectSide) return null;
+  if (side === "yes") return subjectSide;
+  return subjectSide === "home" ? "away" : "home";
+}
 function drawerWinHeading(game, market, side) {
   if (market === "tie") return `You win if the game is ${side === "yes" ? "tied" : "not tied"}`;
-  const team = game.home.name;
+  const team = game[marketSubjectSide(game, market)].name;
   if (market === "gtl") return `You win if ${team} ${side === "yes" ? "get" : "do not get"} the lead`;
   return `You win if ${team} ${side === "yes" ? "keep" : "do not keep"} the lead`;
 }
@@ -326,6 +338,7 @@ function navHTML(authed) {
   return `<nav class="header-nav" aria-label="Primary navigation">
     <a href="home.html" data-scroll-top>Home</a>
     <a href="home.html#live">Live Games</a>
+    ${!authed ? `<a href="waitlist.html#top">Waitlist <span class="header-nav-note">(Prototype only)</span></a>` : ""}
     ${authed ? `<a href="ranking.html">Ranking</a>` : ""}
     ${authed ? `<a href="wallet.html">Portfolio</a>` : ""}
     ${authed ? `<a href="profile.html">Profile &amp; Settings</a>` : ""}
@@ -384,7 +397,7 @@ function renderHeader() {
           </button>
         </div>
         <div class="menu-prototype-row">
-          <a class="menu-location" href="waitlist.html">
+          <a class="menu-location" href="waitlist.html#top">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.5h16v11H4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span>Waitlist</span>
           </a>
@@ -1256,11 +1269,7 @@ function portfolioTradeExperienceHTML(list, { menu = false } = {}) {
 // horizontal home-page carousel layout. The team chip makes the desired outcome explicit.
 function positionOutcome(p, g) {
   if (p.market === "tie") return { label: "Tie", teams: [g.home, g.away], colors: [g.home.color, g.away.color] };
-  const leadingSide = leaderOf(g) || "home";
-  const trailingSide = leadingSide === "home" ? "away" : "home";
-  const targetSide = p.market === "gtl"
-    ? (p.side === "yes" ? trailingSide : leadingSide)
-    : (p.side === "yes" ? leadingSide : trailingSide);
+  const targetSide = positionTargetSide(g, p.market, p.side);
   const team = g[targetSide];
   return { label: team.name, teams: [team], colors: [team.color] };
 }
@@ -3006,41 +3015,58 @@ function bindPositionActions(root) {
 
 function initPortfolioTradeExperiences(root = document) {
   $$('[data-portfolio-trades]', root).forEach((experience) => {
+    let disposeCarousel = () => {};
+    let scorecardUpdateRevision = 0;
+
     const renderStage = (active) => {
+      disposeCarousel();
+      scorecardUpdateRevision += 1;
       const groups = groupedOpenPositions(currentPositions());
       const menu = experience.dataset.tradeMenu === "true";
       const stage = $('[data-trade-stage]', experience);
       if (!stage) return;
-      experience.dataset.tradeActive = active;
+      const resolvedActive = active === "all" || groups.some(({ game }) => game.id === active)
+        ? active
+        : (groups.length > 1 ? "all" : groups[0]?.game.id || "");
+      experience.dataset.tradeActive = resolvedActive;
       $$('[data-trade-filter]', experience).forEach((button) => {
-        const selected = button.dataset.tradeFilter === active;
+        const selected = button.dataset.tradeFilter === resolvedActive;
         button.classList.toggle('is-active', selected);
         button.setAttribute('aria-selected', String(selected));
       });
-      stage.innerHTML = portfolioTradeStageHTML(groups, active, menu);
+      stage.innerHTML = portfolioTradeStageHTML(groups, resolvedActive, menu);
       bindCarousel();
     };
 
     const updateScorecard = (gameId) => {
+      const updateRevision = ++scorecardUpdateRevision;
       const current = $('[data-trade-scorecard]', experience);
       const game = GAMES.find((item) => item.id === gameId);
       if (!current || !game || current.dataset.scoreGame === gameId) return;
       current.classList.add('is-changing');
       window.setTimeout(() => {
-        if (!current.isConnected) return;
+        const active = experience.dataset.tradeActive;
+        const scorecardStillCurrent = current === $('[data-trade-scorecard]', experience);
+        if (updateRevision !== scorecardUpdateRevision || !current.isConnected || !scorecardStillCurrent) return;
+        if (active !== 'all' && active !== gameId) return;
         current.outerHTML = tradeScorecardHTML(game).replace('trade-layout-scorecard"', 'trade-layout-scorecard is-entering"');
       }, 120);
     };
 
     const bindCarousel = () => {
+      disposeCarousel();
       const carousel = $('[data-portfolio-trade-list]', experience);
       const navigation = $('[data-portfolio-trade-navigation]', experience);
       const dots = $('[data-portfolio-trade-dots]', experience);
       if (!carousel || !navigation || !dots) return;
       const cards = $$('.portfolio-trade-card', carousel);
       let activeIndex = 0;
+      let disposed = false;
+      let frame = 0;
+      let resizeObserver;
       const offsets = () => carouselCardOffsets(carousel, cards);
       const setActive = (index, scroll = false) => {
+        if (disposed || !carousel.isConnected) return;
         const cardPositions = offsets();
         activeIndex = Math.max(0, Math.min(index, cardPositions.length - 1));
         $$('[data-portfolio-trade-page]', dots).forEach((dot, dotIndex) => dot.classList.toggle('is-active', dotIndex === activeIndex));
@@ -3051,6 +3077,7 @@ function initPortfolioTradeExperiences(root = document) {
         if (focused) updateScorecard(focused.dataset.tradeGame);
       };
       const renderNavigation = () => {
+        if (disposed || !carousel.isConnected) return;
         const scrolls = carouselContentOverflows(carousel, cards);
         carousel.classList.toggle('is-centered', !scrolls);
         syncCarouselPageTail(carousel, cards, scrolls);
@@ -3058,18 +3085,33 @@ function initPortfolioTradeExperiences(root = document) {
         dots.innerHTML = scrolls ? cards.map((_, index) => `<button class="game-position-dot${index === 0 ? ' is-active' : ''}" type="button" data-portfolio-trade-page="${index}" aria-label="Focus trade card ${index + 1} of ${cards.length}"></button>`).join('') : '';
         setActive(Math.min(activeIndex, cards.length - 1));
       };
-      let frame = 0;
-      carousel.addEventListener('scroll', () => {
-        if (frame) return;
+      const handleScroll = () => {
+        if (disposed || frame) return;
         frame = requestAnimationFrame(() => {
           frame = 0;
+          if (disposed || !carousel.isConnected) return;
           const cardPositions = offsets();
           const index = cardPositions.reduce((best, offset, i) => Math.abs(offset - carousel.scrollLeft) < Math.abs(cardPositions[best] - carousel.scrollLeft) ? i : best, 0);
           setActive(index);
         });
-      }, { passive: true });
-      if (window.ResizeObserver) new ResizeObserver(renderNavigation).observe(carousel);
+      };
+      carousel.addEventListener('scroll', handleScroll, { passive: true });
+      if (window.ResizeObserver) {
+        resizeObserver = new ResizeObserver(renderNavigation);
+        resizeObserver.observe(carousel);
+      }
       else window.addEventListener('resize', renderNavigation, { passive: true });
+      disposeCarousel = () => {
+        if (disposed) return;
+        disposed = true;
+        scorecardUpdateRevision += 1;
+        if (frame) cancelAnimationFrame(frame);
+        carousel.removeEventListener('scroll', handleScroll);
+        resizeObserver?.disconnect();
+        if (!window.ResizeObserver) window.removeEventListener('resize', renderNavigation);
+        if (experience._setPortfolioTradePage === setActive) delete experience._setPortfolioTradePage;
+        disposeCarousel = () => {};
+      };
       renderNavigation();
       experience._setPortfolioTradePage = setActive;
     };

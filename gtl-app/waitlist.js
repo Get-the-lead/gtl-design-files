@@ -1,4 +1,10 @@
 (() => {
+  const resetLinkedScroll = () => {
+    if (window.location.hash === "#top") window.scrollTo(0, 0);
+  };
+  resetLinkedScroll();
+  window.addEventListener("pageshow", resetLinkedScroll);
+
   const form = document.querySelector(".waitlist-form");
   const emailInput = document.querySelector("#waitlist-email");
   const message = document.querySelector("#form-message");
@@ -242,4 +248,60 @@
     gameCardToggle.setAttribute("aria-expanded", String(isOpen));
     gameCardToggle.querySelector(".toggle-label").textContent = isOpen ? "Hide Bets" : "See Bets";
   });
+
+  const cardFan = document.querySelector(".game-card-fan");
+  const leftCard = cardFan?.querySelector(".fan-card--left");
+  const centerCard = cardFan?.querySelector(".fan-card--center");
+  const rightCard = cardFan?.querySelector(".fan-card--right");
+  const cardFanPrevious = cardFan?.querySelector("[data-card-fan-previous]");
+  const cardFanNext = cardFan?.querySelector("[data-card-fan-next]");
+  const cardFanStatus = cardFan?.querySelector("[data-card-fan-status]");
+  const cardFanCards = [leftCard, centerCard, rightCard].filter(Boolean);
+  const reduceCardMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let activeCardIndex = 1;
+  let cardFanIsSwitching = false;
+
+  function positionFanCards() {
+    cardFanCards.forEach((card, index) => {
+      const offset = (index - activeCardIndex + cardFanCards.length) % cardFanCards.length;
+      const isCenter = offset === 0;
+      card.classList.toggle("fan-card", !isCenter);
+      card.classList.toggle("fan-card--center", isCenter);
+      card.classList.toggle("fan-card--right", offset === 1);
+      card.classList.toggle("fan-card--left", offset === cardFanCards.length - 1);
+      card.setAttribute("aria-hidden", String(!isCenter));
+      card.inert = !isCenter;
+    });
+    const currentCard = cardFanCards[activeCardIndex];
+    if (cardFanStatus && currentCard) cardFanStatus.textContent = currentCard.getAttribute("aria-label") || "Bet card changed";
+  }
+
+  function switchFanCard(direction) {
+    if (!cardFan || cardFanIsSwitching || cardFanCards.length < 2) return;
+    const step = direction === "next" ? 1 : -1;
+    if (reduceCardMotion.matches) {
+      activeCardIndex = (activeCardIndex + step + cardFanCards.length) % cardFanCards.length;
+      positionFanCards();
+      return;
+    }
+    cardFanIsSwitching = true;
+    cardFanPrevious.disabled = true;
+    cardFanNext.disabled = true;
+    cardFan.classList.add(`is-switching-${direction}`);
+    window.setTimeout(() => {
+      activeCardIndex = (activeCardIndex + step + cardFanCards.length) % cardFanCards.length;
+      positionFanCards();
+      cardFan.classList.add("has-swapped");
+    }, 220);
+    window.setTimeout(() => {
+      cardFan.classList.remove(`is-switching-${direction}`, "has-swapped");
+      cardFanPrevious.disabled = false;
+      cardFanNext.disabled = false;
+      cardFanIsSwitching = false;
+    }, 560);
+  }
+
+  cardFanPrevious?.addEventListener("click", () => switchFanCard("previous"));
+  cardFanNext?.addEventListener("click", () => switchFanCard("next"));
+  positionFanCards();
 })();

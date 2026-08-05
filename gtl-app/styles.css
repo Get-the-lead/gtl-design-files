@@ -328,6 +328,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; lett
   transition: background 0.18s var(--ease), color 0.18s var(--ease);
 }
 .header-nav a:hover { background: rgba(255, 255, 255, 0.08); color: var(--ink); }
+.header-nav-note { color: var(--ink-3); font-size: .62rem; font-weight: 600; }
+.header-nav a:hover .header-nav-note { color: var(--ink-2); }
 .header-nav-sep { width: 1px; height: 20px; margin: 0 var(--s1); background: var(--line-2); }
 .header-nav-logout {
   display: inline-flex; align-items: center;
@@ -526,11 +528,17 @@ body.pos-open { overflow: hidden; }
   }
   .hpos-backdrop.is-open { opacity: 1; pointer-events: auto; }
   .hpos-panel {
+    right: calc(-1 * var(--s4));
+    width: min(376px, calc(100vw - var(--s2)));
     max-height: calc(100vh - 96px);
     max-height: calc(100dvh - 96px);
+    min-width: 0;
+    padding-right: var(--s4);
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   }
@@ -781,11 +789,21 @@ body.pos-open { overflow: hidden; }
 
 .trade-layout-experience.is-menu { gap: var(--s3); }
 .trade-layout-experience.is-menu .trade-game-strip { margin-top: 0; }
-.trade-layout-menu-list, .trade-layout-menu-group { display: grid; gap: var(--s3); }
+.trade-layout-menu-list, .trade-layout-menu-group { display: grid; min-width: 0; width: 100%; gap: var(--s3); }
 .trade-layout-menu-group { padding-top: var(--s5); border-top: 1px solid var(--line); }
 .trade-layout-menu-group:first-child { padding-top: 0; border-top: 0; }
 .trade-layout-experience.is-menu .trade-layout-scorecard .gb { padding-block: var(--s3) var(--s5); }
-.trade-layout-experience.is-menu .portfolio-trade-card { width: 100%; flex: none; }
+.trade-layout-experience.is-menu .trade-layout-scorecard .gb-score {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: var(--s2);
+}
+.trade-layout-experience.is-menu .trade-layout-scorecard .gb-logo { width: 52px; min-width: 44px; }
+.trade-layout-experience.is-menu .trade-layout-scorecard :is(.gb-num, .gb-dash) { font-size: 4rem; }
+.trade-layout-experience.is-menu .trade-layout-scorecard .gb-score.is-compact-score :is(.gb-num, .gb-dash) { font-size: 3.2rem; }
+.trade-layout-experience.is-menu .portfolio-trade-card { min-width: 0; width: 100%; flex: none; }
+.trade-layout-experience.is-menu .portfolio-trade-card .trade-current-condition { min-height: 0; }
+.trade-layout-experience.is-menu .oc-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.trade-layout-experience.is-menu .oc-actions button { min-width: 0; }
 .hpos-list:has(.trade-layout-experience) { gap: 0; }
 
 @media (max-width: 520px) {

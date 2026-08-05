@@ -14,10 +14,10 @@
   <link rel="stylesheet" href="tokens.css" />
   <link rel="stylesheet" href="styles.css?v=20260805-walkthrough-2" />
   <link rel="stylesheet" href="home.css?v=20260805-walkthrough-2" />
-  <link rel="stylesheet" href="waitlist.css?v=20260805-walkthrough-6" />
+  <link rel="stylesheet" href="waitlist.css?v=20260806-card-fan-2" />
   <script src="brand.js?v=20260804-1" defer></script>
 </head>
-<body class="waitlist-page">
+<body class="waitlist-page" id="top">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="waitlist-header">
@@ -83,7 +83,7 @@
       <div class="waitlist-shell">
         <div class="section-intro">
           <span class="eyebrow">Every drive matters</span>
-          <h2 id="promise-title">Built for the moments between the moments.</h2>
+          <h2 id="promise-title">Don't wait for the final whistle</h2>
           <p>Fast, focused markets that keep you in the action from kickoff to the final play.</p>
         </div>
 
@@ -126,7 +126,7 @@
         </div>
 
         <div class="game-card-fan">
-          <article class="game-tile launch-game-card fan-card fan-card--left" aria-hidden="true" style="--home-color:#00338D;--away-color:#008E97">
+          <article class="game-tile launch-game-card fan-card fan-card--left" aria-label="Live Buffalo Bills versus Miami Dolphins bet card" aria-hidden="true" style="--home-color:#00338D;--away-color:#008E97">
             <div class="tile-main">
               <div class="game-row">
                 <div class="team team-home is-leading">
@@ -151,7 +151,7 @@
             </div>
           </article>
 
-          <article class="game-tile launch-game-card fan-card fan-card--right" aria-hidden="true" style="--home-color:#003594;--away-color:#004C54">
+          <article class="game-tile launch-game-card fan-card fan-card--right" aria-label="Live Dallas Cowboys versus Philadelphia Eagles bet card" aria-hidden="true" style="--home-color:#003594;--away-color:#004C54">
             <div class="tile-main">
               <div class="game-row">
                 <div class="team team-home">
@@ -235,6 +235,13 @@
             </div>
           </div>
           </article>
+          <button class="game-card-nav game-card-nav--previous" type="button" data-card-fan-previous aria-label="Show previous bet card">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="game-card-nav game-card-nav--next" type="button" data-card-fan-next aria-label="Show next bet card">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <p class="sr-only" data-card-fan-status aria-live="polite"></p>
         </div>
       </div>
     </section>
@@ -339,6 +346,6 @@
     <p>© 2026 GTL Markets. 18+. Please play responsibly.</p>
   </footer>
 
-  <script src="waitlist.js?v=20260805-walkthrough-3" defer></script>
+  <script src="waitlist.js?v=20260806-card-fan-2" defer></script>
 </body>
 </html>
