@@ -650,6 +650,41 @@
   max-width: 68ch;
 }
 
+.design-system-page .ds-update-key {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: var(--s10);
+}
+
+.design-system-page .ds-update-key > div {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s5);
+}
+
+.design-system-page .ds-update-key strong {
+  color: var(--ink);
+  font-size: var(--fs-label);
+}
+
+.design-system-page .ds-update-key .is-app-change strong {
+  color: var(--green-ink);
+}
+
+.design-system-page .ds-update-key span {
+  color: var(--ink-2);
+  font-size: var(--fs-label);
+  line-height: 1.55;
+}
+
+.design-system-page .ds-update-key code {
+  color: var(--ink);
+  font-size: inherit;
+}
+
 .design-system-page .ds-update-list {
   display: grid;
   gap: var(--s5);
@@ -5372,6 +5407,41 @@
   align-items: start;
 }
 
+.design-system-page .ds-component-group {
+  margin-top: var(--s10);
+}
+
+.design-system-page .section-header + .ds-component-group,
+.design-system-page .section-header + .ds-component-group-head {
+  margin-top: 0;
+}
+
+.design-system-page .ds-component-group-head {
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: var(--s8);
+  justify-content: space-between;
+  margin: var(--s10) 0 var(--s5);
+  padding-bottom: var(--s4);
+}
+
+.design-system-page .ds-component-group-head h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  margin: 0;
+}
+
+.design-system-page .ds-component-group-head p {
+  color: var(--ink-3);
+  font-size: var(--fs-label);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 58ch;
+  text-align: right;
+}
+
 .design-system-page .ds-app-component-panel,
 .design-system-page .ds-nav-card,
 .design-system-page .ds-card-frame,
@@ -5420,6 +5490,49 @@
   flex-basis: 100%;
 }
 
+.design-system-page .ds-market-button-row,
+.design-system-page .ds-icon-button-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+}
+
+.design-system-page .ds-social-button-stack {
+  display: grid;
+  gap: var(--s3);
+}
+
+.design-system-page .ds-market-button-row .price {
+  min-width: 104px;
+}
+
+.design-system-page .ds-icon-button-row .game-position-nav-button,
+.design-system-page .ds-close-button {
+  display: grid;
+  height: 44px;
+  place-items: center;
+  width: 44px;
+}
+
+.design-system-page .ds-icon-button-row .game-position-nav-button svg {
+  height: 20px;
+  transform: rotate(90deg);
+  width: 20px;
+}
+
+.design-system-page .ds-icon-button-row .ds-icon-next svg {
+  transform: rotate(-90deg);
+}
+
+.design-system-page .ds-close-button {
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
 .design-system-page .ds-chip-row,
 .design-system-page .ds-status-stack,
 .design-system-page .ds-toast-stack {
@@ -5453,6 +5566,19 @@
 
 .design-system-page .ds-form-card .terms-check {
   margin-top: var(--s2);
+}
+
+.design-system-page .ds-form-card .code-input {
+  margin: var(--s4) 0 0;
+}
+
+.design-system-page .ds-form-card .code-box {
+  max-width: 54px;
+}
+
+.design-system-page .ds-form-card .ds-card-note {
+  margin-top: auto;
+  padding-top: var(--s2);
 }
 
 .design-system-page .ds-contact-form {
@@ -5714,6 +5840,12 @@
   width: 100%;
 }
 
+.design-system-page .ds-position-card-grid .trade-layout-current-card {
+  margin-inline: auto;
+  max-width: 376px;
+  width: 100%;
+}
+
 .design-system-page .ds-current-card-grid .game-tile:not(.is-open) .foot-panel {
   display: none;
 }
@@ -5831,10 +5963,11 @@
 
 .design-system-page .ds-dialog-catalog {
   align-items: start;
-  column-gap: 100px;
+  column-gap: clamp(var(--s8), 5vw, var(--s16));
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 390px));
-  row-gap: 100px;
+  grid-template-columns: repeat(2, minmax(0, 390px));
+  justify-content: start;
+  row-gap: var(--s20);
 }
 
 .design-system-page .ds-dialog-group {
@@ -5845,10 +5978,11 @@
   gap: var(--s4);
   min-width: 0;
   padding: 0;
+  width: min(100%, 390px);
 }
 
 .design-system-page .ds-dialog-group-head {
-  min-height: 132px;
+  min-height: 164px;
 }
 
 .design-system-page .ds-dialog-title-row {
@@ -5878,6 +6012,8 @@
 
 .design-system-page .ds-dialog-ranking-group {
   grid-column: 1 / -1;
+  max-width: none;
+  width: 100%;
 }
 
 .design-system-page .ds-dialog-ranking-group .ds-dialog-group-head {
@@ -5890,7 +6026,7 @@
 
 .design-system-page .ds-dialog-ranking-pair {
   display: flex;
-  gap: 100px;
+  gap: var(--s8);
   overflow-x: auto;
   padding-bottom: var(--s2);
   width: 100%;
@@ -5910,13 +6046,12 @@
 .design-system-page .ds-dialog-phone {
   --flat-frame-h: 760px;
   --flat-frame-w: 390px;
-  justify-self: center;
-  max-width: 100%;
+  justify-self: start;
   width: 390px;
 }
 
 .design-system-page .ds-dialog-phone .flat-frame-wrap {
-  max-width: 100%;
+  max-width: none;
 }
 
 .design-system-page .ds-dialog-phone .flat-phone {
@@ -6141,20 +6276,31 @@
   margin: var(--s4) 0 var(--s6);
 }
 
-@media (max-width: 1100px) {
-  .design-system-page .ds-app-button-grid {
-    grid-template-columns: minmax(72px, 0.55fr) repeat(2, minmax(130px, 1fr));
+@media (max-width: 1280px) {
+  .design-system-page .ds-dialog-catalog {
+    grid-template-columns: minmax(0, 390px);
   }
 
-  .design-system-page .ds-app-button-grid > :nth-child(5n + 4),
-  .design-system-page .ds-app-button-grid > :nth-child(5n + 5) {
-    grid-column: auto;
+  .design-system-page .ds-dialog-group-head {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 1100px) {
+  .design-system-page .ds-app-button-grid {
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+  }
+
+  .design-system-page .ds-app-button-grid > .type-label {
+    grid-column: 1 / -1;
+    margin-top: var(--s3);
   }
 
   .design-system-page .ds-current-drawer-grid,
   .design-system-page .ds-current-card-grid {
     grid-template-columns: 1fr;
   }
+
 }
 
 @media (max-width: 760px) {
@@ -6163,6 +6309,7 @@
   }
 
   .design-system-page .ds-app-button-grid > .type-label {
+    grid-column: auto;
     margin-top: var(--s3);
   }
 
@@ -6186,13 +6333,15 @@
     max-width: none;
   }
 
-  .design-system-page .ds-card-group-head {
+  .design-system-page .ds-card-group-head,
+  .design-system-page .ds-component-group-head {
     align-items: flex-start;
     flex-direction: column;
     gap: var(--s3);
   }
 
-  .design-system-page .ds-card-group-head p {
+  .design-system-page .ds-card-group-head p,
+  .design-system-page .ds-component-group-head p {
     text-align: left;
   }
 
@@ -6213,7 +6362,12 @@
   }
 
   .design-system-page .ds-dialog-phone {
+    --flat-frame-w: 100%;
     width: min(100%, 390px);
+  }
+
+  .design-system-page .ds-dialog-phone .flat-frame-wrap {
+    max-width: 100%;
   }
 
   .design-system-page .ds-dialog-ranking-pair {
@@ -7059,6 +7213,10 @@
   .design-system-page .ds-update-log-intro > .ds-theme-toggle {
     position: static;
     width: max-content;
+  }
+
+  .design-system-page .ds-update-key {
+    grid-template-columns: 1fr;
   }
 
   .design-system-page .ds-update-card > summary {

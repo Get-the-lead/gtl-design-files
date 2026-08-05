@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="../gtl-app/fees.css">
     <link rel="stylesheet" href="../gtl-app/rules.css?v=20260730-mobile-table-1">
     <link rel="stylesheet" href="../gtl-app/waitlist.css?v=20260805-walkthrough-6">
-  <link rel="stylesheet" href="design-system.css?v=20260805-authentication-alignment-4">
+    <link rel="stylesheet" href="design-system.css?v=20260805-components-audit-3">
     <script src="../gtl-app/brand.js?v=20260804-1" defer></script>
   </head>
   <body class="design-system-page">
@@ -127,111 +127,272 @@
         <header class="ds-update-log-intro">
           <span class="ds-kicker">Update History</span>
           <h1>Update Log</h1>
-          <p>A concise record of approved product, interface, and Design System changes for review and developer handoff.</p>
+          <p>Developer-facing history of the app and Design System work completed on this branch from 4–5 August 2026. Newest updates appear first.</p>
         </header>
+
+        <aside class="ds-update-key" aria-label="Update type definitions">
+          <div class="is-app-change">
+            <strong>App Design Changes</strong>
+            <span>Changes implemented in <code>gtl-app</code> that affect product screens, behaviour, content, or responsive styling.</span>
+          </div>
+          <div class="is-system-change">
+            <strong>Design System Changes</strong>
+            <span>Changes to Design System navigation, documentation, flat lays, examples, or usage guidance only.</span>
+          </div>
+        </aside>
 
         <div class="ds-update-list">
           <details class="ds-update-card" open>
             <summary>
               <span class="ds-update-summary">
-                <strong>Update 03 — Authentication Consolidation</strong>
-                <span class="ds-update-meta">Covers changes from 5 August</span>
+                <strong>Update 06 — Components and Primitives Audit</strong>
+                <span class="ds-update-meta">5 August · Design System only</span>
               </span>
               <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
             </summary>
 
             <div class="ds-update-content">
               <section>
-                <h2>Authentication</h2>
+                <h2>Design System Changes — Primitives</h2>
                 <ul>
-                  <li>Combined Login, Registration, and Welcome into one canonical Authentication page.</li>
-                  <li>Preserved every login, recovery, account-creation, verification, onboarding, and validation variant.</li>
-                  <li>Organised the flat lays into seven clearly labelled flow and validation sections.</li>
+                  <li>Reduced the catalogue to production tokens actually referenced by the app.</li>
+                  <li>Documented when to use each colour, type, spacing, radius, border, shadow, layout, and motion token.</li>
+                  <li>Standardised every Primitive page to one heading, one source label, and one direct token list.</li>
                 </ul>
               </section>
 
-              <section class="ds-update-handoff">
-                <h2>Developer Handoff</h2>
-                <p>Use Authentication as the single Design System reference for the complete signed-out entry, account-creation, recovery, and post-registration onboarding journey.</p>
+              <section>
+                <h2>Design System Changes — Components</h2>
+                <ul>
+                  <li>Audited Buttons, Buy/Sell Drawer, Cards, Dialogs, Feedback, Forms, Navigation, Pills, and Tables against current app markup.</li>
+                  <li>Added missing glass, social, market, trade, and icon controls; verification fields; Open Trades filters; and carousel navigation.</li>
+                  <li>Removed obsolete terms and generic loading-button examples, and replaced legacy open-position cards with the current GTL, KTL, and TIE trade cards.</li>
+                  <li>Added concise usage guidance for every documented state, including validation, empty, loading, error, and responsive behaviour.</li>
+                  <li>Corrected the Dialog catalogue so fixed-width phone variants never overlap and remain consistently aligned.</li>
+                </ul>
               </section>
+
+              <footer class="ds-update-commits" aria-label="Included changes">
+                <span>Included changes</span>
+                <code>464072a</code>
+                <code>Current working changes</code>
+              </footer>
             </div>
           </details>
 
           <details class="ds-update-card">
             <summary>
               <span class="ds-update-summary">
-                <strong>Update 02 — Home and Waitlist Alignment</strong>
-                <span class="ds-update-meta">Covers changes from 5 August</span>
+                <strong>Update 05 — Authentication, Waitlist, and Variant Documentation</strong>
+                <span class="ds-update-meta">5 August · App designs + Design System</span>
               </span>
               <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
             </summary>
 
             <div class="ds-update-content">
               <section>
-                <h2>Home and Shared Previews</h2>
+                <h2>App Design Changes — Authentication</h2>
                 <ul>
-                  <li>Updated flat-lay footers to match the app’s authenticated and guest Sitemap and Legal structure.</li>
-                  <li>Changed No outcome labels on trade cards from red to neutral text and stabilised two-line bet sentence spacing.</li>
-                  <li>Aligned tablet and desktop trade carousels with production card sizing and left-focused overflow behaviour.</li>
+                  <li>Updated Login, Forgot Password, and Welcome copy to the approved title case and corrected Check Your Email and Claim Your Welcome Credits headings.</li>
+                  <li>Kept Continue, Login, Send Reset Link, and Start Betting disabled until their email, phone, code, password, personal details, or username input is valid.</li>
+                  <li>Added live validation for login identifiers, six-digit verification, date of birth, and username completion.</li>
                 </ul>
               </section>
 
               <section>
-                <h2>Waitlist</h2>
+                <h2>App Design Changes — Waitlist</h2>
                 <ul>
-                  <li>Added explicit already-registered and returning-visitor states alongside validation, progress, confirmation, and sharing.</li>
-                  <li>Remembered successful signup in the browser and restored You’re on the List automatically on return.</li>
-                  <li>Simplified state details and rewrote Required States, Key Implementation Notes, and Open Validation for product handoff.</li>
+                  <li>Added invalid, joining, confirmed, sharing, already-registered, and returning-visitor states.</li>
+                  <li>Changed the closed-modal state to a centred celebration with the shared success ring and static confetti at 5% opacity.</li>
+                  <li>Remembered a successful waitlist signup in the browser and restored the confirmed state on return.</li>
                 </ul>
               </section>
 
-              <section class="ds-update-handoff">
-                <h2>Developer Handoff</h2>
-                <p>Validate the production duplicate-email response, approve customer-facing confirmation copy, and confirm whether waitlist completion remains browser-specific or follows the customer across devices.</p>
+              <section>
+                <h2>Design System Changes</h2>
+                <ul>
+                  <li>Combined Login, Sign Up, Password Recovery, and Welcome into one canonical Authentication page with all implemented and validation variants.</li>
+                  <li>Aligned Authentication and Waitlist flat lays with the updated app designs, copy, disabled actions, success treatments, and responsive states.</li>
+                  <li>Removed duplicated Implementation Details panels and moved implementation guidance into the page introduction.</li>
+                  <li>Standardised Required States, Key Implementation Notes, and Open Validation across Pages.</li>
+                  <li>Added concise View Details content for every page variant, including Buy/Sell and previously undocumented states.</li>
+                </ul>
               </section>
+
+              <footer class="ds-update-commits" aria-label="Included commits">
+                <span>Included commit</span>
+                <code>7ef2fff</code>
+              </footer>
             </div>
           </details>
 
           <details class="ds-update-card">
             <summary>
               <span class="ds-update-summary">
-                <strong>Update 01 — Open Trades and Design System Alignment</strong>
-                <span class="ds-update-meta">Covers changes from 4–5 August</span>
+                <strong>Update 04 — Canonical Design System Structure</strong>
+                <span class="ds-update-meta">5 August · Design System only</span>
               </span>
               <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
             </summary>
 
             <div class="ds-update-content">
               <section>
-                <h2>App Experience</h2>
+                <h2>Design System Changes — Information Architecture</h2>
                 <ul>
-                  <li>Aligned Home and live Game open-trade experiences with the approved trade card designs.</li>
-                  <li>Added one-game and multiple-game filtering, shared score context, card counts, and focus-based carousel behaviour.</li>
-                  <li>Refined trade card hierarchy, market labels, value metadata, team treatments, theme colours, and solid team-colour borders.</li>
-                  <li>Updated bet drawer actions to name the selected market and outcome, and simplified live-game contract actions.</li>
+                  <li>Alphabetised Pages, Primitives, and Components in the left navigation.</li>
+                  <li>Removed the resolved Auth, Bet, and Game decisions and added an explicit No Open Decisions state.</li>
+                  <li>Created the numbered, collapsible Update Log for design review and developer handoff.</li>
+                  <li>Removed the standalone Trades and Trade Cards page after its approved patterns moved into Home and Game.</li>
                 </ul>
               </section>
 
               <section>
-                <h2>Design System</h2>
+                <h2>Design System Changes — Page References</h2>
                 <ul>
-                  <li>Moved approved open-trade patterns into the canonical Home and Game pages and removed the standalone comparison page.</li>
-                  <li>Updated Home previews to match the production background, trading-floor animation, responsive frames, and header treatment.</li>
-                  <li>Restructured page documentation around Required States, Key Implementation Notes, and Open Validation.</li>
-                  <li>Alphabetised navigation, simplified preview controls, refreshed Overview content, and cleared resolved decisions.</li>
+                  <li>Moved page descriptions directly beneath headings and added a separator before Required States.</li>
+                  <li>Replaced zoom controls with side-by-side mobile, tablet, desktop, and theme icon controls.</li>
+                  <li>Removed the simulated iOS island from every frame and aligned device content below the header.</li>
+                  <li>Matched Home previews to the app trading-floor background and removed the incorrect header shadow.</li>
+                  <li>Reduced page background green accents to 5% opacity and corrected Update Log background continuity.</li>
                 </ul>
               </section>
 
-              <section class="ds-update-handoff">
-                <h2>Developer Handoff</h2>
-                <p>Use the Home and Game Design System pages as the visual and behavioural source of truth. Validate authenticated and unauthenticated states, one-game and multiple-game trade filters, responsive carousel positioning, and both themes.</p>
+              <footer class="ds-update-commits" aria-label="Included commits">
+                <span>Included commit</span>
+                <code>2d08d22</code>
+              </footer>
+            </div>
+          </details>
+
+          <details class="ds-update-card">
+            <summary>
+              <span class="ds-update-summary">
+                <strong>Update 03 — Open Trades App Alignment</strong>
+                <span class="ds-update-meta">5 August · App designs + Design System</span>
+              </span>
+              <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
+            </summary>
+
+            <div class="ds-update-content">
+              <section>
+                <h2>App Design Changes — Home, Game, and Header</h2>
+                <ul>
+                  <li>Implemented the approved Open Trades experience on authenticated Home, live Game, and the global header menu.</li>
+                  <li>Added the default All filter for multiple games, single-game filtering, shared live score context, trade counts, and grouped menu sections.</li>
+                  <li>Made carousel indicators match the number of cards and moved previous, next, and dot actions to one focused card at a time with left-aligned overflow.</li>
+                  <li>Kept View Contracts as the only sticky Game action and removed the duplicate animated In Trades control.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>App Design Changes — Trade Card and Drawer</h2>
+                <ul>
+                  <li>Standardised the outcome mark, GTL/KTL/TIE code, plain Yes/No text, bet sentence, Total Value, earnings, Contracts, bought price, and current price hierarchy.</li>
+                  <li>Removed periods from bet outcome sentences and corrected every Tie market reference to TIE.</li>
+                  <li>Changed light cards to white surfaces with a solid outcome-team border, removed filter-button fades, and applied light-theme green to clocks and Yes/No text.</li>
+                  <li>Changed the drawer action to Change [Market] [Side], including Change GTL Yes, Change GTL No, and Change KTL No.</li>
+                  <li>Refined the Home background to one low-opacity green accent and removed the purple accent.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>Design System Changes</h2>
+                <ul>
+                  <li>Updated the Home, live Game, and Open Trades menu flat lays to mirror the final shared scorecard, filter, trade card, and carousel implementation.</li>
+                  <li>Aligned documented light and dark variants with the implemented team borders, semantic colours, card metadata, and TIE terminology.</li>
+                </ul>
+              </section>
+
+              <footer class="ds-update-commits" aria-label="Included commits">
+                <span>Included commit</span>
+                <code>00969ff</code>
+              </footer>
+            </div>
+          </details>
+
+          <details class="ds-update-card">
+            <summary>
+              <span class="ds-update-summary">
+                <strong>Update 02 — Unified Trade Layout Foundations</strong>
+                <span class="ds-update-meta">4 August · App designs + Design System</span>
+              </span>
+              <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
+            </summary>
+
+            <div class="ds-update-content">
+              <section>
+                <h2>App Design Changes</h2>
+                <ul>
+                  <li>Removed repeated score context from individual Game trade cards and kept Buy More and Sell scoped to each trade.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>Design System Changes</h2>
+                <ul>
+                  <li>Defined the shared game scorecard, trade filter, trade card, carousel, and Open Trades menu layout foundations.</li>
+                  <li>Documented Home all-games, selected-game, and single-game states; live Game trades; and global menu all-games and selected-game states.</li>
+                  <li>Added responsive mobile, tablet, and desktop flat lays with initials and licensed-logo references.</li>
+                </ul>
               </section>
 
               <footer class="ds-update-commits" aria-label="Included commits">
                 <span>Included commits</span>
-                <code>c7ce818</code>
                 <code>59ad82d</code>
-                <code>00969ff</code>
+                <code>4a4e401</code>
+              </footer>
+            </div>
+          </details>
+
+          <details class="ds-update-card">
+            <summary>
+              <span class="ds-update-summary">
+                <strong>Update 01 — App Flows and Shared Foundations</strong>
+                <span class="ds-update-meta">4 August · App designs + Design System</span>
+              </span>
+              <span class="material-symbols-outlined ds-update-chevron" aria-hidden="true">expand_more</span>
+            </summary>
+
+            <div class="ds-update-content">
+              <section>
+                <h2>App Design Changes — Shared Shell</h2>
+                <ul>
+                  <li>Added the reusable GTL wordmark asset and shared brand renderer, then aligned headers and footers across app pages.</li>
+                  <li>Updated signed-out and signed-in navigation, wallet and Open Trades controls, theme behaviour, and responsive mobile/desktop chrome.</li>
+                  <li>Aligned Home, Game, Ranking, Portfolio, Profile, Contact, Waitlist, Fees, Rules, Location, and account pages with the shared shell.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>App Design Changes — Authentication and Support</h2>
+                <ul>
+                  <li>Refined Login, Sign Up, Forgot Password, and Welcome flows with disabled-until-valid actions, inline validation, password visibility, segmented verification, and date-of-birth controls.</li>
+                  <li>Updated Welcome personal details, username, credit claim, and completion behaviour.</li>
+                  <li>Reworked Contact with shared fields, topic combobox, character counting, submission validation, success, and retry states.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>App Design Changes — Trading, Portfolio, and Account</h2>
+                <ul>
+                  <li>Expanded live-game, paused-market, order-entry, limit-price, sell, confirmation, and existing-trade warning states.</li>
+                  <li>Added responsive game-position and Home-position carousels with counts, pagination, and Buy More/Sell actions.</li>
+                  <li>Refined Portfolio current, pending, cancelled, settled, detail, empty, loading, and top-up patterns.</li>
+                  <li>Aligned Profile username editing, preferences, account details, betting controls, and destructive account actions.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h2>Design System Changes</h2>
+                <ul>
+                  <li>Expanded the Page flat lays and variant documentation to cover the new shared shell, authentication, contact, trading, Portfolio, account, loading, error, and responsive states.</li>
+                  <li>Aligned the Design System previews with the same app markup, brand asset, fields, buttons, cards, status treatments, and theme behaviour introduced in this checkpoint.</li>
+                </ul>
+              </section>
+
+              <footer class="ds-update-commits" aria-label="Included commits">
+                <span>Included commit</span>
+                <code>c7ce818</code>
               </footer>
             </div>
           </details>
@@ -1659,6 +1820,6 @@
       </div>
     </dialog>
 
-    <script src="script.js?v=20260805-primitives-audit-2"></script>
+    <script src="script.js?v=20260805-components-audit-1"></script>
   </body>
 </html>

@@ -3621,6 +3621,14 @@ function componentSectionHeader(title, copy) {
   return `<div class="section-header"><h2>${title}</h2><p>${copy}</p></div>`;
 }
 
+function componentGroupHeader(title, copy) {
+  return `<div class="ds-component-group-head"><h3>${title}</h3><p>${copy}</p></div>`;
+}
+
+function componentUsage(copy) {
+  return `<p class="ds-card-note">${copy}</p>`;
+}
+
 function primitiveTokenRows(items) {
   return `<div class="token-list ds-primitive-token-list">${items.map(([token, value, usage]) => `<div><code>${token}</code><strong>${value}</strong><span>${usage}</span></div>`).join("")}</div>`;
 }
@@ -3763,27 +3771,6 @@ function componentGameCard(game, { state = "collapsed", licensed = false } = {})
   </article>`;
 }
 
-function componentPositionCard(order = walletUser.positions[0]) {
-  const game = walletGames[order.gameId];
-  const { value, pnl } = walletFigures(order);
-  const up = pnl >= 0;
-  return `<article class="pos-card pos-card--a" style="--home-color:${game.home.color};--away-color:${game.away.color}">
-    <div class="pos-media">${componentGameMedia(game)}</div>
-    <div class="pos-info"><div class="oc-summary"><div class="oc-row"><span class="oc-tag">${walletMarketLabels[order.market]}</span><span class="oc-vr-head">Value: <span class="tnum">${walletMoney(value)}</span></span></div><div class="oc-row"><span class="oc-sub"><span class="side-${order.side}">${order.side.toUpperCase()}</span> · ${order.qty} contracts</span><span class="oc-figures"><span class="oc-pnl ${up ? "up" : "down"} tnum">${walletSigned(pnl)}</span></span></div></div><div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div></div>
-  </article>`;
-}
-
-function componentGamePositionCard(position = { market: "Get the Lead", side: "yes", qty: 120, value: "$52.80", result: "+$7.20" }) {
-  const up = !position.result.startsWith("−") && !position.result.startsWith("-");
-  return `<article class="pos-card pos-card--b" style="--home-color:#00338D;--away-color:#008E97">
-    <div class="pos-info">
-      <div class="ocb-type">${position.market} · <span class="side-${position.side}">${position.side.toUpperCase()}</span></div>
-      <div class="ocb-stats"><div class="ocb-stat"><span class="ocb-k">Contracts</span><span class="ocb-v tnum">${position.qty}</span></div><div class="ocb-stat"><span class="ocb-k">Value</span><span class="ocb-v tnum">${position.value}</span></div><div class="ocb-stat"><span class="ocb-k">Return</span><span class="ocb-v tnum oc-pnl ${up ? "up" : "down"}">${position.result}</span></div></div>
-      <div class="oc-actions"><button class="oc-buy" type="button" tabindex="-1">Buy More</button><button class="oc-sell" type="button" tabindex="-1">Sell</button></div>
-    </div>
-  </article>`;
-}
-
 function componentSettledCard(game) {
   return `<div class="settled-card" style="--home-color:${game.home.color};--away-color:${game.away.color}"><div class="pos-media">${componentGameMedia(game, { center: `<span class="period">Settled</span><span class="sc-won">You Won</span>` })}</div><div class="settled-body"><span class="settled-profit tnum">+$54.10</span><div class="settled-actions"><button class="btn btn-secondary" type="button">Dismiss</button><button class="btn btn-primary" type="button">Bet Again</button></div></div><span class="settled-progress"></span></div>`;
 }
@@ -3923,74 +3910,113 @@ function syncAppComponentSections() {
     dialogs: document.querySelector("#dialogs"),
   };
 
-  if (sections.buttons) sections.buttons.innerHTML = `${componentSectionHeader("Buttons", "Current app actions use the shared button classes, semantic colours, and three supported sizes.")}
-    <article class="panel ds-app-component-panel">
-      <div class="panel-header"><h3>Action hierarchy</h3><span class="tag">App buttons</span></div>
+  if (sections.buttons) sections.buttons.innerHTML = `${componentSectionHeader("Buttons", "Production actions use one shared hierarchy, with contextual glass, destructive, market, and icon-only treatments where the surrounding interface supplies meaning.")}
+    <section class="ds-component-group">
+      ${componentGroupHeader("Action Hierarchy", "Use Primary once per decision area, Secondary for alternatives, Ghost for low-emphasis actions, and Destructive only for irreversible account or order actions.")}
+      <article class="panel ds-app-component-panel">
+      <div class="panel-header"><h3>Standard Actions</h3><span class="tag">Shared</span></div>
       <div class="ds-app-button-grid">
         <span class="type-label">Default</span><button class="btn btn-primary" type="button">Primary</button><button class="btn btn-secondary" type="button">Secondary</button><button class="btn btn-ghost" type="button">Ghost</button><button class="btn btn-danger" type="button">Destructive</button>
-        <span class="type-label">Loading</span><button class="btn btn-primary" type="button" disabled>Processing...</button><button class="btn btn-secondary" type="button" disabled>Loading...</button><button class="btn btn-ghost" type="button" disabled>Loading...</button><button class="btn btn-danger" type="button" disabled>Deleting...</button>
         <span class="type-label">Disabled</span><button class="btn btn-primary" type="button" disabled>Primary</button><button class="btn btn-secondary" type="button" disabled>Secondary</button><button class="btn btn-ghost" type="button" disabled>Ghost</button><button class="btn btn-danger" type="button" disabled>Destructive</button>
       </div>
       <div class="ds-app-button-sizes"><button class="btn btn-primary btn-sm" type="button">Small</button><button class="btn btn-primary" type="button">Default</button><button class="btn btn-primary btn-lg" type="button">Large</button><button class="btn btn-block btn-secondary" type="button">Full width</button></div>
-    </article>`;
+      ${componentUsage("Disabled is reserved for incomplete or unavailable actions. The app uses local skeleton or updating-price feedback instead of a generic loading button. Small is for dense account controls, Large for onboarding and hero actions, and Full width for narrow forms and sheets.")}
+      </article>
+    </section>
+    <section class="ds-component-group">
+      ${componentGroupHeader("Contextual Actions", "These treatments are tied to a specific surface or trading meaning and must not replace the standard hierarchy elsewhere.")}
+      <div class="grid two ds-app-component-grid">
+        <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Glass Action</h3><span class="tag">Header / Hero</span></div><button class="btn btn-glass" type="button">Create Account</button>${componentUsage("Use over atmospheric or image-led backgrounds where the neutral glass surface belongs to the surrounding chrome.")}</article>
+        <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Social Sign-In</h3><span class="tag">Authentication</span></div><div class="ds-social-button-stack"><button class="social-btn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.7-.06-1.4-.18-2.06H12v3.9h5.9a5.04 5.04 0 0 1-2.18 3.31v2.75h3.53c2.07-1.9 3.25-4.71 3.25-7.9z"/><path fill="#34A853" d="M12 23c2.94 0 5.4-.97 7.2-2.63l-3.52-2.75c-.98.66-2.23 1.05-3.68 1.05-2.83 0-5.23-1.91-6.08-4.48H2.28v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.92 14.19a6.6 6.6 0 0 1 0-4.38V6.97H2.28a11 11 0 0 0 0 10.06l3.64-2.84z"/><path fill="#EA4335" d="M12 5.13c1.6 0 3.03.55 4.16 1.62l3.12-3.12A10.98 10.98 0 0 0 12 1 10.99 10.99 0 0 0 2.28 6.97l3.64 2.84C6.77 7.04 9.17 5.13 12 5.13z"/></svg>Continue with Google</button><button class="social-btn" type="button"><svg class="apple-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.05 12.66c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.13.94-3.94.94-.81 0-2.07-.92-3.4-.9-1.75.03-3.36 1.02-4.26 2.58-1.82 3.15-.47 7.82 1.3 10.38.86 1.25 1.89 2.66 3.24 2.61 1.3-.05 1.79-.84 3.36-.84 1.57 0 2.01.84 3.39.81 1.4-.02 2.28-1.28 3.13-2.54.99-1.45 1.4-2.86 1.42-2.93-.03-.01-2.72-1.04-2.46-4.6zM14.6 5.1c.72-.87 1.2-2.08 1.07-3.28-1.03.04-2.28.69-3.02 1.56-.66.76-1.24 1.99-1.09 3.16 1.15.09 2.32-.58 3.04-1.44z"/></svg>Continue with Apple</button></div>${componentUsage("Use only as full-width provider actions at the start of Login and Sign Up. Provider identity remains visible in both themes.")}</article>
+        <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Market Actions</h3><span class="tag">Trading</span></div><div class="ds-market-button-row"><button class="price yes" type="button">64¢</button><button class="price no" type="button">36¢</button></div>${componentUsage("Yes and No price controls are only used to select a live market side. Their colour communicates market semantics, not general success or error.")}</article>
+        <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Trade Actions</h3><span class="tag">Portfolio</span></div><div class="oc-actions"><button class="oc-buy" type="button">Buy More</button><button class="oc-sell" type="button">Sell</button></div>${componentUsage("Use the outlined paired actions on open-trade cards. Keep Buy More first and Sell second across Home, Game, and Open Trades surfaces.")}</article>
+        <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Icon Controls</h3><span class="tag">Compact Navigation</span></div><div class="ds-icon-button-row"><button class="game-position-nav-button" type="button" aria-label="Previous card">${chevronDown}</button><button class="game-position-nav-button ds-icon-next" type="button" aria-label="Next card">${chevronDown}</button><button class="floating-btn ds-close-button" type="button" aria-label="Close">×</button></div>${componentUsage("Icon-only controls require an accessible label and are limited to universally recognised previous, next, close, menu, and appearance actions.")}</article>
+      </div>
+    </section>`;
 
-  if (sections.pills) sections.pills.innerHTML = `${componentSectionHeader("Pills & Status", "Status treatments below are taken directly from live games, portfolio, ranking, and account screens.")}
+  if (sections.pills) sections.pills.innerHTML = `${componentSectionHeader("Pills & Status", "Compact status treatments communicate game state, order outcome, market side, or feature availability. They are labels, not general-purpose buttons.")}
+    ${componentGroupHeader("Supported Status Families", "Match the label and colour to the underlying state. Do not introduce a new chip when plain semantic text already carries the meaning.")}
     <div class="grid two ds-app-component-grid">
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Live and paused</h3><span class="tag">Game</span></div><div class="ds-status-stack"><span class="live-badge game-clock-badge"><span class="game-period"><span class="live-dot"></span>Q3</span><span class="game-clock tnum">11:05</span></span><div class="trade-pause"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div></div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Order outcomes</h3><span class="tag">Portfolio</span></div><div class="ds-chip-row"><span class="result-pill win">Won</span><span class="result-pill loss">Lost</span><span class="status-chip pending">Pending</span><span class="status-chip cancelled">Cancelled</span></div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Trade sides</h3><span class="tag">Trading</span></div><div class="ds-chip-row"><span class="side-yes">YES</span><span class="side-no">NO</span></div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Availability</h3><span class="tag">Account</span></div><div class="ds-chip-row"><span class="status-pill">Coming soon</span></div></article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Live and Paused</h3><span class="tag">Game</span></div><div class="ds-status-stack"><span class="live-badge game-clock-badge"><span class="game-period"><span class="live-dot"></span>Q3</span><span class="game-clock tnum">11:05</span></span><div class="trade-pause"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div></div>${componentUsage("The clock badge is live game metadata. The paused treatment replaces market interaction while prices recalculate; it is not a clickable chip.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Order Outcomes</h3><span class="tag">Portfolio</span></div><div class="ds-chip-row"><span class="result-pill win">Won</span><span class="result-pill loss">Lost</span><span class="status-chip pending">Pending</span><span class="status-chip cancelled">Cancelled</span></div>${componentUsage("Won and Lost appear on settled bets. Pending and Cancelled identify limit-order lifecycle states in Portfolio and order details.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Trade Sides</h3><span class="tag">Trading</span></div><div class="ds-chip-row"><span class="side-yes">YES</span><span class="side-no">NO</span></div>${componentUsage("Yes and No are matching semantic text inside trade metadata. Do not wrap them in an additional filled chip.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Availability</h3><span class="tag">Account</span></div><div class="ds-chip-row"><span class="status-pill">Coming soon</span></div>${componentUsage("Use only when a visible feature is deliberately present but unavailable. Hide features that users do not need to discover yet.")}</article>
     </div>`;
 
-  if (sections.forms) sections.forms.innerHTML = `${componentSectionHeader("Forms", "Authentication, registration, contact, and trading fields use the same visible-label and inline-validation patterns as the app.")}
+  if (sections.forms) sections.forms.innerHTML = `${componentSectionHeader("Forms", "Form controls mirror the current Authentication, Welcome, Contact, Profile, and Buy/Sell flows. Every field keeps a visible label, an explicit state, and adjacent help or validation text when required.")}
+    ${componentGroupHeader("Identity and Account Fields", "Use the shared field structure for account data. Validation appears after interaction or submission and clears when the value becomes valid.")}
     <div class="grid two ds-app-component-grid">
       <article class="panel form-grid ds-form-card"><div class="panel-header"><h3>Authentication</h3><span class="tag">Auth</span></div>
         <div class="field"><label for="ds-current-email">Email</label><input class="field-input" id="ds-current-email" type="email" placeholder="you@email.com"></div>
         <div class="field"><label for="ds-current-password">Password</label><div class="field-pass"><input class="field-input" id="ds-current-password" type="password" placeholder="Your password"><button class="pass-toggle" type="button" tabindex="-1" aria-label="Show password">${showIcon}</button></div></div>
         <div class="field"><label for="ds-current-error">Email error</label><input class="field-input is-error" id="ds-current-error" type="email" value="sam"><p class="field-error" role="alert">Enter a valid email address.</p></div>
+        ${componentUsage("Email, phone, and password entry share this base control. Password visibility is an icon action with an accessible label; errors sit immediately below the invalid field.")}
       </article>
-      <article class="panel form-grid ds-form-card"><div class="panel-header"><h3>Registration</h3><span class="tag">Eligibility</span></div>
-        <fieldset class="field signup-birthday-field"><legend>Date of birth</legend><div class="date-fields"><div class="date-part"><div class="field-combobox"><input class="field-input" placeholder="Month" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" placeholder="Day" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" placeholder="Year" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div></div><span class="field-hint">You must be 18 or older to use GTL.</span></fieldset>
-        <label class="terms-check"><input type="checkbox"><span>I agree to GTL's <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.</span></label>
+      <article class="panel form-grid ds-form-card"><div class="panel-header"><h3>Personal Details</h3><span class="tag">Welcome</span></div>
+        <div class="contact-name-row"><div class="field"><label for="ds-first-name">First Name</label><input class="field-input" id="ds-first-name" type="text" placeholder="Alex"></div><div class="field"><label for="ds-last-name">Last Name</label><input class="field-input" id="ds-last-name" type="text" placeholder="Morgan"></div></div>
+        <fieldset class="field signup-birthday-field"><legend>Date of Birth</legend><div class="date-fields"><div class="date-part"><div class="field-combobox"><input class="field-input" placeholder="Month" role="combobox" aria-label="Month" aria-expanded="false"><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show month options">${chevronDownIcon}</button></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" placeholder="Day" role="combobox" aria-label="Day" aria-expanded="false"><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show day options">${chevronDownIcon}</button></div></div><div class="date-part"><div class="field-combobox"><input class="field-input" placeholder="Year" role="combobox" aria-label="Year" aria-expanded="false"><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show year options">${chevronDownIcon}</button></div></div></div><span class="field-hint">You must be 18 or older to use GTL.</span></fieldset>
+        ${componentUsage("First and last name precede the segmented date-of-birth combobox on the Welcome details step. The obsolete terms checkbox is not part of the implemented flow.")}
       </article>
+      <article class="panel form-grid ds-form-card"><div class="panel-header"><h3>Verification Code</h3><span class="tag">Authentication</span></div>
+        <div class="code-input" aria-label="Six-digit verification code"><input class="code-box is-filled" type="text" value="2" aria-label="Digit 1" readonly><input class="code-box is-filled" type="text" value="8" aria-label="Digit 2" readonly><input class="code-box" type="text" aria-label="Digit 3" readonly><span class="code-dash" aria-hidden="true"></span><input class="code-box" type="text" aria-label="Digit 4" readonly><input class="code-box" type="text" aria-label="Digit 5" readonly><input class="code-box" type="text" aria-label="Digit 6" readonly></div>
+        <p class="code-resend">Didn't get a code? <button type="button">Resend</button></p>
+        ${componentUsage("Use for the six-digit email or phone verification step. Advance focus as digits are entered, support paste, and keep Continue disabled until all six positions are complete.")}
+      </article>
+    </div>
+    ${componentGroupHeader("Trading Inputs", "Trading controls are purpose-built for quantity, price mode, and fast selection. Do not substitute generic text fields for these interactions.")}
+    <div class="grid two ds-app-component-grid">
       <article class="panel form-grid ds-form-card ds-trading-form"><div class="panel-header"><h3>Contracts</h3><span class="tag">Buy</span></div>
         <div class="bet-field contracts-field"><span class="bet-label">Select number of contracts</span><input class="num-input drawer-contract-input" type="text" value="100" aria-label="Number of contracts"><div class="qty-quick"><button type="button">50</button><button class="is-active" type="button">100</button><button type="button">500</button><button type="button">1000</button></div></div>
+        ${componentUsage("The large numeric input is the source of truth. Quick values update it and expose one selected state; the value is constrained by balance and available contracts.")}
       </article>
-      <article class="panel form-grid ds-form-card ds-trading-form"><div class="panel-header"><h3>Order price</h3><span class="tag">Market / limit</span></div>
+      <article class="panel form-grid ds-form-card ds-trading-form"><div class="panel-header"><h3>Order Price</h3><span class="tag">Market / Limit</span></div>
         <div class="bet-field drawer-price-mode"><span class="bet-label">Order price</span><div class="seg drawer-price-toggle"><button class="is-active" type="button">Market <strong class="tnum">64¢</strong></button><label class="drawer-price-option"><span>Set Limit</span></label></div></div>
         <div class="bet-field drawer-price-mode"><span class="bet-label">Invalid limit</span><div class="seg drawer-price-toggle"><button type="button">Market <strong class="tnum">64¢</strong></button><label class="drawer-price-option is-active is-error"><span>Set Limit</span><span class="drawer-limit-entry"><input type="text" value="104" aria-label="Limit price in cents"><span>¢</span></span></label></div><p class="limit-minmax is-error">Maximum limit price is 64¢</p></div>
+        ${componentUsage("Market is the default. Selecting Set Limit reveals the cents input in place; invalid values use the red boundary and inline min/max feedback and disable purchase.")}
       </article>
+    </div>
+    ${componentGroupHeader("Support Form", "The Contact form is the only multiline form pattern. It combines paired identity fields, a non-editable topic combobox, and a counted message area.")}
+    <div class="ds-app-component-grid">
       <article class="panel form-grid ds-form-card ds-contact-form"><div class="panel-header"><h3>Contact</h3><span class="tag">Support</span></div>
         <div class="contact-name-row"><div class="field"><label for="ds-contact-name">Name</label><input class="field-input" id="ds-contact-name" type="text" placeholder="Your name"></div><div class="field"><label for="ds-contact-email">Email</label><input class="field-input" id="ds-contact-email" type="email" placeholder="you@example.com"></div></div>
-        <div class="field"><label for="ds-contact-topic">What can we help with?</label><div class="field-combobox"><input class="field-input" id="ds-contact-topic" type="text" placeholder="Choose a topic" readonly><span class="combobox-toggle">${chevronDownIcon}</span></div></div>
+        <div class="field"><label for="ds-contact-topic">What can we help with?</label><div class="field-combobox"><input class="field-input" id="ds-contact-topic" type="text" placeholder="Choose a topic" role="combobox" aria-expanded="false" readonly><button class="combobox-toggle" type="button" tabindex="-1" aria-label="Show topic options">${chevronDownIcon}</button></div></div>
         <div class="field"><label for="ds-contact-message">Message</label><textarea class="field-input contact-message" id="ds-contact-message" rows="6" maxlength="1000" placeholder="Tell us what happened or what you need help with"></textarea><span class="field-hint">0/1000 characters</span></div>
+        ${componentUsage("Keep Send Message disabled until all required values are valid and the message meets its minimum length. The count is live and capped at 1,000 characters.")}
       </article>
     </div>`;
 
   if (sections.drawers) {
     const drawerStates = [
-      ["Buy market", "buyMarket"],
-      ["Change bet type", "changeBetType"],
-      ["Trading paused", "paused"],
-      ["Buy limit", "buyLimit"],
-      ["Invalid limit", "invalid"],
-      ["Sell trade", "sellMarket"],
-      ["Buy confirmation", "confirmBuy"],
-      ["Sell confirmation", "confirmSell"],
+      ["Buy Market", "buyMarket", "Default order-entry state after a user selects a Yes or No market price."],
+      ["Change Bet Type", "changeBetType", "Inline editor opened by Change [Market] [Side]; preserves the selected game while market and side change."],
+      ["Trading Paused", "paused", "Locks order entry and replaces live interaction while the app recalculates market prices."],
+      ["Buy Limit", "buyLimit", "Reveals a user-defined cents price while retaining contracts, summary, and selected market context."],
+      ["Invalid Limit", "invalid", "Keeps the value visible, adds local min/max feedback, and disables the primary action."],
+      ["Sell Trade", "sellMarket", "Uses held-contract quantity and sell proceeds; it is only reachable from an existing open trade."],
+      ["Buy Confirmation", "confirmBuy", "Five-second post-purchase state with the placed-order summary and time-limited cancellation."],
+      ["Sell Confirmation", "confirmSell", "Post-sale receipt using the same confirmation structure and updated sell values."],
     ];
-    sections.drawers.innerHTML = `${componentSectionHeader("Buy/Sell Drawer", "Current order entry, trading interruption, validation, and five-second confirmation states from the app.")}
-      <div class="ds-current-drawer-grid">${drawerStates.map(([label, mode]) => `<article class="panel ds-current-drawer-card"><div class="panel-header"><h3>${label}</h3><span class="tag">Current flow</span></div><div class="ds-drawer-preview ds-drawer-mobile">${renderDrawerSheet(mode)}</div></article>`).join("")}</div>`;
+    sections.drawers.innerHTML = `${componentSectionHeader("Buy/Sell Drawer", "The order flow is one responsive component: a bottom sheet on mobile and a centred modal on desktop. These are its supported entry, interruption, validation, and confirmation states.")}
+      ${componentGroupHeader("Order Flow States", "Keep the scoreboard and market context stable between states. Only the controls required for the current decision should change.")}
+      <div class="ds-current-drawer-grid">${drawerStates.map(([label, mode, copy]) => `<article class="panel ds-current-drawer-card"><div class="panel-header"><h3>${label}</h3><span class="tag">Current Flow</span></div>${componentUsage(copy)}<div class="ds-drawer-preview ds-drawer-mobile">${renderDrawerSheet(mode)}</div></article>`).join("")}</div>`;
   }
 
-  if (sections.navigation) sections.navigation.innerHTML = `${componentSectionHeader("Navigation", "The shared floating header, page tabs, league filter, and current footer are the app's supported navigation patterns.")}
+  if (sections.navigation) sections.navigation.innerHTML = `${componentSectionHeader("Navigation", "Navigation combines the responsive floating header, context filters, segmented tabs, carousel controls, and shared footer. Each control preserves its role and label across breakpoints.")}
+    ${componentGroupHeader("Global Navigation", "The header changes for authentication state and viewport size. Wallet and Open Trades only appear for signed-in users with the relevant data.")}
     <div class="grid two ds-app-component-grid">
-      <article class="panel ds-nav-card"><div class="panel-header"><h3>Signed out header</h3><span class="tag">Mobile</span></div><div class="ds-nav-header-preview">${homeHeader(false)}</div></article>
-      <article class="panel ds-nav-card"><div class="panel-header"><h3>Signed in header</h3><span class="tag">Mobile</span></div><div class="ds-nav-header-preview">${homeHeader(true)}</div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>League filter</h3><span class="tag">Home</span></div>${homeLeagueStrip("nfl")}</article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Content tabs</h3><span class="tag">Game / Portfolio</span></div><div class="stats-tabs"><button class="stats-tab is-active" type="button">Markets</button><button class="stats-tab" type="button">Game Stats</button></div></article>
+      <article class="panel ds-nav-card"><div class="panel-header"><h3>Signed Out Header</h3><span class="tag">Mobile</span></div><div class="ds-nav-header-preview">${homeHeader(false)}</div>${componentUsage("The wordmark opens the mobile menu and Login remains the only right-side account action.")}</article>
+      <article class="panel ds-nav-card"><div class="panel-header"><h3>Signed In Header</h3><span class="tag">Mobile</span></div><div class="ds-nav-header-preview">${homeHeader(true, true)}</div>${componentUsage("Shows wallet balance and the compact Open Trades count. The menu contains account navigation and Logout.")}</article>
     </div>
-    <article class="panel ds-nav-card ds-nav-desktop-card"><div class="panel-header"><h3>Signed in header</h3><span class="tag">Desktop</span></div><div class="ds-nav-header-preview is-desktop">${homeHeader(true)}</div></article>
-    <article class="panel ds-footer-reference"><div class="panel-header"><h3>Footer</h3><span class="tag">Current</span></div>${homeFooter("home")}</article>`;
+    <article class="panel ds-nav-card ds-nav-desktop-card"><div class="panel-header"><h3>Signed In Header</h3><span class="tag">Desktop</span></div><div class="ds-nav-header-preview is-desktop">${homeHeader(true, true)}</div>${componentUsage("Desktop exposes primary routes inside the wordmark pill, with wallet, Open Trades, and appearance controls aligned on the same row.")}</article>
+    ${componentGroupHeader("Context Navigation", "Use filters to change the data in place, tabs to switch sibling views, and carousel controls only when content overflows the visible row.")}
+    <div class="grid two ds-app-component-grid">
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>League Filter</h3><span class="tag">Home</span></div>${homeLeagueStrip("nfl")}${componentUsage("NFL is the implemented live default. Selecting NBA replaces the game grid with its current availability state.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Content Tabs</h3><span class="tag">Game / Portfolio</span></div><div class="stats-tabs"><button class="stats-tab is-active" type="button">Market Stats</button><button class="stats-tab" type="button">Game Stats</button></div>${componentUsage("Use for sibling datasets within one page region. The same segmented structure switches Orders and Settled on mobile Portfolio.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Open Trades Filter</h3><span class="tag">Home / Menu</span></div><div class="ds-trade-filter-preview">${tradeLayoutFilter("all")}</div>${componentUsage("All is the default when trades span multiple games. With one game, show only that matchup; selecting a matchup filters the scorecard and trade list.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Trade Carousel</h3><span class="tag">Home / Game</span></div><div class="ds-carousel-preview">${tradeLayoutNavigation(4)}</div>${componentUsage("The indicator count always matches the cards. Previous, next, and dots focus one card at a time; overflowing focus cards align to the left edge.")}</article>
+    </div>
+    ${componentGroupHeader("Footer", "The same sitemap and legal navigation closes public and authenticated pages; active-page treatment changes without changing the link structure.")}
+    <article class="panel ds-footer-reference"><div class="panel-header"><h3>Shared Footer</h3><span class="tag">Current</span></div>${homeFooter("home")}${componentUsage("Use on full pages after the main content. Modal-style authentication and focused onboarding steps do not add the site footer.")}</article>`;
 
   if (sections.cards) {
     const cardGame = homeGames[1];
@@ -3998,7 +4024,7 @@ function syncAppComponentSections() {
     const waitingGame = homeGames[2];
     sections.cards.innerHTML = `${componentSectionHeader("Cards", "Reusable card families from the current app, rendered with the same markup, data and supported states used on their source pages. Team initials are the active in-app treatment.")}
       <section class="ds-card-group" aria-labelledby="ds-game-cards-title">
-        <div class="ds-card-group-head"><div><span class="eyebrow">Home</span><h3 id="ds-game-cards-title">Live game cards</h3></div><p>Collapsed is the default. Expansion is reserved for the market panel; interrupted games stay collapsed.</p></div>
+        <div class="ds-card-group-head"><div><span class="eyebrow">Home</span><h3 id="ds-game-cards-title">Live Game Cards</h3></div><p>Collapsed is the default. Expansion is reserved for the market panel; interrupted games stay collapsed.</p></div>
         <div class="ds-current-card-grid ds-game-card-grid">
           <article class="panel ds-card-frame"><div class="panel-header"><h3>Live Game</h3><span class="tag">App Default</span></div>${componentGameCard(cardGame)}<p class="ds-card-note">Default NFL tile. Selecting the score area opens the game; See Bets expands the market panel.</p></article>
           <article class="panel ds-card-frame"><div class="panel-header"><h3>Market Panel</h3><span class="tag">Expanded</span></div>${componentGameCard(cardGame, { state: "expanded" })}<p class="ds-card-note">The only expanded tile state. It exposes the three live markets and a View Game route.</p></article>
@@ -4010,32 +4036,32 @@ function syncAppComponentSections() {
       </section>
 
       <section class="ds-card-group" aria-labelledby="ds-position-cards-title">
-        <div class="ds-card-group-head"><div><span class="eyebrow">Portfolio</span><h3 id="ds-position-cards-title">Trades and orders</h3></div><p>Open trades carry the live-game media header. Order rows use the compact portfolio treatment.</p></div>
+        <div class="ds-card-group-head"><div><span class="eyebrow">Portfolio</span><h3 id="ds-position-cards-title">Trades and Orders</h3></div><p>Open trades carry the live-game media header. Order rows use the compact portfolio treatment.</p></div>
         <div class="ds-current-card-grid ds-position-card-grid">
           <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Portfolio Summary</h3><span class="tag">Overview</span></div><div class="ds-portfolio-summary">${walletStatsHTML()}</div><p class="ds-card-note">Always appears above the Portfolio order groups and recalculates from current, pending and settled data.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Trade</h3><span class="tag">Positive Return</span></div>${componentPositionCard(walletUser.positions[0])}<p class="ds-card-note">Shared by the signed-in Home carousel and the header Open Trades panel.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Trade</h3><span class="tag">Negative Return</span></div>${componentPositionCard(walletUser.positions[2])}<p class="ds-card-note">The same structure switches only the return colour and value when performance is negative.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Game Open Trade</h3><span class="tag">Game Page</span></div>${componentGamePositionCard()}<p class="ds-card-note">Used inside the Game Trades panel. It omits the scoreboard because the parent game page already supplies that context.</p></article>
-          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Current Order</h3><span class="tag">Open</span></div>${walletOrderRow(walletUser.positions[0], "open", 0)}</article>
-          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Pending Order</h3><span class="tag">Limit</span></div>${walletOrderRow(walletUser.pending[0], "pending", 0)}</article>
-          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Cancelled Order</h3><span class="tag">Cancelled</span></div>${walletOrderRow(walletUser.cancelled[0], "cancelled", 0)}</article>
-          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Settled Order</h3><span class="tag">History</span></div>${walletOrderRow(walletUser.settled[0], "settled", 0)}</article>
-          <article class="panel ds-card-frame ds-settled-card-frame"><div class="panel-header"><h3>Winning Settlement</h3><span class="tag">Notification Card</span></div>${componentSettledCard(walletGames[walletUser.settled[0].gameId])}</article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Trade</h3><span class="tag">Positive Return</span></div>${tradeLayoutCurrentGameCard("kc", menuPositionPreviewGames.kc.trades[0], "compact")}<p class="ds-card-note">Canonical trade card shared by the signed-in Home carousel, Game Trades, and header Open Trades panel. The surrounding surface supplies the score once per game.</p></article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Open Trade</h3><span class="tag">Negative Return</span></div>${tradeLayoutCurrentGameCard("ny", menuPositionPreviewGames.ny.trades[0], "compact")}<p class="ds-card-note">The same structure switches only the earnings value and semantic colour when performance is negative.</p></article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Tie Trade</h3><span class="tag">Two-Team Outcome</span></div>${tradeLayoutCurrentGameCard("kc", menuPositionPreviewGames.kc.trades[1], "compact")}<p class="ds-card-note">TIE uses both team marks and the gold market treatment. Market codes are always GTL, KTL, or TIE.</p></article>
+          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Current Order</h3><span class="tag">Open</span></div>${walletOrderRow(walletUser.positions[0], "open", 0)}${componentUsage("Compact Portfolio row for an active position. Selecting it opens the order detail view.")}</article>
+          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Pending Order</h3><span class="tag">Limit</span></div>${walletOrderRow(walletUser.pending[0], "pending", 0)}${componentUsage("Limit order waiting to fill. The status and value replace live earnings until execution.")}</article>
+          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Cancelled Order</h3><span class="tag">Cancelled</span></div>${walletOrderRow(walletUser.cancelled[0], "cancelled", 0)}${componentUsage("Read-only historical order row. Cancellation is explicit and never styled as a loss.")}</article>
+          <article class="panel ds-card-frame ds-order-row-frame"><div class="panel-header"><h3>Settled Order</h3><span class="tag">History</span></div>${walletOrderRow(walletUser.settled[0], "settled", 0)}${componentUsage("Completed bet shown in Settled. Outcome and realised value replace the live order state.")}</article>
+          <article class="panel ds-card-frame ds-settled-card-frame"><div class="panel-header"><h3>Winning Settlement</h3><span class="tag">Notification Card</span></div>${componentSettledCard(walletGames[walletUser.settled[0].gameId])}${componentUsage("Temporary Home notification shown once after a winning settlement, with Dismiss and Bet Again actions.")}</article>
         </div>
       </section>
 
       <section class="ds-card-group" aria-labelledby="ds-data-cards-title">
-        <div class="ds-card-group-head"><div><span class="eyebrow">Game page</span><h3 id="ds-data-cards-title">Game data cards</h3></div><p>Market Stats contains Market Book and Order Flow. Game Stats contains Score Worm and the five-row team comparison.</p></div>
+        <div class="ds-card-group-head"><div><span class="eyebrow">Game Page</span><h3 id="ds-data-cards-title">Game Data Cards</h3></div><p>Market Stats contains Market Book and Order Flow. Game Stats contains Score Worm and the five-row team comparison.</p></div>
         <div class="ds-current-card-grid ds-data-card-grid">
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Score Worm</h3><span class="tag">Game Stats</span></div>${componentScoreWormCard(cardGame)}</article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Score Worm</h3><span class="tag">Game Stats</span></div>${componentScoreWormCard(cardGame)}${componentUsage("Plots score margin across the game with team colour changing at the zero line and exposes lead changes and ties below.")}</article>
           <article class="panel ds-card-frame"><div class="panel-header"><h3>Team Comparison</h3><span class="tag">Five Core Stats</span></div>${componentGameStatsCard(cardGame)}<p class="ds-card-note">Always uses team initials in the comparison header, including licensed-logo scorecard variants.</p></article>
-          <article class="panel ds-card-frame"><div class="panel-header"><h3>Market Book</h3><span class="tag">Market Stats</span></div>${componentMarketBookCard(cardGame)}</article>
-          <article class="panel ds-card-frame ds-order-flow-frame"><div class="panel-header"><h3>Order Flow</h3><span class="tag">Market Stats</span></div>${componentOrderFlowCard(cardGame)}</article>
+          <article class="panel ds-card-frame"><div class="panel-header"><h3>Market Book</h3><span class="tag">Market Stats</span></div>${componentMarketBookCard(cardGame)}${componentUsage("Shows the current bid, ask, spread, and depth. Use the empty treatment until the first team takes the lead and orders open.")}</article>
+          <article class="panel ds-card-frame ds-order-flow-frame"><div class="panel-header"><h3>Order Flow</h3><span class="tag">Market Stats</span></div>${componentOrderFlowCard(cardGame)}${componentUsage("Combines quarter volume with the latest trade table. The empty state keeps the table headers and reports No trades yet.")}</article>
         </div>
       </section>
 
       <section class="ds-card-group" aria-labelledby="ds-settings-cards-title">
-        <div class="ds-card-group-head"><div><span class="eyebrow">Account</span><h3 id="ds-settings-cards-title">Settings cards</h3></div><p>Complete Profile &amp; Settings card coverage, including editable and validation states and the responsive account list.</p></div>
+        <div class="ds-card-group-head"><div><span class="eyebrow">Account</span><h3 id="ds-settings-cards-title">Settings Cards</h3></div><p>Complete Profile &amp; Settings card coverage, including editable and validation states and the responsive account list.</p></div>
         <div class="ds-current-card-grid ds-settings-card-grid">
           <article class="panel ds-card-frame"><div class="panel-header"><h3>Username</h3><span class="tag">Default</span></div>${componentUsernameCard("view")}<p class="ds-card-note">Displayed after authentication. Edit replaces this view in place without navigating away.</p></article>
           <article class="panel ds-card-frame"><div class="panel-header"><h3>Edit Username</h3><span class="tag">Editing</span></div>${componentUsernameCard("edit")}<p class="ds-card-note">The field is prefilled with the saved username. Save validates; Cancel restores the saved value and view state.</p></article>
@@ -4047,18 +4073,22 @@ function syncAppComponentSections() {
       </section>`;
   }
 
-  if (sections.tables) sections.tables.innerHTML = `${componentSectionHeader("Tables", "The app uses a compact trade-history table and responsive leaderboard rows rather than generic operational tables.")}
+  if (sections.tables) sections.tables.innerHTML = `${componentSectionHeader("Tables", "Only two production data-table patterns are supported: compact recent trades on the Game page and responsive leaderboard rows on Ranking.")}
+    ${componentGroupHeader("Production Data Tables", "Keep labels visible, align numeric values with tabular figures, and preserve a meaningful empty row instead of removing the table structure.")}
     <div class="grid two ds-app-component-grid">
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Trade history</h3><span class="tag">Game</span></div><div class="table-wrap"><table class="bets-table"><thead><tr><th>Time</th><th>Market</th><th>Side</th><th class="num">Price</th><th class="num">Size</th></tr></thead><tbody><tr><td class="tnum">11:04</td><td>GTL</td><td class="side-yes">YES</td><td class="num tnum">64¢</td><td class="num tnum">100</td></tr><tr><td class="tnum">11:02</td><td>KTL</td><td class="side-no">NO</td><td class="num tnum">38¢</td><td class="num tnum">50</td></tr></tbody></table></div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Leaderboard</h3><span class="tag">Ranking</span></div><div class="ranking-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="ranking-scroll"><div class="ranking-row is-podium is-rank-1"><span class="rank-pos">1</span><span class="rank-user">leadstorm</span><span class="rank-balance tnum">6,840</span><span class="rank-prize">$1,500</span></div><div class="ranking-row is-current"><span class="rank-pos">47</span><span class="rank-user">alex</span><span class="rank-balance tnum">1,710</span><span class="rank-prize">—</span></div></div></article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Recent Trades</h3><span class="tag">Game</span></div><div class="table-wrap"><table class="bets-table"><thead><tr><th>Time</th><th>Market</th><th>Side</th><th class="num">Price</th><th class="num">Size</th></tr></thead><tbody><tr><td class="tnum">11:04</td><td>GTL</td><td class="side-yes">YES</td><td class="num tnum">64¢</td><td class="num tnum">100</td></tr><tr><td class="tnum">11:02</td><td>KTL</td><td class="side-no">NO</td><td class="num tnum">38¢</td><td class="num tnum">50</td></tr></tbody></table></div>${componentUsage("Lives inside Order Flow. Keep newest trades first; Market uses GTL, KTL, or TIE and Side uses semantic text colour.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Recent Trades Empty</h3><span class="tag">Game</span></div><div class="table-wrap"><table class="bets-table"><thead><tr><th>Time</th><th>Market</th><th>Side</th><th class="num">Price</th><th class="num">Size</th></tr></thead><tbody><tr><td colspan="5" class="empty-row">No trades yet</td></tr></tbody></table></div>${componentUsage("Retain the headings while the market is unopened or has no executions. Replace the body with one centred empty row.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Leaderboard</h3><span class="tag">Ranking</span></div><div class="ranking-table-head"><span>Rank</span><span>Player</span><span>Balance</span><span>Prize</span></div><div class="ranking-scroll"><div class="ranking-row is-podium is-rank-1"><span class="rank-pos">1</span><span class="rank-user">leadstorm</span><span class="rank-balance tnum">6,840</span><span class="rank-prize">$1,500</span></div><div class="ranking-row is-current"><span class="rank-pos">47</span><span class="rank-user">alex</span><span class="rank-balance tnum">1,710</span><span class="rank-prize">—</span></div></div>${componentUsage("Desktop shows all four columns. Mobile retains rank, player, and balance while prize detail moves to the competition context; the current user remains highlighted.")}</article>
     </div>`;
 
-  if (sections.feedback) sections.feedback.innerHTML = `${componentSectionHeader("Feedback", "Current feedback patterns cover transient toasts, inline order warnings, trading interruptions, and empty states.")}
+  if (sections.feedback) sections.feedback.innerHTML = `${componentSectionHeader("Feedback", "Feedback is placed at the scope of the event: field errors beside fields, order warnings inside the drawer, page states in the affected region, and toasts only for brief cross-page confirmation.")}
+    ${componentGroupHeader("Feedback by Scope", "Use the smallest pattern that fully explains the state and includes a recovery action whenever the user can resolve it.")}
     <div class="grid two ds-app-component-grid">
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Toasts</h3><span class="tag">Transient</span></div><div class="ds-toast-stack">${componentToast("success", "Username updated")}${componentToast("error", "Unable to place order")}</div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Inline warnings</h3><span class="tag">Trading</span></div><div class="ds-status-stack"><div class="bet-conflict" role="alert">${drawerWarnIcon}<span><strong>Insufficient balance.</strong> Add funds before placing this bet.</span></div><div class="trade-pause drawer-trade-pause"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div></div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Empty state</h3><span class="tag">Portfolio</span></div><div class="wallet-empty">No current orders.</div></article>
-      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Loading state</h3><span class="tag">Cards</span></div>${flatLoading()}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Toasts</h3><span class="tag">Transient</span></div><div class="ds-toast-stack">${componentToast("success", "Username updated")}${componentToast("error", "Unable to place order")}</div>${componentUsage("Use after an action whose result is no longer adjacent to its trigger. Toasts announce through status or alert roles and dismiss automatically.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Inline Warnings</h3><span class="tag">Trading</span></div><div class="ds-status-stack"><div class="bet-conflict" role="alert">${drawerWarnIcon}<span><strong>Insufficient balance.</strong> Add funds before placing this bet.</span></div><div class="trade-pause drawer-trade-pause"><span class="pause-dot"></span><span>Trading paused. Recalculating markets.</span></div></div>${componentUsage("Keep transactional warnings inside the Buy/Sell Drawer. Balance errors explain the recovery; recalculation locks affected controls until current prices return.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Empty State</h3><span class="tag">Portfolio</span></div><div class="wallet-empty">No current orders.</div>${componentUsage("Use short, content-specific copy inside the list region. Do not place an empty card around a list that has no items.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Loading State</h3><span class="tag">Cards</span></div>${flatLoading()}${componentUsage("Skeletons match the shape and count of the incoming content and replace only the affected region, not the entire application shell.")}</article>
+      <article class="panel ds-app-component-panel"><div class="panel-header"><h3>Recoverable Error</h3><span class="tag">Home Games</span></div><div class="home-game-state" role="alert"><span class="home-game-state-icon" aria-hidden="true">!</span><strong>We couldn't load live games</strong><p>Check your connection and try again.</p><button class="btn btn-secondary" type="button">Try Again</button></div>${componentUsage("Use when a page region fails but the surrounding page remains usable. State the problem plainly and provide one local retry action.")}</article>
     </div>`;
 
   if (sections.dialogs) sections.dialogs.innerHTML = `${componentSectionHeader("Dialogs", "Every modal used by the app, shown implemented over the relevant screen in a complete phone mockup. Buy and sell confirmations remain in the dedicated Buy/Sell Drawer reference.")}
