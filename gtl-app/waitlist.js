@@ -84,7 +84,7 @@
     confirmation.hidden = false;
     confirmation.classList.remove("is-confirmed", "is-sharing");
     confirmationEyebrow.textContent = "Joining the Waitlist";
-    confirmationTitle.textContent = "Securing your place.";
+    confirmationTitle.textContent = "Securing your place";
     confirmationCopy.textContent = "Hold tight—we’re reserving your early-access spot.";
     confirmationActions.hidden = true;
     confirmationSharePanel.hidden = true;
@@ -99,7 +99,7 @@
     confirmationReady = true;
     confirmation.classList.add("is-confirmed");
     confirmationEyebrow.textContent = "Early Access Confirmed";
-    confirmationTitle.textContent = "You’re in before kickoff.";
+    confirmationTitle.textContent = "You’re in before kickoff";
     confirmationCopy.textContent = "We’ll email you before live trading opens, with early market previews and a quick-start guide so you’re ready to make your first move.";
     confirmationActions.hidden = false;
     confirmationScreenClose.hidden = false;
@@ -111,7 +111,7 @@
 
     confirmation.classList.add("is-sharing");
     confirmationEyebrow.textContent = "Share Early Access";
-    confirmationTitle.textContent = "Bring your friends along.";
+    confirmationTitle.textContent = "Bring your friends along";
     confirmationCopy.textContent = "Copy the waitlist link and send it to anyone you want beside you when live trading begins.";
     confirmationShareLink.value = shareUrl;
     confirmationActions.hidden = true;
